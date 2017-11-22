@@ -19,6 +19,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class PrepareCommand extends Command
 {
+    const NAME = 'simplytestable:job:prepare';
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
@@ -102,7 +103,7 @@ class PrepareCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:job:prepare')
+            ->setName(self::NAME)
             ->setDescription('Prepare a set of tasks for a given job')
             ->addArgument('id', InputArgument::REQUIRED, 'id of job to prepare')
         ;

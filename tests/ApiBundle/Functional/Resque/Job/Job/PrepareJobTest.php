@@ -12,7 +12,11 @@ class PrepareJobTest extends AbstractJobTest
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $job = $this->createJob(['id' => 1], self::QUEUE);
+        $job = $this->createJob(
+            ['id' => 1],
+            self::QUEUE,
+            $this->container->get(PrepareCommand::class)
+        );
         $this->assertInstanceOf(PrepareJob::class, $job);
 
         $returnCode = $this->runInMaintenanceReadOnlyMode($job);

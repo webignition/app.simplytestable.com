@@ -13,6 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ActivateVerifyCommand extends Command
 {
+    const NAME = 'simplytestable:worker:activate:verify';
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
@@ -56,7 +58,7 @@ class ActivateVerifyCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:worker:activate:verify')
+            ->setName(self::NAME)
             ->setDescription('Verify the activation request of a worker')
             ->addArgument('id', InputArgument::REQUIRED, 'id of worker to verify')
         ;

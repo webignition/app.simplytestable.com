@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CollectionCommand extends Command
 {
+    const NAME = 'simplytestable:task:cancelcollection';
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
@@ -73,7 +75,7 @@ class CollectionCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:task:cancelcollection')
+            ->setName(self::NAME)
             ->setDescription('Cancel a collection of tasks')
             ->addArgument(
                 'ids',

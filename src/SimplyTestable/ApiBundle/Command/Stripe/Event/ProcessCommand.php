@@ -15,6 +15,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProcessCommand extends Command
 {
+    const NAME = 'simplytestable:stripe:event:process';
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
     const RETURN_CODE_EVENT_HAS_NO_USER = 3;
@@ -67,7 +69,7 @@ class ProcessCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:stripe:event:process')
+            ->setName(self::NAME)
             ->setDescription('Process and respond to received stripe event')
             ->addArgument('stripeId', InputArgument::REQUIRED, 'stripe id of event to process')
         ;

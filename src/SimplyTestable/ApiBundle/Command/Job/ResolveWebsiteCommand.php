@@ -19,6 +19,8 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class ResolveWebsiteCommand extends Command
 {
+    const NAME = 'simplytestable:job:resolve';
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_CANNOT_RESOLVE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
@@ -95,7 +97,7 @@ class ResolveWebsiteCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:job:resolve')
+            ->setName(self::NAME)
             ->setDescription('Resolve a job\'s canonical url to be sure where we are starting off')
             ->addArgument('id', InputArgument::REQUIRED, 'id of job to process')
         ;

@@ -20,6 +20,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CollectionCommand extends Command
 {
+    const NAME = 'simplytestable:task:assigncollection';
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_FAILED_NO_WORKERS = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = -1;
@@ -104,7 +106,7 @@ class CollectionCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:task:assigncollection')
+            ->setName(self::NAME)
             ->setDescription('Assign a collection of tasks to workers')
             ->addArgument('ids', InputArgument::REQUIRED, 'ids of tasks to assign')
             ->addArgument('worker', InputArgument::OPTIONAL, 'hostname of worker to which to assign tasks')

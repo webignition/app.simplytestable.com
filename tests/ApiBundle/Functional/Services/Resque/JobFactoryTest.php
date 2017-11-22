@@ -10,21 +10,7 @@ use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\Job\StartService;
-use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
-use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
-use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
-use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
-use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
@@ -160,15 +146,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'job-prepare',
                 'expectedArgs' => [
                     'id' => 1,
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        QueueService::class,
-                        JobFactory::class,
-                        JobPreparationService::class,
-                        CrawlJobContainerService::class,
-                        'logger',
-                        'doctrine.orm.entity_manager',
-                    ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [
                             'css-validation' => [
@@ -199,14 +176,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'job-resolve',
                 'expectedArgs' => [
                     'id' => 1,
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        QueueService::class,
-                        JobFactory::class,
-                        WebsiteResolutionService::class,
-                        JobPreparationService::class,
-                        'doctrine.orm.entity_manager',
-                    ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [
                             'css-validation' => [
@@ -237,16 +206,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'task-assign-collection',
                 'expectedArgs' => [
                     'ids' => '1,2,3',
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        'doctrine.orm.entity_manager',
-                        Factory::class,
-                        QueueService::class,
-                        JobFactory::class,
-                        StateService::class,
-                        WorkerTaskAssignmentService::class,
-                        'logger',
-                    ],
                 ],
             ],
             'task-cancel-collection' => [
@@ -258,13 +217,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'task-cancel-collection',
                 'expectedArgs' => [
                     'ids' => '1,2,3',
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        TaskService::class,
-                        WorkerTaskCancellationService::class,
-                        'logger',
-                        'doctrine.orm.entity_manager',
-                    ],
                 ],
             ],
             'worker-activate-verify' => [
@@ -276,11 +228,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'worker-activate-verify',
                 'expectedArgs' => [
                     'id' => 1,
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        WorkerActivationRequestService::class,
-                        'doctrine.orm.entity_manager',
-                    ],
                 ],
             ],
             'stripe-event' => [
@@ -292,12 +239,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'stripe-event',
                 'expectedArgs' => [
                     'stripeId' => 'evt_2c6KUnrLeIFqQv',
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        'doctrine.orm.entity_manager',
-                        'logger',
-                        'event_dispatcher',
-                    ],
                 ],
             ],
             'tasks-notify' => [
@@ -305,11 +246,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'args' => [],
                 'expectedJobClass' => NotifyJob::class,
                 'expectedQueue' => 'tasks-notify',
-                'expectedArgs' => [
-                    'serviceIds' => [
-                        TaskNotificationService::class,
-                    ],
-                ],
+                'expectedArgs' => [],
             ],
             'scheduledjob-execute' => [
                 'queue' => 'scheduledjob-execute',
@@ -320,14 +257,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'scheduledjob-execute',
                 'expectedArgs' => [
                     'id' => 1,
-                    'serviceIds' => [
-                        ApplicationStateService::class,
-                        QueueService::class,
-                        JobFactory::class,
-                        'doctrine.orm.entity_manager',
-                        StartService::class,
-                        JobService::class,
-                    ],
                 ],
             ],
         ];

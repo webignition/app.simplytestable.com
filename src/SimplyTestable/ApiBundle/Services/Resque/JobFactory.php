@@ -9,7 +9,6 @@ class JobFactory
     const EXCEPTION_CODE_INVALID_QUEUE = 1;
     const EXCEPTION_MESSAGE_MISSING_REQUIRED_ARG = 'Required argument "%s" is missing';
     const EXCEPTION_CODE_MISSING_REQUIRED_ARG = 2;
-    const KEY_SERVICE_IDS = 'serviceIds';
     const KEY_JOB_CLASS_NAME = 'jobClassName';
     const KEY_REQUIRED_ARGS = 'requiredArgs';
     const KEY_PARAMETERS = 'parameters';
@@ -62,11 +61,6 @@ class JobFactory
                 }
             }
         }
-
-        if (isset($queueProperties[self::KEY_SERVICE_IDS])) {
-            $args[self::KEY_SERVICE_IDS] = $queueProperties[self::KEY_SERVICE_IDS];
-        }
-
 
         if (isset($queueProperties[self::KEY_PARAMETERS])) {
             $args[self::KEY_PARAMETERS] = $queueProperties[self::KEY_PARAMETERS];
