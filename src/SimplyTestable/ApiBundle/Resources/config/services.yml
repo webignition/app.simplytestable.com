@@ -59,3 +59,14 @@ services:
     arguments:
       $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
       $parameters: "%stripe_webhook_developer_notification%"
+
+  # Needs to be explicitly defined to be used in a resque context
+  # Is otherwise autowired and autoconfigured correctly when injected from the main DIC
+  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
+    arguments:
+      $jobService: '@SimplyTestable\ApiBundle\Services\JobService'
+      $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+      $websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
+      $urlResolver: '@SimplyTestable\ApiBundle\Services\UrlResolver'
+      $stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+      $entityManager: '@doctrine.orm.entity_manager'
