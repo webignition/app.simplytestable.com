@@ -7,14 +7,6 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob
             requiredArgs:
               - id
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - SimplyTestable\ApiBundle\Services\Resque\QueueService
-              - SimplyTestable\ApiBundle\Services\Resque\JobFactory
-              - SimplyTestable\ApiBundle\Services\JobPreparationService
-              - SimplyTestable\ApiBundle\Services\CrawlJobContainerService
-              - logger
-              - doctrine.orm.entity_manager
             parameters:
               predefinedDomainsToIgnore:
                 css-validation: '%css_validation_domains_to_ignore%'
@@ -24,13 +16,6 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob
             requiredArgs:
               - id
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - SimplyTestable\ApiBundle\Services\Resque\QueueService
-              - SimplyTestable\ApiBundle\Services\Resque\JobFactory
-              - SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
-              - SimplyTestable\ApiBundle\Services\JobPreparationService
-              - doctrine.orm.entity_manager
             parameters:
               predefinedDomainsToIgnore:
                 css-validation: '%css_validation_domains_to_ignore%'
@@ -40,59 +25,26 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob
             requiredArgs:
               - ids
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - doctrine.orm.entity_manager
-              - SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
-              - SimplyTestable\ApiBundle\Services\Resque\QueueService
-              - SimplyTestable\ApiBundle\Services\Resque\JobFactory
-              - SimplyTestable\ApiBundle\Services\StateService
-              - SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
-              - logger
           task-cancel-collection:
             queue: task-cancel-collection
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob
             requiredArgs:
               - ids
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - SimplyTestable\ApiBundle\Services\TaskService
-              - SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
-              - logger
-              - doctrine.orm.entity_manager
           worker-activate-verify:
             queue: worker-activate-verify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob
             requiredArgs:
               - id
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-              - doctrine.orm.entity_manager
           stripe-event:
             queue: stripe-event
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob
             requiredArgs:
               - stripeId
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - doctrine.orm.entity_manager
-              - logger
-              - event_dispatcher
           tasks-notify:
             queue: tasks-notify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
           scheduledjob-execute:
             queue: scheduledjob-execute
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob
             requiredArgs:
               - id
-            serviceIds:
-              - SimplyTestable\ApiBundle\Services\ApplicationStateService
-              - SimplyTestable\ApiBundle\Services\Resque\QueueService
-              - SimplyTestable\ApiBundle\Services\Resque\JobFactory
-              - doctrine.orm.entity_manager
-              - SimplyTestable\ApiBundle\Services\Job\StartService
-              - SimplyTestable\ApiBundle\Services\JobService

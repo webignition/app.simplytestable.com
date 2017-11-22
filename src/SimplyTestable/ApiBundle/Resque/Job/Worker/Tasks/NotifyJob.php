@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks;
 
 use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
-use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
 
 class NotifyJob extends CommandJob
 {
@@ -21,14 +20,9 @@ class NotifyJob extends CommandJob
     /**
      * {@inheritdoc}
      */
-    public function getCommand()
+    public function getCommandName()
     {
-        /* @var TaskNotificationService $workerTaskNotificationService */
-        $workerTaskNotificationService = $this->getContainer()->get($this->args['serviceIds'][0]);
-
-        return new TaskNotificationCommand(
-            $workerTaskNotificationService
-        );
+        return TaskNotificationCommand::NAME;
     }
 
     /**

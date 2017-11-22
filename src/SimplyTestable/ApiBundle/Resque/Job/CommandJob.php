@@ -2,17 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 abstract class CommandJob extends Job
 {
     /**
-     * @return Command
+     * @return string
      */
-    abstract public function getCommand();
+    abstract public function getCommandName();
 
     /**
      * Get the arguments required by the to-be-run command.
@@ -36,16 +35,22 @@ abstract class CommandJob extends Job
      */
     public function run($args)
     {
-        $command = $this->getCommand();
+        $kernel = $this->createKernel();
+        $kernel->boot();
 
-        if ($command instanceof ContainerAwareCommand) {
-            $command->setContainer($this->getContainer());
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
+
+        if ('test' === $this->args['kernel.environment'] && isset($this->args['command'])) {
+            $application->add($this->args['command']);
         }
 
-        $input = new ArrayInput($this->getCommandArgs());
-        $output = new BufferedOutput();
+        $input = new ArrayInput(array_merge([
+            'command' => $this->getCommandName(),
+        ], $this->getCommandArgs()));
 
-        $returnCode = $command->run($input, $output);
+        $output = new BufferedOutput();
+        $returnCode = $application->run($input, $output);
 
         if ($returnCode === 0) {
             return true;
@@ -70,7 +75,6 @@ abstract class CommandJob extends Job
             $this->getIdentifier(),
             $returnCode
         ));
-
 
         $logger->error(sprintf(
             '%s: task [%s] output %s',

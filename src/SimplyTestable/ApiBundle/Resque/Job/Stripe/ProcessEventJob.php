@@ -2,12 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Stripe;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProcessEventJob extends CommandJob
 {
@@ -24,26 +20,9 @@ class ProcessEventJob extends CommandJob
     /**
      * {@inheritdoc}
      */
-    public function getCommand()
+    public function getCommandName()
     {
-        /* @var ApplicationStateService $applicationStateService */
-        $applicationStateService = $this->getContainer()->get($this->args['serviceIds'][0]);
-
-        /* @var EntityManagerInterface $entityManager */
-        $entityManager = $this->getContainer()->get($this->args['serviceIds'][1]);
-
-        /* @var LoggerInterface $logger */
-        $logger = $this->getContainer()->get($this->args['serviceIds'][2]);
-
-        /* @var EventDispatcherInterface $eventDispatcher */
-        $eventDispatcher = $this->getContainer()->get($this->args['serviceIds'][3]);
-
-        return new ProcessCommand(
-            $applicationStateService,
-            $entityManager,
-            $logger,
-            $eventDispatcher
-        );
+        return ProcessCommand::NAME;
     }
 
     /**

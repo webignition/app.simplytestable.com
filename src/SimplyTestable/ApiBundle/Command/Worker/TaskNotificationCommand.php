@@ -8,6 +8,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TaskNotificationCommand extends Command
 {
+    const NAME = 'simplytestable:worker:tasknotification';
+
     const RETURN_CODE_OK = 0;
 
     /**
@@ -32,7 +34,7 @@ class TaskNotificationCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:worker:tasknotification')
+            ->setName(self::NAME)
             ->setDescription('Notify all workers of tasks ready to be carried out')
         ;
     }

@@ -20,6 +20,8 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 
 class ExecuteCommand extends Command
 {
+    const NAME = 'simplytestable:scheduledjob:execute';
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
     const RETURN_CODE_INVALID_SCHEDULED_JOB = 3;
@@ -90,7 +92,7 @@ class ExecuteCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:scheduledjob:execute')
+            ->setName(self::NAME)
             ->setDescription('Start a new job from a scheduled job')
             ->addArgument('id', InputArgument::REQUIRED, 'id of scheduled job to execute')
         ;

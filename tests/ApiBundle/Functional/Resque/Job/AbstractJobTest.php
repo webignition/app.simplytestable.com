@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Resque\Job;
 use SimplyTestable\ApiBundle\Resque\Job\Job;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use Symfony\Component\Console\Command\Command;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 abstract class AbstractJobTest extends AbstractBaseTestCase
@@ -15,7 +16,7 @@ abstract class AbstractJobTest extends AbstractBaseTestCase
      *
      * @return Job
      */
-    public function createJob($args, $queue)
+    public function createJob($args, $queue, Command $command)
     {
         $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
 
@@ -24,6 +25,7 @@ abstract class AbstractJobTest extends AbstractBaseTestCase
         $job->setKernelOptions([
             'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
             'kernel.environment' => $this->container->getParameter('kernel.environment'),
+            'command' => $command,
         ]);
 
         return $job;
