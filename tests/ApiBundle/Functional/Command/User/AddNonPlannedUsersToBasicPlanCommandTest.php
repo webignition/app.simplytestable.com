@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\User;
 
 use SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -23,21 +22,6 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(AddNonPlannedUsersToBasicPlanCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyModeReturnsStatusCode1()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            AddNonPlannedUsersToBasicPlanCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

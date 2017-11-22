@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Command\Tasks;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -35,11 +34,6 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
     private $entityManager;
 
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param StateService $stateService
      * @param EntityManagerInterface $entityManager
@@ -56,8 +50,6 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**
@@ -75,19 +67,16 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $isInMaintenanceReadOnlyState = $this->applicationStateService->isInMaintenanceReadOnlyState();
-        $isInMaintenanceBackupReadOnlyState = $this->applicationStateService->isInMaintenanceBackupReadOnlyState();
-
-        $isInReadOnlyState = $isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState;
-
-        if ($isInReadOnlyState) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
         $taskQueuedForAssignmentState = $this->stateService->get(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
 
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+
         /* @var Task[] $tasks */
-        $tasks = $this->taskRepository->findBy([
+        $tasks = $taskRepository->findBy([
             'state' => $taskQueuedForAssignmentState,
         ]);
 

@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -40,21 +39,6 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
         $this->command = $this->container->get(CompleteAllWithNoIncompleteTasksCommand::class);
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

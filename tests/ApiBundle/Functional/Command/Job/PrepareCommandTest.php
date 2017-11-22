@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
@@ -37,20 +36,6 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $this->jobFactory = new JobFactory($this->container);
 
         $this->prepareCommand = $this->container->get(PrepareCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->prepareCommand->run(new ArrayInput([
-            'id' => 1,
-        ]), new BufferedOutput());
-
-        $this->assertEquals(PrepareCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     public function testRunWithJobInWrongState()

@@ -5,7 +5,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
-use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
@@ -60,10 +59,9 @@ class PrepareCommand extends Command
     private $predefinedDomainsToIgnore;
 
     /**
-     * @var JobRepository
+     * @var EntityManagerInterface
      */
-    private $jobRepository;
-
+    private $entityManager;
     /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
@@ -95,8 +93,7 @@ class PrepareCommand extends Command
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->logger = $logger;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -116,7 +113,7 @@ class PrepareCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             $this->resqueQueueService->enqueue(
                 $this->resqueJobFactory->create(
                     'job-prepare',
@@ -132,7 +129,10 @@ class PrepareCommand extends Command
             $input->getArgument('id')
         ));
 
-        $job = $this->jobRepository->find((int)$input->getArgument('id'));
+        $jobRepository = $this->entityManager->getRepository(Job::class);
+
+        /* @var Job $job */
+        $job = $jobRepository->find((int)$input->getArgument('id'));
 
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var TaskType $taskType */

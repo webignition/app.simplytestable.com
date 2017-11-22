@@ -2,12 +2,10 @@
 namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -67,16 +65,6 @@ class CollectionCommand extends Command
     private $logger;
 
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
-     * @var EntityRepository
-     */
-    private $workerRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
@@ -108,9 +96,6 @@ class CollectionCommand extends Command
         $this->stateService = $stateService;
         $this->workerTaskAssignmentService = $workerTaskAssignmentService;
         $this->logger = $logger;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
-        $this->workerRepository = $entityManager->getRepository(Worker::class);
     }
 
     /**
@@ -131,7 +116,7 @@ class CollectionCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
@@ -141,8 +126,11 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+
         /* @var Task[] $tasks */
-        $tasks = $this->taskRepository->findBy([
+        $tasks = $taskRepository->findBy([
             'id' => $taskIds,
         ]);
 
@@ -167,7 +155,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $activeWorkers = $this->workerRepository->findBy([
+        $activeWorkers = $workerRepository->findBy([
             'state' => $this->stateService->get(Worker::STATE_ACTIVE),
         ]);
 

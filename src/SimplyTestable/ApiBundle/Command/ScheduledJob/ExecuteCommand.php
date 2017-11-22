@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -58,11 +57,6 @@ class ExecuteCommand extends Command
     private $jobService;
 
     /**
-     * @var EntityRepository
-     */
-    private $scheduledJobRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
@@ -88,7 +82,6 @@ class ExecuteCommand extends Command
         $this->entityManager = $entityManager;
         $this->jobStartService = $jobStartService;
         $this->jobService = $jobService;
-        $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
     }
 
     /**
@@ -110,8 +103,8 @@ class ExecuteCommand extends Command
     {
         $id = (int)$input->getArgument('id');
 
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
-            if (!$this->resqueQueueService->contains('scheduled-job', ['id' => $id])) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
+            if (!$this->resqueQueueService->contains('scheduledjob-execute', ['id' => $id])) {
                 $this->resqueQueueService->enqueue(
                     $this->resqueJobFactory->create(
                         'scheduledjob-execute',
@@ -125,8 +118,10 @@ class ExecuteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $scheduledJobRepository = $this->entityManager->getRepository(ScheduledJob::class);
+
         /* @var ScheduledJob $scheduledJob */
-        $scheduledJob = $this->scheduledJobRepository->find($id);
+        $scheduledJob = $scheduledJobRepository->find($id);
 
         if (empty($scheduledJob)) {
             $output->writeln('Scheduled job [' . $input->getArgument('id') . '] does not exist');
@@ -151,7 +146,6 @@ class ExecuteCommand extends Command
             $output->writeln(sprintf(
                 'Plan limit [%s] reached',
                 $userAccountPlanEnforcementException->getAccountPlanConstraint()->getName()
-
             ));
 
             return self::RETURN_CODE_PLAN_LIMIT_REACHED;

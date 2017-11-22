@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\Tasks;
 
 use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -27,36 +26,6 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(RequeueQueuedForAssignmentCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            RequeueQueuedForAssignmentCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-    }
-
-    public function testRunInMaintenanceBackupReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            RequeueQueuedForAssignmentCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

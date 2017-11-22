@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -26,21 +25,6 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(EnqueuePrepareAllCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            EnqueuePrepareAllCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     public function testRun()

@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Command\Task\Cancel;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
@@ -39,9 +38,9 @@ class CollectionCommand extends Command
     private $logger;
 
     /**
-     * @var TaskRepository
+     * @var EntityManagerInterface
      */
-    private $taskRepository;
+    private $entityManager;
 
     /**
      * @param ApplicationStateService $applicationStateService
@@ -65,8 +64,7 @@ class CollectionCommand extends Command
         $this->taskService = $taskService;
         $this->workerTaskCancellationService = $workerTaskCancellationService;
         $this->logger = $logger;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -89,7 +87,7 @@ class CollectionCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
@@ -97,10 +95,12 @@ class CollectionCommand extends Command
 
         $taskIds = array_filter(explode(',', $input->getArgument('ids')));
 
-        $taskIdsByWorker = array();
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+
+        $taskIdsByWorker = [];
         foreach ($taskIds as $taskId) {
             /* @var Task $task */
-            $task = $this->taskRepository->find($taskId);
+            $task = $taskRepository->find($taskId);
 
             $taskWorker = $task->getWorker();
 

@@ -2,15 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Command\Worker;
 
-use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use Tests\ApiBundle\Factory\JobFactory;
-use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Factory\WorkerActivationRequestFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -32,21 +25,6 @@ class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(SetTokenFromActivationRequestCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            SetTokenFromActivationRequestCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

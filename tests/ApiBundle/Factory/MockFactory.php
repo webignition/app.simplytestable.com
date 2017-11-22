@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Mockery\Mock;
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
@@ -17,6 +18,7 @@ use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
@@ -46,7 +48,11 @@ use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobServic
 use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
+use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
+use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MockFactory
 {
@@ -573,23 +579,61 @@ class MockFactory
     }
 
     /**
+     * @param array $calls
+     *
      * @return Mock|ResqueQueueService
      */
-    public static function createResqueQueueService()
+    public static function createResqueQueueService($calls = [])
     {
         /* @var Mock|ResqueQueueService $resqueQueueService */
         $resqueQueueService = \Mockery::mock(ResqueQueueService::class);
+
+        if (isset($calls['enqueue'])) {
+            $callValues = $calls['enqueue'];
+
+            $with = $callValues['with'];
+
+            $resqueQueueService
+                ->shouldReceive('enqueue')
+                ->with($with);
+        }
+
+        if (isset($calls['contains'])) {
+            $callValues = $calls['contains'];
+
+            $withArgs = $callValues['withArgs'];
+            $return = $callValues['return'];
+
+            $resqueQueueService
+                ->shouldReceive('contains')
+                ->withArgs($withArgs)
+                ->andReturn($return);
+        }
 
         return $resqueQueueService;
     }
 
     /**
+     * @param array $calls
+     *
      * @return Mock|ResqueJobFactory
      */
-    public static function createResqueJobFactory()
+    public static function createResqueJobFactory($calls = [])
     {
         /* @var Mock|ResqueJobFactory $resqueJobFactory */
         $resqueJobFactory = \Mockery::mock(ResqueJobFactory::class);
+
+        if (isset($calls['create'])) {
+            $callValues = $calls['create'];
+
+            $withArgs = $callValues['withArgs'];
+            $return = $callValues['return'];
+
+            $resqueJobFactory
+                ->shouldReceive('create')
+                ->withArgs($withArgs)
+                ->andReturn($return);
+        }
 
         return $resqueJobFactory;
     }
@@ -849,6 +893,8 @@ class MockFactory
     }
 
     /**
+     * @param array $calls
+     *
      * @return Mock|AccountPlanService
      */
     public static function createAccountPlanService($calls = [])
@@ -984,5 +1030,71 @@ class MockFactory
         $workerActivationRequestService = \Mockery::mock(WorkerActivationRequestService::class);
 
         return $workerActivationRequestService;
+    }
+
+    /**
+     * @return Mock|LoggerInterface
+     */
+    public static function createLogger()
+    {
+        /* @var Mock|LoggerInterface $logger */
+        $logger = \Mockery::mock(LoggerInterface::class);
+
+        return $logger;
+    }
+
+    /**
+     * @return Mock|WebsiteResolutionService
+     */
+    public static function createWebsiteResolutionService()
+    {
+        /* @var Mock|WebsiteResolutionService $websiteResolutionService */
+        $websiteResolutionService = \Mockery::mock(WebsiteResolutionService::class);
+
+        return $websiteResolutionService;
+    }
+
+    /**
+     * @return Mock|EventDispatcherInterface
+     */
+    public static function createEventDispatcher()
+    {
+        /* @var Mock|EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
+
+        return $eventDispatcher;
+    }
+
+    /**
+     * @return Mock|TaskPreProcessorFactory
+     */
+    public static function createTaskPreProcessorFactory()
+    {
+        /* @var Mock|TaskPreProcessorFactory $taskPreProcessorFactory */
+        $taskPreProcessorFactory = \Mockery::mock(TaskPreProcessorFactory::class);
+
+        return $taskPreProcessorFactory;
+    }
+
+    /**
+     * @return Mock|WorkerTaskAssignmentService
+     */
+    public static function createWorkerTaskAssignmentService()
+    {
+        /* @var Mock|WorkerTaskAssignmentService $workerTaskAssignmentService */
+        $workerTaskAssignmentService = \Mockery::mock(WorkerTaskAssignmentService::class);
+
+        return $workerTaskAssignmentService;
+    }
+
+    /**
+     * @return Mock|WorkerTaskCancellationService
+     */
+    public static function createWorkerTaskCancellationService()
+    {
+        /* @var Mock|WorkerTaskCancellationService $workerTaskCancellationService */
+        $workerTaskCancellationService = \Mockery::mock(WorkerTaskCancellationService::class);
+
+        return $workerTaskCancellationService;
     }
 }

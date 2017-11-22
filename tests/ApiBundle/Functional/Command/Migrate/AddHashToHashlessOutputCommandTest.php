@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\Migrate;
 
 use SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -26,21 +25,6 @@ class AddHashToHashlessOutputCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(AddHashToHashlessOutputCommand::class);
-    }
-
-    public function testRunCommandInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            AddHashToHashlessOutputCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

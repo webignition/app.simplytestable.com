@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
-use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,11 +25,6 @@ class AddHashToHashlessOutputCommand extends Command
     private $entityManager;
 
     /**
-     * @var TaskOutputRepository
-     */
-    private $taskOutputRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param string|null $name
@@ -44,7 +38,6 @@ class AddHashToHashlessOutputCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**
@@ -65,7 +58,7 @@ class AddHashToHashlessOutputCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
@@ -75,7 +68,9 @@ class AddHashToHashlessOutputCommand extends Command
 
         $output->writeln('Finding hashless output ...');
 
-        $hashlessOutputIds = $this->taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+
+        $hashlessOutputIds = $taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
         $hashlessOutputCount = count($hashlessOutputIds);
 
         if (empty($hashlessOutputIds)) {
@@ -90,7 +85,7 @@ class AddHashToHashlessOutputCommand extends Command
 
         foreach ($hashlessOutputIds as $hashlessOutputId) {
             /* @var Output $taskOutput */
-            $taskOutput = $this->taskOutputRepository->find($hashlessOutputId);
+            $taskOutput = $taskOutputRepository->find($hashlessOutputId);
 
             $processedTaskOutputCount++;
             $remainingTaskCount = $hashlessOutputCount - $processedTaskOutputCount;
@@ -99,7 +94,6 @@ class AddHashToHashlessOutputCommand extends Command
                 'Setting hash for [%s] (%s remaining)',
                 $taskOutput->getId(),
                 $remainingTaskCount
-
             ));
 
             if (!$isDryRun) {

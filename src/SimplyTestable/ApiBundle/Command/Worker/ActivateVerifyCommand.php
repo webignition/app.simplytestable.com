@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -28,14 +27,9 @@ class ActivateVerifyCommand extends Command
     private $workerActivationRequestService;
 
     /**
-     * @var EntityRepository
+     * @var EntityManagerInterface
      */
-    private $workerRepository;
-
-    /**
-     * @var EntityRepository
-     */
-    private $workerActivationRequestRepository;
+    private $entityManager;
 
     /**
      * @param ApplicationStateService $applicationStateService
@@ -53,9 +47,7 @@ class ActivateVerifyCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->workerActivationRequestService = $workerActivationRequestService;
-
-        $this->workerRepository = $entityManager->getRepository(Worker::class);
-        $this->workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -75,16 +67,19 @@ class ActivateVerifyCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
         $id = (int)$input->getArgument('id');
 
-        $worker = $this->workerRepository->find($id);
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+        $workerActivationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
+
+        $worker = $workerRepository->find($id);
 
         /* @var WorkerActivationRequest $activationRequest */
-        $activationRequest = $this->workerActivationRequestRepository->findOneBy([
+        $activationRequest = $workerActivationRequestRepository->findOneBy([
             'worker' => $worker,
         ]);
 

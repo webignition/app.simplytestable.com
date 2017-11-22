@@ -5,7 +5,6 @@ namespace Tests\ApiBundle\Functional\Command\Stripe\Event;
 use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -27,21 +26,6 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(UpdateDataCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            UpdateDataCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

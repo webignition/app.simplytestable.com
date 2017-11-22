@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
@@ -26,16 +25,6 @@ class SetTokenFromActivationRequestCommand extends Command
     private $entityManager;
 
     /**
-     * @var EntityRepository
-     */
-    private $workerRepository;
-
-    /**
-     * @var EntityRepository
-     */
-    private $workerActivationRequestRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param string|null $name
@@ -49,9 +38,6 @@ class SetTokenFromActivationRequestCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-
-        $this->workerRepository = $entityManager->getRepository(Worker::class);
-        $this->workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
     }
 
     /**
@@ -70,15 +56,18 @@ class SetTokenFromActivationRequestCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+        $workerActivationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
+
         /* @var Worker[] $workers */
-        $workers = $this->workerRepository->findAll();
+        $workers = $workerRepository->findAll();
 
         foreach ($workers as $worker) {
-            $workerActivationRequest = $this->workerActivationRequestRepository->findOneBy([
+            $workerActivationRequest = $workerActivationRequestRepository->findOneBy([
                 'worker' => $worker,
             ]);
 

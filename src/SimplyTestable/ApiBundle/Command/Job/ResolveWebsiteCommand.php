@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
-use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
@@ -55,9 +54,9 @@ class ResolveWebsiteCommand extends Command
     private $predefinedDomainsToIgnore;
 
     /**
-     * @var JobRepository
+     * @var EntityManagerInterface
      */
-    private $jobRepository;
+    private $entityManager;
 
     /**
      * @param ApplicationStateService $applicationStateService
@@ -87,8 +86,7 @@ class ResolveWebsiteCommand extends Command
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -108,12 +106,14 @@ class ResolveWebsiteCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $jobRepository = $this->entityManager->getRepository(Job::class);
+
         /* @var Job $job */
-        $job = $this->jobRepository->find((int)$input->getArgument('id'));
+        $job = $jobRepository->find((int)$input->getArgument('id'));
 
         try {
             $this->websiteResolutionService->resolve($job);

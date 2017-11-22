@@ -2,9 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Command\ScheduledJob\ExecuteCommand;
 
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -29,30 +27,6 @@ class ExecuteCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(ExecuteCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $resqueQueueService = $this->container->get(QueueService::class);
-
-        $returnCode = $this->command->run(new ArrayInput([
-            'id' => 1,
-        ]), new BufferedOutput());
-
-        $this->assertEquals(
-            ExecuteCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $this->assertTrue($resqueQueueService->contains(
-            'scheduledjob-execute',
-            ['id' => 1]
-        ));
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     public function testRunWithInvalidScheduledJob()
