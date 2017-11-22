@@ -10,16 +10,3 @@ services:
       $domainsToIgnoreByTaskType:
         "css validation": '%css_validation_domains_to_ignore%'
         "js static analysis": '%js_static_analysis_domains_to_ignore%'
-
-#services:
-#  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
-#    class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory
-#    arguments:
-#      $taskPreprocessors:
-#        - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
-#
-#  SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
-#    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
-#    arguments:
-#      $taskPreprocessors:
-#        - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'

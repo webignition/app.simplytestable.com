@@ -8,7 +8,6 @@ services:
       tags: ['console.command']
 
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
-    class:  SimplyTestable\ApiBundle\Command\Job\PrepareCommand
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
@@ -22,7 +21,6 @@ services:
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
 
   SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand:
-    class:  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
@@ -35,7 +33,6 @@ services:
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
 
   SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand:
-    class:  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'

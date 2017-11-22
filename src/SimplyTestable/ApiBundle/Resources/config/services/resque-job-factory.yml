@@ -1,7 +1,5 @@
 services:
   SimplyTestable\ApiBundle\Services\Resque\JobFactory:
-    class:  SimplyTestable\ApiBundle\Services\Resque\JobFactory
-    public: true
     arguments:
         $queues:
           job-prepare:
