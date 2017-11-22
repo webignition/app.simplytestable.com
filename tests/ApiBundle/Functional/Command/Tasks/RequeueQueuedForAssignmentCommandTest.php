@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Command\Tasks;
 
 use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -27,38 +26,6 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(RequeueQueuedForAssignmentCommand::class);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            RequeueQueuedForAssignmentCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $maintenanceController->disableReadOnlyAction();
-    }
-
-    public function testRunInMaintenanceBackupReadOnlyMode()
-    {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableBackupReadOnlyAction();
-
-        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
-
-        $this->assertEquals(
-            RequeueQueuedForAssignmentCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $maintenanceController->disableReadOnlyAction();
     }
 
     /**

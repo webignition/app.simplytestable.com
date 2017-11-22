@@ -5,8 +5,10 @@ namespace Tests\ApiBundle\Functional\Controller\User;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @group Controller/UserController
+ */
 class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
 {
     public function testHasInvitesActionGetRequest()
@@ -31,37 +33,6 @@ class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
         ]);
 
         $response = $this->getClientResponse();
-
-        $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testHasInvitesActionUserNotFound()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->userController->hasInvitesAction('foo@example.com');
-    }
-
-    public function testHasInvitesActionNoInvites()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $userService = $this->container->get(UserService::class);
-        $publicUser = $userService->getPublicUser();
-
-        $this->userController->hasInvitesAction($publicUser->getEmail());
-    }
-
-    public function testHasInvitesActionSuccess()
-    {
-        $teamInviteService = $this->container->get(InviteService::class);
-
-        $userFactory = new UserFactory($this->container);
-        $users = $userFactory->createPublicPrivateAndTeamUserSet();
-
-        $teamInviteService->get($users['leader'], $users['private']);
-
-        $response = $this->userController->hasInvitesAction($users['private']->getEmail());
 
         $this->assertTrue($response->isSuccessful());
     }

@@ -2,11 +2,12 @@
 
 namespace Tests\ApiBundle\Functional\Controller\UserAccountPlanSubscription;
 
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/UserAccountPlanSubscriptionController
+ */
 class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
  AbstractUserAccountPlanSubscriptionControllerTest
 {
@@ -40,71 +41,6 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
         $this->assertTrue($response->isSuccessful());
     }
 
-    public function testAssociateCardActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->userAccountPlanSubscriptionController->associateCardAction('foo', 'bar');
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider associateCardActionClientFailureDataProvider
-     *
-     * @param string $userName
-     * @param string $emailCanonical
-     * @param string $stripeCardToken
-     */
-    public function testAssociateCardActionClientFailure($userName, $emailCanonical, $stripeCardToken)
-    {
-        $userFactory = new UserFactory($this->container);
-        $users = $userFactory->createPublicAndPrivateUserSet();
-
-        $user = $users[$userName];
-        $this->setUser($user);
-
-        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
-            $emailCanonical,
-            $stripeCardToken
-        );
-
-        $this->assertTrue($response->isClientError());
-    }
-
-    /**
-     * @return array
-     */
-    public function associateCardActionClientFailureDataProvider()
-    {
-        return [
-            'public user' => [
-                'userName' => 'public',
-                'emailCanonical' => 'foo@example.com',
-                'stripeCardToken' => 'personal',
-            ],
-            'request email does not match user' => [
-                'userName' => 'private',
-                'emailCanonical' => 'foo@example.com',
-                'stripeCardToken' => 'foo',
-            ],
-            'invalid stripe card token' => [
-                'userName' => 'private',
-                'emailCanonical' => 'private@example.com',
-                'stripeCardToken' => 'foo',
-            ],
-            'user has no stripe customer' => [
-                'userName' => 'private',
-                'emailCanonical' => 'private@example.com',
-                'stripeCardToken' => 'tok_Bb4A2szGLfgwJe',
-            ],
-        ];
-    }
-
     public function testAssociateCardActionWithDecliningCard()
     {
         StripeApiFixtureFactory::set([
@@ -123,6 +59,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
         $this->setUser($user);
 
         $response = $this->userAccountPlanSubscriptionController->associateCardAction(
+            $user,
             $user->getEmail(),
             'tok_Bb4A2szGLfgwJe'
         );
@@ -155,6 +92,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
         $this->setUser($user);
 
         $response = $this->userAccountPlanSubscriptionController->associateCardAction(
+            $user,
             $user->getEmail(),
             'tok_Bb4A2szGLfgwJe'
         );

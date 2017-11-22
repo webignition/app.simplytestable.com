@@ -74,7 +74,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;

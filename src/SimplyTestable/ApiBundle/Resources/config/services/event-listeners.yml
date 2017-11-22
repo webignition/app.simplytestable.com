@@ -1,0 +1,68 @@
+services:
+  SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener:
+    arguments:
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
+
+  SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener:
+    arguments:
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
+
+  SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener:
+    arguments:
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
+
+  SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener:
+    arguments:
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
+
+  SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener:
+    arguments:
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
+
+  SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener:
+    arguments:
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $dispatcher: '@event_dispatcher'
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
+

@@ -9,56 +9,66 @@ use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
 use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class MaintenanceController extends Controller
+class MaintenanceController
 {
     /**
+     * @param EnableBackupReadOnlyCommand $enableBackupReadOnlyCommand
+     *
      * @return JsonResponse
      */
-    public function enableBackupReadOnlyAction()
+    public function enableBackupReadOnlyAction(EnableBackupReadOnlyCommand $enableBackupReadOnlyCommand)
     {
-        return $this->executeCommand(
-            $this->container->get(EnableBackupReadOnlyCommand::class)
-        );
+        return $this->executeCommand($enableBackupReadOnlyCommand);
     }
 
     /**
+     * @param EnableReadOnlyCommand $enableReadOnlyCommand
+     *
      * @return JsonResponse
      */
-    public function enableReadOnlyAction()
+    public function enableReadOnlyAction(EnableReadOnlyCommand $enableReadOnlyCommand)
     {
-        return $this->executeCommand(
-            $this->container->get(EnableReadOnlyCommand::class)
-        );
+        return $this->executeCommand($enableReadOnlyCommand);
     }
 
     /**
+     * @param DisableReadOnlyCommand $disableReadOnlyCommand
+     *
      * @return JsonResponse
      */
-    public function disableReadOnlyAction()
+    public function disableReadOnlyAction(DisableReadOnlyCommand $disableReadOnlyCommand)
     {
-        return $this->executeCommand(
-            $this->container->get(DisableReadOnlyCommand::class)
-        );
+        return $this->executeCommand($disableReadOnlyCommand);
     }
 
     /**
+     * @param DisableReadOnlyCommand $disableReadOnlyCommand
+     * @param EnqueuePrepareAllCommand $enqueuePrepareAllCommand
+     * @param RequeueQueuedForAssignmentCommand $requeueQueuedForAssignmentCommand
+     * @param TaskNotificationCommand $taskNotificationCommand
+     * @param EnqueueCancellationForAwaitingCancellationCommand $enqueueCancellationForAwaitingCancellationCommand
+     *
      * @return Response
      */
-    public function leaveReadOnlyAction()
-    {
+    public function leaveReadOnlyAction(
+        DisableReadOnlyCommand $disableReadOnlyCommand,
+        EnqueuePrepareAllCommand $enqueuePrepareAllCommand,
+        RequeueQueuedForAssignmentCommand $requeueQueuedForAssignmentCommand,
+        TaskNotificationCommand $taskNotificationCommand,
+        EnqueueCancellationForAwaitingCancellationCommand $enqueueCancellationForAwaitingCancellationCommand
+    ) {
         $commands = [
-            $this->container->get(DisableReadOnlyCommand::class),
-            $this->container->get(EnqueuePrepareAllCommand::class),
-            $this->container->get(RequeueQueuedForAssignmentCommand::class),
-            $this->container->get(TaskNotificationCommand::class),
-            $this->container->get(EnqueueCancellationForAwaitingCancellationCommand::class),
+            $disableReadOnlyCommand,
+            $enqueuePrepareAllCommand,
+            $requeueQueuedForAssignmentCommand,
+            $taskNotificationCommand,
+            $enqueueCancellationForAwaitingCancellationCommand,
         ];
 
         $responseLines = [];

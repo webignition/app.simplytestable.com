@@ -2,8 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Team;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
+/**
+ * @group Controller/TeamController
+ */
 class TeamControllerGetActionTest extends AbstractTeamControllerTest
 {
     public function testGetActionGetRequest()
@@ -22,15 +23,6 @@ class TeamControllerGetActionTest extends AbstractTeamControllerTest
         $this->assertTrue($response->isSuccessful());
     }
 
-    public function testGetActionUserNotOnTeam()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->setUser($this->users['private']);
-
-        $this->teamController->getAction();
-    }
-
     /**
      * @dataProvider getActionSuccessDataProvider
      *
@@ -38,9 +30,8 @@ class TeamControllerGetActionTest extends AbstractTeamControllerTest
      */
     public function testGetActionSuccess($userName)
     {
-        $this->setUser($this->users[$userName]);
-
-        $response = $this->teamController->getAction();
+        $user = $this->users[$userName];
+        $response = $this->teamController->getAction($user);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('application/json', $response->headers->get('content-type'));

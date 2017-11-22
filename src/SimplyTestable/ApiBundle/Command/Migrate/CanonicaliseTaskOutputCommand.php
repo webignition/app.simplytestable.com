@@ -5,8 +5,6 @@ namespace SimplyTestable\ApiBundle\Command\Migrate;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,16 +26,6 @@ class CanonicaliseTaskOutputCommand extends Command
     private $entityManager;
 
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
-     * @var TaskOutputRepository
-     */
-    private $taskOutputRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param string|null $name
@@ -51,9 +39,6 @@ class CanonicaliseTaskOutputCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**
@@ -74,7 +59,7 @@ class CanonicaliseTaskOutputCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
@@ -84,7 +69,10 @@ class CanonicaliseTaskOutputCommand extends Command
 
         $output->writeln('Finding duplicate output ...');
 
-        $duplicateHashes = $this->taskOutputRepository->findDuplicateHashes($this->getLimit($input));
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+
+        $duplicateHashes = $taskOutputRepository->findDuplicateHashes($this->getLimit($input));
 
         if (empty($duplicateHashes)) {
             $output->writeln('No duplicate output found. Done.');
@@ -97,7 +85,7 @@ class CanonicaliseTaskOutputCommand extends Command
         $updatedHashCount = 0;
 
         foreach ($duplicateHashes as $duplicateHash) {
-            $outputIds = $this->taskOutputRepository->findIdsByHash($duplicateHash);
+            $outputIds = $taskOutputRepository->findIdsByHash($duplicateHash);
 
             $updatedHashCount++;
             $output->writeln(sprintf(
@@ -112,16 +100,16 @@ class CanonicaliseTaskOutputCommand extends Command
 
             if (count($outputIds) > 1) {
                 $sourceId = $outputIds[0];
-                $sourceOutput = $this->taskOutputRepository->find($sourceId);
+                $sourceOutput = $taskOutputRepository->find($sourceId);
                 $duplicatesToRemove = array_slice($outputIds, 1);
                 $updatedTaskCount = 0;
 
                 foreach ($duplicatesToRemove as $taskOutputId) {
                     $processedDuplicateHashCount++;
 
-                    $taskOutput = $this->taskOutputRepository->find($taskOutputId);
+                    $taskOutput = $taskOutputRepository->find($taskOutputId);
 
-                    $tasksToUpdate = $this->taskRepository->findBy([
+                    $tasksToUpdate = $taskRepository->findBy([
                         'output' => $taskOutput,
                     ]);
 

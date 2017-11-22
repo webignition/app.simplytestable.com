@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Command\Stripe\Event;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
@@ -41,11 +40,6 @@ class ProcessCommand extends Command
     private $eventDispatcher;
 
     /**
-     * @var EntityRepository
-     */
-    private $stripeEventRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
@@ -65,8 +59,6 @@ class ProcessCommand extends Command
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
-
-        $this->stripeEventRepository = $entityManager->getRepository(Event::class);
     }
 
     /**
@@ -86,12 +78,14 @@ class ProcessCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $stripeEventRepository = $this->entityManager->getRepository(Event::class);
+
         /* @var StripeEvent $eventEntity */
-        $eventEntity = $this->stripeEventRepository->findOneBy([
+        $eventEntity = $stripeEventRepository->findOneBy([
             'stripeId' => $input->getArgument('stripeId'),
         ]);
 

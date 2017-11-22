@@ -43,7 +43,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
         $this->setUser($user);
 
         $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
-        $jobStartRequest = $jobStartRequestFactory->create();
+        $jobStartRequest = $jobStartRequestFactory->create($request);
 
         $this->assertEquals($jobStartRequest->getUser(), $user);
         $this->assertEquals($expectedSiteRootUrl, $jobStartRequest->getWebsite()->getCanonicalUrl());

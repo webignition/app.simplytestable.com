@@ -5,8 +5,6 @@ namespace SimplyTestable\ApiBundle\Command\Migrate;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Component\Console\Command\Command;
@@ -29,19 +27,9 @@ class NormaliseJsLintOutputCommand extends Command
     private $entityManager;
 
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
      * @var TaskTypeService
      */
     private $taskTypeService;
-
-    /**
-     * @var TaskOutputRepository
-     */
-    private $taskOutputRepository;
 
     /**
      * @param ApplicationStateService $applicationStateService
@@ -60,9 +48,6 @@ class NormaliseJsLintOutputCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->taskTypeService = $taskTypeService;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**
@@ -85,7 +70,7 @@ class NormaliseJsLintOutputCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
@@ -97,7 +82,10 @@ class NormaliseJsLintOutputCommand extends Command
 
         $jsStaticAnalysisType = $this->taskTypeService->getJsStaticAnalysisTaskType();
 
-        $jsLintOutputIds = $this->taskRepository->getTaskOutputByType($jsStaticAnalysisType);
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+
+        $jsLintOutputIds = $taskRepository->getTaskOutputByType($jsStaticAnalysisType);
 
         $output->writeln('['.count($jsLintOutputIds).'] outputs to examine');
 
@@ -117,7 +105,7 @@ class NormaliseJsLintOutputCommand extends Command
             ));
 
             /* @var Output $taskOutput */
-            $taskOutput = $this->taskOutputRepository->find((int)$jsLintOutputId);
+            $taskOutput = $taskOutputRepository->find((int)$jsLintOutputId);
 
             $beforeLength = strlen($taskOutput->getOutput());
 

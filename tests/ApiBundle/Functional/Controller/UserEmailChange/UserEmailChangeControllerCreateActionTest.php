@@ -7,6 +7,9 @@ use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
+/**
+ * @group Controller/UserEmailChangeController
+ */
 class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeControllerTest
 {
     public function testCreateActionPostRequest()
@@ -35,6 +38,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
         $this->createEmailChangeRequest($this->user, $newEmail);
 
         $response = $this->userEmailChangeController->createAction(
+            $this->user,
             $this->user->getEmail(),
             $newEmail
         );
@@ -51,6 +55,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
         $this->createEmailChangeRequest($this->user, 'foo@example.com');
 
         $this->userEmailChangeController->createAction(
+            $this->user,
             $this->user->getEmail(),
             $newEmail
         );
@@ -63,6 +68,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
         $newEmail = 'foo';
 
         $this->userEmailChangeController->createAction(
+            $this->user,
             $this->user->getEmail(),
             $newEmail
         );
@@ -79,6 +85,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
         ]);
 
         $this->userEmailChangeController->createAction(
+            $this->user,
             $this->user->getEmail(),
             $newEmail
         );
@@ -97,6 +104,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
         $this->createEmailChangeRequest($differentUser, $newEmail);
 
         $this->userEmailChangeController->createAction(
+            $this->user,
             $this->user->getEmail(),
             $newEmail
         );
@@ -110,6 +118,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
         $newEmail = 'new-email@example.com';
 
         $response = $this->userEmailChangeController->createAction(
+            $this->user,
             $this->user->getEmail(),
             $newEmail
         );

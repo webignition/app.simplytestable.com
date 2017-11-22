@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Command\Worker;
 
 use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\CurlExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -34,23 +33,6 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
 
         $this->command = $this->container->get(ActivateVerifyCommand::class);
         $this->workerFactory = new WorkerFactory($this->container);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([
-            'id' => 1,
-        ]), new BufferedOutput());
-
-        $this->assertEquals(
-            ActivateVerifyCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
-use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
@@ -13,48 +13,86 @@ use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\Team\Service;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class JobController extends Controller
+class JobController
 {
-    protected $testId = null;
+    /**
+     * @var RouterInterface
+     */
+    private $router;
 
     /**
-     * @param $site_root_url
+     * @var RetrievalService
+     */
+    private $jobRetrievalService;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param RouterInterface $router
+     * @param RetrievalService $jobRetrievalService
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        RouterInterface $router,
+        RetrievalService $jobRetrievalService,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->router = $router;
+        $this->jobRetrievalService = $jobRetrievalService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param WebSiteService $websiteService
+     * @param UserService $userService
+     * @param TeamService $teamService
+     * @param UserInterface|User $user
+     * @param string $site_root_url
      *
      * @return RedirectResponse|Response
      */
-    public function latestAction($site_root_url)
-    {
-        $websiteService = $this->get(WebSiteService::class);
-        $userService = $this->container->get(UserService::class);
-        $teamService = $this->get(Service::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+    public function latestAction(
+        WebSiteService $websiteService,
+        UserService $userService,
+        TeamService $teamService,
+        UserInterface $user,
+        $site_root_url
+    ) {
+        $jobRepository = $this->entityManager->getRepository(Job::class);
 
         $website = $websiteService->get($site_root_url);
+
+        /* @var Job $latestJob */
         $latestJob = null;
 
-        $userHasTeam = $teamService->hasTeam($this->getUser());
-        $userBelongsToTeam = $teamService->getMemberService()->belongsToTeam($this->getUser());
+        $userHasTeam = $teamService->hasTeam($user);
+        $userBelongsToTeam = $teamService->getMemberService()->belongsToTeam($user);
 
         if ($userHasTeam || $userBelongsToTeam) {
-            $team = $teamService->getForUser($this->getUser());
+            $team = $teamService->getForUser($user);
 
             $latestJob = $jobRepository->findOneBy([
                 'website' => $website,
@@ -71,10 +109,10 @@ class JobController extends Controller
             }
         }
 
-        if (!$userService->isPublicUser($this->getUser())) {
+        if (!$userService->isPublicUser($user)) {
             $latestJob = $jobRepository->findOneBy([
                 'website' => $website,
-                'user' => $this->getUser(),
+                'user' => $user,
             ], [
                 'id' => 'DESC',
             ]);
@@ -95,9 +133,7 @@ class JobController extends Controller
         ]);
 
         if (is_null($latestJob)) {
-            $response = new Response();
-            $response->setStatusCode(404);
-            return $response;
+            throw new NotFoundHttpException();
         }
 
         return $this->createRedirectToJobStatus(
@@ -107,25 +143,49 @@ class JobController extends Controller
     }
 
     /**
+     * @param UserService $userService
+     * @param UserInterface $user
      * @param string $site_root_url
      * @param int $test_id
      *
-     * @return RedirectResponse|Response
+     * @return RedirectResponse
      */
-    public function setPublicAction($site_root_url, $test_id)
-    {
-        return $this->setIsPublic($site_root_url, $test_id, true);
+    public function setPublicAction(
+        UserService $userService,
+        UserInterface $user,
+        $site_root_url,
+        $test_id
+    ) {
+        return $this->setIsPublic(
+            $userService,
+            $user,
+            $site_root_url,
+            $test_id,
+            true
+        );
     }
 
     /**
+     * @param UserService $userService
+     * @param UserInterface $user
      * @param string $site_root_url
      * @param int $test_id
      *
-     * @return RedirectResponse|Response
+     * @return RedirectResponse
      */
-    public function setPrivateAction($site_root_url, $test_id)
-    {
-        return $this->setIsPublic($site_root_url, $test_id, false);
+    public function setPrivateAction(
+        UserService $userService,
+        UserInterface $user,
+        $site_root_url,
+        $test_id
+    ) {
+        return $this->setIsPublic(
+            $userService,
+            $user,
+            $site_root_url,
+            $test_id,
+            false
+        );
     }
 
     /**
@@ -134,10 +194,11 @@ class JobController extends Controller
      *
      * @return Response
      */
-    public function isPublicAction($site_root_url, $test_id)
-    {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+    public function isPublicAction(
+        $site_root_url,
+        $test_id
+    ) {
+        $jobRepository = $this->entityManager->getRepository(Job::class);
 
         return new Response(
             '',
@@ -146,30 +207,26 @@ class JobController extends Controller
     }
 
     /**
+     * @param UserService $userService
+     * @param User|UserInterface $user
      * @param string $siteRootUrl
      * @param int $testId
      * @param bool $isPublic
      *
-     * @return RedirectResponse|Response
+     * @return RedirectResponse
      */
-    private function setIsPublic($siteRootUrl, $testId, $isPublic)
-    {
-        $userService = $this->container->get(UserService::class);
-        $jobRetrievalService = $this->get(RetrievalService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        if ($userService->isPublicUser($this->getUser())) {
+    private function setIsPublic(
+        UserService $userService,
+        User $user,
+        $siteRootUrl,
+        $testId,
+        $isPublic
+    ) {
+        if ($userService->isPublicUser($user)) {
             return $this->createRedirectToJobStatus($siteRootUrl, $testId);
         }
 
-        try {
-            $job = $jobRetrievalService->retrieve($testId);
-        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-
-            return $response;
-        }
+        $job = $this->retrieveJob($testId);
 
         if ($userService->isPublicUser($job->getUser())) {
             return $this->createRedirectToJobStatus($siteRootUrl, $testId);
@@ -178,75 +235,65 @@ class JobController extends Controller
         if ($job->getIsPublic() !== $isPublic) {
             $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
 
-            $entityManager->persist($job);
-            $entityManager->flush();
+            $this->entityManager->persist($job);
+            $this->entityManager->flush();
         }
 
         return $this->createRedirectToJobStatus($siteRootUrl, $testId);
     }
 
     /**
+     * @param JobSummaryFactory $jobSummaryFactory
      * @param string $site_root_url
      * @param int $test_id
      *
      * @return JsonResponse|Response
      */
-    public function statusAction($site_root_url, $test_id)
-    {
-        $jobRetrievalService = $this->container->get(RetrievalService::class);
-        $jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
+    public function statusAction(
+        JobSummaryFactory $jobSummaryFactory,
+        $site_root_url,
+        $test_id
+    ) {
+        $job = $this->retrieveJob($test_id);
+        $jobSummary = $jobSummaryFactory->create($job);
 
-        try {
-            $job = $jobRetrievalService->retrieve($test_id);
-            $jobSummary = $jobSummaryFactory->create($job);
-
-            return new JsonResponse($jobSummary);
-        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            throw new AccessDeniedHttpException();
-        }
+        return new JsonResponse($jobSummary);
     }
 
     /**
+     * @param ApplicationStateService $applicationStateService
+     * @param JobService $jobService
+     * @param CrawlJobContainerService $crawlJobContainerService
+     * @param JobPreparationService $jobPreparationService
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param StateService $stateService
+     * @param TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService
      * @param string $site_root_url
      * @param int $test_id
      *
      * @return Response
      */
-    /**
-     * @param string $site_root_url
-     * @param int $test_id
-     *
-     * @return Response
-     */
-    public function cancelAction($site_root_url, $test_id)
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-
+    public function cancelAction(
+        ApplicationStateService $applicationStateService,
+        JobService $jobService,
+        CrawlJobContainerService $crawlJobContainerService,
+        JobPreparationService $jobPreparationService,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        StateService $stateService,
+        TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService,
+        $site_root_url,
+        $test_id
+    ) {
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobRetrievalService = $this->get(RetrievalService::class);
-        $jobService = $this->container->get(JobService::class);
-        $crawlJobContainerService = $this->get(CrawlJobContainerService::class);
-        $jobPreparationService = $this->container->get(JobPreparationService::class);
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $resqueJobFactory = $this->container->get(JobFactory::class);
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $job = $this->retrieveJob($test_id);
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $entityManager->getRepository(Task::class);
-
-        try {
-            $job = $jobRetrievalService->retrieve($test_id);
-        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
-        }
-
-        $this->testId = $test_id;
+        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         $hasCrawlJob = $crawlJobContainerService->hasForJob($job);
 
@@ -257,12 +304,33 @@ class JobController extends Controller
             $isCrawlJob = $crawlJobContainer->getCrawlJob() === $job;
 
             if ($isParentJob) {
-                $this->cancelAction($site_root_url, $crawlJobContainer->getCrawlJob()->getId());
+                $this->cancelAction(
+                    $applicationStateService,
+                    $jobService,
+                    $crawlJobContainerService,
+                    $jobPreparationService,
+                    $resqueQueueService,
+                    $resqueJobFactory,
+                    $stateService,
+                    $taskTypeDomainsToIgnoreService,
+                    $site_root_url,
+                    $crawlJobContainer->getCrawlJob()->getId()
+                );
             }
 
             if ($isCrawlJob) {
                 $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
-                $this->setJobPreparationDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
+
+                foreach ($parentJob->getRequestedTaskTypes() as $taskType) {
+                    $taskTypeDomainsToIgnore = $taskTypeDomainsToIgnoreService->getForTaskType($taskType);
+
+                    if (!empty($taskTypeDomainsToIgnore)) {
+                        $jobPreparationService->setPredefinedDomainsToIgnore(
+                            $taskType,
+                            $taskTypeDomainsToIgnore
+                        );
+                    }
+                }
 
                 $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
 
@@ -311,28 +379,23 @@ class JobController extends Controller
     }
 
     /**
+     * @param TaskService $taskService
      * @param Request $request
      * @param string $site_root_url
      * @param int $test_id
      *
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
-    public function tasksAction(Request $request, $site_root_url, $test_id)
-    {
-        $taskService = $this->container->get(TaskService::class);
-        $jobRetrievalService = $this->container->get(RetrievalService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+    public function tasksAction(
+        TaskService $taskService,
+        Request $request,
+        $site_root_url,
+        $test_id
+    ) {
+        $job = $this->retrieveJob($test_id);
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $entityManager->getRepository(Task::class);
-
-        try {
-            $job = ($jobRetrievalService->retrieve($test_id));
-        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
-        }
+        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         $taskIds = $this->getRequestTaskIds($request);
 
@@ -364,19 +427,10 @@ class JobController extends Controller
      */
     public function taskIdsAction($site_root_url, $test_id)
     {
-        $jobRetrievalService = $this->container->get(RetrievalService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $job = $this->retrieveJob($test_id);
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $entityManager->getRepository(Task::class);
-
-        try {
-            $job = ($jobRetrievalService->retrieve($test_id));
-        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
-        }
+        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         $taskIds = $taskRepository->getIdsByJob($job);
 
@@ -391,20 +445,10 @@ class JobController extends Controller
      */
     public function listUrlsAction($site_root_url, $test_id)
     {
-        $jobRetrievalService = $this->container->get(RetrievalService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $job = $this->retrieveJob($test_id);
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $entityManager->getRepository(Task::class);
-
-        try {
-            $job = ($jobRetrievalService->retrieve($test_id));
-        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
-        }
-
+        $taskRepository = $this->entityManager->getRepository(Task::class);
         $urls = $taskRepository->findUrlsByJob($job);
 
         return new JsonResponse($urls);
@@ -448,37 +492,29 @@ class JobController extends Controller
      */
     private function createRedirectToJobStatus($siteRootUrl, $testId)
     {
-        return $this->redirect(
-            $this->generateUrl(
-                'job_job_status',
-                [
-                    'site_root_url' => $siteRootUrl,
-                    'test_id' => $testId
-                ],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
+        $url = $this->router->generate(
+            'job_job_status',
+            [
+                'site_root_url' => $siteRootUrl,
+                'test_id' => $testId
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL
         );
+
+        return new RedirectResponse($url);
     }
 
     /**
-     * @param Job $job
-     * @param JobPreparationService $jobPreparationService
+     * @param int $testId
+     *
+     * @return Job
      */
-    private function setJobPreparationDomainsToIgnoredFromJobTaskTypes(
-        Job $job,
-        JobPreparationService $jobPreparationService
-    ) {
-        foreach ($job->getRequestedTaskTypes() as $taskType) {
-            /* @var Type $taskType */
-            $taskTypeNameKey = strtolower(str_replace(' ', '_', $taskType->getName()));
-            $taskTypeParameterDomainsToIgnoreKey = $taskTypeNameKey . '_domains_to_ignore';
-
-            if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                $jobPreparationService->setPredefinedDomainsToIgnore(
-                    $taskType,
-                    $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
-                );
-            }
+    private function retrieveJob($testId)
+    {
+        try {
+            return $this->jobRetrievalService->retrieve($testId);
+        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
+            throw new AccessDeniedHttpException();
         }
     }
 }

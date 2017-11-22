@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Command\Task\Cancel;
 
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -40,20 +39,6 @@ class CollectionCommandTest extends AbstractBaseTestCase
 
         $this->workerFactory = new WorkerFactory($this->container);
         $this->jobFactory = new JobFactory($this->container);
-    }
-
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([
-            'ids' => '1,2,3'
-        ]), new BufferedOutput());
-
-        $this->assertEquals(CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

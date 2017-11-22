@@ -6,15 +6,19 @@ use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 
+/**
+ * @group Controller/Worker/TasksController
+ */
 class TasksControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -29,24 +33,10 @@ class TasksControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->tasksController = new TasksController();
-        $this->tasksController->setContainer($this->container);
+        $this->tasksController = $this->container->get(TasksController::class);
     }
 
-    public function testRequestActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->tasksController->requestAction(new Request());
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    public function testRequest()
+    public function testRequestActionGetRequest()
     {
         $this->getCrawler([
             'url' => $this->container->get('router')->generate('worker_tasks_request')
@@ -80,7 +70,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             ]
         );
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertTrue($response->headers->has('x-message'));
@@ -129,7 +119,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             ]
         );
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertTrue($response->headers->has('x-message'));
@@ -177,7 +167,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             ]
         );
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertTrue($response->headers->has('x-message'));
@@ -189,7 +179,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     public function testRequestActionZeroLimit()
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -203,7 +193,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             ]
         );
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
@@ -211,7 +201,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     public function testRequestActionNoTasksToAssign()
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -225,7 +215,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             ]
         );
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
@@ -235,7 +225,7 @@ class TasksControllerTest extends AbstractBaseTestCase
     {
         $jobFactory = new JobFactory($this->container);
 
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
         $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
 
         $workerFactory = new WorkerFactory($this->container);
@@ -268,7 +258,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             $resqueQueueService->getResque()->getQueue('task-assign-collection')->getSize()
         );
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isSuccessful());
 
@@ -311,7 +301,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             $tasks = array_merge($tasks, $job->getTasks()->toArray());
         }
 
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -331,7 +321,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
 
-        $response = $this->tasksController->requestAction($request);
+        $response = $this->callRequestAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($resqueQueueService->isEmpty('task-assign-collection'));
@@ -379,5 +369,18 @@ class TasksControllerTest extends AbstractBaseTestCase
                 'limit' => 3,
             ],
         ];
+    }
+
+    private function callRequestAction(Request $request)
+    {
+        return $this->tasksController->requestAction(
+            $this->container->get(ApplicationStateService::class),
+            $this->container->get('doctrine.orm.entity_manager'),
+            $this->container->get(ResqueQueueService::class),
+            $this->container->get(ResqueJobFactory::class),
+            $this->container->get(StateService::class),
+            $this->container->get(TaskQueueService::class),
+            $request
+        );
     }
 }

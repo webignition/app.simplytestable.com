@@ -14,7 +14,6 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class StartRequestFactory
@@ -66,29 +65,34 @@ class StartRequestFactory
     private $jobTypeService;
 
     /**
-     * @param RequestStack $requestStack
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManagerInterface $entityManager
      * @param WebSiteService $websiteService
      * @param JobTypeService $jobTypeService
      */
     public function __construct(
-        RequestStack $requestStack,
         TokenStorageInterface $tokenStorage,
         EntityManagerInterface $entityManager,
         WebSiteService $websiteService,
         JobTypeService $jobTypeService
     ) {
-        $request = $requestStack->getCurrentRequest();
-
-        $this->request = $request;
-        $this->requestAttributes = $request->attributes;
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         $this->websiteService = $websiteService;
         $this->jobTypeService = $jobTypeService;
 
         $this->taskTypeRepository = $entityManager->getRepository(TaskType::class);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return StartRequest
+     */
+    public function create(Request $request)
+    {
+        $this->request = $request;
+        $this->requestAttributes = $request->attributes;
 
         if (0 === $request->request->count() && 0 === $request->query->count()) {
             $this->requestPayload = new ParameterBag();
@@ -97,13 +101,7 @@ class StartRequestFactory
         } elseif ($request->query->count()) {
             $this->requestPayload = $request->query;
         }
-    }
 
-    /**
-     * @return StartRequest
-     */
-    public function create()
-    {
         return new StartRequest(
             $this->tokenStorage->getToken()->getUser(),
             $this->getWebsiteFromRequest(),

@@ -2,8 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -12,7 +14,6 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,24 +21,61 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class JobConfigurationController extends Controller
+class JobConfigurationController
 {
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var ConfigurationService
+     */
+    private $jobConfigurationService;
+
+    /**
+     * @param RouterInterface $router
+     * @param ApplicationStateService $applicationStateService
+     * @param ConfigurationService $jobConfigurationService
+     */
+    public function __construct(
+        RouterInterface $router,
+        ApplicationStateService $applicationStateService,
+        ConfigurationService $jobConfigurationService
+    ) {
+        $this->applicationStateService = $applicationStateService;
+        $this->jobConfigurationService = $jobConfigurationService;
+        $this->router = $router;
+    }
+
+    /**
+     * @param UserService $userService
+     * @param WebSiteService $websiteService
+     * @param TaskTypeService $taskTypeService
+     * @param JobTypeService $jobTypeService
+     * @param UserInterface|User $user
      * @param Request $request
      *
      * @return RedirectResponse|Response
      */
-    public function createAction(Request $request)
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $userService = $this->container->get(UserService::class);
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+    public function createAction(
+        UserService $userService,
+        WebSiteService $websiteService,
+        TaskTypeService $taskTypeService,
+        JobTypeService $jobTypeService,
+        UserInterface $user,
+        Request $request
+    ) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
@@ -66,8 +104,6 @@ class JobConfigurationController extends Controller
         if (empty($requestTaskConfiguration)) {
             throw new BadRequestHttpException('"task-configuration" missing');
         }
-
-        $user = $this->getUser();
 
         if ($userService->isSpecialUser($user)) {
             return Response::create('', 400, [
@@ -100,12 +136,12 @@ class JobConfigurationController extends Controller
         $jobConfigurationValues->setParameters($requestData->get('parameters'));
 
         try {
-            $jobConfiguration = $jobConfigurationService->create($jobConfigurationValues);
+            $jobConfiguration = $this->jobConfigurationService->create($jobConfigurationValues);
 
-            return $this->redirect($this->generateUrl(
+            return $this->redirect(
                 'jobconfiguration_get',
                 ['label' => $jobConfiguration->getLabel()]
-            ));
+            );
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return Response::create('', 400, [
                 'X-JobConfigurationCreate-Error' => json_encode([
@@ -117,35 +153,31 @@ class JobConfigurationController extends Controller
     }
 
     /**
-     * @param $label
+     * @param EntityManagerInterface $entityManager
+     * @param string $label
      *
      * @return Response
      */
-    public function deleteAction($label)
+    public function deleteAction(EntityManagerInterface $entityManager, $label)
     {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
         $label = trim($label);
 
-        $jobConfiguration = $jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->get($label);
         if (is_null($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
 
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
         $scheduledJob = $scheduledJobRepository->findOneBy([
             'jobConfiguration' => $jobConfiguration,
         ]);
 
         if (empty($scheduledJob)) {
-            $jobConfigurationService->delete($label);
+            $this->jobConfigurationService->delete($label);
 
             return new Response();
         }
@@ -165,11 +197,9 @@ class JobConfigurationController extends Controller
      */
     public function getAction($label)
     {
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-
         $label = trim($label);
 
-        $jobConfiguration = $jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->get($label);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -182,30 +212,30 @@ class JobConfigurationController extends Controller
      */
     public function listAction()
     {
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-
-        return new JsonResponse($jobConfigurationService->getList());
+        return new JsonResponse($this->jobConfigurationService->getList());
     }
 
     /**
+     * @param WebSiteService $websiteService
+     * @param TaskTypeService $taskTypeService
+     * @param JobTypeService $jobTypeService
      * @param Request $request
      * @param string $label
      *
      * @return RedirectResponse|Response
      */
-    public function updateAction(Request $request, $label)
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+    public function updateAction(
+        WebSiteService $websiteService,
+        TaskTypeService $taskTypeService,
+        JobTypeService $jobTypeService,
+        Request $request,
+        $label
+    ) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobConfiguration = $jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->get($label);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -237,15 +267,15 @@ class JobConfigurationController extends Controller
         $newJobConfigurationValues->setType($jobType);
 
         try {
-            $jobConfigurationService->update(
+            $this->jobConfigurationService->update(
                 $jobConfiguration,
                 $newJobConfigurationValues
             );
 
-            return $this->redirect($this->generateUrl(
+            return $this->redirect(
                 'jobconfiguration_get',
                 ['label' => $jobConfiguration->getLabel()]
-            ));
+            );
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return Response::create('', 400, [
                 'X-JobConfigurationUpdate-Error' => json_encode([
@@ -254,5 +284,22 @@ class JobConfigurationController extends Controller
                 ])
             ]);
         }
+    }
+
+    /**
+     * @param string  $routeName
+     * @param array $routeParameters
+     *
+     * @return RedirectResponse
+     */
+    private function redirect($routeName, $routeParameters = [])
+    {
+        $url = $this->router->generate(
+            $routeName,
+            $routeParameters,
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return new RedirectResponse($url);
     }
 }

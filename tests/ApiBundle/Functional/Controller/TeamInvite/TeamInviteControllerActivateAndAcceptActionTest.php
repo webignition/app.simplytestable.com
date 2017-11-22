@@ -7,6 +7,9 @@ use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInviteControllerTest
 {
     public function testActivateAndAcceptActionPostRequest()

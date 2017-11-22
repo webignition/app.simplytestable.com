@@ -6,6 +6,9 @@ use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteControllerTest
 {
     public function testDeclineActionPostRequest()
@@ -40,7 +43,6 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
         $teamInviteService = $this->container->get(InviteService::class);
 
         $user = $this->users['private'];
-        $this->setUser($user);
 
         $this->assertFalse($teamInviteService->hasAnyForUser($user));
 
@@ -48,7 +50,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
             'team' => 'Invalid Team',
         ]);
 
-        $response = $this->teamInviteController->declineAction($request);
+        $response = $this->teamInviteController->declineAction($user, $request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($teamInviteService->hasAnyForUser($user));
@@ -59,7 +61,6 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
         $teamInviteService = $this->container->get(InviteService::class);
 
         $user = $this->users['private'];
-        $this->setUser($user);
 
         $this->assertFalse($teamInviteService->hasAnyForUser($user));
 
@@ -67,7 +68,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
             'team' => 'Foo',
         ]);
 
-        $response = $this->teamInviteController->declineAction($request);
+        $response = $this->teamInviteController->declineAction($user, $request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($teamInviteService->hasAnyForUser($user));
@@ -78,7 +79,6 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
         $teamInviteService = $this->container->get(InviteService::class);
 
         $user = $this->users['private'];
-        $this->setUser($user);
 
         $teamInviteService->get($this->users['leader'], $user);
 
@@ -88,7 +88,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
             'team' => 'Foo',
         ]);
 
-        $response = $this->teamInviteController->declineAction($request);
+        $response = $this->teamInviteController->declineAction($user, $request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($teamInviteService->hasAnyForUser($user));

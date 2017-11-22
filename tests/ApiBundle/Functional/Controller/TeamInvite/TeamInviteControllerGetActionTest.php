@@ -9,6 +9,9 @@ use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
 {
     public function testGetActionGetRequest()
@@ -42,9 +45,8 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
         $userAccountPlanFactory->create($this->users['private'], 'agency');
 
         $inviter = $this->users[$inviterName];
-        $this->setUser($inviter);
 
-        $response = $this->teamInviteController->getAction(new Request(), $inviteeEmail);
+        $response = $this->teamInviteController->getAction($inviter, new Request(), $inviteeEmail);
 
         $this->assertTrue($response->isClientError());
 
@@ -155,9 +157,8 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
         $this->assertEquals($expectedInviteAlreadyExists, !is_null($invite));
 
         $inviter = $this->users['leader'];
-        $this->setUser($inviter);
 
-        $response = $this->teamInviteController->getAction(new Request(), $inviteeEmail);
+        $response = $this->teamInviteController->getAction($inviter, new Request(), $inviteeEmail);
 
         $this->assertTrue($response->isSuccessful());
 

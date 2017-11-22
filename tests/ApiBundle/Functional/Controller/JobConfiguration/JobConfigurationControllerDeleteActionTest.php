@@ -2,25 +2,17 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/JobConfiguration
+ */
+class JobConfigurationControllerDeleteActionTest extends AbstractJobConfigurationControllerTest
 {
-    /**
-     * @var JobConfigurationController
-     */
-    private $jobConfigurationController;
-
     /**
      * @var JobConfiguration
      */
@@ -37,9 +29,6 @@ class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->jobConfigurationController = new JobConfigurationController();
-        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -88,49 +77,15 @@ class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
         $this->assertTrue($response->isSuccessful());
     }
 
-    public function testDeleteActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->jobConfigurationController->deleteAction('foo');
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    public function testDeleteActionJobConfigurationNotFound()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->jobConfigurationController->deleteAction('foo');
-    }
-
-    public function testDeleteActionJobConfigurationBelongsToScheduledJob()
-    {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $scheduledJobService->create(
-            $this->jobConfiguration
-        );
-
-        $response = $this->jobConfigurationController->deleteAction($this->jobConfiguration->getLabel());
-
-        $this->assertTrue($response->isClientError());
-
-        $this->assertEquals(
-            '{"code":1,"message":"Job configuration is in use by a scheduled job"}',
-            $response->headers->get('X-JobConfigurationDelete-Error')
-        );
-    }
-
     public function testDeleteActionSuccess()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
-        $response = $this->jobConfigurationController->deleteAction($this->jobConfiguration->getLabel());
+        $response = $this->jobConfigurationController->deleteAction(
+            $this->container->get('doctrine.orm.entity_manager'),
+            $this->jobConfiguration->getLabel()
+        );
 
         $this->assertTrue($response->isSuccessful());
 

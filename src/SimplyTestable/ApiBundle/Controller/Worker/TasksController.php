@@ -2,35 +2,45 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class TasksController extends Controller
+class TasksController
 {
-    public function requestAction(Request $request)
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManagerInterface $entityManager
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param StateService $stateService
+     * @param TaskQueueService $taskQueueService
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function requestAction(
+        ApplicationStateService $applicationStateService,
+        EntityManagerInterface $entityManager,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        StateService $stateService,
+        TaskQueueService $taskQueueService,
+        Request $request
+    ) {
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
-
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
-        $resqueJobFactory = $this->container->get(JobFactory::class);
-        $stateService = $this->container->get(StateService::class);
-        $taskQueueService = $this->container->get(TaskQueueService::class);
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $entityManager->getRepository(Task::class);

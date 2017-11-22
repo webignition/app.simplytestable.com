@@ -33,23 +33,6 @@ class ProcessCommandTest extends AbstractBaseTestCase
         $this->command = $this->container->get(ProcessCommand::class);
     }
 
-    public function testRunInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $returnCode = $this->command->run(new ArrayInput([
-            'stripeId' => 1,
-        ]), new BufferedOutput());
-
-        $this->assertEquals(
-            ProcessCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
-            $returnCode
-        );
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-    }
-
     public function testRunForEventWithNoUser()
     {
         $stripeEventService = $this->container->get(StripeEventService::class);
@@ -78,7 +61,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
      * @param string $fixtureName
      * @param string $expectedEventName
      */
-    public function testRunFoo($fixtureName, $expectedEventName)
+    public function testRun($fixtureName, $expectedEventName)
     {
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);

@@ -3,7 +3,6 @@ namespace SimplyTestable\ApiBundle\Command\Task;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
@@ -44,11 +43,6 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
     private $resqueJobFactory;
 
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
@@ -71,8 +65,6 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**
@@ -90,13 +82,15 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
         $taskAwaitingCancellationState = $this->stateService->get(TaskService::AWAITING_CANCELLATION_STATE);
 
-        $taskIds = $this->taskRepository->getIdsByState(
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+
+        $taskIds = $taskRepository->getIdsByState(
             $taskAwaitingCancellationState
         );
 

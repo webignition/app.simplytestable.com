@@ -2,74 +2,156 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use FOS\UserBundle\Util\UserManipulator;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
-use SimplyTestable\ApiBundle\Services\Team\InviteService;
-use SimplyTestable\ApiBundle\Services\Team\MemberService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
+use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class TeamInviteController extends Controller
+class TeamInviteController
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
     /**
+     * @var UserService $userService
+     */
+    private $userService;
+
+    /**
+     * @var AccountPlanService
+     */
+    private $accountPlanService;
+
+    /**
+     * @var UserAccountPlanService
+     */
+    private $userAccountPlanService;
+
+    /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
+     * @var TeamInviteService
+     */
+    private $teamInviteService;
+
+    /**
+     * @var TeamMemberService
+     */
+    private $teamMemberService;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var ScheduledJobService
+     */
+    private $scheduledJobService;
+
+    /**
+     * @var ConfigurationService
+     */
+    private $jobConfigurationService;
+
+    /**
+     * @var UserManipulator
+     */
+    private $userManipulator;
+
+    /**
+     * @param UserService $userService
+     * @param AccountPlanService $accountPlanService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param TeamService $teamService
+     * @param TeamInviteService $teamInviteService
+     * @param TeamMemberService $teamMemberService
+     * @param EntityManagerInterface $entityManager
+     * @param ScheduledJobService $scheduledJobService
+     * @param ConfigurationService $jobConfigurationService
+     * @param UserManipulator $userManipulator
+     */
+    public function __construct(
+        UserService $userService,
+        AccountPlanService $accountPlanService,
+        UserAccountPlanService $userAccountPlanService,
+        TeamService $teamService,
+        TeamInviteService $teamInviteService,
+        TeamMemberService $teamMemberService,
+        EntityManagerInterface $entityManager,
+        ScheduledJobService $scheduledJobService,
+        ConfigurationService $jobConfigurationService,
+        UserManipulator $userManipulator
+    ) {
+        $this->userService = $userService;
+        $this->accountPlanService = $accountPlanService;
+        $this->userAccountPlanService = $userAccountPlanService;
+        $this->teamService = $teamService;
+        $this->teamInviteService = $teamInviteService;
+        $this->teamMemberService = $teamMemberService;
+        $this->entityManager = $entityManager;
+        $this->scheduledJobService = $scheduledJobService;
+        $this->jobConfigurationService = $jobConfigurationService;
+        $this->userManipulator = $userManipulator;
+    }
+
+    /**
+     * @param UserInterface|User $inviter
      * @param Request $request
      * @param string $invitee_email
      *
      * @return JsonResponse|Response
      */
-    public function getAction(Request $request, $invitee_email)
+    public function getAction(UserInterface $inviter, Request $request, $invitee_email)
     {
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(TeamService::class);
-        $accountPlanService = $this->container->get(AccountPlanService::class);
-
-        $inviter = $this->getUser();
-
-        if (!$teamService->hasTeam($inviter)) {
+        if (!$this->teamService->hasTeam($inviter)) {
             return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => TeamInviteServiceException::INVITER_IS_NOT_A_LEADER,
                 'X-TeamInviteGet-Error-Message' => 'Inviter is not a team leader',
             ]);
         }
 
-        if (!$userService->exists($invitee_email)) {
-            $user = $userService->create($invitee_email, md5(rand()));
+        if (!$this->userService->exists($invitee_email)) {
+            $user = $this->userService->create($invitee_email, md5(rand()));
 
             $requestData = $request->query;
 
             $planName = rawurldecode(trim($requestData->get('plan')));
-            $plan = $accountPlanService->get($planName);
+            $plan = $this->accountPlanService->get($planName);
 
             if (empty($plan)) {
-                $plan = $accountPlanService->get(self::DEFAULT_ACCOUNT_PLAN_NAME);
+                $plan = $this->accountPlanService->get(self::DEFAULT_ACCOUNT_PLAN_NAME);
             }
 
-            $userAccountPlanService->subscribe($user, $plan);
+            $this->userAccountPlanService->subscribe($user, $plan);
         }
 
-        $invitee = $userService->findUserByEmail($invitee_email);
+        $invitee = $this->userService->findUserByEmail($invitee_email);
 
-        if ($userService->isSpecialUser($invitee)) {
+        if ($this->userService->isSpecialUser($invitee)) {
             return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => 10,
                 'X-TeamInviteGet-Error-Message' => 'Special users cannot be invited',
             ]);
         }
 
-        if ($userAccountPlanService->getForUser($invitee)->getPlan()->getIsPremium()) {
+        if ($this->userAccountPlanService->getForUser($invitee)->getPlan()->getIsPremium()) {
             return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => 11,
                 'X-TeamInviteGet-Error-Message' => 'Invitee has a premium plan',
@@ -77,7 +159,7 @@ class TeamInviteController extends Controller
         }
 
         try {
-            return new JsonResponse($teamInviteService->get($inviter, $invitee));
+            return new JsonResponse($this->teamInviteService->get($inviter, $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {
             return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => $teamInviteServiceException->getCode(),
@@ -88,19 +170,13 @@ class TeamInviteController extends Controller
 
     /**
      * @param Request $request
+     * @param UserInterface|User $user
      *
      * @return Response
      */
-    public function acceptAction(Request $request)
+    public function acceptAction(Request $request, UserInterface $user)
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $jobConfigurationService = $this->get(ConfigurationService::class);
-        $teamMemberService = $this->container->get(MemberService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $teamRepository = $entityManager->getRepository(Team::class);
+        $teamRepository = $this->entityManager->getRepository(Team::class);
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -117,7 +193,7 @@ class TeamInviteController extends Controller
             ]);
         }
 
-        $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
+        $invite = $this->teamInviteService->getForTeamAndUser($team, $user);
 
         if (empty($invite)) {
             return Response::create('', 400, [
@@ -126,47 +202,44 @@ class TeamInviteController extends Controller
             ]);
         }
 
-        if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+        if ($this->userAccountPlanService->getForUser($user)->getPlan()->getIsPremium()) {
             return new Response();
         }
 
-        $scheduledJobService->removeAll();
+        $this->scheduledJobService->removeAll();
+        $this->jobConfigurationService->removeAll();
 
-        $jobConfigurationService->removeAll();
+        $this->teamMemberService->add($invite->getTeam(), $invite->getUser());
 
-        $teamMemberService->add($invite->getTeam(), $invite->getUser());
-
-        $invites = $teamInviteService->getForUser($this->getUser());
+        $invites = $this->teamInviteService->getForUser($user);
 
         foreach ($invites as $invite) {
-            $entityManager->remove($invite);
-            $entityManager->flush();
+            $this->entityManager->remove($invite);
+            $this->entityManager->flush();
         }
 
         return new Response();
     }
 
     /**
+     * @param UserInterface|User $user
+     *
      * @return JsonResponse|Response
      */
-    public function listAction()
+    public function listAction(UserInterface $user)
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(TeamService::class);
-
-        if (!$teamService->hasTeam($this->getUser())) {
+        if (!$this->teamService->hasTeam($user)) {
             return Response::create('', 400, [
                 'X-TeamInviteList-Error-Code' => 1,
                 'X-TeamInviteList-Error-Message' => 'User is not a team leader',
             ]);
         }
 
-        $allInvites = $teamInviteService->getForTeam($teamService->getForUser($this->getUser()));
+        $allInvites = $this->teamInviteService->getForTeam($this->teamService->getForUser($user));
         $invites = [];
 
         foreach ($allInvites as $invite) {
-            $userAccountPlan = $userAccountPlanService->getForUser($invite->getUser());
+            $userAccountPlan = $this->userAccountPlanService->getForUser($invite->getUser());
 
             if (!$userAccountPlan->getPlan()->getIsPremium()) {
                 $invites[] = $invite;
@@ -177,49 +250,44 @@ class TeamInviteController extends Controller
     }
 
     /**
+     * @param UserInterface|User $user
+     *
      * @return Response
      */
-    public function userListAction()
+    public function userListAction(UserInterface $user)
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-
-        if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+        if ($this->userAccountPlanService->getForUser($user)->getPlan()->getIsPremium()) {
             return new JsonResponse([]);
         }
 
-        return new JsonResponse($teamInviteService->getForUser($this->getUser()));
+        return new JsonResponse($this->teamInviteService->getForUser($user));
     }
 
     /**
+     * @param UserInterface|User $leader
      * @param string $invitee_email
      *
      * @return Response
      */
-    public function removeAction($invitee_email)
+    public function removeAction(UserInterface $leader, $invitee_email)
     {
-        $userService = $this->container->get(UserService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(TeamService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        if (!$teamService->hasTeam($this->getUser())) {
+        if (!$this->teamService->hasTeam($leader)) {
             return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 1,
                 'X-TeamInviteRemove-Error-Message' => 'User is not a team leader',
             ]);
         }
 
-        if (!$userService->exists($invitee_email)) {
+        if (!$this->userService->exists($invitee_email)) {
             return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 2,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee is not a user',
             ]);
         }
 
-        $team = $teamService->getForUser($this->getUser());
-        $invitee = $userService->findUserByEmail($invitee_email);
-        $invite = $teamInviteService->getForTeamAndUser($team, $invitee);
+        $team = $this->teamService->getForUser($leader);
+        $invitee = $this->userService->findUserByEmail($invitee_email);
+        $invite = $this->teamInviteService->getForTeamAndUser($team, $invitee);
 
         if (empty($invite)) {
             return Response::create('', 400, [
@@ -228,23 +296,21 @@ class TeamInviteController extends Controller
             ]);
         }
 
-        $entityManager->remove($invite);
-        $entityManager->flush();
+        $this->entityManager->remove($invite);
+        $this->entityManager->flush();
 
         return new Response();
     }
 
     /**
+     * @param UserInterface|User $user
      * @param Request $request
      *
      * @return Response
      */
-    public function declineAction(Request $request)
+    public function declineAction(UserInterface $user, Request $request)
     {
-        $teamInviteService = $this->container->get(InviteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $teamRepository = $entityManager->getRepository(Team::class);
+        $teamRepository = $this->entityManager->getRepository(Team::class);
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -254,11 +320,11 @@ class TeamInviteController extends Controller
         ]);
 
         if ($team instanceof Team) {
-            $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
+            $invite = $this->teamInviteService->getForTeamAndUser($team, $user);
 
             if (!empty($invite)) {
-                $entityManager->remove($invite);
-                $entityManager->flush();
+                $this->entityManager->remove($invite);
+                $this->entityManager->flush();
             }
         }
 
@@ -272,9 +338,7 @@ class TeamInviteController extends Controller
      */
     public function getByTokenAction($token)
     {
-        $teamInviteService = $this->container->get(InviteService::class);
-
-        $invite = $teamInviteService->getForToken($token);
+        $invite = $this->teamInviteService->getForToken($token);
 
         if (empty($invite)) {
             throw new NotFoundHttpException();
@@ -290,16 +354,10 @@ class TeamInviteController extends Controller
      */
     public function activateAndAcceptAction(Request $request)
     {
-        $teamInviteService = $this->container->get(InviteService::class);
-        $teamMemberService = $this->container->get(MemberService::class);
-        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $requestData = $request->request;
         $token = trim($requestData->get('token'));
 
-        $invite = $teamInviteService->getForToken($token);
+        $invite = $this->teamInviteService->getForToken($token);
 
         if (empty($invite)) {
             return Response::create('', 400, [
@@ -311,20 +369,20 @@ class TeamInviteController extends Controller
         $invitee = $invite->getUser();
         $team = $invite->getTeam();
 
-        $userManipulator->activate($invitee->getUsername());
+        $this->userManipulator->activate($invitee->getUsername());
 
         $password = rawurldecode(trim($requestData->get('password')));
 
         $invitee->setPlainPassword($password);
-        $userService->updateUser($invitee);
+        $this->userService->updateUser($invitee);
 
-        $teamMemberService->add($team, $invitee);
+        $this->teamMemberService->add($team, $invitee);
 
-        $invites = $teamInviteService->getForUser($invitee);
+        $invites = $this->teamInviteService->getForUser($invitee);
 
         foreach ($invites as $invite) {
-            $entityManager->remove($invite);
-            $entityManager->flush();
+            $this->entityManager->remove($invite);
+            $this->entityManager->flush();
         }
 
         return new Response();

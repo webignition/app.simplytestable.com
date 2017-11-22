@@ -2,37 +2,92 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
-use SimplyTestable\ApiBundle\Services\Team\InviteService;
-use SimplyTestable\ApiBundle\Services\Team\MemberService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
+use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
-use SimplyTestable\ApiBundle\Services\Team\Service;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class TeamController extends Controller
+class TeamController
 {
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
+     * @var TeamMemberService
+     */
+    private $teamMemberService;
+
+    /**
+     * @var TeamInviteService
+     */
+    private $teamInviteService;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param RouterInterface $router
+     * @param TeamService $teamService
+     * @param TeamMemberService $teamMemberService
+     * @param TeamInviteService $teamInviteService
+     * @param UserService $userService
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        RouterInterface $router,
+        TeamService $teamService,
+        TeamMemberService $teamMemberService,
+        TeamInviteService $teamInviteService,
+        UserService $userService,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->router = $router;
+        $this->teamService = $teamService;
+        $this->teamMemberService = $teamMemberService;
+        $this->teamInviteService = $teamInviteService;
+        $this->userService = $userService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param UserInterface|User $user
+     *
      * @return JsonResponse
      */
-    public function getAction()
+    public function getAction(UserInterface $user)
     {
-        $teamService = $this->container->get(Service::class);
-        $teamMemberService = $this->container->get(MemberService::class);
-
-        $user = $this->getUser() ;
-        $team = $teamService->getForUser($user);
+        $team = $this->teamService->getForUser($user);
 
         if (empty($team)) {
             throw new NotFoundHttpException();
         }
 
-        $members = $teamMemberService->getMembers($team);
+        $members = $this->teamMemberService->getMembers($team);
 
         $serializedMembers = [];
 
@@ -48,34 +103,29 @@ class TeamController extends Controller
 
     /**
      * @param Request $request
+     * @param UserInterface|User $user
+     *
      * @return RedirectResponse|Response
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, UserInterface $user)
     {
-        $userService = $this->container->get(UserService::class);
-        $teamService = $this->container->get(Service::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        if ($userService->isSpecialUser($this->getUser())) {
+        if ($this->userService->isSpecialUser($user)) {
             return Response::create('', 400, [
                 'X-TeamCreate-Error-Code' => 9,
                 'X-TeamCreate-Error-Message' => 'Special users cannot create teams',
             ]);
         }
 
-        $user = $this->getUser();
-
         $requestData = $request->request;
         $requestName = trim($requestData->get('name'));
 
         try {
-            $teamService->create($requestName, $user);
+            $this->teamService->create($requestName, $user);
 
-            $invites = $teamInviteService->getForUser($this->getUser());
+            $invites = $this->teamInviteService->getForUser($user);
             foreach ($invites as $invite) {
-                $entityManager->remove($invite);
-                $entityManager->flush();
+                $this->entityManager->remove($invite);
+                $this->entityManager->flush();
             }
 
         } catch (TeamServiceException $teamServiceException) {
@@ -83,7 +133,7 @@ class TeamController extends Controller
             $isUserAlreadyOnTeamException = $teamServiceException->isUserAlreadyOnTeamException();
 
             if ($isUserAlreadyLeadsTeamException || $isUserAlreadyOnTeamException) {
-                return $this->createTeamGetRedirectResponse($teamService);
+                return $this->createTeamGetRedirectResponse($user);
             }
 
             return Response::create('', 400, [
@@ -92,70 +142,73 @@ class TeamController extends Controller
             ]);
         }
 
-        return $this->createTeamGetRedirectResponse($teamService);
+        return $this->createTeamGetRedirectResponse($user);
     }
 
     /**
+     * @param UserInterface|User $leader
      * @param string $member_email
      *
      * @return Response
      */
-    public function removeAction($member_email)
+    public function removeAction(UserInterface $leader, $member_email)
     {
-        $userService = $this->container->get(UserService::class);
-        $teamService = $this->container->get(Service::class);
-
-        if (!$userService->exists($member_email)) {
+        if (!$this->userService->exists($member_email)) {
             return Response::create('', 400, [
                 'X-TeamRemove-Error-Code' => 9,
                 'X-TeamRemove-Error-Message' => 'Member is not a user',
             ]);
         }
 
-        $member = $userService->findUserByEmail($member_email);
+        $member = $this->userService->findUserByEmail($member_email);
 
         try {
-            $teamService->remove($this->getUser(), $member);
-
-            return new Response();
+            $this->teamService->remove($leader, $member);
         } catch (TeamServiceException $teamServiceException) {
             return Response::create('', 400, [
                 'X-TeamRemove-Error-Code' => $teamServiceException->getCode(),
                 'X-TeamRemove-Error-Message' => $teamServiceException->getMessage(),
             ]);
         }
+
+        return new Response();
     }
 
     /**
+     * @param UserInterface|User $user
+     *
      * @return Response
      */
-    public function leaveAction()
+    public function leaveAction(UserInterface $user)
     {
-        $teamService = $this->container->get(Service::class);
-        $teamMemberService = $this->container->get(MemberService::class);
-
-        if ($teamService->hasTeam($this->getUser())) {
+        if ($this->teamService->hasTeam($user)) {
             return Response::create('', 400, [
                 'X-TeamLeave-Error-Code' => 9,
                 'X-TeamLeave-Error-Message' => 'Leader cannot leave team',
             ]);
         }
 
-        $teamMemberService->remove($this->getUser());
+        $this->teamMemberService->remove($user);
 
         return new Response();
     }
 
     /**
-     * @param TeamService $teamService
+     * @param User $user
      *
      * @return RedirectResponse
      */
-    private function createTeamGetRedirectResponse(TeamService $teamService)
+    private function createTeamGetRedirectResponse(User $user)
     {
-        $response = $this->redirect($this->generateUrl('team_get'));
+        $url = $this->router->generate(
+            'team_get',
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
-        $team = $teamService->getForUser($this->getUser());
+        $response = new RedirectResponse($url);
+
+        $team = $this->teamService->getForUser($user);
 
         $response->headers->set('X-Team-Name', $team->getName());
         $response->headers->set('X-Team-ID', $team->getId());

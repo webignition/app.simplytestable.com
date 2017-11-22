@@ -6,6 +6,9 @@ use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @group Controller/UserEmailChangeController
+ */
 class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeControllerTest
 {
     public function testGetActionGetRequest()
@@ -28,20 +31,6 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testGetActionInvalidUser()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->userEmailChangeController->getAction('foo@example.com');
-    }
-
-    public function testGetActionNoEmailChangeRequest()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->userEmailChangeController->getAction($this->user->getEmail());
     }
 
     public function testGetActionSuccess()

@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
-use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,11 +27,6 @@ class RemoveUnusedOutputCommand extends Command
     private $entityManager;
 
     /**
-     * @var TaskOutputRepository
-     */
-    private $taskOutputRepository;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param string|null $name
@@ -46,7 +40,6 @@ class RemoveUnusedOutputCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**
@@ -67,7 +60,7 @@ class RemoveUnusedOutputCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
@@ -76,7 +69,8 @@ class RemoveUnusedOutputCommand extends Command
 
         $output->writeln('Finding unused output ...');
 
-        $unusedTaskOutputIds = $this->taskOutputRepository->findUnusedIds($this->getLimit($input));
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+        $unusedTaskOutputIds = $taskOutputRepository->findUnusedIds($this->getLimit($input));
 
         if (empty($unusedTaskOutputIds)) {
             $output->writeln('No unused task outputs found. Done.');
@@ -91,7 +85,7 @@ class RemoveUnusedOutputCommand extends Command
         $persistCount = 0;
 
         foreach ($unusedTaskOutputIds as $unusedTaskOutputId) {
-            $taskOutputToRemove = $this->taskOutputRepository->find($unusedTaskOutputId);
+            $taskOutputToRemove = $taskOutputRepository->find($unusedTaskOutputId);
 
             $processedTaskOutputCount++;
             $output->writeln(sprintf(
@@ -158,6 +152,8 @@ class RemoveUnusedOutputCommand extends Command
 
     /**
      * @param InputInterface $input
+     * @param string $optionName
+     * @param mixed $defaultValue
      *
      * @return int
      */

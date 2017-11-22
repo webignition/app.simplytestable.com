@@ -7,6 +7,9 @@ use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/TeamController
+ */
 class TeamControllerCreateActionTest extends AbstractTeamControllerTest
 {
     public function testCreateActionPostRequest()
@@ -25,7 +28,7 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
 
         $response = $this->getClientResponse();
 
-        $this->assertTrue($response->isRedirect('/team/'));
+        $this->assertTrue($response->isRedirect('http://localhost/team/'));
     }
 
     /**
@@ -45,7 +48,7 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
         $this->setUser($user);
 
         $request = new Request([], $postData);
-        $response = $this->teamController->createAction($request);
+        $response = $this->teamController->createAction($request, $user);
 
         $this->assertTrue($response->isClientError());
 
@@ -64,22 +67,6 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
     public function createActionClientFailureDataProvider()
     {
         return [
-            'public user cannot create team' => [
-                'userEmail' => 'public@simplytestable.com',
-                'postData' => [],
-                'expectedResponseError' => [
-                    'code' => 9,
-                    'message' => 'Special users cannot create teams',
-                ],
-            ],
-            'admin user cannot create team' => [
-                'userEmail' => 'admin@simplytestable.com',
-                'postData' => [],
-                'expectedResponseError' => [
-                    'code' => 9,
-                    'message' => 'Special users cannot create teams',
-                ],
-            ],
             'name empty' => [
                 'userEmail' => 'new-user@example.com',
                 'postData' => [],
@@ -115,9 +102,9 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
             'team' => 'Foo',
         ]);
 
-        $response = $this->teamController->createAction($request);
+        $response = $this->teamController->createAction($request, $user);
 
-        $this->assertTrue($response->isRedirect('/team/'));
+        $this->assertTrue($response->isRedirect('http://localhost/team/'));
         $this->assertEquals('Foo', $response->headers->get('X-Team-Name'));
     }
 
@@ -155,9 +142,9 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
             'name' => 'Unique Team Name',
         ]);
 
-        $response = $this->teamController->createAction($request);
+        $response = $this->teamController->createAction($request, $user);
 
-        $this->assertTrue($response->isRedirect('/team/'));
+        $this->assertTrue($response->isRedirect('http://localhost/team/'));
         $this->assertEquals('Unique Team Name', $response->headers->get('X-Team-Name'));
 
         $team = $teamService->getForUser($user);

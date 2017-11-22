@@ -2,38 +2,45 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Stripe;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class WebHookController extends Controller
+class WebHookController
 {
     /**
+     * @param EntityManagerInterface $entityManager
+     * @param StripeEventService $stripeEventService
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param StripeWebHookMailNotificationSender $stripeWebHookMailNotification
      * @param Request $request
      *
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
-    public function indexAction(Request $request)
-    {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stripeEventService = $this->container->get(StripeEventService::class);
-        $mailService = $this->container->get(MailService::class);
-
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
-        $stripeEventRepository = $entityManager->getRepository(Event::class);
-
+    public function indexAction(
+        EntityManagerInterface $entityManager,
+        StripeEventService $stripeEventService,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        StripeWebHookMailNotificationSender $stripeWebHookMailNotification,
+        Request $request
+    ) {
         $eventContent = $this->getEventContent($request);
 
         if (empty($eventContent)) {
-            return Response::create('', 400);
+            throw new BadRequestHttpException();
         }
+
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $stripeEventRepository = $entityManager->getRepository(Event::class);
 
         $requestData = json_decode($eventContent);
         $stripeId = $requestData->id;
@@ -47,7 +54,7 @@ class WebHookController extends Controller
             return new JsonResponse($stripeEvent);
         }
 
-        $this->sendDeveloperWebhookNotification($mailService, $eventContent, $requestData->type);
+        $stripeWebHookMailNotification->send($eventContent, $requestData->type);
 
         $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
 
@@ -66,9 +73,6 @@ class WebHookController extends Controller
             $eventContent,
             $user
         );
-
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $resqueJobFactory = $this->container->get(JobFactory::class);
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(
@@ -139,23 +143,5 @@ class WebHookController extends Controller
         }
 
         return $event->object == 'event';
-    }
-
-    /**
-     * @param MailService $mailService
-     * @param string $rawWebhookData
-     * @param string $eventType
-     */
-    private function sendDeveloperWebhookNotification(MailService $mailService, $rawWebhookData, $eventType)
-    {
-        $emailSettings = $this->container->getParameter('stripe_webhook_developer_notification');
-
-        $message = $mailService->getNewMessage();
-        $message->setFrom($emailSettings['sender_email'], $emailSettings['sender_name']);
-        $message->addTo($emailSettings['recipient_email']);
-        $message->setSubject(str_replace('{{ event-type }}', $eventType, $emailSettings['subject']));
-        $message->setTextMessage($rawWebhookData);
-
-        $mailService->getSender()->send($message);
     }
 }

@@ -5,14 +5,22 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/Job/JobController
+ */
 class JobControllerCancelActionTest extends AbstractJobControllerTest
 {
     public function testRequest()
@@ -34,40 +42,18 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testCancelActionInMaintenanceReadOnlyMode()
+    public function testCancelActionSuccess()
     {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
+        $userService = $this->container->get(UserService::class);
+        $user = $userService->getPublicUser();
 
-        try {
-            $this->jobController->cancelAction('foo', 1);
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider cancelActionDataProvider
-     *
-     * @param string $owner
-     * @param string $requester
-     * @param int $expectedResponseStatusCode
-     */
-    public function testCancelAction($owner, $requester, $expectedResponseStatusCode)
-    {
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
-
-        $ownerUser = $users[$owner];
-        $requesterUser = $users[$requester];
-
-        $this->setUser($ownerUser);
+        $this->setUser($user);
 
         $canonicalUrl = 'http://example.com/';
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
-            JobFactory::KEY_USER => $ownerUser,
+            JobFactory::KEY_USER => $user,
             JobFactory::KEY_TASKS => [
                 [
                     JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
@@ -75,30 +61,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $this->setUser($requesterUser);
+        $response = $this->callCancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
 
-        $response = $this->jobController->cancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
-
-        $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
-    }
-
-    /**
-     * @return array
-     */
-    public function cancelActionDataProvider()
-    {
-        return [
-            'public owner, public requester' => [
-                'owner' => 'public',
-                'requester' => 'public',
-                'expectedStatusCode' => 200,
-            ],
-            'private owner, public requester' => [
-                'owner' => 'private',
-                'requester' => 'public',
-                'expectedStatusCode' => 403,
-            ],
-        ];
+        $this->assertTrue($response->isSuccessful());
     }
 
     public function testCancelCrawlJob()
@@ -132,7 +97,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
-        $response = $this->jobController->cancelAction($crawlJob->getWebsite()->getCanonicalUrl(), $crawlJob->getId());
+        $response = $this->callCancelAction($crawlJob->getWebsite()->getCanonicalUrl(), $crawlJob->getId());
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -164,7 +129,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             json_decode($jsStaticAnalysisTask->getParameters())->{'domains-to-ignore'}
         );
 
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
         $this->assertFalse($resqueQueueService->isEmpty(
             'tasks-notify'
         ));
@@ -200,7 +165,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
-        $response = $this->jobController->cancelAction(
+        $response = $this->callCancelAction(
             $parentJob->getWebsite()->getCanonicalUrl(),
             $parentJob->getId()
         );
@@ -209,5 +174,27 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         $this->assertEquals($jobCancelledState, $crawlJob->getState());
         $this->assertEquals($jobCancelledState, $parentJob->getState());
+    }
+
+    /**
+     * @param string $siteRootUrl
+     * @param int $testId
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function callCancelAction($siteRootUrl, $testId)
+    {
+        return $this->jobController->cancelAction(
+            $this->container->get(ApplicationStateService::class),
+            $this->container->get(JobService::class),
+            $this->container->get(CrawlJobContainerService::class),
+            $this->container->get(JobPreparationService::class),
+            $this->container->get(ResqueQueueService::class),
+            $this->container->get(ResqueJobFactory::class),
+            $this->container->get(StateService::class),
+            $this->container->get(TaskTypeDomainsToIgnoreService::class),
+            $siteRootUrl,
+            $testId
+        );
     }
 }

@@ -2,28 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserController extends Controller
+class UserController
 {
     /**
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param AccountPlanService $accountPlanService
+     * @param UserSummaryFactory $userSummaryFactory
+     * @param UserInterface|User $user
+     *
      * @return JsonResponse
      */
-    public function getAction()
-    {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $accountPlanService = $this->container->get(AccountPlanService::class);
-
-        $user = $this->getUser();
-
+    public function getAction(
+        UserAccountPlanService $userAccountPlanService,
+        AccountPlanService $accountPlanService,
+        UserSummaryFactory $userSummaryFactory,
+        UserInterface $user
+    ) {
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         if (empty($userAccountPlan)) {
             $basicPlan = $accountPlanService->getBasicPlan();
@@ -33,8 +38,6 @@ class UserController extends Controller
                 $basicPlan
             );
         }
-
-        $userSummaryFactory = $this->container->get(UserSummaryFactory::class);
 
         return new JsonResponse($userSummaryFactory->create());
     }
@@ -48,14 +51,15 @@ class UserController extends Controller
     }
 
     /**
+     * @param UserService $userService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function getTokenAction($email_canonical)
-    {
-        $userService = $this->container->get(UserService::class);
-
+    public function getTokenAction(
+        UserService $userService,
+        $email_canonical
+    ) {
         $user = $userService->findUserByEmail($email_canonical);
         if (empty($user)) {
             throw new NotFoundHttpException();
@@ -67,13 +71,15 @@ class UserController extends Controller
     }
 
     /**
+     * @param UserService $userService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function isEnabledAction($email_canonical)
-    {
-        $userService = $this->container->get(UserService::class);
+    public function isEnabledAction(
+        UserService $userService,
+        $email_canonical
+    ) {
         $user = $userService->findUserByEmail($email_canonical);
 
         if (is_null($user)) {
@@ -88,13 +94,15 @@ class UserController extends Controller
     }
 
     /**
+     * @param UserService $userService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function existsAction($email_canonical)
-    {
-        $userService = $this->container->get(UserService::class);
+    public function existsAction(
+        UserService $userService,
+        $email_canonical
+    ) {
         if ($userService->exists($email_canonical)) {
             return new Response('', 200);
         }
@@ -103,15 +111,17 @@ class UserController extends Controller
     }
 
     /**
-     * @param $email_canonical
+     * @param UserService $userService
+     * @param InviteService $teamInviteService
+     * @param string $email_canonical
      *
      * @return Response
      */
-    public function hasInvitesAction($email_canonical)
-    {
-        $teamInviteService = $this->container->get(InviteService::class);
-        $userService = $this->container->get(UserService::class);
-
+    public function hasInvitesAction(
+        UserService $userService,
+        InviteService $teamInviteService,
+        $email_canonical
+    ) {
         $user = $userService->findUserByEmail($email_canonical);
 
         if (empty($user)) {

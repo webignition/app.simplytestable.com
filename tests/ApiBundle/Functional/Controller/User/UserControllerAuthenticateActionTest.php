@@ -7,6 +7,9 @@ use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 
+/**
+ * @group Controller/UserController
+ */
 class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
 {
     public function testAuthenticateActionGetRequest()

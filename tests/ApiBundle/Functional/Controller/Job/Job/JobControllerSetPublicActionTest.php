@@ -2,10 +2,14 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
-use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * @group Controller/Job/JobController
+ */
 class JobControllerSetPublicActionTest extends AbstractJobControllerTest
 {
     const CANONICAL_URL = 'http://example.com/';
@@ -34,13 +38,11 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
      *
      * @param string $owner
      * @param string $requester
-     * @param int $expectedResponseStatusCode
      * @param bool $expectedIsPublic
      */
     public function testSetPublicAction(
         $owner,
         $requester,
-        $expectedResponseStatusCode,
         $expectedIsPublic
     ) {
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
@@ -55,14 +57,17 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         ]);
 
         $this->setUser($requesterUser);
-        $response = $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+        $response = $this->jobController->setPublicAction(
+            $this->container->get(UserService::class),
+            $requesterUser,
+            $job->getWebsite()->getCanonicalUrl(),
+            $job->getId()
+        );
 
-        $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
+        $this->assertEquals(302, $response->getStatusCode());
 
-        if ($expectedResponseStatusCode === 302) {
-            $jobFromResponse = $this->jobFactory->getFromResponse($response);
-            $this->assertEquals($job->getId(), $jobFromResponse->getId());
-        }
+        $jobFromResponse = $this->jobFactory->getFromResponse($response);
+        $this->assertEquals($job->getId(), $jobFromResponse->getId());
 
         $this->assertEquals($expectedIsPublic, $job->getIsPublic());
     }
@@ -76,43 +81,31 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
             'public owner, public requester' => [
                 'owner' => 'public',
                 'requester' => 'public',
-                'expectedStatusCode' => 302,
                 'expectedIsPublic' => true,
             ],
             'public owner, private requester' => [
                 'owner' => 'public',
                 'requester' => 'private',
-                'expectedStatusCode' => 302,
                 'expectedIsPublic' => true,
             ],
             'private owner, private requester' => [
                 'owner' => 'private',
                 'requester' => 'private',
-                'expectedStatusCode' => 302,
                 'expectedIsPublic' => true,
             ],
             'private owner, public requester' => [
                 'owner' => 'private',
                 'requester' => 'public',
-                'expectedStatusCode' => 302,
-                'expectedIsPublic' => false,
-            ],
-            'private owner, different private requester' => [
-                'owner' => 'private',
-                'requester' => 'leader',
-                'expectedStatusCode' => 403,
                 'expectedIsPublic' => false,
             ],
             'leader owner, member1 requester' => [
                 'owner' => 'leader',
                 'requester' => 'member1',
-                'expectedStatusCode' => 302,
                 'expectedIsPublic' => true,
             ],
             'member1 owner, leader requester' => [
                 'owner' => 'member1',
                 'requester' => 'leader',
-                'expectedStatusCode' => 302,
                 'expectedIsPublic' => true,
             ],
             'member1 owner, member2 requester' => [

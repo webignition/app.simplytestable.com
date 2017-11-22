@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services\Resque;
 
+use Mockery\Mock;
 use ResqueBundle\Resque\Resque;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
@@ -142,18 +143,14 @@ class QueueServiceTest extends AbstractBaseTestCase
 
         $queue = 'tasks-notify';
 
+        /* @var Mock|Resque $resque */
         $resque = \Mockery::mock(Resque::class);
         $resque
             ->shouldReceive('getQueue')
             ->with($queue)
             ->andThrow($credisException);
 
-        $queueService = new QueueService(
-            $resque,
-            'test',
-            $this->container->get('logger'),
-            $this->container->get(JobFactory::class)
-        );
+        $queueService = $this->createQueueService($resque);
 
         $queueService->contains($queue);
     }
@@ -175,17 +172,13 @@ class QueueServiceTest extends AbstractBaseTestCase
     {
         $credisException = \Mockery::mock(\CredisException::class);
 
+        /* @var Mock|Resque $resque */
         $resque = \Mockery::mock(Resque::class);
         $resque
             ->shouldReceive('enqueue')
             ->andThrow($credisException);
 
-        $queueService = new QueueService(
-            $resque,
-            'test',
-            $this->container->get('logger'),
-            $this->container->get(JobFactory::class)
-        );
+        $queueService = $this->createQueueService($resque);
 
         $queue = 'tasks-notify';
         $job = $this->jobFactory->create($queue);
@@ -197,17 +190,13 @@ class QueueServiceTest extends AbstractBaseTestCase
     {
         $credisException = \Mockery::mock(\CredisException::class);
 
+        /* @var Mock|Resque $resque */
         $resque = \Mockery::mock(Resque::class);
         $resque
             ->shouldReceive('enqueue')
             ->andThrow($credisException);
 
-        $queueService = new QueueService(
-            $resque,
-            'test',
-            $this->container->get('logger'),
-            $this->container->get(JobFactory::class)
-        );
+        $queueService = $this->createQueueService($resque);
 
         $queue = 'tasks-notify';
         $queueService->isEmpty($queue);
@@ -218,5 +207,20 @@ class QueueServiceTest extends AbstractBaseTestCase
         $resque = $this->queueService->getResque();
 
         $this->assertInstanceOf(Resque::class, $resque);
+    }
+
+    /**
+     * @param Resque $resque
+     *
+     * @return QueueService
+     */
+    private function createQueueService(Resque $resque)
+    {
+        return new QueueService(
+            $resque,
+            $this->container->get('logger'),
+            $this->container->get(JobFactory::class),
+            'test'
+        );
     }
 }

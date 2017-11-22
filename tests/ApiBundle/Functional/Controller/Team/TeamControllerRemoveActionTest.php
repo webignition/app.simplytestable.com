@@ -4,8 +4,10 @@ namespace Tests\ApiBundle\Functional\Controller\Team;
 
 use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\UserFactory;
-use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/TeamController
+ */
 class TeamControllerRemoveActionTest extends AbstractTeamControllerTest
 {
     public function testRemoveActionPostRequest()
@@ -38,7 +40,7 @@ class TeamControllerRemoveActionTest extends AbstractTeamControllerTest
         $user = $this->users[$userName];
         $this->setUser($user);
 
-        $response = $this->teamController->removeAction($memberEmail);
+        $response = $this->teamController->removeAction($user, $memberEmail);
 
         $this->assertTrue($response->isClientError());
 
@@ -96,10 +98,10 @@ class TeamControllerRemoveActionTest extends AbstractTeamControllerTest
             UserFactory::KEY_EMAIL => $memberEmail,
         ]);
 
-        $user = $this->users['leader'];
-        $this->setUser($user);
+        $leader = $this->users['leader'];
+        $this->setUser($leader);
 
-        $response = $this->teamController->removeAction($memberEmail);
+        $response = $this->teamController->removeAction($leader, $memberEmail);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($teamService->hasForUser($member));

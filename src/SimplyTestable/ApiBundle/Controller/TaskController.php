@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -11,48 +12,77 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class TaskController extends Controller
+class TaskController
 {
     /**
+     * @var EntityManagerInterface $entityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var TaskTypeService
+     */
+    private $taskTypeService;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param TaskTypeService $taskTypeService
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TaskTypeService $taskTypeService
+    ) {
+        $this->entityManager = $entityManager;
+        $this->taskTypeService = $taskTypeService;
+    }
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param CompleteRequestFactory $completeRequestFactory
+     * @param TaskService $taskService
+     * @param JobService $jobService
+     * @param JobPreparationService $jobPreparationService
+     * @param CrawlJobContainerService $crawlJobContainerService
+     * @param TaskOutputJoinerFactory $taskOutputJoinerFactory
+     * @param TaskPostProcessorFactory $taskPostProcessorFactory
+     * @param StateService $stateService
+     * @param TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService
+     *
      * @return Response
      */
-    public function completeAction()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $resqueJobFactory = $this->container->get(JobFactory::class);
-        $completeRequestFactory = $this->container->get(CompleteRequestFactory::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $taskService = $this->container->get(TaskService::class);
-        $jobService = $this->container->get(JobService::class);
-        $jobPreparationService = $this->container->get(JobPreparationService::class);
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
-        $taskOutputJoinerFactory = $this->container->get(TaskOutputJoinerFactory::class);
-        $taskPostProcessorFactory = $this->container->get(TaskPostProcessorFactory::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stateService = $this->container->get(StateService::class);
-
-        /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
-        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
-
+    public function completeAction(
+        ApplicationStateService $applicationStateService,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        CompleteRequestFactory $completeRequestFactory,
+        TaskService $taskService,
+        JobService $jobService,
+        JobPreparationService $jobPreparationService,
+        CrawlJobContainerService $crawlJobContainerService,
+        TaskOutputJoinerFactory $taskOutputJoinerFactory,
+        TaskPostProcessorFactory $taskPostProcessorFactory,
+        StateService $stateService,
+        TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService
+    ) {
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
@@ -77,7 +107,7 @@ class TaskController extends Controller
 
         $state = $completeRequest->getState();
 
-        $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
+        $urlDiscoveryTaskType = $this->taskTypeService->getUrlDiscoveryTaskType();
 
         foreach ($tasks as $task) {
             $currentTaskOutput = $task->getOutput();
@@ -108,6 +138,9 @@ class TaskController extends Controller
                 if (JobService::COMPLETED_STATE === $task->getJob()->getState()->getName()) {
                     $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 
+                    /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
+                    $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);
+
                     if ($crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                         $task,
                         $jobFailedNoSitemapState
@@ -115,15 +148,12 @@ class TaskController extends Controller
                         $crawlJobContainer = $crawlJobContainerService->getForJob($task->getJob());
 
                         foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
-                            /* @var $taskType TaskType */
-                            $taskTypeParameterDomainsToIgnoreKey = strtolower(
-                                str_replace(' ', '_', $taskType->getName())
-                            ) . '_domains_to_ignore';
+                            $taskTypeDomainsToIgnore = $taskTypeDomainsToIgnoreService->getForTaskType($taskType);
 
-                            if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                            if (!empty($taskTypeDomainsToIgnore)) {
                                 $jobPreparationService->setPredefinedDomainsToIgnore(
                                     $taskType,
-                                    $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
+                                    $taskTypeDomainsToIgnore
                                 );
                             }
                         }
@@ -151,18 +181,13 @@ class TaskController extends Controller
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $entityManager->getRepository(Task::class);
-        $stateRepository = $entityManager->getRepository(State::class);
-
-        $taskType = $taskTypeService->get($task_type);
+        $taskType = $this->taskTypeService->get($task_type);
 
         if (empty($taskType)) {
             throw new NotFoundHttpException();
         }
+
+        $stateRepository = $this->entityManager->getRepository(State::class);
 
         /* @var State $state */
         $state = $stateRepository->findOneBy([
@@ -173,6 +198,8 @@ class TaskController extends Controller
             throw new NotFoundHttpException();
         }
 
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->entityManager->getRepository(Task::class);
         $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
         return new JsonResponse($count);

@@ -3,7 +3,6 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
@@ -39,9 +38,9 @@ class EnqueuePrepareAllCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var JobRepository
+     * @var EntityManagerInterface
      */
-    private $jobRepository;
+    private $entityManager;
 
     /**
      * @param ResqueQueueService $resqueQueueService
@@ -65,7 +64,7 @@ class EnqueuePrepareAllCommand extends Command
         $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
         $this->applicationStateService = $applicationStateService;
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -84,13 +83,14 @@ class EnqueuePrepareAllCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
         $jobStartingState = $this->stateService->get(JobService::STARTING_STATE);
 
-        $jobIds = $this->jobRepository->getIdsByState($jobStartingState);
+        $jobRepository = $this->entityManager->getRepository(Job::class);
+        $jobIds = $jobRepository->getIdsByState($jobStartingState);
         $output->writeln(count($jobIds).' new jobs to prepare');
 
         foreach ($jobIds as $jobId) {

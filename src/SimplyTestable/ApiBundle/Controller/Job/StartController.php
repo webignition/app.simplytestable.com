@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
@@ -10,42 +11,105 @@ use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
     as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
-class StartController extends Controller
+class StartController
 {
     /**
-     * @return RedirectResponse|Response
-     * @throws JobStartServiceException
+     * @var RouterInterface
      */
-    public function startAction()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $jobStartService = $this->container->get(StartService::class);
-        $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
-        $jobConfigurationFactory = $this->container->get(JobConfigurationFactory::class);
+    private $router;
 
-        if ($applicationStateService->isInReadOnlyMode()) {
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var StartService
+     */
+    private $jobStartService;
+
+    /**
+     * @var StartRequestFactory
+     */
+    private $jobStartRequestFactory;
+
+    /**
+     * @var JobConfigurationFactory
+     */
+    private $jobConfigurationFactory;
+
+    /**
+     * @var JobService
+     */
+    private $jobService;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param RouterInterface $router
+     * @param ApplicationStateService $applicationStateService
+     * @param StartService $jobStartService
+     * @param StartRequestFactory $jobStartRequestFactory
+     * @param JobConfigurationFactory $jobConfigurationFactory
+     * @param JobService $jobService
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        RouterInterface $router,
+        ApplicationStateService $applicationStateService,
+        StartService $jobStartService,
+        StartRequestFactory $jobStartRequestFactory,
+        JobConfigurationFactory $jobConfigurationFactory,
+        JobService $jobService,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->router = $router;
+        $this->applicationStateService = $applicationStateService;
+        $this->jobStartService = $jobStartService;
+        $this->jobStartRequestFactory = $jobStartRequestFactory;
+        $this->jobConfigurationFactory = $jobConfigurationFactory;
+        $this->jobService = $jobService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return RedirectResponse|Response
+     */
+    public function startAction(Request $request)
+    {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobStartRequest = $jobStartRequestFactory->create();
-        $jobConfiguration = $jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
+        $jobStartRequest = $this->jobStartRequestFactory->create($request);
+        $jobConfiguration = $this->jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
 
         try {
-            $job = $jobStartService->start($jobConfiguration);
+            $job = $this->jobStartService->start($jobConfiguration);
 
-            return $this->redirect($this->generateUrl('job_job_status', array(
-                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
-                'test_id' => $job->getId()
-            )));
+            return $this->redirect(
+                'job_job_status',
+                [
+                    'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+                    'test_id' => $job->getId()
+                ]
+            );
         } catch (JobStartServiceException $jobStartServiceException) {
             return $this->rejectAsUnroutableAndRedirect($jobConfiguration);
         } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
@@ -63,20 +127,21 @@ class StartController extends Controller
      *
      * @return RedirectResponse|Response
      */
-    public function retestAction(Request $request, $site_root_url, $test_id)
-    {
-        $jobService = $this->container->get(JobService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+    public function retestAction(
+        Request $request,
+        $site_root_url,
+        $test_id
+    ) {
+        $jobRepository = $this->entityManager->getRepository(Job::class);
 
         /* @var Job $job */
         $job = $jobRepository->find($test_id);
         if (is_null($job)) {
-            return Response::create('', 400);
+            throw new BadRequestHttpException();
         }
 
-        if (!$jobService->isFinished($job)) {
-            return Response::create('', 400);
+        if (!$this->jobService->isFinished($job)) {
+            throw new BadRequestHttpException();
         }
 
         $taskTypeNames = array();
@@ -96,7 +161,7 @@ class StartController extends Controller
         $request->request->set('test-type-options', $taskTypeOptionsArray);
         $request->attributes->set('site_root_url', $site_root_url);
 
-        return $this->startAction();
+        return $this->startAction($request);
     }
 
     /**
@@ -124,7 +189,7 @@ class StartController extends Controller
 
     /**
      * @param JobConfiguration $jobConfiguration
-     * @param $reason
+     * @param string $reason
      * @param AccountPlanConstraint|null $constraint
      *
      * @return RedirectResponse
@@ -134,19 +199,35 @@ class StartController extends Controller
         $reason,
         AccountPlanConstraint $constraint = null
     ) {
-        $jobService = $this->container->get(JobService::class);
-
-        $job = $jobService->create(
+        $job = $this->jobService->create(
             $jobConfiguration
         );
 
-        $jobService = $this->container->get(JobService::class);
+        $this->jobService->reject($job, $reason, $constraint);
 
-        $jobService->reject($job, $reason, $constraint);
+        return $this->redirect(
+            'job_job_status',
+            [
+                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+                'test_id' => $job->getId()
+            ]
+        );
+    }
 
-        return $this->redirect($this->generateUrl('job_job_status', array(
-            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
-            'test_id' => $job->getId()
-        )));
+    /**
+     * @param string  $routeName
+     * @param array $routeParameters
+     *
+     * @return RedirectResponse
+     */
+    private function redirect($routeName, $routeParameters = [])
+    {
+        $url = $this->router->generate(
+            $routeName,
+            $routeParameters,
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return new RedirectResponse($url);
     }
 }

@@ -2,46 +2,14 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job;
 
-use SimplyTestable\ApiBundle\Controller\Job\JobListController;
-use SimplyTestable\ApiBundle\Entity\User;
-use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @group Controller/Job/JobListController
+ */
 class JobListControllerTest extends AbstractBaseTestCase
 {
-    /**
-     * @var User[]
-     */
-    private $users;
-
-    /**
-     * @var JobListController
-     */
-    private $jobListController;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $userFactory = new UserFactory($this->container);
-        $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
-
-        $this->jobListController = new JobListController();
-        $this->jobListController->setContainer($this->container);
-
-        $this->requestStack = $this->container->get('request_stack');
-    }
-
     public function testCountActionGetRequest()
     {
         $requestUrl = $this->container->get('router')->generate('job_joblist_count');

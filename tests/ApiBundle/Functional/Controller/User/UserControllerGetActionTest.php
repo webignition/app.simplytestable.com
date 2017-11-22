@@ -3,11 +3,17 @@
 namespace Tests\ApiBundle\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
+/**
+ * @group Controller/UserController
+ */
 class UserControllerGetActionTest extends AbstractUserControllerTest
 {
     /**
@@ -90,7 +96,12 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
         $user = $this->users[$userName];
         $this->setUser($user);
 
-        $response = $this->userController->getAction();
+        $response = $this->userController->getAction(
+            $this->container->get(UserAccountPlanService::class),
+            $this->container->get(AccountPlanService::class),
+            $this->container->get(UserSummaryFactory::class),
+            $user
+        );
 
         $this->assertTrue($response->isSuccessful());
 

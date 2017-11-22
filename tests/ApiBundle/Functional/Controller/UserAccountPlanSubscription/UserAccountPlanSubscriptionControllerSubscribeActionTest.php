@@ -3,13 +3,14 @@
 namespace Tests\ApiBundle\Functional\Controller\UserAccountPlanSubscription;
 
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/UserAccountPlanSubscriptionController
+ */
 class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractUserAccountPlanSubscriptionControllerTest
 {
     public function testPostRequest()
@@ -42,63 +43,6 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
         $this->assertTrue($response->isSuccessful());
     }
 
-    public function testSubscribeActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->userAccountPlanSubscriptionController->subscribeAction('foo', 'bar');
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider subscribeActionClientFailureDataProvider
-     *
-     * @param string $userName
-     * @param string $emailCanonical
-     * @param string $planName
-     */
-    public function testSubscribeActionClientFailure($userName, $emailCanonical, $planName)
-    {
-        $userFactory = new UserFactory($this->container);
-        $users = $userFactory->createPublicAndPrivateUserSet();
-
-        $user = $users[$userName];
-        $this->setUser($user);
-
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction($emailCanonical, $planName);
-
-        $this->assertTrue($response->isClientError());
-    }
-
-    /**
-     * @return array
-     */
-    public function subscribeActionClientFailureDataProvider()
-    {
-        return [
-            'public user' => [
-                'userName' => 'public',
-                'emailCanonical' => 'foo@example.com',
-                'planName' => 'personal',
-            ],
-            'request email does not match user' => [
-                'userName' => 'private',
-                'emailCanonical' => 'foo@example.com',
-                'planName' => 'personal',
-            ],
-            'invalid plan' => [
-                'userName' => 'private',
-                'emailCanonical' => 'private@example.com',
-                'planName' => 'foo',
-            ],
-        ];
-    }
-
     public function testSubscribeActionInvalidStripeApiKey()
     {
         StripeApiFixtureFactory::set([
@@ -114,7 +58,11 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
         ]);
         $this->setUser($user);
 
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction($user->getEmail(), 'personal');
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
+            $user,
+            $user->getEmail(),
+            'personal'
+        );
 
         $this->assertTrue($response->isForbidden());
     }
@@ -134,7 +82,11 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
         ]);
         $this->setUser($user);
 
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction($user->getEmail(), 'personal');
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
+            $user,
+            $user->getEmail(),
+            'personal'
+        );
 
         $this->assertTrue($response->isClientError());
 
@@ -158,7 +110,11 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
         $user = $users['member1'];
         $this->setUser($user);
 
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction($user->getEmail(), 'personal');
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
+            $user,
+            $user->getEmail(),
+            'personal'
+        );
 
         $this->assertTrue($response->isClientError());
 
@@ -191,7 +147,11 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
 
         $planName = 'personal';
 
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction($user->getEmail(), $planName);
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
+            $user,
+            $user->getEmail(),
+            'personal'
+        );
 
         $this->assertTrue($response->isSuccessful());
 

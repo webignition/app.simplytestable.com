@@ -8,8 +8,6 @@ use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 abstract class AbstractUserEmailChangeControllerTest extends AbstractBaseTestCase
 {
@@ -35,8 +33,7 @@ abstract class AbstractUserEmailChangeControllerTest extends AbstractBaseTestCas
     {
         parent::setUp();
 
-        $this->userEmailChangeController = new UserEmailChangeController();
-        $this->userEmailChangeController->setContainer($this->container);
+        $this->userEmailChangeController = $this->container->get(UserEmailChangeController::class);
 
         $this->userFactory = new UserFactory($this->container);
         $this->user = $this->userFactory->createAndActivateUser([

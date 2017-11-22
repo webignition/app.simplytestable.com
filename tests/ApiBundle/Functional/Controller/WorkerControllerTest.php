@@ -5,16 +5,16 @@ namespace Tests\ApiBundle\Functional\Controller;
 use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/WorkerController
+ */
 class WorkerControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -29,8 +29,7 @@ class WorkerControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->workerController = new WorkerController();
-        $this->workerController->setContainer($this->container);
+        $this->workerController = $this->container->get(WorkerController::class);
     }
 
     public function testRequest()
@@ -59,63 +58,6 @@ class WorkerControllerTest extends AbstractBaseTestCase
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testActivateActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->workerController->activateAction(new Request());
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider activateActionBadRequestDataProvider
-     *
-     * @param string $hostname
-     * @param string $token
-     * @param string $expectedExceptionMessage
-     */
-    public function testActivateActionBadRequest($hostname, $token, $expectedExceptionMessage)
-    {
-        $request = new Request([], [
-            'hostname' => $hostname,
-            'token' => $token,
-        ]);
-
-        $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
-
-        $this->workerController->activateAction($request);
-    }
-
-    /**
-     * @return array
-     */
-    public function activateActionBadRequestDataProvider()
-    {
-        return [
-            'no hostname no token' => [
-                'hostname' => null,
-                'token' => null,
-                'expectedExceptionMessage' => '"hostname" missing',
-            ],
-            'has hostname no token' => [
-                'hostname' => 'foo.worker.simplytestable.com',
-                'token' => null,
-                'expectedExceptionMessage' => '"token" missing',
-            ],
-            'no hostname has token' => [
-                'hostname' => null,
-                'token' => 'abcdef',
-                'expectedExceptionMessage' => '"hostname" missing',
-            ],
-        ];
     }
 
     /**

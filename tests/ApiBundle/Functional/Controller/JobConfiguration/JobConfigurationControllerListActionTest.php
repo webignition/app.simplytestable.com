@@ -2,20 +2,16 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
-class JobConfigurationControllerListActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/JobConfiguration
+ */
+class JobConfigurationControllerListActionTest extends AbstractJobConfigurationControllerTest
 {
-    /**
-     * @var JobConfigurationController
-     */
-    private $jobConfigurationController;
-
     /**
      * @var JobConfiguration
      */
@@ -32,9 +28,6 @@ class JobConfigurationControllerListActionTest extends AbstractBaseTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->jobConfigurationController = new JobConfigurationController();
-        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();

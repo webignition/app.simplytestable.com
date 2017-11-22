@@ -2,15 +2,18 @@
 
 namespace Tests\ApiBundle\Factory;
 
+use Cron\CronBundle\Entity\CronJob;
 use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
+use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
@@ -71,15 +74,30 @@ class ModelFactory
     const JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE = 'job-ids-to-exclude';
     const JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE = 'job-ids-to-include';
     const JOB_LIST_REQUEST_USER = 'user';
+    const JOB_CONFIGURATION_USER = 'user';
+    const JOB_CONFIGURATION_WEBSITE = 'website';
+    const JOB_CONFIGURATION_LABEL = 'label';
+    const JOB_CONFIGURATION_PARAMETERS = 'parameters';
+    const JOB_CONFIGURATION_TYPE = 'type';
+    const JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION = 'task-configuration-collection';
+    const SCHEDULED_JOB_JOB_CONFIGURATION = 'job-configuration';
+    const SCHEDULED_JOB_SCHEDULE = 'schedule';
+    const SCHEDULED_JOB_ID = 'id';
+    const SCHEDULED_JOB_IS_RECURRING = 'is-recurring';
+    const SCHEDULED_JOB_SCHEDULE_MODIFIER = 'schedule-modifier';
 
     /**
      * @param array $userValues
      *
      * @return User
      */
-    public static function createUser($userValues)
+    public static function createUser($userValues = [])
     {
         $user = new User();
+
+        if (!isset($userValues[self::USER_EMAIL])) {
+            $userValues[self::USER_EMAIL] = 'user@example.com';
+        }
 
         $user->setEmail($userValues[self::USER_EMAIL]);
         $user->setEmailCanonical($userValues[self::USER_EMAIL]);
@@ -354,7 +372,7 @@ class ModelFactory
      *
      * @return Job
      */
-    public static function createJob($jobValues)
+    public static function createJob($jobValues = [])
     {
         $job = new Job();
 
@@ -366,10 +384,21 @@ class ModelFactory
             $reflectionProperty->setValue($job, $jobValues[self::JOB_ID]);
         }
 
-        $job->setUser($jobValues[self::JOB_USER]);
-        $job->setWebsite($jobValues[self::JOB_WEBSITE]);
-        $job->setState($jobValues[self::JOB_STATE]);
-        $job->setUrlCount($jobValues[self::JOB_URL_COUNT]);
+        if (isset($jobValues[self::JOB_USER])) {
+            $job->setUser($jobValues[self::JOB_USER]);
+        }
+
+        if (isset($jobValues[self::JOB_WEBSITE])) {
+            $job->setWebsite($jobValues[self::JOB_WEBSITE]);
+        }
+
+        if (isset($jobValues[self::JOB_STATE])) {
+            $job->setState($jobValues[self::JOB_STATE]);
+        }
+
+        if (isset($jobValues[self::JOB_URL_COUNT])) {
+            $job->setUrlCount($jobValues[self::JOB_URL_COUNT]);
+        }
 
         if (isset($jobValues[self::JOB_REQUESTED_TASK_TYPES])) {
             $requestedTaskTypes = $jobValues[self::JOB_REQUESTED_TASK_TYPES];
@@ -387,7 +416,9 @@ class ModelFactory
             }
         }
 
-        $job->setType($jobValues[self::JOB_TYPE]);
+        if (isset($jobValues[self::JOB_TYPE])) {
+            $job->setType($jobValues[self::JOB_TYPE]);
+        }
 
         if (isset($jobValues[self::JOB_TIME_PERIOD])) {
             $job->setTimePeriod($jobValues[self::JOB_TIME_PERIOD]);
@@ -450,5 +481,80 @@ class ModelFactory
         );
 
         return $jobListRequest;
+    }
+
+    /**
+     * @param array $jobConfigurationValues
+     *
+     * @return Configuration
+     */
+    public static function createJobConfiguration($jobConfigurationValues = [])
+    {
+        $jobConfiguration = new Configuration();
+
+        $jobConfiguration->setLabel($jobConfigurationValues[self::JOB_CONFIGURATION_LABEL]);
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_USER])) {
+            $jobConfiguration->setUser($jobConfigurationValues[self::JOB_CONFIGURATION_USER]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_WEBSITE])) {
+            $jobConfiguration->setWebsite($jobConfigurationValues[self::JOB_CONFIGURATION_WEBSITE]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_PARAMETERS])) {
+            $jobConfiguration->setParameters($jobConfigurationValues[self::JOB_CONFIGURATION_PARAMETERS]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_TYPE])) {
+            $jobConfiguration->setType($jobConfigurationValues[self::JOB_CONFIGURATION_TYPE]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION])) {
+            $taskConfigurationCollection = $jobConfigurationValues[
+                self::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION
+            ];
+
+            foreach ($taskConfigurationCollection as $taskConfiguration) {
+                $jobConfiguration->addTaskConfiguration($taskConfiguration);
+            }
+        }
+
+        return $jobConfiguration;
+    }
+
+    /**
+     * @param array $scheduledJobValues
+     *
+     * @return ScheduledJob
+     */
+    public static function createScheduledJob($scheduledJobValues = [])
+    {
+        $scheduledJob = new ScheduledJob();
+
+        if (isset($scheduledJobValues[self::SCHEDULED_JOB_ID])) {
+            $reflectionClass = new ReflectionClass(ScheduledJob::class);
+
+            $reflectionProperty = $reflectionClass->getProperty('id');
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($scheduledJob, $scheduledJobValues[self::SCHEDULED_JOB_ID]);
+        }
+
+        $scheduledJob->setJobConfiguration($scheduledJobValues[self::SCHEDULED_JOB_JOB_CONFIGURATION]);
+
+        if (isset($scheduledJobValues[self::SCHEDULED_JOB_IS_RECURRING])) {
+            $scheduledJob->setIsRecurring($scheduledJobValues[self::SCHEDULED_JOB_IS_RECURRING]);
+        }
+
+        $cronJob = new CronJob();
+        $cronJob->setSchedule($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE]);
+
+        $scheduledJob->setCronJob($cronJob);
+
+        if (isset($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE_MODIFIER])) {
+            $scheduledJob->setCronModifier($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE_MODIFIER]);
+        }
+
+        return $scheduledJob;
     }
 }

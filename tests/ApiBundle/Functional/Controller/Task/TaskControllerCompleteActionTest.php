@@ -2,11 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
-use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
@@ -16,22 +14,15 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Factory\InternetMediaTypeFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
 use Tests\ApiBundle\Factory\TaskTypeFactory;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\GoneHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class TaskControllerCompleteActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/TaskController
+ */
+class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
 {
-    /**
-     * @var TaskController
-     */
-    private $taskController;
-
     /**
      * @var JobFactory
      */
@@ -44,139 +35,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskController = new TaskController();
-        $this->taskController->setContainer($this->container);
-
         $this->jobFactory = new JobFactory($this->container);
-    }
-
-    public function testCompleteActionInReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        $this->container->get('request_stack')->push(new Request());
-
-        try {
-            $this->taskController->completeAction();
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider completeActionInvalidRequestDataProvider
-     *
-     * @param array $postData
-     * @param array $routeParams
-     */
-    public function testCompleteActionInvalidRequest($postData, $routeParams)
-    {
-        $this->expectException(BadRequestHttpException::class);
-
-        $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->get('request_stack')->push($request);
-
-        $this->taskController->completeAction();
-    }
-
-    /**
-     * @return array
-     */
-    public function completeActionInvalidRequestDataProvider()
-    {
-        $htmlValidationTaskType = TaskTypeFactory::create('html validation');
-
-        return [
-            'no post data' => [
-                'postData' => [],
-                'routeParams' => [
-                    CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
-                    CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider completeActionNoMatchingTasksDataProvider
-     *
-     * @param array $postData
-     * @param array $routeParams
-     */
-    public function testCompleteActionNoMatchingTasks($postData, $routeParams)
-    {
-        $stateService = $this->container->get(StateService::class);
-        $userService = $this->container->get(UserService::class);
-
-        $this->expectException(GoneHttpException::class);
-
-        $job = $this->jobFactory->createResolveAndPrepare([
-            'type' => JobTypeService::FULL_SITE_NAME,
-            'siteRootUrl' => 'http://example.com',
-            'testTypes' => ['html validation',],
-            'testTypeOptions' => [],
-            'parameters' => [],
-            'user' => $userService->getPublicUser()
-        ]);
-
-        $this->setJobTaskStates(
-            $job,
-            $stateService->get(TaskService::IN_PROGRESS_STATE)
-        );
-
-        $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->get('request_stack')->push($request);
-
-        $this->taskController->completeAction();
-    }
-
-    /**
-     * @return array
-     */
-    public function completeActionNoMatchingTasksDataProvider()
-    {
-        $htmlValidationTaskType = TaskTypeFactory::create('html validation');
-        $applicationJsonContentType = InternetMediaTypeFactory::create('application', 'json');
-        $now = new \DateTime();
-
-        return [
-            'invalid task type' => [
-                'postData' => [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
-                    CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
-                ],
-                'routeParams' => [
-                    CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'foo',
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
-                    CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
-                ],
-            ],
-            'incorrect parameter hash, no matching tasks' => [
-                'postData' => [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
-                    CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
-                ],
-                'routeParams' => [
-                    CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
-                    CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
-                ],
-            ],
-            'incorrect canonical url, no matching tasks' => [
-                'postData' => [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
-                    CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
-                ],
-                'routeParams' => [
-                    CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
-                    CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd751713988987e9331980363e24189ce',
-                ],
-            ],
-        ];
     }
 
     /**
@@ -221,7 +80,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
         $this->container->get('request_stack')->push($request);
 
-        $response = $this->taskController->completeAction();
+        $response = $this->callCompleteAction();
 
         $this->assertTrue($response->isSuccessful());
 
