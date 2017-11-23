@@ -15,6 +15,7 @@ use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
@@ -23,6 +24,7 @@ use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -38,6 +40,7 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\UrlFinder;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
@@ -1096,5 +1099,38 @@ class MockFactory
         $workerTaskCancellationService = \Mockery::mock(WorkerTaskCancellationService::class);
 
         return $workerTaskCancellationService;
+    }
+
+    /**
+     * @return Mock|JobUserAccountPlanEnforcementService
+     */
+    public static function createJobUserAccountPlanEnforcementService()
+    {
+        /* @var Mock|JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService */
+        $jobUserAccountPlanEnforcementService = \Mockery::mock(JobUserAccountPlanEnforcementService::class);
+
+        return $jobUserAccountPlanEnforcementService;
+    }
+
+    /**
+     * @return Mock|UrlFinder
+     */
+    public static function createUrlFinder()
+    {
+        /* @var Mock|UrlFinder $urlFinder */
+        $urlFinder = \Mockery::mock(UrlFinder::class);
+
+        return $urlFinder;
+    }
+
+    /**
+     * @return Mock|CrawlJobUrlCollector
+     */
+    public static function createCrawlJobUrlCollector()
+    {
+        /* @var Mock|CrawlJobUrlCollector $crawlJobUrlCollector */
+        $crawlJobUrlCollector = \Mockery::mock(CrawlJobUrlCollector::class);
+
+        return $crawlJobUrlCollector;
     }
 }

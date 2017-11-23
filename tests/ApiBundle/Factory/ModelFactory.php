@@ -6,6 +6,7 @@ use Cron\CronBundle\Entity\CronJob;
 use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -85,6 +86,8 @@ class ModelFactory
     const SCHEDULED_JOB_ID = 'id';
     const SCHEDULED_JOB_IS_RECURRING = 'is-recurring';
     const SCHEDULED_JOB_SCHEDULE_MODIFIER = 'schedule-modifier';
+    const CRAWL_JOB_CONTAINER_PARENT_JOB = 'parent-job';
+    const CRAWL_JOB_CONTAINER_CRAWL_JOB = 'crawl-job';
 
     /**
      * @param array $userValues
@@ -556,5 +559,21 @@ class ModelFactory
         }
 
         return $scheduledJob;
+    }
+
+    /**
+     * @param array $crawlJobContainerValues
+     *
+     * @return CrawlJobContainer
+     */
+    public static function createCrawlJobContainer($crawlJobContainerValues = [])
+    {
+        $crawlJobContainer = new CrawlJobContainer();
+
+        if (isset($crawlJobContainerValues[self::CRAWL_JOB_CONTAINER_PARENT_JOB])) {
+            $crawlJobContainer->setParentJob($crawlJobContainerValues[self::CRAWL_JOB_CONTAINER_PARENT_JOB]);
+        }
+
+        return $crawlJobContainer;
     }
 }
