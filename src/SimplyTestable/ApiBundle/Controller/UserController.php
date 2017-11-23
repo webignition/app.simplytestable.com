@@ -16,6 +16,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserController
 {
     /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+    /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param AccountPlanService $accountPlanService
      * @param UserSummaryFactory $userSummaryFactory
@@ -51,36 +64,30 @@ class UserController
     }
 
     /**
-     * @param UserService $userService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function getTokenAction(
-        UserService $userService,
-        $email_canonical
-    ) {
-        $user = $userService->findUserByEmail($email_canonical);
+    public function getTokenAction($email_canonical)
+    {
+        $user = $this->userService->findUserByEmail($email_canonical);
         if (empty($user)) {
             throw new NotFoundHttpException();
         }
 
-        $token = $userService->getConfirmationToken($user);
+        $token = $this->userService->getConfirmationToken($user);
 
         return new JsonResponse($token);
     }
 
     /**
-     * @param UserService $userService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function isEnabledAction(
-        UserService $userService,
-        $email_canonical
-    ) {
-        $user = $userService->findUserByEmail($email_canonical);
+    public function isEnabledAction($email_canonical)
+    {
+        $user = $this->userService->findUserByEmail($email_canonical);
 
         if (is_null($user)) {
             throw new NotFoundHttpException();
@@ -94,16 +101,13 @@ class UserController
     }
 
     /**
-     * @param UserService $userService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function existsAction(
-        UserService $userService,
-        $email_canonical
-    ) {
-        if ($userService->exists($email_canonical)) {
+    public function existsAction($email_canonical)
+    {
+        if ($this->userService->exists($email_canonical)) {
             return new Response('', 200);
         }
 
@@ -111,18 +115,14 @@ class UserController
     }
 
     /**
-     * @param UserService $userService
      * @param InviteService $teamInviteService
      * @param string $email_canonical
      *
      * @return Response
      */
-    public function hasInvitesAction(
-        UserService $userService,
-        InviteService $teamInviteService,
-        $email_canonical
-    ) {
-        $user = $userService->findUserByEmail($email_canonical);
+    public function hasInvitesAction(InviteService $teamInviteService, $email_canonical)
+    {
+        $user = $this->userService->findUserByEmail($email_canonical);
 
         if (empty($user)) {
             throw new NotFoundHttpException(404);
