@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Services\Request\Factory\Task;
+namespace Tests\ApiBundle\Unit\Services\Request\Factory\Task;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Mock;
@@ -80,7 +80,9 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $completedState = StateFactory::create(TaskService::COMPLETED_STATE);
         $htmlValidationTaskType = TaskTypeFactory::create('html validation');
         $applicationJsonContentType = InternetMediaTypeFactory::create('application', 'json');
-        $now = new \DateTime();
+
+        $endDateTime = new \DateTime('2017-11-23T14:02:01+00:00');
+
         $tasks = [
             $this->createTask(),
             $this->createTask(),
@@ -116,7 +118,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ],
             'no tasks, valid' => [
                 'request' => new Request([], [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
+                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $endDateTime->format('c'),
                     CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
                 ], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
@@ -136,7 +138,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
                     'parameterHash' => 'f4aa3479641e8bb1e2744857a3b687a5',
                 ]),
                 'expectedIsValid' => true,
-                'expectedEndDateTime' => $now,
+                'expectedEndDateTime' => $endDateTime,
                 'expectedOutput' => '',
                 'expectedContentType' => $applicationJsonContentType,
                 'expectedState' => $completedState,
@@ -146,7 +148,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ],
             'invalid task type, valid' => [
                 'request' => new Request([], [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
+                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $endDateTime->format('c'),
                     CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
                 ], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
@@ -166,7 +168,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
                     'parameterHash' => 'f4aa3479641e8bb1e2744857a3b687a5',
                 ]),
                 'expectedIsValid' => true,
-                'expectedEndDateTime' => $now,
+                'expectedEndDateTime' => $endDateTime,
                 'expectedOutput' => '',
                 'expectedContentType' => $applicationJsonContentType,
                 'expectedState' => $completedState,
@@ -176,7 +178,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ],
             'valid' => [
                 'request' => new Request([], [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
+                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $endDateTime->format('c'),
                     CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
                 ], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
@@ -196,7 +198,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
                     'parameterHash' => 'f4aa3479641e8bb1e2744857a3b687a5',
                 ]),
                 'expectedIsValid' => true,
-                'expectedEndDateTime' => $now,
+                'expectedEndDateTime' => $endDateTime,
                 'expectedOutput' => '',
                 'expectedContentType' => $applicationJsonContentType,
                 'expectedState' => $completedState,
