@@ -135,7 +135,7 @@ user_get_token:
 
 user_reset_password:
   path: /user/reset-password/{token}/
-  defaults: { _controller: SimplyTestableApiBundle:UserPasswordReset:resetPassword, _format: json }
+  defaults: { _controller: SimplyTestableApiBundle:User:resetPassword, _format: json }
 
 user_exists:
   path: /user/{email_canonical}/exists/

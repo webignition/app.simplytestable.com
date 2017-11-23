@@ -1,34 +1,21 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Controller;
+namespace Tests\ApiBundle\Functional\Controller\User;
 
-use SimplyTestable\ApiBundle\Controller\UserPasswordResetController;
-use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Tests\ApiBundle\Factory\UserFactory;
 
 /**
- * @group Controller/UserPasswordResetController
+ * @group Controller/UserController
  */
-class UserPasswordResetControllerTest extends AbstractBaseTestCase
+class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
 {
-    /**
-     * @var UserPasswordResetController
-     */
-    private $userPasswordResetController;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->userPasswordResetController = $this->container->get(UserPasswordResetController::class);
-    }
-
-    public function testRequest()
+    public function testResetPasswordActionPostRequest()
     {
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
@@ -57,12 +44,10 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
 
-        $request = new Request();
-
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('"password" missing');
 
-        $this->userPasswordResetController->resetPasswordAction($request, $user->getConfirmationToken());
+        $this->callResetPasswordAction(new Request(), $user);
     }
 
     /**
@@ -90,7 +75,7 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
             'password' => 'new password',
         ]);
 
-        $response = $this->userPasswordResetController->resetPasswordAction($request, $user->getConfirmationToken());
+        $response = $this->callResetPasswordAction($request, $user);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals($expectedIsEnabledAfter, $user->isEnabled());
@@ -116,4 +101,19 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
         ];
     }
 
+    /**
+     * @param Request $request
+     * @param User $user
+     *
+     * @return Response
+     */
+    private function callResetPasswordAction(Request $request, User $user)
+    {
+        return $this->userController->resetPasswordAction(
+            $this->container->get(ApplicationStateService::class),
+            $this->container->get('fos_user.util.user_manipulator'),
+            $request,
+            $user->getConfirmationToken()
+        );
+    }
 }
