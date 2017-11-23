@@ -5,7 +5,9 @@ namespace Tests\ApiBundle\Unit\Controller;
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\UserService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Tests\ApiBundle\Factory\MockFactory;
 
 /**
@@ -220,12 +222,47 @@ class UserControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($response->isSuccessful());
     }
 
+    public function testResetPasswordActionInMaintenanceReadOnlyMode()
+    {
+        $userController = $this->createUserController();
+
+        $this->expectException(ServiceUnavailableHttpException::class);
+
+        $userController->resetPasswordAction(
+            MockFactory::createApplicationStateService(true),
+            MockFactory::createUserManipulator(),
+            new Request(),
+            'token'
+        );
+    }
+
+    public function testResetPasswordActionInvalidUser()
+    {
+        $userController = $this->createUserController([
+            UserService::class => MockFactory::createUserService([
+                'findUserByConfirmationToken' => [
+                    'with' => 'token',
+                    'return' => null,
+                ],
+            ]),
+        ]);
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $userController->resetPasswordAction(
+            MockFactory::createApplicationStateService(),
+            MockFactory::createUserManipulator(),
+            new Request(),
+            'token'
+        );
+    }
+
     /**
      * @param array $services
      *
      * @return UserController
      */
-    protected function createUserController($services)
+    protected function createUserController($services = [])
     {
         if (!isset($services[UserService::class])) {
             $services[UserService::class] = MockFactory::createUserService();

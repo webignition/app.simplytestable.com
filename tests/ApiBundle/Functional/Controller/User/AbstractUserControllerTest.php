@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 abstract class AbstractUserControllerTest extends AbstractBaseTestCase
@@ -19,7 +20,9 @@ abstract class AbstractUserControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userController = new UserController();
+        $this->userController = new UserController(
+            $this->container->get(UserService::class)
+        );
     }
 
     /**
