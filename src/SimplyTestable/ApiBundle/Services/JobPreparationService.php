@@ -142,7 +142,6 @@ class JobPreparationService
             );
         }
 
-
         $user = $job->getUser();
 
         $jobPreparingState = $this->stateService->get(JobService::PREPARING_STATE);
@@ -210,7 +209,7 @@ class JobPreparationService
      */
     public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer)
     {
-        $this->processedUrls = array();
+        $this->processedUrls = [];
         $job = $crawlJobContainer->getParentJob();
 
         if (JobService::FAILED_NO_SITEMAP_STATE !== $job->getState()->getName()) {
@@ -283,7 +282,7 @@ class JobPreparationService
 
                     $job->addTask($task);
 
-                    $parameters = array();
+                    $parameters = [];
 
                     if ($taskTypeOptions->getOptionCount()) {
                         $parameters = $taskTypeOptions->getOptions();

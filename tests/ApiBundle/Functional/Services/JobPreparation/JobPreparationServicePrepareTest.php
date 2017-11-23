@@ -1,23 +1,20 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Services;
+namespace Tests\ApiBundle\Functional\Services\JobPreparation;
 
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
-use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 
-class JobPreparationServiceTest extends AbstractBaseTestCase
+/**
+ * @group Services/JobPreparationService
+ */
+class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
 {
     /**
      * @var array
@@ -27,42 +24,6 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
         'name' => 'cookie-name',
         'value' => 'cookie-value',
     ];
-
-    /**
-     * @var JobPreparationService
-     */
-    private $jobPreparationService;
-
-    /**
-     * @var JobFactory
-     */
-    private $jobFactory;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->jobPreparationService = $this->container->get(JobPreparationService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $cssValidationTaskType = $taskTypeService->getCssValidationTaskType();
-
-        $this->jobPreparationService->setPredefinedDomainsToIgnore($cssValidationTaskType, [
-            'predefined',
-        ]);
-
-        $this->jobFactory = new JobFactory($this->container);
-    }
-
-    public function testJobInWrongState()
-    {
-        $this->expectException(JobPreparationException::class);
-
-        $job = $this->jobFactory->create();
-        $this->jobPreparationService->prepare($job);
-    }
 
     /**
      * @dataProvider prepareDataProvider
@@ -86,12 +47,10 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
     ) {
         $this->queueHttpFixtures($httpFixtures);
 
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $userFactory = new UserFactory($this->container);
-        $users = $userFactory->createPublicAndPrivateUserSet();
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
         $jobValues['user'] = $users[$user];
 
         $job = $this->jobFactory->create($jobValues);
@@ -105,10 +64,10 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
         $this->jobPreparationService->prepare($job);
 
         $this->assertEquals($expectedJobState, (string)$job->getState());
-        $this->assertEquals($expectedHasCrawlJobContainer, $crawlJobContainerService->hasForJob($job));
+        $this->assertEquals($expectedHasCrawlJobContainer, $this->crawlJobContainerService->hasForJob($job));
 
         if ($expectedHasCrawlJobContainer) {
-            $crawlJob = $crawlJobContainerService->getForJob($job)->getCrawlJob();
+            $crawlJob = $this->crawlJobContainerService->getForJob($job)->getCrawlJob();
             $this->assertEquals($job->getParametersArray(), $crawlJob->getParametersArray());
         }
 
