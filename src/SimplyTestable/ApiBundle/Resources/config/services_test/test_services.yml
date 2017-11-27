@@ -1,9 +1,4 @@
 # Test-specific services that extend regular services to allow functionality to be mocked/controlled during tests
 services:
-  SimplyTestable\ApiBundle\Services\HttpClientService:
-    class:  SimplyTestable\ApiBundle\Services\TestHttpClientService
-    arguments:
-        $curlOptions: '%curl_options%'
-
   SimplyTestable\ApiBundle\Services\Postmark\Sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\TestSender
