@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "44aa6a7a3c1e7f2b4e5f201734bb4d44",
+    "content-hash": "0fac2f2728a76e70562abb6b6682aaed",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -1604,6 +1604,59 @@
                 "web service"
             ],
             "time": "2015-01-28T01:03:29+00:00"
+        },
+        {
+            "name": "guzzlehttp/retry-subscriber",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/retry-subscriber.git",
+                "reference": "f13a4c640b823e9eaf06975d8e8981f9551250e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/retry-subscriber/zipball/f13a4c640b823e9eaf06975d8e8981f9551250e8",
+                "reference": "f13a4c640b823e9eaf06975d8e8981f9551250e8",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~5.1",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "guzzlehttp/log-subscriber": "~1.0",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Subscriber\\Retry\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Retries failed HTTP requests using customizable retry strategies (Guzzle 4+)",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "http",
+                "retry"
+            ],
+            "time": "2014-12-19T20:42:37+00:00"
         },
         {
             "name": "guzzlehttp/ringphp",
