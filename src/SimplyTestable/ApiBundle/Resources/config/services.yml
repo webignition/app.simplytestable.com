@@ -10,10 +10,18 @@ services:
   FOS\UserBundle\Util\TokenGeneratorInterface:
     alias: fos_user.util.token_generator
 
+  simplytestable.services.webresourceserviceconfiguration:
+    class:  webignition\WebResource\Service\Configuration
+    arguments:
+        $configurationValues:
+          allow-unknown-resource-types: false
+          retry-with-url-encoding-disabled: true
+          content-type-web-resource-map: '%content_type_web_resource_map%'
+
   simplytestable.services.webresourceservice:
     class:  webignition\WebResource\Service\Service
     calls:
-      - [createConfiguration, [{allow-uknown-resource-types: 'true', retry-with-url-encoding-disabled: 'true', content-type-web-resource-map: '%content_type_web_resource_map%' }]]
+      - [setConfiguration, ['@simplytestable.services.webresourceserviceconfiguration']]
 
   simplytestable.services.sitemapfactory:
     class:  webignition\WebResource\Sitemap\Factory
