@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cfcff5519981a2a5f68c4a669789b410",
+    "content-hash": "44aa6a7a3c1e7f2b4e5f201734bb4d44",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -1707,6 +1707,50 @@
             "time": "2014-10-12T19:18:40+00:00"
         },
         {
+            "name": "hobnob/xml-stream-reader",
+            "version": "v1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hobnob/xmlStreamReader.git",
+                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
+                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hobnob\\XmlStreamReader": "/classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David North",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP SAX XML Stream Reader",
+            "homepage": "https://github.com/hobnob/xmlStreamReader",
+            "keywords": [
+                "stream",
+                "xml"
+            ],
+            "time": "2015-03-10T15:52:44+00:00"
+        },
+        {
             "name": "incenteev/composer-parameter-handler",
             "version": "v2.1.2",
             "source": {
@@ -2713,6 +2757,66 @@
             ],
             "description": "A security checker for your composer.lock",
             "time": "2017-10-29T18:48:08+00:00"
+        },
+        {
+            "name": "simplepie/simplepie",
+            "version": "1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simplepie/simplepie.git",
+                "reference": "5de5551953f95feef12cf355a7a26a70f94aa3ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/5de5551953f95feef12cf355a7a26a70f94aa3ab",
+                "reference": "5de5551953f95feef12cf355a7a26a70f94aa3ab",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4 || ~5"
+            },
+            "suggest": {
+                "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SimplePie": "library"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Parman",
+                    "homepage": "http://ryanparman.com/",
+                    "role": "Creator, alumnus developer"
+                },
+                {
+                    "name": "Geoffrey Sneddon",
+                    "homepage": "http://gsnedders.com/",
+                    "role": "Alumnus developer"
+                },
+                {
+                    "name": "Ryan McCue",
+                    "email": "me@ryanmccue.info",
+                    "homepage": "http://ryanmccue.info/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple Atom/RSS parsing library for PHP",
+            "homepage": "http://simplepie.org/",
+            "keywords": [
+                "atom",
+                "feeds",
+                "rss"
+            ],
+            "time": "2017-04-17T07:29:31+00:00"
         },
         {
             "name": "stephenfarrell/postmark-bundle",
@@ -3998,6 +4102,55 @@
                 "robots.txt"
             ],
             "time": "2017-05-09T16:52:05+00:00"
+        },
+        {
+            "name": "webignition/sitemap-model",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/sitemap-model.git",
+                "reference": "b932072f3a1b69175b3d697bfadee36aca55582c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/b932072f3a1b69175b3d697bfadee36aca55582c",
+                "reference": "b932072f3a1b69175b3d697bfadee36aca55582c",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": ">=5.2.0,<5.3",
+                "hobnob/xml-stream-reader": "1.0.8",
+                "php": ">=5.4.0",
+                "simplepie/simplepie": "1.5",
+                "webignition/url": ">=0.1,<2.0",
+                "webignition/web-resource-model": "1.2.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\WebResource\\Sitemap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Models a website sitemap",
+            "homepage": "https://github.com/webignition/sitemap-model",
+            "keywords": [
+                "Sitemap"
+            ],
+            "time": "2017-11-23T18:16:27+00:00"
         },
         {
             "name": "webignition/string-parser",
