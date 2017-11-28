@@ -61,18 +61,12 @@ class UrlFinderTest extends AbstractBaseTestCase
 
         $this->assertEquals($expectedUrlSet, $urls);
 
-        $requestUserAgents = [];
         $requestPropertiesCollection = [];
 
         foreach ($httpClientService->getHistory() as $httpTransaction) {
             /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-//            var_dump($request->getHeader('cookie'));
-//            var_dump($request->getHeader('authorization'));
-//            var_dump($request->getHeader('user-agent'));
-
-            $requestUserAgents[] = $request->getHeader('user-agent');
             $requestProperties = [];
 
             foreach (['user-agent', 'cookie', 'authorization'] as $headerKey) {
@@ -83,9 +77,6 @@ class UrlFinderTest extends AbstractBaseTestCase
         }
 
         $this->assertEquals($expectedRequestPropertiesCollection, $requestPropertiesCollection);
-//        exit();
-
-//        var_dump($requestUserAgents);
     }
 
     /**

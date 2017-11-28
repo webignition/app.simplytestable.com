@@ -22,6 +22,18 @@ services:
     calls:
       - [setConfiguration, ['@webignition\WebResource\Service\Configuration']]
 
+  webignition\Url\Resolver\Configuration:
+    arguments:
+      $configurationValues:
+        follow-meta-redirects: true
+        retry-with-url-encoding-disabled: true
+        http-client: '@=service("SimplyTestable\\ApiBundle\\Services\\HttpClientService").get()'
+        timeout-ms: 10000
+
+  webignition\Url\Resolver\Resolver:
+    arguments:
+      $configuration: '@webignition\Url\Resolver\Configuration'
+
   simplytestable.services.sitemapfactory:
     class:  webignition\WebResource\Sitemap\Factory
 
@@ -74,6 +86,6 @@ services:
       $jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
       $websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
-      $urlResolver: '@SimplyTestable\ApiBundle\Services\UrlResolver'
+      $urlResolver: '@webignition\Url\Resolver\Resolver'
       $stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       $entityManager: '@doctrine.orm.entity_manager'

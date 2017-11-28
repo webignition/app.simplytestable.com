@@ -34,7 +34,7 @@
         "stripe/stripe-php": "2.1.0",
         "webignition/html-validation-error-normaliser":"dev-master",
         "webignition/html-document-link-finder":">=0.7,<1.0",
-        "webignition/url-resolver":">=1.0,<2",
+        "webignition/url-resolver":">=1.1,<2",
         "webignition/php-stripe-models":">=0.2.5,<1.0",
         "webignition/cookie-url-matcher":">=0.1,<1",
         "egulias/email-validator":"1.1.1",
@@ -47,7 +47,8 @@
         "webignition/web-page-model": ">=1.0.6,<2",
         "cron/cron-bundle": "1.2.0",
         "webignition/sitemap-model":"1.2",
-        "guzzlehttp/retry-subscriber":">=2.0.2,<3"
+        "guzzlehttp/retry-subscriber":">=2.0.2,<3",
+        "webignition/guzzle-curl-exception":">=0.1.2,<1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
