@@ -14,12 +14,13 @@ use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Subscriber\Cookie as HttpCookieSubscriber;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber as HttpRetrySubscriber;
 use GuzzleHttp\Subscriber\History as HttpHistorySubscriber;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class HttpClientService
 {
-//    const PARAMETER_KEY_COOKIES = 'cookies';
-//    const PARAMETER_KEY_HTTP_AUTH_USERNAME = 'http-auth-username';
-//    const PARAMETER_KEY_HTTP_AUTH_PASSWORD = 'http-auth-password';
+    const PARAMETER_KEY_COOKIES = 'cookies';
+    const PARAMETER_KEY_HTTP_AUTH_USERNAME = 'http-auth-username';
+    const PARAMETER_KEY_HTTP_AUTH_PASSWORD = 'http-auth-password';
 
     /**
      * @var HttpClient
@@ -221,6 +222,40 @@ class HttpClientService
             'auth',
             null
         );
+    }
+
+    /**
+     * @param array $parameters
+     */
+    public function setCookiesFromParameters($parameters)
+    {
+        $this->clearCookies();
+
+        $parameterBag = new ParameterBag($parameters);
+
+        if ($parameterBag->has(self::PARAMETER_KEY_COOKIES)) {
+            $this->setCookies($parameterBag->get(self::PARAMETER_KEY_COOKIES));
+        }
+    }
+
+    /**
+     * @param array $parameters
+     */
+    public function setBasicHttpAuthenticationFromParameters($parameters)
+    {
+        $this->clearBasicHttpAuthorization();
+
+        $parameterBag = new ParameterBag($parameters);
+
+        $hasHttpAuthUserNameParameter = $parameterBag->has(self::PARAMETER_KEY_HTTP_AUTH_USERNAME);
+        $hasHttpAuthPasswordParameter = $parameterBag->has(self::PARAMETER_KEY_HTTP_AUTH_PASSWORD);
+
+        if ($hasHttpAuthUserNameParameter || $hasHttpAuthPasswordParameter) {
+            $this->setBasicHttpAuthorization(
+                $parameterBag->get(self::PARAMETER_KEY_HTTP_AUTH_USERNAME),
+                $parameterBag->get(self::PARAMETER_KEY_HTTP_AUTH_PASSWORD)
+            );
+        }
     }
 
 

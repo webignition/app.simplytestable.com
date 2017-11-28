@@ -284,6 +284,59 @@ class HttpClientServiceTest extends AbstractBaseTestCase
         $this->assertFalse($request->hasHeader('authorization'));
     }
 
+    public function testSetCookiesFromParameters()
+    {
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
+
+        $parameters = [
+            HttpClientService::PARAMETER_KEY_COOKIES => [
+                [
+                    'Name' => 'foo',
+                    'Value' => 'bar',
+                    'Domain' => '.example.com',
+                ],
+            ],
+        ];
+
+        $this->httpClientService->setCookiesFromParameters($parameters);
+
+        $httpClient = $this->httpClientService->get();
+        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
+
+        $request = $this->httpClientService->getHistory()->getLastRequest();
+
+        $this->assertEquals(
+            'foo=bar',
+            $request->getHeader('cookie')
+        );
+    }
+
+    public function testSetBasicHttpAuthenticationFromParameters()
+    {
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
+
+        $parameters = [
+            HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
+            HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
+        ];
+
+        $this->httpClientService->setBasicHttpAuthenticationFromParameters($parameters);
+
+        $httpClient = $this->httpClientService->get();
+        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
+
+        $request = $this->httpClientService->getHistory()->getLastRequest();
+
+        $this->assertEquals(
+            'Basic dXNlcjpwYXNzd29yZA==',
+            $request->getHeader('authorization')
+        );
+    }
+
     /**
      * @param string $eventName
      * @param string $className
