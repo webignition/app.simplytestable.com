@@ -2,11 +2,12 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Exception\CurlException;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
 class WorkerActivationRequestService
 {
@@ -73,21 +74,25 @@ class WorkerActivationRequestService
             'http://' . $activationRequest->getWorker()->getHostname() . '/verify/'
         );
 
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
-            'hostname' => $activationRequest->getWorker()->getHostname(),
-            'token' => $activationRequest->getToken()
-        ));
+        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
+            'body' => [
+                'hostname' => $activationRequest->getWorker()->getHostname(),
+                'token' => $activationRequest->getToken()
+            ],
+        ]);
 
         $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $requestUrl);
 
         try {
-            $response = $httpRequest->send();
-        } catch (CurlException $curlException) {
+            $response = $this->httpClientService->get()->send($httpRequest);
+        } catch (ConnectException $connectException) {
+            $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
+
             $this->logger->info(sprintf(
                 'WorkerActivationRequestService::verify %s: %s %s',
                 $requestUrl,
-                $curlException->getErrorNo(),
-                $curlException->getError()
+                $curlException->getCurlCode(),
+                $curlException->getMessage()
             ));
 
             return false;
