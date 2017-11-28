@@ -10,8 +10,7 @@ services:
   FOS\UserBundle\Util\TokenGeneratorInterface:
     alias: fos_user.util.token_generator
 
-  simplytestable.services.webresourceserviceconfiguration:
-    class:  webignition\WebResource\Service\Configuration
+  webignition\WebResource\Service\Configuration:
     arguments:
         $configurationValues:
           allow-unknown-resource-types: true
@@ -21,7 +20,7 @@ services:
   simplytestable.services.webresourceservice:
     class:  webignition\WebResource\Service\Service
     calls:
-      - [setConfiguration, ['@simplytestable.services.webresourceserviceconfiguration']]
+      - [setConfiguration, ['@webignition\WebResource\Service\Configuration']]
 
   simplytestable.services.sitemapfactory:
     class:  webignition\WebResource\Sitemap\Factory

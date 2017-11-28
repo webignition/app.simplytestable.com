@@ -39,9 +39,7 @@ class UrlFinderTest extends AbstractBaseTestCase
         $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
         $httpClientService = $this->container->get(HttpClientService::class);
 
-        $webResourceServiceConfiguration = $this->container->get(
-            'simplytestable.services.webresourceserviceconfiguration'
-        );
+        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
 
         $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
             WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
