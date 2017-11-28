@@ -11,7 +11,7 @@ use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
@@ -28,7 +28,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = $this->container->get(UserService::class);
 
         $this->queueHttpFixtures([
-            CurlExceptionFactory::create('Operation timed out', 28),
+            ConnectExceptionFactory::create('CURL/28 Operation timed out'),
         ]);
 
         $user = $userService->getPublicUser();

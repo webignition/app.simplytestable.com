@@ -88,10 +88,12 @@ abstract class AbstractListener
             return false;
         }
 
-        $request = $this->httpClientService->postRequest($subscriberUrl, [], $data);
-
         try {
-            $request->send();
+            $request = $this->httpClientService->postRequest($subscriberUrl, [
+                'body' => $data,
+            ]);
+
+            $this->httpClientService->get()->send($request);
             return true;
         } catch (\Exception $e) {
             return false;
