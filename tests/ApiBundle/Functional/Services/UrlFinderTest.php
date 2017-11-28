@@ -11,6 +11,7 @@ use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\RssFeedFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
 
 class UrlFinderTest extends AbstractBaseTestCase
 {
@@ -33,7 +34,16 @@ class UrlFinderTest extends AbstractBaseTestCase
         $this->queueHttpFixtures($httpFixtures);
 
         $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
-        $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
+
+        $webResourceServiceConfiguration = $this->container->get(
+            'simplytestable.services.webresourceserviceconfiguration'
+        );
+
+        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
+            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
+        ]);
+
+        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
 
         $websiteService = $this->container->get(WebSiteService::class);
         $website = $websiteService->get($websiteUrl);
