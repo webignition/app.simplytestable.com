@@ -47,6 +47,11 @@ class UrlFinder
     private $sitemapRetrieverTotalTransferTime;
 
     /**
+     * @var WebsiteRssFeedFinder
+     */
+    private $websiteRssFeedFinder;
+
+    /**
      * @param HttpClientService $httpClientService
      * @param WebResourceService $webResourceService
      * @param SitemapFactory $sitemapFactory
@@ -277,7 +282,7 @@ class UrlFinder
         $this->httpClientService->setCookiesFromParameters($parameters);
         $this->httpClientService->setBasicHttpAuthenticationFromParameters($parameters);
 
-        $feedFinder = $this->createWebsiteRssFeedFinder($website);
+        $feedFinder = $this->getWebsiteRssFeedFinder($website);
         $feedUrls = $feedFinder->getRssFeedUrls();
 
         $this->httpClientService->resetUserAgent();
@@ -303,7 +308,7 @@ class UrlFinder
         $this->httpClientService->setCookiesFromParameters($parameters);
         $this->httpClientService->setBasicHttpAuthenticationFromParameters($parameters);
 
-        $feedFinder = $this->createWebsiteRssFeedFinder($website);
+        $feedFinder = $this->getWebsiteRssFeedFinder($website);
         $feedUrls = $feedFinder->getAtomFeedUrls();
 
         $this->httpClientService->resetUserAgent();
@@ -343,12 +348,16 @@ class UrlFinder
      *
      * @return WebsiteRssFeedFinder
      */
-    private function createWebsiteRssFeedFinder(Website $website)
+    private function getWebsiteRssFeedFinder(Website $website)
     {
-        $feedFinderConfiguration = new WebsiteRssFeedFinderConfiguration();
-        $feedFinderConfiguration->setHttpClient($this->httpClientService->get());
-        $feedFinderConfiguration->setRootUrl($website->getCanonicalUrl());
+        if (empty($this->websiteRssFeedFinder)) {
+            $feedFinderConfiguration = new WebsiteRssFeedFinderConfiguration();
+            $feedFinderConfiguration->setHttpClient($this->httpClientService->get());
+            $feedFinderConfiguration->setRootUrl($website->getCanonicalUrl());
 
-        return new WebsiteRssFeedFinder($feedFinderConfiguration);
+            $this->websiteRssFeedFinder = new WebsiteRssFeedFinder($feedFinderConfiguration);
+        }
+
+        return $this->websiteRssFeedFinder;
     }
 }
