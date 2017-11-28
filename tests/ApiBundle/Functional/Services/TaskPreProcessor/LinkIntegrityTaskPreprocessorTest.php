@@ -2,20 +2,21 @@
 
 namespace Tests\ApiBundle\Functional\Services\TaskPreProcessor;
 
-use Guzzle\Http\Message\Request;
+use GuzzleHttp\Message\RequestInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
 
 class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 {
@@ -106,8 +107,14 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
      */
     public function testProcessWebResourceFailure($httpFixtures)
     {
+        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
+
+        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
+            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
+        ]);
+
         $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
-        $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
+        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
@@ -153,7 +160,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'curl timeout getting web resource' => [
                 'httpFixtures' => [
-                    CurlExceptionFactory::create('operation timed out', 28),
+                    ConnectExceptionFactory::create('CURL/28 operation timed out'),
                 ],
             ],
             'too many redirects getting web resource' => [
@@ -594,22 +601,18 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
         $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
-        $httpTransactions = $httpClientService->getHistoryPlugin()->getAll();
+        $httpHistory = $httpClientService->getHistory();
 
-        foreach ($httpTransactions as $httpTransaction) {
-            /* @var Request $request */
+        foreach ($httpHistory as $httpTransaction) {
+            /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            $this->assertEquals([
-                'foo' => 'bar',
-            ], $request->getCookies());
+            $this->assertEquals('foo=bar', $request->getHeader('cookie'));
         }
-
-        $lastRequest = $httpClientService->getHistoryPlugin()->getLastRequest();
 
         $this->assertEquals(
             LinkIntegrityTaskPreProcessor::HTTP_USER_AGENT,
-            $lastRequest->getHeader('user-agent')
+            $httpHistory->getLastRequest()->getHeader('user-agent')
         );
     }
 }
