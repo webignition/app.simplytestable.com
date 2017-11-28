@@ -4,13 +4,6 @@ namespace SimplyTestable\ApiBundle\Services;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Cookie\SetCookie;
 use GuzzleHttp\Message\RequestInterface;
-//use Guzzle\Plugin\Backoff\BackoffPlugin;
-//use Doctrine\Common\Cache\MemcacheCache;
-//use Guzzle\Cache\DoctrineCacheAdapter;
-//use Guzzle\Plugin\Cache\CachePlugin;
-//use Guzzle\Plugin\History\HistoryPlugin;
-//use Symfony\Component\HttpFoundation\ParameterBag;
-//use webignition\Cookie\UrlMatcher\UrlMatcher;
 use GuzzleHttp\Subscriber\Cookie as HttpCookieSubscriber;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber as HttpRetrySubscriber;
 use GuzzleHttp\Subscriber\History as HttpHistorySubscriber;
@@ -257,59 +250,4 @@ class HttpClientService
             );
         }
     }
-
-
-//    /**
-//     * @param Request $request
-//     * @param array $parameters
-//     */
-//    public function prepareRequest(Request $request, $parameters = [])
-//    {
-//        $parameterBag = new ParameterBag($parameters);
-//
-//        $this->setRequestAuthentication($request, $parameterBag);
-//        $this->setRequestCookies($request, $parameterBag);
-//    }
-//
-//
-//    /**
-//     * @param Request $request
-//     * @param ParameterBag $parameters
-//     */
-//    private function setRequestAuthentication(Request $request, ParameterBag $parameters)
-//    {
-//        $hasHttpAuthUserNameParameter = $parameters->has(self::PARAMETER_KEY_HTTP_AUTH_USERNAME);
-//        $hasHttpAuthPasswordParameter = $parameters->has(self::PARAMETER_KEY_HTTP_AUTH_PASSWORD);
-//
-//        if ($hasHttpAuthUserNameParameter || $hasHttpAuthPasswordParameter) {
-//            $request->setAuth(
-//                ($hasHttpAuthUserNameParameter) ? $parameters->get(self::PARAMETER_KEY_HTTP_AUTH_USERNAME) : '',
-//                ($hasHttpAuthPasswordParameter) ? $parameters->get(self::PARAMETER_KEY_HTTP_AUTH_PASSWORD) : '',
-//                'any'
-//            );
-//        }
-//    }
-//
-//    /**
-//     * @param Request $request
-//     * @param ParameterBag $parameters
-//     */
-//    private function setRequestCookies(Request $request, ParameterBag $parameters)
-//    {
-//        if (!is_null($request->getCookies())) {
-//            foreach ($request->getCookies() as $name => $value) {
-//                $request->removeCookie($name);
-//            }
-//        }
-//
-//        if ($parameters->has(self::PARAMETER_KEY_COOKIES)) {
-//            $cookieUrlMatcher = new UrlMatcher();
-//
-//            foreach ($parameters->get(self::PARAMETER_KEY_COOKIES) as $cookie) {
-//                if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
-//                    $request->addCookie($cookie['name'], $cookie['value']);
-//                }
-//            }
-//        }
-//    }
 }
