@@ -451,7 +451,13 @@ class Job
      */
     public function getParametersArray()
     {
-        return json_decode($this->getParameters(), true);
+        $parametersArray = json_decode($this->getParameters(), true);
+
+        if (!is_array($parametersArray)) {
+            $parametersArray = [];
+        }
+
+        return $parametersArray;
     }
 
     /**
