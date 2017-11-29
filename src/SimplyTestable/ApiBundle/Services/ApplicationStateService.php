@@ -2,25 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Services;
 
+use SimplyTestable\ApiBundle\Model\ApplicationStateInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class ApplicationStateService
 {
     const RESOURCE_PATH = '@SimplyTestableApiBundle/Resources/config/state/%s';
-
-    const STATE_ACTIVE = 'active';
-    const STATE_MAINTENANCE_READ_ONLY = 'maintenance-read-only';
-    const STATE_MAINTENANCE_BACKUP_READ_ONLY = 'maintenance-backup-read-only';
-    const DEFAULT_STATE = self::STATE_ACTIVE;
-
-    /**
-     * @var string[]
-     */
-    private $allowedStates = [
-        self::STATE_ACTIVE,
-        self::STATE_MAINTENANCE_READ_ONLY,
-        self::STATE_MAINTENANCE_BACKUP_READ_ONLY
-    ];
 
     /**
      * @var string
@@ -62,7 +49,7 @@ class ApplicationStateService
      */
     public function isInActiveState()
     {
-        return $this->getState() == self::STATE_ACTIVE;
+        return ApplicationStateInterface::STATE_ACTIVE === $this->getState();
     }
 
     /**
@@ -70,7 +57,7 @@ class ApplicationStateService
      */
     public function isInMaintenanceReadOnlyState()
     {
-        return $this->getState() == self::STATE_MAINTENANCE_READ_ONLY;
+        return ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY === $this->getState();
     }
 
     /**
@@ -78,7 +65,7 @@ class ApplicationStateService
      */
     public function isInMaintenanceBackupReadOnlyState()
     {
-        return $this->getState() == self::STATE_MAINTENANCE_BACKUP_READ_ONLY;
+        return ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY === $this->getState();
     }
 
     /**
@@ -120,7 +107,7 @@ class ApplicationStateService
             }
 
             if (!$this->isAllowedState($this->state)) {
-                $this->state = self::DEFAULT_STATE;
+                $this->state = ApplicationStateInterface::DEFAULT_STATE;
             }
         }
 
@@ -133,6 +120,12 @@ class ApplicationStateService
      */
     private function isAllowedState($state)
     {
-        return in_array($state, $this->allowedStates);
+        $allowedStates = [
+            ApplicationStateInterface::STATE_ACTIVE,
+            ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY,
+            ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY
+        ];
+
+        return in_array($state, $allowedStates);
     }
 }
