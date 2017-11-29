@@ -90,7 +90,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
             'job-states[none specified], task-states[in-progress]' => [
                 'jobStateNames' => [],
                 'taskStateNames' => [
-                    TaskService::IN_PROGRESS_STATE,
+                    Task::STATE_IN_PROGRESS,
                 ],
                 'expectedJobIndices' => [],
             ],
@@ -99,7 +99,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
                     Job::STATE_IN_PROGRESS,
                 ],
                 'taskStateNames' => [
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_CANCELLED,
                 ],
                 'expectedJobIndices' => [],
             ],
@@ -108,7 +108,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
                     Job::STATE_IN_PROGRESS,
                 ],
                 'taskStateNames' => [
-                    TaskService::IN_PROGRESS_STATE,
+                    Task::STATE_IN_PROGRESS,
                 ],
                 'expectedJobIndices' => [7],
             ],
@@ -118,7 +118,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
                     Job::STATE_CANCELLED,
                 ],
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedJobIndices' => [1, 7],
             ],

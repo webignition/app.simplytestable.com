@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 
@@ -18,7 +18,7 @@ trait GetCountByTaskTypeAndStateDataProvider
             'none' => [
                 'jobValuesCollection' => [],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'taskStateName' => TaskService::COMPLETED_STATE,
+                'taskStateName' => Task::STATE_COMPLETED,
                 'expectedCount' => 0,
             ],
             'many' => [
@@ -32,22 +32,22 @@ trait GetCountByTaskTypeAndStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -59,13 +59,13 @@ trait GetCountByTaskTypeAndStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -77,19 +77,19 @@ trait GetCountByTaskTypeAndStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
                 ],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'taskStateName' => TaskService::COMPLETED_STATE,
+                'taskStateName' => Task::STATE_COMPLETED,
                 'expectedCount' => 6,
             ],
         ];

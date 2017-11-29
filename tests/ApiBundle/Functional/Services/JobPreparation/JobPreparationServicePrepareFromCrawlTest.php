@@ -107,7 +107,7 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
             $expectedTaskValues = $expectedTaskValuesCollection[$taskIndex];
 
             $this->assertNull($task->getWorker());
-            $this->assertEquals(TaskService::QUEUED_STATE, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_QUEUED, $task->getState()->getName());
             $this->assertEquals($expectedTaskValues['url'], $task->getUrl());
             $this->assertEquals($expectedTaskValues['taskTypeName'], $task->getType()->getName());
         }

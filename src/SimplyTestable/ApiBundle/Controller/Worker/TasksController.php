@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
@@ -48,6 +47,7 @@ class TasksController
 
         $workerHostname = $request->request->get('worker_hostname');
 
+        /* @var Worker $worker */
         $worker = $workerRepository->findOneBy([
             'hostname' => $workerHostname,
         ]);
@@ -101,9 +101,9 @@ class TasksController
         ]);
 
         foreach ($tasks as $task) {
-            $task->setState($stateService->get(TaskService::QUEUED_FOR_ASSIGNMENT_STATE));
+            $task->setState($stateService->get(Task::STATE_QUEUED_FOR_ASSIGNMENT));
             $entityManager->persist($task);
-            $entityManager->flush($task);
+            $entityManager->flush();
         }
 
         $resqueQueueService->enqueue(

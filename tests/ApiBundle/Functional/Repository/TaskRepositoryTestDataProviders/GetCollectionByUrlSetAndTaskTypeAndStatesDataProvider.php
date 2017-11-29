@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
-use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -26,22 +26,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -49,13 +49,13 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
@@ -93,7 +93,7 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                 ],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'taskStateNames' => [
-                    TaskService::QUEUED_STATE,
+                    Task::STATE_QUEUED,
                 ],
                 'expectedTaskIndices' => [0, 6],
             ],
@@ -107,22 +107,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -134,22 +134,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -187,8 +187,8 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                 ],
                 'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
                 'taskStateNames' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_QUEUED,
+                    Task::STATE_CANCELLED,
                 ],
                 'expectedTaskIndices' => [1, 7],
             ],
@@ -202,22 +202,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -229,22 +229,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -283,8 +283,8 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                 ],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'taskStateNames' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_QUEUED,
+                    Task::STATE_CANCELLED,
                 ],
                 'expectedTaskIndices' => [0, 2, 6, 8],
             ],

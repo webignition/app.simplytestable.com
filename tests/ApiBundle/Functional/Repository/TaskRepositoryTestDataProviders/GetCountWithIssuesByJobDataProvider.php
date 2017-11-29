@@ -2,8 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 
@@ -19,13 +19,13 @@ trait GetCountWithIssuesByJobDataProvider
                 JobFactory::KEY_USER => 'public',
                 JobFactory::KEY_TASKS => [
                     [
-                        JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                     ],
                     [
-                        JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                        JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                     ],
                 ],
             ],
@@ -100,8 +100,8 @@ trait GetCountWithIssuesByJobDataProvider
                 'jobIndex' => 0,
                 'issueType' => TaskRepository::ISSUE_TYPE_ERROR,
                 'stateNamesToExclude' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_QUEUED,
+                    Task::STATE_CANCELLED,
                 ],
                 'expectedCount' => 1,
             ],
@@ -111,8 +111,8 @@ trait GetCountWithIssuesByJobDataProvider
                 'jobIndex' => 0,
                 'issueType' => TaskRepository::ISSUE_TYPE_WARNING,
                 'stateNamesToExclude' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_QUEUED,
+                    Task::STATE_CANCELLED,
                 ],
                 'expectedCount' => 0,
             ],

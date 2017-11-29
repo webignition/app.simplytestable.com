@@ -201,7 +201,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      */
     private function completeTask(Task $task, Output $output)
     {
-        $taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
+        $taskCompletedState = $this->stateService->get(Task::STATE_COMPLETED);
 
         $this->taskService->complete(
             $task,

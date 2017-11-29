@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
-use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 
@@ -16,7 +16,7 @@ trait FindUrlsByJobAndStateDataProvider
         return [
             'none found' => [
                 'jobValues' => [],
-                'taskStateName' => TaskService::COMPLETED_STATE,
+                'taskStateName' => Task::STATE_COMPLETED,
                 'expectedUrls' => [],
             ],
             'found' => [
@@ -26,17 +26,17 @@ trait FindUrlsByJobAndStateDataProvider
                     ],
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
-                'taskStateName' => TaskService::COMPLETED_STATE,
+                'taskStateName' => Task::STATE_COMPLETED,
                 'expectedUrls' => [
                     'http://example.com/one',
                     'http://example.com/foo bar',

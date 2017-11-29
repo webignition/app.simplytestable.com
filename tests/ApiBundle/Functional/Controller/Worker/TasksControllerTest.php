@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
@@ -316,7 +315,7 @@ class TasksControllerTest extends AbstractBaseTestCase
         );
 
         foreach ($tasks as $task) {
-            $this->assertEquals(TaskService::QUEUED_STATE, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_QUEUED, $task->getState()->getName());
         }
 
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
@@ -342,7 +341,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
         foreach ($resqueJobTaskIds as $resqueJobTaskId) {
             $task = $taskRepository->find($resqueJobTaskId);
-            $this->assertEquals(TaskService::QUEUED_FOR_ASSIGNMENT_STATE, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_QUEUED_FOR_ASSIGNMENT, $task->getState()->getName());
         }
     }
 

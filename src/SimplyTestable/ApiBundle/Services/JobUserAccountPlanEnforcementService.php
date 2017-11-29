@@ -187,11 +187,11 @@ class JobUserAccountPlanEnforcementService
         return $this->taskRepository->getCountByUsersAndStatesForPeriod(
             $this->teamService->getPeopleForUser($this->user),
             $this->stateService->getCollection([
-                TaskService::COMPLETED_STATE,
-                TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-                TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-                TaskService::TASK_SKIPPED_STATE,
+                Task::STATE_COMPLETED,
+                Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                Task::STATE_FAILED_RETRY_AVAILABLE,
+                Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                Task::STATE_SKIPPED,
             ]),
             $startDateTime->format('Y-m-01'),
             $endDateTime->format('Y-m-d 23:59:59')

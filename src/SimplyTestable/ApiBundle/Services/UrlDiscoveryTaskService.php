@@ -66,7 +66,7 @@ class UrlDiscoveryTaskService
             );
         }
 
-        $taskQueuedState = $this->stateService->get(TaskService::QUEUED_STATE);
+        $taskQueuedState = $this->stateService->get(Task::STATE_QUEUED);
 
         $task = new Task();
         $task->setJob($crawlJob);

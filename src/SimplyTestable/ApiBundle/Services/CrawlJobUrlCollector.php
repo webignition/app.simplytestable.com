@@ -67,7 +67,7 @@ class CrawlJobUrlCollector
             (string)$website->getCanonicalUrl(),
         ];
 
-        $taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
+        $taskCompletedState = $this->stateService->get(Task::STATE_COMPLETED);
 
         $completedTaskUrls = $this->taskRepository->findUrlsByJobAndState(
             $crawlJob,

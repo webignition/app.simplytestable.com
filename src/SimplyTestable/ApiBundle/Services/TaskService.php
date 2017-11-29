@@ -16,17 +16,6 @@ use webignition\Url\Url;
 
 class TaskService
 {
-    const CANCELLED_STATE = 'task-cancelled';
-    const QUEUED_STATE = 'task-queued';
-    const IN_PROGRESS_STATE = 'task-in-progress';
-    const COMPLETED_STATE = 'task-completed';
-    const AWAITING_CANCELLATION_STATE = 'task-awaiting-cancellation';
-    const QUEUED_FOR_ASSIGNMENT_STATE = 'task-queued-for-assignment';
-    const TASK_FAILED_NO_RETRY_AVAILABLE_STATE = 'task-failed-no-retry-available';
-    const TASK_FAILED_RETRY_AVAILABLE_STATE = 'task-failed-retry-available';
-    const TASK_FAILED_RETRY_LIMIT_REACHED_STATE = 'task-failed-retry-limit-reached';
-    const TASK_SKIPPED_STATE = 'task-skipped';
-
     /**
      * @var EntityManagerInterface
      */
@@ -58,47 +47,47 @@ class TaskService
      * @var string[]
      */
     private $availableStateNames = [
-        self::CANCELLED_STATE,
-        self::QUEUED_STATE,
-        self::IN_PROGRESS_STATE,
-        self::COMPLETED_STATE,
-        self::AWAITING_CANCELLATION_STATE,
-        self::QUEUED_FOR_ASSIGNMENT_STATE,
-        self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-        self::TASK_FAILED_RETRY_AVAILABLE_STATE,
-        self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-        self::TASK_SKIPPED_STATE
+        Task::STATE_CANCELLED,
+        Task::STATE_QUEUED,
+        Task::STATE_IN_PROGRESS,
+        Task::STATE_COMPLETED,
+        Task::STATE_AWAITING_CANCELLATION,
+        Task::STATE_QUEUED_FOR_ASSIGNMENT,
+        Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+        Task::STATE_FAILED_RETRY_AVAILABLE,
+        Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+        Task::STATE_SKIPPED
     ];
 
     /**
      * @var string[]
      */
     private $incompleteStateNames = [
-        self::IN_PROGRESS_STATE,
-        self::QUEUED_STATE,
-        self::QUEUED_FOR_ASSIGNMENT_STATE,
+        Task::STATE_IN_PROGRESS,
+        Task::STATE_QUEUED,
+        Task::STATE_QUEUED_FOR_ASSIGNMENT,
     ];
 
     /**
      * @var string[]
      */
     private $finishedStateNames = [
-        self::CANCELLED_STATE,
-        self::COMPLETED_STATE,
-        self::TASK_FAILED_RETRY_AVAILABLE_STATE,
-        self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-        self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-        self::TASK_SKIPPED_STATE,
+        Task::STATE_CANCELLED,
+        Task::STATE_COMPLETED,
+        Task::STATE_FAILED_RETRY_AVAILABLE,
+        Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+        Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+        Task::STATE_SKIPPED,
     ];
 
     /**
      * @var string[]
      */
     private $cancellableStateNames = [
-        self::AWAITING_CANCELLATION_STATE,
-        self::IN_PROGRESS_STATE,
-        self::QUEUED_STATE,
-        self::QUEUED_FOR_ASSIGNMENT_STATE,
+        Task::STATE_AWAITING_CANCELLATION,
+        Task::STATE_IN_PROGRESS,
+        Task::STATE_QUEUED,
+        Task::STATE_QUEUED_FOR_ASSIGNMENT,
     ];
 
     /**
@@ -144,7 +133,7 @@ class TaskService
             return;
         }
 
-        $cancelledState = $this->stateService->get(self::CANCELLED_STATE);
+        $cancelledState = $this->stateService->get(Task::STATE_CANCELLED);
 
         $task->setState($cancelledState);
         $task->clearWorker();
@@ -169,16 +158,16 @@ class TaskService
     public function setAwaitingCancellation(Task $task)
     {
         $disAllowedStateNames = [
-            self::AWAITING_CANCELLATION_STATE,
-            self::CANCELLED_STATE,
-            self::COMPLETED_STATE,
+            Task::STATE_AWAITING_CANCELLATION,
+            Task::STATE_CANCELLED,
+            Task::STATE_COMPLETED,
         ];
 
         if (in_array($task->getState()->getName(), $disAllowedStateNames)) {
             return;
         }
 
-        $awaitingCancellationState = $this->stateService->get(self::AWAITING_CANCELLATION_STATE);
+        $awaitingCancellationState = $this->stateService->get(Task::STATE_AWAITING_CANCELLATION);
 
         $task->setState($awaitingCancellationState);
     }
@@ -229,7 +218,7 @@ class TaskService
      */
     public function setStarted(Task $task, Worker $worker, $remoteId)
     {
-        $inProgressState = $this->stateService->get(self::IN_PROGRESS_STATE);
+        $inProgressState = $this->stateService->get(Task::STATE_IN_PROGRESS);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());

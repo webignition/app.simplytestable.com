@@ -163,7 +163,7 @@ class JobService
 
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
         foreach ($tasks as $task) {
-            if ($task->getState()->getName() === TaskService::IN_PROGRESS_STATE) {
+            if ($task->getState()->getName() === Task::STATE_IN_PROGRESS) {
                 $this->taskService->setAwaitingCancellation($task);
             } else {
                 $this->taskService->cancel($task);
@@ -192,7 +192,7 @@ class JobService
     public function cancelIncompleteTasks(Job $job)
     {
         foreach ($job->getTasks() as $task) {
-            if ($task->getState()->getName() !== TaskService::COMPLETED_STATE) {
+            if ($task->getState()->getName() !== Task::STATE_COMPLETED) {
                 $this->taskService->cancel($task);
             }
         }
@@ -340,8 +340,8 @@ class JobService
             $job,
             $issueType,
             $this->stateService->getCollection([
-                TaskService::CANCELLED_STATE,
-                TaskService::AWAITING_CANCELLATION_STATE,
+                Task::STATE_CANCELLED,
+                Task::STATE_AWAITING_CANCELLATION,
             ])
         );
     }
@@ -357,8 +357,8 @@ class JobService
         return $this->taskRepository->getCountByJobAndStates(
             $job,
             $this->stateService->getCollection([
-                TaskService::CANCELLED_STATE,
-                TaskService::AWAITING_CANCELLATION_STATE,
+                Task::STATE_CANCELLED,
+                Task::STATE_AWAITING_CANCELLATION,
             ])
         );
     }
@@ -371,7 +371,7 @@ class JobService
     public function getSkippedTaskCount(Job $job)
     {
         return $this->taskRepository->getCountByJobAndStates($job, [
-            $this->stateService->get(TaskService::TASK_SKIPPED_STATE),
+            $this->stateService->get(Task::STATE_SKIPPED),
         ]);
     }
 

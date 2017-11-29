@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -32,7 +31,9 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
+        $this->jobUserAccountPlanEnforcementService = $this->container->get(
+            JobUserAccountPlanEnforcementService::class
+        );
     }
 
     /**
@@ -280,7 +281,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             'one credit used' => [
                 'jobValues' => [],
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedCreditsUsed' => 1,
             ],
@@ -292,11 +293,11 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                     ],
                 ],
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-                    TaskService::TASK_SKIPPED_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                    Task::STATE_SKIPPED,
                 ],
                 'expectedCreditsUsed' => 5,
             ],
@@ -310,16 +311,16 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                     ],
                 ],
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-                    TaskService::TASK_SKIPPED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-                    TaskService::TASK_SKIPPED_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                    Task::STATE_SKIPPED,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                    Task::STATE_SKIPPED,
                 ],
                 'expectedCreditsUsed' => 10,
             ],
@@ -411,7 +412,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             ],
             'limit not reached; some credits used' => [
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'planValues' => [
                     PlanFactory::KEY_NAME => 'Plan',
@@ -430,9 +431,9 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             ],
             'limit reached' => [
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
                 ],
                 'planValues' => [
                     PlanFactory::KEY_NAME => 'Plan',

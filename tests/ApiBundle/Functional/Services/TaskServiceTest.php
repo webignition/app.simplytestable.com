@@ -67,23 +67,23 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function cancelFinishedTaskDataProvider()
     {
         return [
-            TaskService::CANCELLED_STATE => [
-                'stateName' => TaskService::CANCELLED_STATE,
+            Task::STATE_CANCELLED => [
+                'stateName' => Task::STATE_CANCELLED,
             ],
-            TaskService::COMPLETED_STATE => [
-                'stateName' => TaskService::COMPLETED_STATE,
+            Task::STATE_COMPLETED => [
+                'stateName' => Task::STATE_COMPLETED,
             ],
-            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE => [
-                'stateName' => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+            Task::STATE_FAILED_RETRY_AVAILABLE => [
+                'stateName' => Task::STATE_FAILED_RETRY_AVAILABLE,
             ],
-            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE => [
-                'stateName' => TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+            Task::STATE_FAILED_NO_RETRY_AVAILABLE => [
+                'stateName' => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
             ],
-            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE => [
-                'stateName' => TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+            Task::STATE_FAILED_RETRY_LIMIT_REACHED => [
+                'stateName' => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
             ],
-            TaskService::TASK_SKIPPED_STATE => [
-                'stateName' => TaskService::TASK_SKIPPED_STATE,
+            Task::STATE_SKIPPED => [
+                'stateName' => Task::STATE_SKIPPED,
             ],
         ];
     }
@@ -116,7 +116,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->taskService->cancel($this->task);
 
-        $this->assertEquals(TaskService::CANCELLED_STATE, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_CANCELLED, $this->task->getState()->getName());
         $this->assertNull($this->task->getWorker());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
@@ -149,9 +149,9 @@ class TaskServiceTest extends AbstractBaseTestCase
         $stateService = $this->container->get(StateService::class);
 
         $disallowedStateNames = [
-            TaskService::AWAITING_CANCELLATION_STATE,
-            TaskService::CANCELLED_STATE,
-            TaskService::COMPLETED_STATE,
+            Task::STATE_AWAITING_CANCELLATION,
+            Task::STATE_CANCELLED,
+            Task::STATE_COMPLETED,
         ];
 
         foreach ($disallowedStateNames as $stateName) {
@@ -166,7 +166,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         $this->taskService->setAwaitingCancellation($this->task);
 
-        $this->assertEquals(TaskService::AWAITING_CANCELLATION_STATE, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_AWAITING_CANCELLATION, $this->task->getState()->getName());
     }
 
     public function testIsFinished()
@@ -182,10 +182,10 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         $unfinishedStateNames = [
-            TaskService::QUEUED_STATE,
-            TaskService::IN_PROGRESS_STATE,
-            TaskService::AWAITING_CANCELLATION_STATE,
-            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+            Task::STATE_QUEUED,
+            Task::STATE_IN_PROGRESS,
+            Task::STATE_AWAITING_CANCELLATION,
+            Task::STATE_QUEUED_FOR_ASSIGNMENT,
         ];
 
         foreach ($unfinishedStateNames as $stateName) {
@@ -208,12 +208,12 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         $uncancellableStateNames = [
-            TaskService::CANCELLED_STATE,
-            TaskService::COMPLETED_STATE,
-            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-            TaskService::TASK_SKIPPED_STATE
+            Task::STATE_CANCELLED,
+            Task::STATE_COMPLETED,
+            Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+            Task::STATE_FAILED_RETRY_AVAILABLE,
+            Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+            Task::STATE_SKIPPED
         ];
 
         foreach ($uncancellableStateNames as $stateName) {
@@ -226,9 +226,9 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testGetIncompleteStateNames()
     {
         $this->assertEquals([
-            TaskService::IN_PROGRESS_STATE,
-            TaskService::QUEUED_STATE,
-            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+            Task::STATE_IN_PROGRESS,
+            Task::STATE_QUEUED,
+            Task::STATE_QUEUED_FOR_ASSIGNMENT,
         ], $this->taskService->getIncompleteStateNames());
     }
 
@@ -273,7 +273,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testSetStarted()
     {
-        $this->assertEquals(TaskService::QUEUED_STATE, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, $this->task->getState()->getName());
         $this->assertNull($this->task->getWorker());
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
@@ -284,7 +284,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->taskService->setStarted($this->task, $worker, $remoteId);
 
-        $this->assertEquals(TaskService::IN_PROGRESS_STATE, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
         $this->assertEquals($worker, $this->task->getWorker());
         $this->assertEquals($remoteId, $this->task->getRemoteId());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
@@ -295,7 +295,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCompleteIncorrectState()
     {
         $stateService = $this->container->get(StateService::class);
-        $completedState = $stateService->get(TaskService::COMPLETED_STATE);
+        $completedState = $stateService->get(Task::STATE_COMPLETED);
 
         $incorrectStateNames = $this->taskService->getFinishedStateNames();
 
@@ -312,7 +312,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stateService = $this->container->get(StateService::class);
-        $completedState = $stateService->get(TaskService::COMPLETED_STATE);
+        $completedState = $stateService->get(Task::STATE_COMPLETED);
 
         $output = new Output();
         $output->generateHash();
@@ -384,7 +384,7 @@ class TaskServiceTest extends AbstractBaseTestCase
                 'taskValues' => [],
                 'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
                 'outputContent' => 'foo',
-                'stateName' => TaskService::COMPLETED_STATE,
+                'stateName' => Task::STATE_COMPLETED,
             ],
             'has worker, has remote id, has time period' => [
                 'taskValues' => [
@@ -396,7 +396,7 @@ class TaskServiceTest extends AbstractBaseTestCase
                 ],
                 'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
                 'outputContent' => 'foo',
-                'stateName' => TaskService::COMPLETED_STATE,
+                'stateName' => Task::STATE_COMPLETED,
             ],
         ];
     }
@@ -404,16 +404,16 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testGetAvailableStateNames()
     {
         $this->assertEquals([
-            TaskService::CANCELLED_STATE,
-            TaskService::QUEUED_STATE,
-            TaskService::IN_PROGRESS_STATE,
-            TaskService::COMPLETED_STATE,
-            TaskService::AWAITING_CANCELLATION_STATE,
-            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
-            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-            TaskService::TASK_SKIPPED_STATE
+            Task::STATE_CANCELLED,
+            Task::STATE_QUEUED,
+            Task::STATE_IN_PROGRESS,
+            Task::STATE_COMPLETED,
+            Task::STATE_AWAITING_CANCELLATION,
+            Task::STATE_QUEUED_FOR_ASSIGNMENT,
+            Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+            Task::STATE_FAILED_RETRY_AVAILABLE,
+            Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+            Task::STATE_SKIPPED
         ], $this->taskService->getAvailableStateNames());
     }
 
@@ -517,26 +517,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                 ],
                 'url' => 'foo',
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'parameterHash' => '',
                 'stateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [0, 1, 2],
             ],
@@ -546,26 +546,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                         TaskFactory::KEY_URL => 'foo%20bar',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo bar',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo%20bar',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                 ],
                 'url' => 'foo%20bar',
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'parameterHash' => '',
                 'stateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [0, 1, 2],
             ],
@@ -575,26 +575,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                         TaskFactory::KEY_URL => 'foo%20bar',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo bar',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo%20bar',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                 ],
                 'url' => 'foo bar',
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'parameterHash' => '',
                 'stateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [0, 1, 2],
             ],
@@ -604,26 +604,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::CANCELLED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                 ],
                 'url' => 'foo',
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'parameterHash' => '',
                 'stateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [0, 2],
             ],
@@ -633,26 +633,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::CSS_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::CSS_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                 ],
                 'url' => 'foo',
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'parameterHash' => '',
                 'stateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [0],
             ],
@@ -662,26 +662,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => 'bar',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => 'bar',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
                         TaskFactory::KEY_URL => 'foo',
                         TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskFactory::KEY_PARAMETERS => '',
-                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                 ],
                 'url' => 'foo',
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'parameterHash' => 'd41d8cd98f00b204e9800998ecf8427e',
                 'stateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [2],
             ],

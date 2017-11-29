@@ -5,7 +5,6 @@ namespace Tests\ApiBundle\Unit\Request\Task;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Request\Task\CompleteRequest;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\InternetMediaTypeFactory;
 use Tests\ApiBundle\Factory\StateFactory;
 use webignition\InternetMediaType\InternetMediaType;
@@ -74,7 +73,7 @@ class CompleteRequestTest extends \PHPUnit_Framework_TestCase
     public function createDataProvider()
     {
         $applicationJsonContentType = InternetMediaTypeFactory::create('application', 'json');
-        $completedState = StateFactory::create(TaskService::COMPLETED_STATE);
+        $completedState = StateFactory::create(Task::STATE_COMPLETED);
         $now = new \DateTime();
 
         return [

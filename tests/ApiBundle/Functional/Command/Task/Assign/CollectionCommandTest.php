@@ -5,7 +5,6 @@ namespace Tests\ApiBundle\Functional\Command\Task\Assign;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
@@ -130,15 +129,15 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedTaskValuesCollection' => [
                     [
                         'worker' => null,
-                        'state' => TaskService::QUEUED_STATE,
+                        'state' => Task::STATE_QUEUED,
                     ],
                     [
                         'worker' => null,
-                        'state' => TaskService::QUEUED_STATE,
+                        'state' => Task::STATE_QUEUED,
                     ],
                     [
                         'worker' => null,
-                        'state' => TaskService::QUEUED_STATE,
+                        'state' => Task::STATE_QUEUED,
                     ],
                 ],
                 'expectedTaskAssignCollectionQueueIsEmpty' => false,
@@ -157,15 +156,15 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedTaskValuesCollection' => [
                     [
                         'worker' => null,
-                        'state' => TaskService::QUEUED_STATE,
+                        'state' => Task::STATE_QUEUED,
                     ],
                     [
                         'worker' => null,
-                        'state' => TaskService::QUEUED_STATE,
+                        'state' => Task::STATE_QUEUED,
                     ],
                     [
                         'worker' => null,
-                        'state' => TaskService::QUEUED_STATE,
+                        'state' => Task::STATE_QUEUED,
                     ],
                 ],
                 'expectedTaskAssignCollectionQueueIsEmpty' => false,
@@ -207,19 +206,19 @@ class CollectionCommandTest extends AbstractBaseTestCase
                         'worker' => [
                             'hostname' => 'hydrogen.worker.example.com'
                         ],
-                        'state' => TaskService::IN_PROGRESS_STATE,
+                        'state' => Task::STATE_IN_PROGRESS,
                     ],
                     [
                         'worker' => [
                             'hostname' => 'hydrogen.worker.example.com'
                         ],
-                        'state' => TaskService::IN_PROGRESS_STATE,
+                        'state' => Task::STATE_IN_PROGRESS,
                     ],
                     [
                         'worker' => [
                             'hostname' => 'hydrogen.worker.example.com'
                         ],
-                        'state' => TaskService::IN_PROGRESS_STATE,
+                        'state' => Task::STATE_IN_PROGRESS,
                     ],
                 ],
                 'expectedTaskAssignCollectionQueueIsEmpty' => true,

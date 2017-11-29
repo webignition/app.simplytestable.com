@@ -77,7 +77,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function createDataProvider()
     {
-        $completedState = StateFactory::create(TaskService::COMPLETED_STATE);
+        $completedState = StateFactory::create(Task::STATE_COMPLETED);
         $htmlValidationTaskType = TaskTypeFactory::create('html validation');
         $applicationJsonContentType = InternetMediaTypeFactory::create('application', 'json');
 
@@ -218,9 +218,9 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
     private function createTaskService($equivalentTasks, $getEquivalentTasksArgs)
     {
         $incompleteStates = [
-            StateFactory::create(TaskService::IN_PROGRESS_STATE),
-            StateFactory::create(TaskService::QUEUED_STATE),
-            StateFactory::create(TaskService::QUEUED_FOR_ASSIGNMENT_STATE),
+            StateFactory::create(Task::STATE_IN_PROGRESS),
+            StateFactory::create(Task::STATE_QUEUED),
+            StateFactory::create(Task::STATE_QUEUED_FOR_ASSIGNMENT),
         ];
 
         /* @var Mock|TaskService $taskService */
@@ -228,9 +228,9 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $taskService
             ->shouldReceive('getIncompleteStateNames')
             ->andReturn([
-                TaskService::IN_PROGRESS_STATE,
-                TaskService::QUEUED_STATE,
-                TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+                Task::STATE_IN_PROGRESS,
+                Task::STATE_QUEUED,
+                Task::STATE_QUEUED_FOR_ASSIGNMENT,
             ]);
 
         $taskService
@@ -261,14 +261,14 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $stateService
             ->shouldReceive('getCollection')
             ->with([
-                TaskService::IN_PROGRESS_STATE,
-                TaskService::QUEUED_STATE,
-                TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+                Task::STATE_IN_PROGRESS,
+                Task::STATE_QUEUED,
+                Task::STATE_QUEUED_FOR_ASSIGNMENT,
             ])
             ->andReturn([
-                StateFactory::create(TaskService::IN_PROGRESS_STATE),
-                StateFactory::create(TaskService::QUEUED_STATE),
-                StateFactory::create(TaskService::QUEUED_FOR_ASSIGNMENT_STATE),
+                StateFactory::create(Task::STATE_IN_PROGRESS),
+                StateFactory::create(Task::STATE_QUEUED),
+                StateFactory::create(Task::STATE_QUEUED_FOR_ASSIGNMENT),
             ]);
 
         return $stateService;

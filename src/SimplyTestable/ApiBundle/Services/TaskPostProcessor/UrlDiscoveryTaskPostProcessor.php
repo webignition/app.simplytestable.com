@@ -10,7 +10,6 @@ use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -104,7 +103,7 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
      */
     public function process(Task $task)
     {
-        if (TaskService::COMPLETED_STATE !== $task->getState()->getName()) {
+        if (Task::STATE_COMPLETED !== $task->getState()->getName()) {
             return false;
         }
 

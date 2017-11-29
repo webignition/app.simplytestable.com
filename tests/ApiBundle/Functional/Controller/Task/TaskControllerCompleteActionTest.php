@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -71,7 +70,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
 
             $this->setJobTaskStates(
                 $job,
-                $stateService->get(TaskService::IN_PROGRESS_STATE)
+                $stateService->get(Task::STATE_IN_PROGRESS)
             );
 
             $jobs[] = $job;

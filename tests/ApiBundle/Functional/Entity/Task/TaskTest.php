@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Entity\Task;
 
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -41,7 +40,7 @@ class TaskTest extends AbstractBaseTestCase
         $task = new Task();
         $task->setJob($this->jobFactory->create());
         $task->setUrl($taskUrl);
-        $task->setState($stateService->get(TaskService::QUEUED_STATE));
+        $task->setState($stateService->get(Task::STATE_QUEUED));
         $task->setType($taskTypeService->getHtmlValidationTaskType());
         $task->setParameters(json_encode([
             $parameterKey => $parameterValue,

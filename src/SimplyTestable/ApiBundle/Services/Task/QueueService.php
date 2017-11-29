@@ -61,7 +61,7 @@ class QueueService
         $this->taskRepository = $entityManager->getRepository(Task::class);
 
         $this->incompleteJobStates = $stateService->getCollection($jobService->getIncompleteStateNames());
-        $this->taskQueuedState = $stateService->get(TaskService::QUEUED_STATE);
+        $this->taskQueuedState = $stateService->get(Task::STATE_QUEUED);
     }
 
     /**

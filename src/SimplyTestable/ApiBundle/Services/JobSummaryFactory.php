@@ -158,7 +158,7 @@ class JobSummaryFactory
 
             $processedUrls = $this->taskRepository->findUrlsByJobAndState(
                 $crawlJobContainer->getCrawlJob(),
-                $this->stateService->get(TaskService::COMPLETED_STATE)
+                $this->stateService->get(Task::STATE_COMPLETED)
             );
 
             $crawlSummary = new CrawlSummary(
