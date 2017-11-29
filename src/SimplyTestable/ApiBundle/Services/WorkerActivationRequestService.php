@@ -11,10 +11,6 @@ use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptio
 
 class WorkerActivationRequestService
 {
-    const STARTING_STATE = 'worker-activation-request-awaiting-verification';
-    const VERIFIED_STATE = 'worker-activation-request-verified';
-    const FAILED_STATE = 'worker-activation-request-failed';
-
     /**
      * @var LoggerInterface
      */
@@ -150,7 +146,7 @@ class WorkerActivationRequestService
      */
     public function create(Worker $worker, $token)
     {
-        $state = $this->stateService->get(self::STARTING_STATE);
+        $state = $this->stateService->get(WorkerActivationRequest::STATE_STARTING);
 
         $activationRequest = new WorkerActivationRequest();
         $activationRequest->setState($state);

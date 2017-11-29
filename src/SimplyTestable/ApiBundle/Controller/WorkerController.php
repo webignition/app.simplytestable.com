@@ -124,7 +124,7 @@ class WorkerController
             $activationRequest = $this->workerActivationRequestService->create($worker, $token);
         }
 
-        $activationRequestStartingState = $this->stateService->get(WorkerActivationRequestService::STARTING_STATE);
+        $activationRequestStartingState = $this->stateService->get(WorkerActivationRequest::STATE_STARTING);
         $activationRequest->setState($activationRequestStartingState);
 
         $this->entityManager->persist($activationRequest);

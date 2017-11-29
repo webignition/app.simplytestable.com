@@ -8,6 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class WorkerActivationRequest
 {
+    const STATE_STARTING = 'worker-activation-request-awaiting-verification';
+    const STATE_VERIFIED = 'worker-activation-request-verified';
+    const STATE_FAILED = 'worker-activation-request-failed';
+
     /**
      * @var int
      *
