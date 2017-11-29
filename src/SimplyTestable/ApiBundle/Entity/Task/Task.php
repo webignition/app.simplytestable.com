@@ -296,10 +296,6 @@ class Task implements \JsonSerializable
     {
         $parametersArray = $this->getParametersArray();
 
-        if (!is_array($parametersArray)) {
-            return false;
-        }
-
         if (!isset($parametersArray[$name])) {
             return false;
         }
