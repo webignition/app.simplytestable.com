@@ -13,6 +13,7 @@ use Tests\ApiBundle\Factory\RssFeedFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
+use webignition\WebResource\Service\Service as WebResourceService;
 
 class UrlFinderTest extends AbstractBaseTestCase
 {
@@ -36,7 +37,7 @@ class UrlFinderTest extends AbstractBaseTestCase
     ) {
         $this->queueHttpFixtures($httpFixtures);
 
-        $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
+        $webResourceService = $this->container->get(WebResourceService::class);
         $httpClientService = $this->container->get(HttpClientService::class);
 
         $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);

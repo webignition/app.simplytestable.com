@@ -14,6 +14,7 @@ use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
+use webignition\WebResource\Service\Service as WebResourceService;
 
 class PrepareCommandTest extends AbstractBaseTestCase
 {
@@ -75,7 +76,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
             WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
         ]);
 
-        $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
+        $webResourceService = $this->container->get(WebResourceService::class);
         $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
 
         $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);

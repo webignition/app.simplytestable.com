@@ -17,6 +17,7 @@ use Tests\ApiBundle\Factory\TaskFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
+use webignition\WebResource\Service\Service as WebResourceService;
 
 class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 {
@@ -113,7 +114,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
         ]);
 
-        $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
+        $webResourceService = $this->container->get(WebResourceService::class);
         $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
 
         $job = $this->jobFactory->createResolveAndPrepare([
