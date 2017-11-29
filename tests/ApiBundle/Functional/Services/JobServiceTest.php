@@ -13,7 +13,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -457,7 +456,7 @@ class JobServiceTest extends AbstractBaseTestCase
             /* @var Task $task */
             $task = $tasks->first();
 
-            $task->setState($stateService->get(TaskService::IN_PROGRESS_STATE));
+            $task->setState($stateService->get(Task::STATE_IN_PROGRESS));
 
             $entityManager->persist($task);
             $entityManager->flush();
@@ -469,9 +468,9 @@ class JobServiceTest extends AbstractBaseTestCase
 
         foreach ($tasks as $taskIndex => $task) {
             if ($taskIndex === 0) {
-                $this->assertEquals(TaskService::AWAITING_CANCELLATION_STATE, $task->getState());
+                $this->assertEquals(Task::STATE_AWAITING_CANCELLATION, $task->getState());
             } else {
-                $this->assertEquals(TaskService::CANCELLED_STATE, $task->getState());
+                $this->assertEquals(Task::STATE_CANCELLED, $task->getState());
             }
         }
     }
@@ -575,19 +574,19 @@ class JobServiceTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $finishedTaskStates = [
-            TaskService::CANCELLED_STATE,
-            TaskService::COMPLETED_STATE,
-            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-            TaskService::TASK_SKIPPED_STATE,
+            Task::STATE_CANCELLED,
+            Task::STATE_COMPLETED,
+            Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+            Task::STATE_FAILED_RETRY_AVAILABLE,
+            Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+            Task::STATE_SKIPPED,
         ];
 
         $incompleteTaskStates = [
-            TaskService::QUEUED_STATE,
-            TaskService::IN_PROGRESS_STATE,
-            TaskService::AWAITING_CANCELLATION_STATE,
-            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+            Task::STATE_QUEUED,
+            Task::STATE_IN_PROGRESS,
+            Task::STATE_AWAITING_CANCELLATION,
+            Task::STATE_QUEUED_FOR_ASSIGNMENT,
         ];
 
         $job = $this->jobFactory->createResolveAndPrepare([
@@ -637,7 +636,7 @@ class JobServiceTest extends AbstractBaseTestCase
         }
 
         foreach ($tasksToChange as $taskIndex => $task) {
-            $this->assertEquals(TaskService::CANCELLED_STATE, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_CANCELLED, $task->getState()->getName());
         }
     }
 
@@ -702,7 +701,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
         $this->assertNull($job->getTimePeriod()->getEndDateTime());
 
-        $this->jobFactory->setTaskStates($job, $stateService->get(TaskService::COMPLETED_STATE));
+        $this->jobFactory->setTaskStates($job, $stateService->get(Task::STATE_COMPLETED));
 
         $this->jobService->complete($job);
 
@@ -768,7 +767,7 @@ class JobServiceTest extends AbstractBaseTestCase
             $jobs[$stateName] = $job;
         }
 
-        $taskCompletedState = $stateService->get(TaskService::COMPLETED_STATE);
+        $taskCompletedState = $stateService->get(Task::STATE_COMPLETED);
 
         foreach ($completedTasksStates as $stateName) {
             $job = $jobs[$stateName];
@@ -960,13 +959,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                     ],
                 ],
@@ -991,13 +990,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -1051,13 +1050,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -1096,13 +1095,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],

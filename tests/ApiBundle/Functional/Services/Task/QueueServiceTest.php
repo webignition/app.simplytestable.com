@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Services\Task;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Task\QueueService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -132,31 +132,31 @@ class QueueServiceTest extends AbstractBaseTestCase
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
                             ],
                         ],
                     ],
@@ -239,10 +239,10 @@ class QueueServiceTest extends AbstractBaseTestCase
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -250,7 +250,7 @@ class QueueServiceTest extends AbstractBaseTestCase
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
                             ],
                         ],
                     ],

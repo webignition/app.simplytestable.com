@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -71,7 +70,7 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskQueuedForAssignmentState = $this->stateService->get(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
+        $taskQueuedForAssignmentState = $this->stateService->get(Task::STATE_QUEUED_FOR_ASSIGNMENT);
 
         $taskRepository = $this->entityManager->getRepository(Task::class);
 
@@ -84,7 +83,7 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
             return self::RETURN_CODE_OK;
         }
 
-        $taskQueuedState = $this->stateService->get(TaskService::QUEUED_STATE);
+        $taskQueuedState = $this->stateService->get(Task::STATE_QUEUED);
 
         foreach ($tasks as $task) {
             $task->setState($taskQueuedState);

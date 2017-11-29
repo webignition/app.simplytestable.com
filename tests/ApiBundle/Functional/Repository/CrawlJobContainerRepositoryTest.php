@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -78,7 +77,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $task->setType($taskTypeService->getUrlDiscoveryTaskType());
         $task->setJob($crawlJob);
         $task->setUrl('http://example.com/');
-        $task->setState($stateService->get(TaskService::COMPLETED_STATE));
+        $task->setState($stateService->get(Task::STATE_COMPLETED));
 
         $entityManager->persist($task);
         $entityManager->flush();

@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -40,7 +39,7 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
 
         $this->assertInstanceOf(Task::class, $urlDiscoveryTask);
         $this->assertEquals(TaskTypeService::URL_DISCOVERY_TYPE, $urlDiscoveryTask->getType()->getName());
-        $this->assertEquals(TaskService::QUEUED_STATE, $urlDiscoveryTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, $urlDiscoveryTask->getState()->getName());
         $this->assertEquals($crawlJob, $urlDiscoveryTask->getJob());
         $this->assertEquals($taskUrl, $urlDiscoveryTask->getUrl());
         $this->assertEquals($expectedTaskParameters, $urlDiscoveryTask->getParametersArray());

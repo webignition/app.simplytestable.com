@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -55,7 +54,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_TASKS => [
                 [
-                    JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                    JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
                 ],
             ],
         ]);

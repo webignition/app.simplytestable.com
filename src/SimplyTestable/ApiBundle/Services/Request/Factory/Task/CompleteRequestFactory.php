@@ -31,10 +31,10 @@ class CompleteRequestFactory
      * @var string[]
      */
     private $allowedStateNames = [
-        TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-        TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-        TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-        TaskService::TASK_SKIPPED_STATE,
+        Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+        Task::STATE_FAILED_RETRY_AVAILABLE,
+        Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+        Task::STATE_SKIPPED,
     ];
 
     /**
@@ -140,7 +140,7 @@ class CompleteRequestFactory
     {
         $stateValue = $this->requestParameters->get(self::PARAMETER_STATE);
         if (empty($stateValue) || !in_array($stateValue, $this->allowedStateNames)) {
-            $stateValue = TaskService::COMPLETED_STATE;
+            $stateValue = Task::STATE_COMPLETED;
         }
 
         return $this->stateService->get($stateValue);

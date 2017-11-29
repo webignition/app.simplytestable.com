@@ -2,8 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 
@@ -26,22 +26,22 @@ trait GetCountByJobAndStatesDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -53,21 +53,21 @@ trait GetCountByJobAndStatesDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
                 ],
                 'jobIndex' => 0,
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::QUEUED_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_QUEUED,
                 ],
                 'expectedCount' => 4,
             ],
@@ -82,22 +82,22 @@ trait GetCountByJobAndStatesDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -109,21 +109,21 @@ trait GetCountByJobAndStatesDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
                 ],
                 'jobIndex' => 1,
                 'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_CANCELLED,
                 ],
                 'expectedCount' => 2,
             ],

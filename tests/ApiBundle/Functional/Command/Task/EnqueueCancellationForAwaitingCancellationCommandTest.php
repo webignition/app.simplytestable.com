@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Command\Task;
 
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -83,13 +83,13 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                     ],
                 ],

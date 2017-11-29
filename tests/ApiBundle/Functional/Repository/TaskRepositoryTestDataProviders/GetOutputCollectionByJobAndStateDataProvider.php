@@ -3,9 +3,6 @@
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 
@@ -49,7 +46,7 @@ trait GetOutputCollectionByJobAndStateDataProvider
                     ],
                 ],
                 'jobIndex' => 0,
-                'taskStateName' => TaskService::QUEUED_STATE,
+                'taskStateName' => Task::STATE_QUEUED,
                 'expectedTaskOutputValues' => [
                     'public-foo',
                     'public-bar',
@@ -87,7 +84,7 @@ trait GetOutputCollectionByJobAndStateDataProvider
                     ],
                 ],
                 'jobIndex' => 1,
-                'taskStateName' => TaskService::QUEUED_STATE,
+                'taskStateName' => Task::STATE_QUEUED,
                 'expectedTaskOutputValues' => [
                     'private-foo',
                     'private-bar',

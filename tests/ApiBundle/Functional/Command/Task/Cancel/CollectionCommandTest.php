@@ -6,8 +6,8 @@ use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Post\PostBody;
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -130,9 +130,9 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'jobValues' => [],
                 'expectedHttpTransactions' => [],
                 'expectedTaskStates' => [
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
                 ],
             ],
             'tasks have workers' => [
@@ -188,9 +188,9 @@ class CollectionCommandTest extends AbstractBaseTestCase
                     ],
                 ],
                 'expectedTaskStates' => [
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
                 ],
             ],
             'tasks have workers; request failures' => [
@@ -254,9 +254,9 @@ class CollectionCommandTest extends AbstractBaseTestCase
                     ],
                 ],
                 'expectedTaskStates' => [
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
                 ],
             ],
         ];

@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
@@ -152,7 +151,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
-                            'http://example.com/' => TaskService::COMPLETED_STATE,
+                            'http://example.com/' => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -182,7 +181,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
-                            'http://example.com/' => TaskService::COMPLETED_STATE,
+                            'http://example.com/' => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -206,8 +205,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'expectedCrawlJobState' => Job::STATE_IN_PROGRESS,
                         'expectedParentJobState' => Job::STATE_FAILED_NO_SITEMAP,
                         'expectedTaskStates' => [
-                            'http://example.com/' => TaskService::COMPLETED_STATE,
-                            'http://example.com/1' => TaskService::QUEUED_STATE,
+                            'http://example.com/' => Task::STATE_COMPLETED,
+                            'http://example.com/1' => Task::STATE_QUEUED,
                         ],
                     ],
                 ],
@@ -231,8 +230,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'expectedCrawlJobState' => Job::STATE_IN_PROGRESS,
                         'expectedParentJobState' => Job::STATE_FAILED_NO_SITEMAP,
                         'expectedTaskStates' => [
-                            'http://example.com/' => TaskService::COMPLETED_STATE,
-                            'http://example.com/1' => TaskService::QUEUED_STATE,
+                            'http://example.com/' => Task::STATE_COMPLETED,
+                            'http://example.com/1' => Task::STATE_QUEUED,
                         ],
                     ],
                     [
@@ -250,8 +249,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
-                            'http://example.com/' => TaskService::COMPLETED_STATE,
-                            'http://example.com/1' => TaskService::COMPLETED_STATE,
+                            'http://example.com/' => Task::STATE_COMPLETED,
+                            'http://example.com/1' => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -285,7 +284,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
-                            'http://example.com/' => TaskService::COMPLETED_STATE,
+                            'http://example.com/' => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],

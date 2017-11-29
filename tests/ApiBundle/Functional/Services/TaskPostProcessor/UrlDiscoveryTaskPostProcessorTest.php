@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
@@ -119,15 +118,15 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
     {
         return [
             'incorrect state' => [
-                'taskStateName' => TaskService::QUEUED_STATE,
+                'taskStateName' => Task::STATE_QUEUED,
                 'taskOutputValues' => [],
             ],
             'empty output' => [
-                'taskStateName' => TaskService::COMPLETED_STATE,
+                'taskStateName' => Task::STATE_COMPLETED,
                 'taskOutputValues' => [],
             ],
             'errored output' => [
-                'taskStateName' => TaskService::COMPLETED_STATE,
+                'taskStateName' => Task::STATE_COMPLETED,
                 'taskOutputValues' => [
                     TaskOutputFactory::KEY_ERROR_COUNT => 1,
                 ],
@@ -227,7 +226,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                 'taskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                         'output' => json_encode([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -243,21 +242,21 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                     ],
                     [
                         'url' => 'http://example.com/one',
-                        'stateName' => TaskService::QUEUED_STATE,
+                        'stateName' => Task::STATE_QUEUED,
                         'output' => null,
                     ],
                 ],
                 'expectedAmmendmentReason' => 'plan-url-limit-reached:discovered-url-count-11',
                 'expectedTaskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_CANCELLED,
                 ],
             ],
             '12 discovered urls' => [
                 'taskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                         'output' => json_encode([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -275,7 +274,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                 ],
                 'expectedAmmendmentReason' => 'plan-url-limit-reached:discovered-url-count-12',
                 'expectedTaskStateNames' => [
-                    TaskService::COMPLETED_STATE,
+                    Task::STATE_COMPLETED,
                 ],
             ],
         ];
@@ -371,14 +370,14 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                 'taskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                         'output' => json_encode(1)
                     ],
                 ],
                 'expectedTaskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                     ],
                 ],
             ],
@@ -386,7 +385,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                 'taskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                         'output' => json_encode([
                             'http://example.com/one',
                         ])
@@ -395,11 +394,11 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                 'expectedTaskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                     ],
                     [
                         'url' => 'http://example.com/one',
-                        'stateName' => TaskService::QUEUED_STATE,
+                        'stateName' => Task::STATE_QUEUED,
                     ],
                 ],
             ],
@@ -407,7 +406,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                 'taskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                         'output' => json_encode([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -415,22 +414,22 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
                     ],
                     [
                         'url' => 'http://example.com/one',
-                        'stateName' => TaskService::QUEUED_STATE,
+                        'stateName' => Task::STATE_QUEUED,
                         'output' => null,
                     ],
                 ],
                 'expectedTaskValuesCollection' => [
                     [
                         'url' => 'http://example.com/',
-                        'stateName' => TaskService::COMPLETED_STATE,
+                        'stateName' => Task::STATE_COMPLETED,
                     ],
                     [
                         'url' => 'http://example.com/one',
-                        'stateName' => TaskService::QUEUED_STATE,
+                        'stateName' => Task::STATE_QUEUED,
                     ],
                     [
                         'url' => 'http://example.com/two',
-                        'stateName' => TaskService::QUEUED_STATE,
+                        'stateName' => Task::STATE_QUEUED,
                     ],
                 ],
             ],

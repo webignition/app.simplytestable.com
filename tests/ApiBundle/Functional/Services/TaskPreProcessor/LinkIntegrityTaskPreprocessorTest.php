@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
@@ -144,7 +143,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $selectedTaskOutput = $selectedTask->getOutput();
 
         $this->assertFalse($returnValue);
-        $this->assertEquals(TaskService::QUEUED_STATE, $selectedTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, $selectedTask->getState()->getName());
         $this->assertEmpty($selectedTaskOutput);
     }
 
@@ -233,7 +232,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $selectedTaskOutput = $selectedTask->getOutput();
 
         $this->assertFalse($returnValue);
-        $this->assertEquals(TaskService::QUEUED_STATE, $selectedTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, $selectedTask->getState()->getName());
         $this->assertEmpty($selectedTaskOutput);
     }
 
@@ -307,7 +306,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
         $this->assertFalse($returnValue);
-        $this->assertEquals(TaskService::QUEUED_STATE, $selectedTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, $selectedTask->getState()->getName());
 
         $selectedTaskOutput = $selectedTask->getOutput();
 
@@ -487,7 +486,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
                     [],
                 ],
                 'expectedTaskPreProcessorReturnValue' => true,
-                'expectedTaskStateName' => TaskService::COMPLETED_STATE,
+                'expectedTaskStateName' => Task::STATE_COMPLETED,
                 'expectedTaskOutputValues' => [
                     'output' => null,
                     'errorCount' => 0,
@@ -547,7 +546,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
                     ],
                 ],
                 'expectedTaskPreProcessorReturnValue' => true,
-                'expectedTaskStateName' => TaskService::COMPLETED_STATE,
+                'expectedTaskStateName' => Task::STATE_COMPLETED,
                 'expectedTaskOutputValues' => [
                     'output' => json_encode([
                         [

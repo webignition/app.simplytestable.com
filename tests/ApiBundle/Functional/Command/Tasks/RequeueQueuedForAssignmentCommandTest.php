@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\Tasks;
 
 use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -85,9 +84,9 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
                     [],
                 ],
                 'expectedTaskStateNames' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
+                    Task::STATE_QUEUED,
+                    Task::STATE_QUEUED,
+                    Task::STATE_QUEUED,
                 ],
             ],
             'mixed states' => [
@@ -96,13 +95,13 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
                             ],
                         ],
                     ],
@@ -110,24 +109,24 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                         ],
                     ],
                 ],
                 'expectedTaskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_QUEUED,
+                    Task::STATE_QUEUED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_QUEUED,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
                 ],
             ],
         ];

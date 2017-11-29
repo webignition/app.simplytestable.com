@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -86,7 +85,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskAwaitingCancellationState = $this->stateService->get(TaskService::AWAITING_CANCELLATION_STATE);
+        $taskAwaitingCancellationState = $this->stateService->get(Task::STATE_AWAITING_CANCELLATION);
 
         $taskRepository = $this->entityManager->getRepository(Task::class);
 

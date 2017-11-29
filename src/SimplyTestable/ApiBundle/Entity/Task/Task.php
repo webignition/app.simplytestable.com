@@ -22,6 +22,17 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
  */
 class Task implements \JsonSerializable
 {
+    const STATE_CANCELLED = 'task-cancelled';
+    const STATE_QUEUED = 'task-queued';
+    const STATE_IN_PROGRESS = 'task-in-progress';
+    const STATE_COMPLETED = 'task-completed';
+    const STATE_AWAITING_CANCELLATION = 'task-awaiting-cancellation';
+    const STATE_QUEUED_FOR_ASSIGNMENT = 'task-queued-for-assignment';
+    const STATE_FAILED_NO_RETRY_AVAILABLE = 'task-failed-no-retry-available';
+    const STATE_FAILED_RETRY_AVAILABLE = 'task-failed-retry-available';
+    const STATE_FAILED_RETRY_LIMIT_REACHED = 'task-failed-retry-limit-reached';
+    const STATE_SKIPPED = 'task-skipped';
+
     /**
      * @var int
      *
