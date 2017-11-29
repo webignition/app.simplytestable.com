@@ -13,6 +13,7 @@ use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
 
 class PrepareCommandTest extends AbstractBaseTestCase
 {
@@ -69,8 +70,13 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $expectedHasCrawlJob,
         $expectedTaskCount
     ) {
+        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
+        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
+            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
+        ]);
+
         $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
-        $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
+        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
 
         $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
