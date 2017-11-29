@@ -2,9 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
-use phpmock\functions\FixedValueFunction;
-use phpmock\MockBuilder;
-use phpmock\mockery\PHPMockery;
+use SimplyTestable\ApiBundle\Model\ApplicationStateInterface;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -38,7 +36,7 @@ class ApplicationStateServiceTest extends AbstractBaseTestCase
         $this->assertTrue($returnValue);
         $this->assertEquals($expectedState, $this->applicationStateService->getState());
 
-        $this->applicationStateService->setState(ApplicationStateService::DEFAULT_STATE);
+        $this->applicationStateService->setState(ApplicationStateInterface::DEFAULT_STATE);
     }
 
     /**
@@ -47,17 +45,17 @@ class ApplicationStateServiceTest extends AbstractBaseTestCase
     public function setStateGetStateDataProvider()
     {
         return [
-            ApplicationStateService::STATE_ACTIVE => [
-                'state' => ApplicationStateService::STATE_ACTIVE,
-                'expectedState' => ApplicationStateService::STATE_ACTIVE,
+            ApplicationStateInterface::STATE_ACTIVE => [
+                'state' => ApplicationStateInterface::STATE_ACTIVE,
+                'expectedState' => ApplicationStateInterface::STATE_ACTIVE,
             ],
-            ApplicationStateService::STATE_MAINTENANCE_READ_ONLY => [
-                'state' => ApplicationStateService::STATE_MAINTENANCE_READ_ONLY,
-                'expectedState' => ApplicationStateService::STATE_MAINTENANCE_READ_ONLY,
+            ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY => [
+                'state' => ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY,
+                'expectedState' => ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY,
             ],
-            ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY => [
-                'state' => ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY,
-                'expectedState' => ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY,
+            ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY => [
+                'state' => ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY,
+                'expectedState' => ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY,
             ],
         ];
     }
@@ -103,7 +101,7 @@ class ApplicationStateServiceTest extends AbstractBaseTestCase
             $this->applicationStateService->isInMaintenanceBackupReadOnlyState()
         );
 
-        $this->applicationStateService->setState(ApplicationStateService::DEFAULT_STATE);
+        $this->applicationStateService->setState(ApplicationStateInterface::DEFAULT_STATE);
     }
 
     /**
@@ -112,20 +110,20 @@ class ApplicationStateServiceTest extends AbstractBaseTestCase
     public function isInStateDataProvider()
     {
         return [
-            ApplicationStateService::STATE_ACTIVE => [
-                'state' => ApplicationStateService::STATE_ACTIVE,
+            ApplicationStateInterface::STATE_ACTIVE => [
+                'state' => ApplicationStateInterface::STATE_ACTIVE,
                 'expectedIsInActiveState' => true,
                 'expectedIsInMaintenanceReadOnlyState' => false,
                 'expectedIsInMaintenanceBackupReadOnlyState' => false,
             ],
-            ApplicationStateService::STATE_MAINTENANCE_READ_ONLY => [
-                'state' => ApplicationStateService::STATE_MAINTENANCE_READ_ONLY,
+            ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY => [
+                'state' => ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY,
                 'expectedIsInActiveState' => false,
                 'expectedIsInMaintenanceReadOnlyState' => true,
                 'expectedIsInMaintenanceBackupReadOnlyState' => false,
             ],
-            ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY => [
-                'state' => ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY,
+            ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY => [
+                'state' => ApplicationStateInterface::STATE_MAINTENANCE_BACKUP_READ_ONLY,
                 'expectedIsInActiveState' => false,
                 'expectedIsInMaintenanceReadOnlyState' => false,
                 'expectedIsInMaintenanceBackupReadOnlyState' => true,
