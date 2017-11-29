@@ -2,11 +2,12 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Exception\CurlException;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
 class WorkerTaskAssignmentService extends WorkerTaskService
 {
@@ -195,18 +196,22 @@ class WorkerTaskAssignmentService extends WorkerTaskService
 
         $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection/');
 
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
-            'tasks' => $requestData
-        ));
+        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
+            'body' => [
+                'tasks' => $requestData
+            ],
+        ]);
 
         try {
-            $response = $httpRequest->send();
-        } catch (CurlException $curlException) {
+            $response = $this->httpClientService->get()->send($httpRequest);
+        } catch (ConnectException $connectException) {
+            $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
+
             $this->logger->error(sprintf(
                 'WorkerTaskAssignmentService::assignCollectionToWorker: %s: %s %s',
                 $requestUrl,
-                $curlException->getErrorNo(),
-                $curlException->getError()
+                $curlException->getCurlCode(),
+                $curlException->getMessage()
             ));
 
             return false;
@@ -214,7 +219,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
             $response = $badResponseException->getResponse();
         }
 
-        if (!$response->isSuccessful()) {
+        if (200 !== $response->getStatusCode()) {
             $this->logger->error(sprintf(
                 'WorkerTaskAssignmentService::assignCollectionToWorker %s: %s %s',
                 $requestUrl,

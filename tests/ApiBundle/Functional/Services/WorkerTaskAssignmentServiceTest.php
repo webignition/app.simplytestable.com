@@ -2,13 +2,14 @@
 
 namespace Tests\ApiBundle\Command;
 
-use Guzzle\Http\Message\EntityEnclosingRequest;
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Post\PostBody;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
@@ -65,17 +66,15 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
      * @param array $workerValuesCollection
      * @param int[] $taskIndicesToAssign
      * @param int|bool $expectedReturnValue
-     * @param array $expectedRequests
-     * @param array $expectedResponses
+     * @param array $expectedHttpTransactions
      * @param string[] $expectedTaskStateNames
      */
-    public function testAssignCollectionFoo(
+    public function testAssignCollection(
         $httpFixtures,
         $workerValuesCollection,
         $taskIndicesToAssign,
         $expectedReturnValue,
-        $expectedRequests,
-        $expectedResponses,
+        $expectedHttpTransactions,
         $expectedTaskStateNames
     ) {
         $httpClientService = $this->container->get(HttpClientService::class);
@@ -99,8 +98,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
 
         $this->queueHttpFixtures($httpFixtures);
 
-        $httpHistory = $httpClientService->getHistoryPlugin();
-        $httpHistory->clear();
+        $httpClientService->getHistory()->clear();
 
         $workers = [];
         foreach ($workerValuesCollection as $workerValues) {
@@ -111,25 +109,34 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals($expectedReturnValue, $returnValue);
 
-        $httpTransactions = $httpClientService->getHistoryPlugin()->getAll();
+        $httpHistory = $httpClientService->getHistory();
 
-        $this->assertCount(count($expectedRequests), $httpTransactions);
-        $this->assertCount(count($expectedResponses), $httpTransactions);
+        $this->assertCount(count($expectedHttpTransactions), $httpHistory);
 
-        foreach ($httpTransactions as $httpTransactionIndex => $httpTransaction) {
-            /* @var EntityEnclosingRequest $request */
+        foreach ($httpHistory as $httpTransactionIndex => $httpTransaction) {
+            $expectedHttpTransaction = $expectedHttpTransactions[$httpTransactionIndex];
+            $expectedRequest = $expectedHttpTransaction['request'];
+            $expectedResponse = $expectedHttpTransaction['response'];
+
+            /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
-            $requestTasksData = $request->getPostField('tasks');
 
-            $expectedRequestData = $expectedRequests[$httpTransactionIndex];
-            $this->assertEquals($expectedRequestData['hostname'], $request->getUrl(true)->getHost());
-            $this->assertEquals($expectedRequestData['tasksData'], $requestTasksData);
+            /* @var PostBody $requestBody */
+            $requestBody = $request->getBody();
 
-            /* @var Response $response */
+            $requestTasksData = $requestBody->getField('tasks');
+
+            $this->assertEquals($expectedRequest['hostname'], $request->getHost());
+            $this->assertEquals($expectedRequest['tasksData'], $requestTasksData);
+
+            /* @var ResponseInterface $response */
             $response = $httpTransaction['response'];
 
-            $expectedResponseData = $expectedResponses[$httpTransactionIndex];
-            $this->assertEquals($expectedResponseData['statusCode'], $response->getStatusCode());
+            if (is_null($expectedResponse)) {
+                $this->assertNull($response);
+            } else {
+                $this->assertEquals($expectedResponse['statusCode'], $response->getStatusCode());
+            }
         }
 
         foreach ($job->getTasks() as $taskIndex => $task) {
@@ -165,21 +172,21 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                 ],
                 'taskIndicesToAssign' => [0],
                 'expectedReturnValue' => WorkerTaskAssignmentService::ASSIGN_COLLECTION_OK_STATUS_CODE,
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/one',
-                                'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
                         ],
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 200,
+                        'response' => [
+                            'statusCode' => 200,
+                        ],
                     ],
                 ],
                 'expectedTaskStateNames' => [
@@ -208,21 +215,21 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                 ],
                 'taskIndicesToAssign' => [0],
                 'expectedReturnValue' => $couldNotAssignToAnyWorkersReturnCode,
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/one',
-                                'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
                         ],
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 503,
+                        'response' => [
+                            'statusCode' => 503,
+                        ],
                     ],
                 ],
                 'expectedTaskStateNames' => [
@@ -242,7 +249,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             ],
             'single task, single worker, curl failure' => [
                 'httpFixtures' => [
-                    CurlExceptionFactory::create('Operation timed out', 28),
+                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
                 ],
                 'workerValuesCollection' => [
                     [
@@ -251,8 +258,21 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                 ],
                 'taskIndicesToAssign' => [0],
                 'expectedReturnValue' => $couldNotAssignToAnyWorkersReturnCode,
-                'expectedRequests' => [],
-                'expectedResponses' => [],
+                'expectedHttpTransactions' => [
+                    [
+                        'request' => [
+                            'hostname' => 'worker.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
+                            ],
+                        ],
+                        'response' => null
+                    ],
+                ],
                 'expectedTaskStateNames' => [
                     TaskService::QUEUED_STATE,
                     TaskService::QUEUED_STATE,
@@ -289,34 +309,36 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                 ],
                 'taskIndicesToAssign' => [0],
                 'expectedReturnValue' => WorkerTaskAssignmentService::ASSIGN_COLLECTION_OK_STATUS_CODE,
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker1.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/one',
-                                'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker1.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
+                        ],
+                        'response' => [
+                            'statusCode' => 503,
                         ],
                     ],
                     [
-                        'hostname' => 'worker2.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/one',
-                                'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker2.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
                         ],
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 503,
-                    ],
-                    [
-                        'statusCode' => 200,
+                        'response' => [
+                            'statusCode' => 200,
+                        ],
                     ],
                 ],
                 'expectedTaskStateNames' => [
@@ -378,52 +400,56 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                 ],
                 'taskIndicesToAssign' => [0, 1, 4, 5],
                 'expectedReturnValue' => WorkerTaskAssignmentService::ASSIGN_COLLECTION_OK_STATUS_CODE,
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker1.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/one',
-                                'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker1.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
+                                [
+                                    'url' => 'http://example.com/bar%20foo',
+                                    'type' => TaskTypeService::CSS_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
-                            [
-                                'url' => 'http://example.com/bar%20foo',
-                                'type' => TaskTypeService::CSS_VALIDATION_TYPE,
-                                'parameters' => '[]',
-                            ],
+                        ],
+                        'response' => [
+                            'statusCode' => 200,
                         ],
                     ],
                     [
-                        'hostname' => 'worker2.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/one',
-                                'type' => TaskTypeService::CSS_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker2.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/one',
+                                    'type' => TaskTypeService::CSS_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
+                        ],
+                        'response' => [
+                            'statusCode' => 200,
                         ],
                     ],
                     [
-                        'hostname' => 'worker3.simplytestable.com',
-                        'tasksData' => [
-                            [
-                                'url' => 'http://example.com/bar%20foo',
-                                'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                'parameters' => '[]',
+                        'request' => [
+                            'hostname' => 'worker3.simplytestable.com',
+                            'tasksData' => [
+                                [
+                                    'url' => 'http://example.com/bar%20foo',
+                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'parameters' => '[]',
+                                ],
                             ],
                         ],
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 200,
-                    ],
-                    [
-                        'statusCode' => 200,
-                    ],
-                    [
-                        'statusCode' => 200,
+                        'response' => [
+                            'statusCode' => 200,
+                        ],
                     ],
                 ],
                 'expectedTaskStateNames' => [
