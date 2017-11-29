@@ -8,60 +8,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 class WorkerTaskCancellationService extends WorkerTaskService
 {
     /**
-     * @param Task $task
-     *
-     * @return int
-     */
-    public function cancel(Task $task)
-    {
-        $this->logger->info("WorkerTaskCancellationService::cancel: Initialising");
-        $this->logger->info(sprintf(
-            'WorkerTaskCancellationService::cancel: Processing task [%s] [%s] [%s] [%s]',
-            $task->getId(),
-            $task->getRemoteId(),
-            $task->getType()->getName(),
-            $task->getUrl()
-        ));
-
-        if (!$this->taskService->isCancellable($task)) {
-            $this->logger->error(sprintf(
-                'WorkerTaskCancellationService::cancel: Task not in cancellable state [%s]',
-                $task->getState()->getName()
-            ));
-
-            return -1;
-        }
-
-        $requestUrl = $this->urlService->prepare('http://' . $task->getWorker()->getHostname() . '/task/cancel/');
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
-            'id' => $task->getRemoteId()
-        ));
-
-        try {
-            $response = $httpRequest->send();
-        } catch (CurlException $curlException) {
-            $this->logger->info(sprintf(
-                'WorkerTaskCancellationService::cancel::CurlException %s: %s %s',
-                $requestUrl,
-                $curlException->getErrorNo(),
-                $curlException->getError()
-            ));
-            return false;
-        } catch (BadResponseException $badResponseException) {
-            $response = $badResponseException->getResponse();
-            $this->logger->info(sprintf(
-                'WorkerTaskCancellationService::cancel::BadResponseException %s: %s %s',
-                $requestUrl,
-                $response->getStatusCode(),
-                $response->getReasonPhrase()
-            ));
-        }
-
-        $this->taskService->cancel($task);
-        return $response->getStatusCode();
-    }
-
-    /**
      * @param Task[] $tasks
      *
      * @return bool
