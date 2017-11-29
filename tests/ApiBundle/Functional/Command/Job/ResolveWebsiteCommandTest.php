@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -98,7 +98,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         $job = $this->jobFactory->create();
 
         $this->queueHttpFixtures([
-            CurlExceptionFactory::create('operation timed out', 28),
+            ConnectExceptionFactory::create('CURL/28 Operation timed out'),
         ]);
 
         $returnCode = $this->command->run(new ArrayInput([
