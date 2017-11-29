@@ -168,7 +168,7 @@ class JobServiceTest extends AbstractBaseTestCase
                 'expectedUserEmail' => 'public@simplytestable.com',
                 'expectedWebsiteUrl' => 'http://example.com/',
                 'expectedJobTypeName' => 'Full site',
-                'expectedJobParameters' => null,
+                'expectedJobParameters' => [],
                 'expectedJobTaskTypes' => [
                     'HTML validation',
                 ],
