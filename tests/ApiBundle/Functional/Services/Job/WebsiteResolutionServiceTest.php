@@ -3,11 +3,11 @@
 namespace Tests\ApiBundle\Functional\Services\Job;
 
 use GuzzleHttp\Message\RequestInterface;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -89,7 +89,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
             'job' => $job,
         ]);
 
-        $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
         $this->assertInstanceOf(RejectionReason::class, $jobRejectionReason);
         $this->assertEquals($expectedRejectionReason, $jobRejectionReason->getReason());
         $this->assertEquals($siteRootUrl, $job->getWebsite()->getCanonicalUrl());
@@ -129,7 +129,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
         $this->websiteResolutionService->resolve($job);
 
-        $this->assertEquals(JobService::RESOLVED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
         $this->assertEquals($expectedResolvedUrl, $job->getWebsite()->getCanonicalUrl());
 
         $requestPropertiesCollection = [];

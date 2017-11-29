@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -139,7 +139,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
-                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJob' => false,
                 'expectedTasksCount' => 0,
             ],
@@ -154,7 +154,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
-                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJob' => false,
                 'expectedTasksCount' => 0,
             ],
@@ -169,7 +169,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
-                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJob' => true,
                 'expectedTasksCount' => 0,
             ],
@@ -197,7 +197,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
                     ),
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
-                'expectedJobState' => JobService::QUEUED_STATE,
+                'expectedJobState' => Job::STATE_QUEUED,
                 'expectedHasCrawlJob' => false,
                 'expectedTasksCount' => 3,
             ],

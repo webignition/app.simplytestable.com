@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services\TaskPostProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -143,7 +144,7 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
                 $this->entityManager->flush();
             }
 
-            if (JobService::COMPLETED_STATE !== $crawlJob->getState()->getName()) {
+            if (Job::STATE_COMPLETED !== $crawlJob->getState()->getName()) {
                 $this->jobService->cancelIncompleteTasks($crawlJob);
                 $this->entityManager->flush();
             }

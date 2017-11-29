@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
-use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -139,8 +139,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                 'commandInput' => [],
                 'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_NO_MATCHING_JOBS,
                 'expectedJobStateNames' => [
-                    JobService::QUEUED_STATE,
-                    JobService::QUEUED_STATE,
+                    Job::STATE_QUEUED,
+                    Job::STATE_QUEUED,
                 ],
             ],
             'jobs with all mixed complete and incomplete tasks' => [
@@ -178,8 +178,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                 'commandInput' => [],
                 'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_NO_MATCHING_JOBS,
                 'expectedJobStateNames' => [
-                    JobService::QUEUED_STATE,
-                    JobService::QUEUED_STATE,
+                    Job::STATE_QUEUED,
+                    Job::STATE_QUEUED,
                 ],
             ],
             'jobs with some all-complete tasks' => [
@@ -217,8 +217,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                 'commandInput' => [],
                 'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_OK,
                 'expectedJobStateNames' => [
-                    JobService::COMPLETED_STATE,
-                    JobService::QUEUED_STATE,
+                    Job::STATE_COMPLETED,
+                    Job::STATE_QUEUED,
                 ],
             ],
             'jobs with some all-complete tasks, dry-run' => [
@@ -258,8 +258,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                 ],
                 'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_OK,
                 'expectedJobStateNames' => [
-                    JobService::QUEUED_STATE,
-                    JobService::QUEUED_STATE,
+                    Job::STATE_QUEUED,
+                    Job::STATE_QUEUED,
                 ],
             ],
             'jobs with some all-complete tasks and with crawl jobs' => [
@@ -315,9 +315,9 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                 'commandInput' => [],
                 'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_OK,
                 'expectedJobStateNames' => [
-                    JobService::COMPLETED_STATE,
-                    JobService::QUEUED_STATE,
-                    JobService::COMPLETED_STATE,
+                    Job::STATE_COMPLETED,
+                    Job::STATE_QUEUED,
+                    Job::STATE_COMPLETED,
                 ],
             ],
         ];

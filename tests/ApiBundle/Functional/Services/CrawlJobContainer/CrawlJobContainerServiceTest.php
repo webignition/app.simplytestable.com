@@ -5,7 +5,6 @@ namespace Tests\ApiBundle\Functional\Services\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -53,25 +52,25 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [
-            JobService::STARTING_STATE,
-            JobService::CANCELLED_STATE,
-            JobService::COMPLETED_STATE,
-            JobService::IN_PROGRESS_STATE,
-            JobService::PREPARING_STATE,
-            JobService::QUEUED_STATE,
-            JobService::FAILED_NO_SITEMAP_STATE,
-            JobService::REJECTED_STATE,
-            JobService::RESOLVING_STATE,
-            JobService::RESOLVED_STATE,
+            Job::STATE_STARTING,
+            Job::STATE_CANCELLED,
+            Job::STATE_COMPLETED,
+            Job::STATE_IN_PROGRESS,
+            Job::STATE_PREPARING,
+            Job::STATE_QUEUED,
+            Job::STATE_FAILED_NO_SITEMAP,
+            Job::STATE_REJECTED,
+            Job::STATE_RESOLVING,
+            Job::STATE_RESOLVED,
         ];
 
         $incompleteStateNames = [
-            JobService::STARTING_STATE,
-            JobService::RESOLVING_STATE,
-            JobService::RESOLVED_STATE,
-            JobService::IN_PROGRESS_STATE,
-            JobService::PREPARING_STATE,
-            JobService::QUEUED_STATE
+            Job::STATE_STARTING,
+            Job::STATE_RESOLVING,
+            Job::STATE_RESOLVED,
+            Job::STATE_IN_PROGRESS,
+            Job::STATE_PREPARING,
+            Job::STATE_QUEUED
         ];
 
         /* @var User[] $users */
@@ -89,7 +88,7 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
             $users[1]->getEmail() => [],
         ];
 
-        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
+        $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
         foreach ($users as $userIndex => $user) {
             foreach ($jobStateNames as $jobStateName) {

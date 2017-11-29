@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Services\Task;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Task\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -104,19 +103,19 @@ class QueueServiceTest extends AbstractBaseTestCase
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
-                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://3.example.com/',
-                        JobFactory::KEY_STATE => JobService::FAILED_NO_SITEMAP_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_FAILED_NO_SITEMAP,
                     ],
                 ],
                 'limit' => null,

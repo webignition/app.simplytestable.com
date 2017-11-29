@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Entity\CrawlJobContainer;
 
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -26,7 +25,7 @@ class PersistTest extends AbstractBaseTestCase
 
         $crawlJob = new Job();
         $crawlJob->setType($crawlJobType);
-        $crawlJob->setState($stateService->get(JobService::STARTING_STATE));
+        $crawlJob->setState($stateService->get(Job::STATE_STARTING));
         $crawlJob->setUser($parentJob->getUser());
         $crawlJob->setWebsite($parentJob->getWebsite());
 

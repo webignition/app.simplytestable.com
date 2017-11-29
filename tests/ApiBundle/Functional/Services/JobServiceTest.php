@@ -113,7 +113,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->assertInstanceOf(Job::class, $job);
 
-        $jobStartingState = $stateService->get(JobService::STARTING_STATE);
+        $jobStartingState = $stateService->get(Job::STATE_STARTING);
 
         $this->assertEquals($expectedUserEmail, $job->getUser()->getEmail());
         $this->assertEquals($expectedWebsiteUrl, $job->getWebsite()->getCanonicalUrl());
@@ -323,8 +323,8 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->entityManager->flush();
 
         $this->assertEquals($expectedIsFinished, $this->jobService->isFinished($job));
-        $this->assertEquals($expectedIsNew, JobService::STARTING_STATE == $job->getState());
-        $this->assertEquals($expectedIsPreparing, JobService::PREPARING_STATE == $job->getState());
+        $this->assertEquals($expectedIsNew, Job::STATE_STARTING == $job->getState());
+        $this->assertEquals($expectedIsPreparing, Job::STATE_PREPARING == $job->getState());
     }
 
     /**
@@ -333,62 +333,62 @@ class JobServiceTest extends AbstractBaseTestCase
     public function isStateDataProvider()
     {
         return [
-            JobService::STARTING_STATE => [
-                'stateName' => JobService::STARTING_STATE,
+            Job::STATE_STARTING => [
+                'stateName' => Job::STATE_STARTING,
                 'expectedIsFinished' => false,
                 'expectedIsNew' => true,
                 'expectedIsPreparing' => false,
             ],
-            JobService::CANCELLED_STATE => [
-                'stateName' => JobService::CANCELLED_STATE,
+            Job::STATE_CANCELLED => [
+                'stateName' => Job::STATE_CANCELLED,
                 'expectedIsFinished' => true,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::COMPLETED_STATE => [
-                'stateName' => JobService::COMPLETED_STATE,
+            Job::STATE_COMPLETED => [
+                'stateName' => Job::STATE_COMPLETED,
                 'expectedIsFinished' => true,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::IN_PROGRESS_STATE => [
-                'stateName' => JobService::IN_PROGRESS_STATE,
+            Job::STATE_IN_PROGRESS => [
+                'stateName' => Job::STATE_IN_PROGRESS,
                 'expectedIsFinished' => false,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::PREPARING_STATE => [
-                'stateName' => JobService::PREPARING_STATE,
+            Job::STATE_PREPARING => [
+                'stateName' => Job::STATE_PREPARING,
                 'expectedIsFinished' => false,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => true,
             ],
-            JobService::QUEUED_STATE => [
-                'stateName' => JobService::QUEUED_STATE,
+            Job::STATE_QUEUED => [
+                'stateName' => Job::STATE_QUEUED,
                 'expectedIsFinished' => false,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::FAILED_NO_SITEMAP_STATE => [
-                'stateName' => JobService::FAILED_NO_SITEMAP_STATE,
+            Job::STATE_FAILED_NO_SITEMAP => [
+                'stateName' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedIsFinished' => true,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::REJECTED_STATE => [
-                'stateName' => JobService::REJECTED_STATE,
+            Job::STATE_REJECTED => [
+                'stateName' => Job::STATE_REJECTED,
                 'expectedIsFinished' => true,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::RESOLVING_STATE => [
-                'stateName' => JobService::RESOLVING_STATE,
+            Job::STATE_RESOLVING => [
+                'stateName' => Job::STATE_RESOLVING,
                 'expectedIsFinished' => false,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
-            JobService::RESOLVED_STATE => [
-                'stateName' => JobService::RESOLVED_STATE,
+            Job::STATE_RESOLVED => [
+                'stateName' => Job::STATE_RESOLVED,
                 'expectedIsFinished' => false,
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
@@ -422,14 +422,14 @@ class JobServiceTest extends AbstractBaseTestCase
     public function cancelFinishedJobDataProvider()
     {
         return [
-            JobService::REJECTED_STATE => [
-                'stateName' => JobService::REJECTED_STATE,
+            Job::STATE_REJECTED => [
+                'stateName' => Job::STATE_REJECTED,
             ],
-            JobService::CANCELLED_STATE => [
-                'stateName' => JobService::CANCELLED_STATE,
+            Job::STATE_CANCELLED => [
+                'stateName' => Job::STATE_CANCELLED,
             ],
-            JobService::COMPLETED_STATE => [
-                'stateName' => JobService::COMPLETED_STATE,
+            Job::STATE_COMPLETED => [
+                'stateName' => Job::STATE_COMPLETED,
             ],
         ];
     }
@@ -465,7 +465,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->jobService->cancel($job);
 
-        $this->assertEquals(JobService::CANCELLED_STATE, $job->getState());
+        $this->assertEquals(Job::STATE_CANCELLED, $job->getState());
 
         foreach ($tasks as $taskIndex => $task) {
             if ($taskIndex === 0) {
@@ -670,16 +670,16 @@ class JobServiceTest extends AbstractBaseTestCase
     {
         return [
             'finished; rejected' => [
-                'state' => JobService::REJECTED_STATE,
+                'state' => Job::STATE_REJECTED,
             ],
             'finished; cancelled' => [
-                'state' => JobService::CANCELLED_STATE,
+                'state' => Job::STATE_CANCELLED,
             ],
             'finished; completed' => [
-                'state' => JobService::COMPLETED_STATE,
+                'state' => Job::STATE_COMPLETED,
             ],
             'finished; failed-no-sitemap' => [
-                'state' => JobService::FAILED_NO_SITEMAP_STATE,
+                'state' => Job::STATE_FAILED_NO_SITEMAP,
             ],
         ];
     }
@@ -687,11 +687,11 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testCompleteWithIncompleteTasks()
     {
         $job = $this->jobFactory->createResolveAndPrepare();
-        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
 
         $this->jobService->complete($job);
 
-        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
     }
 
     public function testComplete()
@@ -699,41 +699,41 @@ class JobServiceTest extends AbstractBaseTestCase
         $stateService = $this->container->get(StateService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare();
-        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
         $this->assertNull($job->getTimePeriod()->getEndDateTime());
 
         $this->jobFactory->setTaskStates($job, $stateService->get(TaskService::COMPLETED_STATE));
 
         $this->jobService->complete($job);
 
-        $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_COMPLETED, $job->getState()->getName());
         $this->assertInstanceOf(\DateTime::class, $job->getTimePeriod()->getEndDateTime());
     }
 
     public function testGetUnfinishedJobsWithTasksAndNoIncompleteTasks()
     {
         $stateNames = [
-            JobService::STARTING_STATE,
-            JobService::CANCELLED_STATE,
-            JobService::COMPLETED_STATE,
-            JobService::IN_PROGRESS_STATE,
-            JobService::PREPARING_STATE,
-            JobService::QUEUED_STATE,
-            JobService::FAILED_NO_SITEMAP_STATE,
-            JobService::REJECTED_STATE,
-            JobService::RESOLVING_STATE,
-            JobService::RESOLVED_STATE,
+            Job::STATE_STARTING,
+            Job::STATE_CANCELLED,
+            Job::STATE_COMPLETED,
+            Job::STATE_IN_PROGRESS,
+            Job::STATE_PREPARING,
+            Job::STATE_QUEUED,
+            Job::STATE_FAILED_NO_SITEMAP,
+            Job::STATE_REJECTED,
+            Job::STATE_RESOLVING,
+            Job::STATE_RESOLVED,
         ];
 
         $zeroTaskStates = [
-            JobService::STARTING_STATE,
-            JobService::RESOLVING_STATE,
-            JobService::RESOLVED_STATE,
+            Job::STATE_STARTING,
+            Job::STATE_RESOLVING,
+            Job::STATE_RESOLVED,
         ];
 
         $completedTasksStates = [
-            JobService::PREPARING_STATE,
-            JobService::QUEUED_STATE,
+            Job::STATE_PREPARING,
+            Job::STATE_QUEUED,
         ];
 
         $userFactory = new UserFactory($this->container);
@@ -817,26 +817,26 @@ class JobServiceTest extends AbstractBaseTestCase
     public function rejectInWrongStateDataProvider()
     {
         return [
-            JobService::CANCELLED_STATE => [
-                'stateName' => JobService::CANCELLED_STATE,
+            Job::STATE_CANCELLED => [
+                'stateName' => Job::STATE_CANCELLED,
             ],
-            JobService::COMPLETED_STATE => [
-                'stateName' => JobService::COMPLETED_STATE,
+            Job::STATE_COMPLETED => [
+                'stateName' => Job::STATE_COMPLETED,
             ],
-            JobService::IN_PROGRESS_STATE => [
-                'stateName' => JobService::IN_PROGRESS_STATE,
+            Job::STATE_IN_PROGRESS => [
+                'stateName' => Job::STATE_IN_PROGRESS,
             ],
-            JobService::QUEUED_STATE => [
-                'stateName' => JobService::QUEUED_STATE,
+            Job::STATE_QUEUED => [
+                'stateName' => Job::STATE_QUEUED,
             ],
-            JobService::FAILED_NO_SITEMAP_STATE => [
-                'stateName' => JobService::FAILED_NO_SITEMAP_STATE,
+            Job::STATE_FAILED_NO_SITEMAP => [
+                'stateName' => Job::STATE_FAILED_NO_SITEMAP,
             ],
-            JobService::REJECTED_STATE => [
-                'stateName' => JobService::REJECTED_STATE,
+            Job::STATE_REJECTED => [
+                'stateName' => Job::STATE_REJECTED,
             ],
-            JobService::RESOLVED_STATE => [
-                'stateName' => JobService::RESOLVED_STATE,
+            Job::STATE_RESOLVED => [
+                'stateName' => Job::STATE_RESOLVED,
             ],
         ];
     }
@@ -869,7 +869,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->jobService->reject($job, $reason, $constraint);
 
-        $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
 
         $rejectionReason = $jobRejectionReasonRepository->findOneBy([
             'job' => $job,
@@ -1115,10 +1115,10 @@ class JobServiceTest extends AbstractBaseTestCase
     {
         $this->assertEquals(
             [
-                JobService::REJECTED_STATE,
-                JobService::CANCELLED_STATE,
-                JobService::COMPLETED_STATE,
-                JobService::FAILED_NO_SITEMAP_STATE,
+                Job::STATE_REJECTED,
+                Job::STATE_CANCELLED,
+                Job::STATE_COMPLETED,
+                Job::STATE_FAILED_NO_SITEMAP,
             ],
             $this->jobService->getFinishedStateNames()
         );

@@ -135,7 +135,7 @@ class JobPreparationService
      */
     public function prepare(Job $job)
     {
-        if (JobService::RESOLVED_STATE !== $job->getState()->getName()) {
+        if (Job::STATE_RESOLVED !== $job->getState()->getName()) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
@@ -144,7 +144,7 @@ class JobPreparationService
 
         $user = $job->getUser();
 
-        $jobPreparingState = $this->stateService->get(JobService::PREPARING_STATE);
+        $jobPreparingState = $this->stateService->get(Job::STATE_PREPARING);
         $job->setState($jobPreparingState);
 
         $this->entityManager->persist($job);
@@ -163,7 +163,7 @@ class JobPreparationService
         $urls = $this->collectUrlsForJob($job, $urlsPerJobConstraint->getLimit());
 
         if (empty($urls)) {
-            $jobFailedNoSitemapState = $this->stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
+            $jobFailedNoSitemapState = $this->stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
             $job->setState($jobFailedNoSitemapState);
 
@@ -188,7 +188,7 @@ class JobPreparationService
 
             $this->prepareTasksFromCollectedUrls($job, $urls);
 
-            $jobQueuedState = $this->stateService->get(JobService::QUEUED_STATE);
+            $jobQueuedState = $this->stateService->get(Job::STATE_QUEUED);
 
             $job->setState($jobQueuedState);
 
@@ -212,14 +212,14 @@ class JobPreparationService
         $this->processedUrls = [];
         $job = $crawlJobContainer->getParentJob();
 
-        if (JobService::FAILED_NO_SITEMAP_STATE !== $job->getState()->getName()) {
+        if (Job::STATE_FAILED_NO_SITEMAP !== $job->getState()->getName()) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }
 
-        $jobPreparingState = $this->stateService->get(JobService::PREPARING_STATE);
+        $jobPreparingState = $this->stateService->get(Job::STATE_PREPARING);
 
         $job->setState($jobPreparingState);
 
@@ -244,7 +244,7 @@ class JobPreparationService
 
         $this->prepareTasksFromCollectedUrls($job, $urls);
 
-        $jobQueuedState = $this->stateService->get(JobService::QUEUED_STATE);
+        $jobQueuedState = $this->stateService->get(Job::STATE_QUEUED);
 
         $job->setState($jobQueuedState);
 

@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -40,32 +39,32 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
     public function prepareInWrongStateDataProvider()
     {
         return [
-            JobService::CANCELLED_STATE => [
-                'stateName' => JobService::CANCELLED_STATE,
+            Job::STATE_CANCELLED => [
+                'stateName' => Job::STATE_CANCELLED,
             ],
-            JobService::COMPLETED_STATE => [
-                'stateName' => JobService::COMPLETED_STATE,
+            Job::STATE_COMPLETED => [
+                'stateName' => Job::STATE_COMPLETED,
             ],
-            JobService::IN_PROGRESS_STATE => [
-                'stateName' => JobService::IN_PROGRESS_STATE,
+            Job::STATE_IN_PROGRESS => [
+                'stateName' => Job::STATE_IN_PROGRESS,
             ],
-            JobService::PREPARING_STATE => [
-                'stateName' => JobService::PREPARING_STATE,
+            Job::STATE_PREPARING => [
+                'stateName' => Job::STATE_PREPARING,
             ],
-            JobService::QUEUED_STATE => [
-                'stateName' => JobService::QUEUED_STATE,
+            Job::STATE_QUEUED => [
+                'stateName' => Job::STATE_QUEUED,
             ],
-            JobService::FAILED_NO_SITEMAP_STATE => [
-                'stateName' => JobService::FAILED_NO_SITEMAP_STATE,
+            Job::STATE_FAILED_NO_SITEMAP => [
+                'stateName' => Job::STATE_FAILED_NO_SITEMAP,
             ],
-            JobService::REJECTED_STATE => [
-                'stateName' => JobService::REJECTED_STATE,
+            Job::STATE_REJECTED => [
+                'stateName' => Job::STATE_REJECTED,
             ],
-            JobService::RESOLVING_STATE => [
-                'stateName' => JobService::RESOLVING_STATE,
+            Job::STATE_RESOLVING => [
+                'stateName' => Job::STATE_RESOLVING,
             ],
-            JobService::RESOLVED_STATE => [
-                'stateName' => JobService::RESOLVED_STATE,
+            Job::STATE_RESOLVED => [
+                'stateName' => Job::STATE_RESOLVED,
             ],
         ];
     }
@@ -118,7 +117,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $website = $websiteService->get('http://example.com/');
 
         $crawlJob = new Job();
-        $crawlJob->setState($stateService->get(JobService::STARTING_STATE));
+        $crawlJob->setState($stateService->get(Job::STATE_STARTING));
         $crawlJob->setUser($user);
         $crawlJob->setWebsite($website);
 
@@ -130,7 +129,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $crawlJobContainer->setCrawlJob($crawlJob);
         $crawlJobContainer->setParentJob($parentJob);
 
-        $this->assertNotEquals(JobService::QUEUED_STATE, $crawlJob->getState()->getName());
+        $this->assertNotEquals(Job::STATE_QUEUED, $crawlJob->getState()->getName());
         $this->assertNull($crawlJob->getTimePeriod());
         $this->assertCount(0, $crawlJob->getTasks());
 
@@ -138,7 +137,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $this->crawlJobContainerService->prepare($crawlJobContainer);
         $this->crawlJobContainerService->prepare($crawlJobContainer);
 
-        $this->assertEquals(JobService::QUEUED_STATE, $crawlJob->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, $crawlJob->getState()->getName());
         $this->assertNotNull($crawlJob->getTimePeriod());
         $this->assertCount(1, $crawlJob->getTasks());
 

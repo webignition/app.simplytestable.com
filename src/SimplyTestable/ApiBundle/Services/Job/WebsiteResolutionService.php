@@ -78,7 +78,7 @@ class WebsiteResolutionService
      */
     public function resolve(Job $job)
     {
-        $jobIsNew = JobService::STARTING_STATE === $job->getState()->getName();
+        $jobIsNew = Job::STATE_STARTING === $job->getState()->getName();
 
         if (!$jobIsNew) {
             throw new WebsiteResolutionException(
@@ -87,8 +87,8 @@ class WebsiteResolutionService
             );
         }
 
-        $jobResolvingState = $this->stateService->get(JobService::RESOLVING_STATE);
-        $jobResolvedState = $this->stateService->get(JobService::RESOLVED_STATE);
+        $jobResolvingState = $this->stateService->get(Job::STATE_RESOLVING);
+        $jobResolvedState = $this->stateService->get(Job::STATE_RESOLVED);
 
         $job->setState($jobResolvingState);
 

@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -182,7 +181,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_FAILED_NO_WORKERS;
         }
 
-        $jobInProgressState = $this->stateService->get(JobService::IN_PROGRESS_STATE);
+        $jobInProgressState = $this->stateService->get(Job::STATE_IN_PROGRESS);
 
         $response = $this->workerTaskAssignmentService->assignCollection($tasks, $workers);
         if ($response === 0) {

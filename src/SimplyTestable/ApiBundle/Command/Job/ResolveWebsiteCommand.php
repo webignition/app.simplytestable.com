@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
@@ -125,7 +124,7 @@ class ResolveWebsiteCommand extends Command
             }
         }
 
-        if (JobService::REJECTED_STATE === $job->getState()->getName()) {
+        if (Job::STATE_REJECTED === $job->getState()->getName()) {
             return self::RETURN_CODE_OK;
         }
 

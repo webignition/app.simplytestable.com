@@ -292,7 +292,7 @@ class JobFactory
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $jobResolvedState = $stateService->get(JobService::RESOLVED_STATE);
+        $jobResolvedState = $stateService->get(Job::STATE_RESOLVED);
 
         $job->setState($jobResolvedState);
 

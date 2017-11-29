@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Services\JobPreparation;
 
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -55,7 +55,7 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
 
         $job = $this->jobFactory->create($jobValues);
 
-        $jobResolvedState = $stateService->get(JobService::RESOLVED_STATE);
+        $jobResolvedState = $stateService->get(Job::STATE_RESOLVED);
         $job->setState($jobResolvedState);
 
         $entityManager->persist($job);
@@ -115,7 +115,7 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
-                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJobContainer' => false,
                 'expectedAmmendments' => [],
                 'expectedTasks' => [],
@@ -137,7 +137,7 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
-                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJobContainer' => true,
                 'expectedAmmendments' => [],
                 'expectedTasks' => [],
@@ -158,7 +158,7 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                 ],
                 'user' => 'private',
                 'httpFixtures' => [],
-                'expectedJobState' => JobService::QUEUED_STATE,
+                'expectedJobState' => Job::STATE_QUEUED,
                 'expectedHasCrawlJobContainer' => false,
                 'expectedAmmendments' => [],
                 'expectedTasks' => [
@@ -207,7 +207,7 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                         ])
                     ),
                 ],
-                'expectedJobState' => JobService::QUEUED_STATE,
+                'expectedJobState' => Job::STATE_QUEUED,
                 'expectedHasCrawlJobContainer' => false,
                 'expectedAmmendments' => [
                     [

@@ -16,37 +16,26 @@ use SimplyTestable\ApiBundle\Repository\TaskRepository;
 
 class JobService
 {
-    const STARTING_STATE = 'job-new';
-    const CANCELLED_STATE = 'job-cancelled';
-    const COMPLETED_STATE = 'job-completed';
-    const IN_PROGRESS_STATE = 'job-in-progress';
-    const PREPARING_STATE = 'job-preparing';
-    const QUEUED_STATE = 'job-queued';
-    const FAILED_NO_SITEMAP_STATE = 'job-failed-no-sitemap';
-    const REJECTED_STATE = 'job-rejected';
-    const RESOLVING_STATE = 'job-resolving';
-    const RESOLVED_STATE = 'job-resolved';
-
     /**
      * @var string[]
      */
     private $incompleteStateNames = [
-        self::STARTING_STATE,
-        self::RESOLVING_STATE,
-        self::RESOLVED_STATE,
-        self::IN_PROGRESS_STATE,
-        self::PREPARING_STATE,
-        self::QUEUED_STATE
+        Job::STATE_STARTING,
+        Job::STATE_RESOLVING,
+        Job::STATE_RESOLVED,
+        Job::STATE_IN_PROGRESS,
+        Job::STATE_PREPARING,
+        Job::STATE_QUEUED
     ];
 
     /**
      * @var string[]
      */
     private $finishedStates = [
-        self::REJECTED_STATE,
-        self::CANCELLED_STATE,
-        self::COMPLETED_STATE,
-        self::FAILED_NO_SITEMAP_STATE,
+        Job::STATE_REJECTED,
+        Job::STATE_CANCELLED,
+        Job::STATE_COMPLETED,
+        Job::STATE_FAILED_NO_SITEMAP,
     ];
 
     /**
@@ -132,7 +121,7 @@ class JobService
             $job->setParameters($jobConfigurationParameters);
         }
 
-        $startingState = $this->stateService->get(self::STARTING_STATE);
+        $startingState = $this->stateService->get(Job::STATE_STARTING);
 
         $job->setState($startingState);
         $this->entityManager->persist($job);
@@ -166,8 +155,8 @@ class JobService
      */
     public function cancel(Job $job)
     {
-        if ($this->isFinished($job) && self::FAILED_NO_SITEMAP_STATE !== $job->getState()->getName()) {
-            return $job;
+        if ($this->isFinished($job) && Job::STATE_FAILED_NO_SITEMAP !== $job->getState()->getName()) {
+            return;
         }
 
         $tasks = $job->getTasks();
@@ -189,7 +178,7 @@ class JobService
             $job->getTimePeriod()->setEndDateTime(new \DateTime());
         }
 
-        $cancelledState = $this->stateService->get(self::CANCELLED_STATE);
+        $cancelledState = $this->stateService->get(Job::STATE_CANCELLED);
 
         $job->setState($cancelledState);
 
@@ -219,16 +208,16 @@ class JobService
         $jobStateName = $job->getState()->getName();
 
         $allowedStateNames = [
-            self::STARTING_STATE,
-            self::PREPARING_STATE,
-            self::RESOLVING_STATE,
+            Job::STATE_STARTING,
+            Job::STATE_PREPARING,
+            Job::STATE_RESOLVING,
         ];
 
         if (!in_array($jobStateName, $allowedStateNames)) {
             return;
         }
 
-        $rejectedState = $this->stateService->get(self::REJECTED_STATE);
+        $rejectedState = $this->stateService->get(Job::STATE_REJECTED);
         $job->setState($rejectedState);
 
         $rejectionReason = new JobRejectionReason();
@@ -283,7 +272,7 @@ class JobService
             return;
         }
 
-        $completedState = $this->stateService->get(self::COMPLETED_STATE);
+        $completedState = $this->stateService->get(Job::STATE_COMPLETED);
 
         $job->getTimePeriod()->setEndDateTime(new \DateTime());
         $job->setState($completedState);
