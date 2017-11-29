@@ -37,3 +37,8 @@ before_script:
 
 script:
   - composer test
+
+matrix:
+  allow_failures:
+  - php: 7.1
+
