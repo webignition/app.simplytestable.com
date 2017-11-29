@@ -2,12 +2,12 @@
 
 namespace Tests\ApiBundle\Functional\Services\Resque;
 
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Message\ResponseInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -34,10 +34,9 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
      *
      * @param array $httpFixtures
      * @param array $workerValuesCollection
-     * @param array $expectedRequests
-     * @param array $expectedResponses
+     * @param array $expectedHttpTransactions
      */
-    public function testNotify($httpFixtures, $workerValuesCollection, $expectedRequests, $expectedResponses)
+    public function testNotify($httpFixtures, $workerValuesCollection, $expectedHttpTransactions)
     {
         $this->queueHttpFixtures($httpFixtures);
 
@@ -51,23 +50,28 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
         $httpClientService = $this->container->get(HttpClientService::class);
         $httpClientService->get();
 
-        $httpTransactions = $httpClientService->getHistoryPlugin()->getAll();
+        $httpHistory = $httpClientService->getHistory();
 
-        $this->assertCount(count($expectedRequests), $httpTransactions);
-        $this->assertCount(count($expectedResponses), $httpTransactions);
+        $this->assertCount(count($expectedHttpTransactions), $httpHistory);
 
-        foreach ($httpTransactions as $httpTransactionIndex => $httpTransaction) {
-            /* @var Request $request */
+        foreach ($httpHistory as $httpTransactionIndex => $httpTransaction) {
+            $expectedHttpTransaction = $expectedHttpTransactions[$httpTransactionIndex];
+            $expectedRequest = $expectedHttpTransaction['request'];
+            $expectedResponse = $expectedHttpTransaction['response'];
+
+            /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            /* @var Response $response */
+            $this->assertEquals($expectedRequest['hostname'], $request->getHost());
+
+            /* @var ResponseInterface $response */
             $response = $httpTransaction['response'];
 
-            $expectedRequestData = $expectedRequests[$httpTransactionIndex];
-            $this->assertEquals($expectedRequestData['hostname'], $request->getUrl(true)->getHost());
-
-            $expectedResponseData = $expectedResponses[$httpTransactionIndex];
-            $this->assertEquals($expectedResponseData['statusCode'], $response->getStatusCode());
+            if (is_null($expectedResponse)) {
+                $this->assertNull($response);
+            } else {
+                $this->assertEquals($expectedResponse['statusCode'], $response->getStatusCode());
+            }
         }
     }
 
@@ -90,8 +94,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_STATE => Worker::STATE_UNACTIVATED,
                     ],
                 ],
-                'expectedRequests' => [],
-                'expectedResponses' => [],
+                'expectedHttpTransactions' => [],
             ],
             'single active worker, client error response' => [
                 'httpFixtures' => [
@@ -103,14 +106,14 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_STATE => Worker::STATE_ACTIVE,
                     ],
                 ],
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker.simplytestable.com',
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 400,
+                        'request' => [
+                            'hostname' => 'worker.simplytestable.com',
+                        ],
+                        'response' => [
+                            'statusCode' => 400,
+                        ],
                     ],
                 ],
             ],
@@ -124,20 +127,20 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_STATE => Worker::STATE_ACTIVE,
                     ],
                 ],
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker.simplytestable.com',
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 503,
+                        'request' => [
+                            'hostname' => 'worker.simplytestable.com',
+                        ],
+                        'response' => [
+                            'statusCode' => 503,
+                        ],
                     ],
                 ],
             ],
             'single active worker, curl error response' => [
                 'httpFixtures' => [
-                    CurlExceptionFactory::create('Operation timed out', 28)
+                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
                 ],
                 'workerValuesCollection' => [
                     [
@@ -145,8 +148,14 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_STATE => Worker::STATE_ACTIVE,
                     ],
                 ],
-                'expectedRequests' => [],
-                'expectedResponses' => [],
+                'expectedHttpTransactions' => [
+                    [
+                        'request' => [
+                            'hostname' => 'worker.simplytestable.com',
+                        ],
+                        'response' => null,
+                    ],
+                ],
             ],
             'many workers, mixed responses' => [
                 'httpFixtures' => [
@@ -168,26 +177,30 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_STATE => Worker::STATE_ACTIVE,
                     ],
                 ],
-                'expectedRequests' => [
+                'expectedHttpTransactions' => [
                     [
-                        'hostname' => 'worker1.simplytestable.com',
+                        'request' => [
+                            'hostname' => 'worker1.simplytestable.com',
+                        ],
+                        'response' => [
+                            'statusCode' => 200,
+                        ],
                     ],
                     [
-                        'hostname' => 'worker2.simplytestable.com',
+                        'request' => [
+                            'hostname' => 'worker2.simplytestable.com',
+                        ],
+                        'response' => [
+                            'statusCode' => 404,
+                        ],
                     ],
                     [
-                        'hostname' => 'worker3.simplytestable.com',
-                    ],
-                ],
-                'expectedResponses' => [
-                    [
-                        'statusCode' => 200,
-                    ],
-                    [
-                        'statusCode' => 404,
-                    ],
-                    [
-                        'statusCode' => 200,
+                        'request' => [
+                            'hostname' => 'worker3.simplytestable.com',
+                        ],
+                        'response' => [
+                            'statusCode' => 200,
+                        ],
                     ],
                 ],
             ],
