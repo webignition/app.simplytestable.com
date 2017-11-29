@@ -4,13 +4,12 @@ namespace Tests\ApiBundle\Functional\Command\Worker;
 
 use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class ActivateVerifyCommandTest extends AbstractBaseTestCase
 {
@@ -73,19 +72,19 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         return [
             'Bad Request' => [
                 'httpFixtures' => [
-                    GuzzleResponse::fromMessage('HTTP/1.1 400 Bad Request'),
+                    'HTTP/1.1 400 Bad Request',
                 ],
                 'expectedReturnCode' => 400,
             ],
             'Service Unavailable' => [
                 'httpFixtures' => [
-                    GuzzleResponse::fromMessage('HTTP/1.1 503 Service Unavailable'),
+                    'HTTP/1.1 503 Service Unavailable',
                 ],
                 'expectedReturnCode' => 503,
             ],
             'curl failure' => [
                 'httpFixtures' => [
-                    CurlExceptionFactory::create('Operation timed out', 28),
+                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
                 ],
                 'expectedReturnCode' => false,
             ],

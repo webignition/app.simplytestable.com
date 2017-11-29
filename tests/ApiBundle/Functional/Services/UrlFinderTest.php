@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Command;
 
+use GuzzleHttp\Message\RequestInterface;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UrlFinder;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -11,6 +12,8 @@ use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\RssFeedFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
+use webignition\WebResource\Service\Service as WebResourceService;
 
 class UrlFinderTest extends AbstractBaseTestCase
 {
@@ -21,6 +24,7 @@ class UrlFinderTest extends AbstractBaseTestCase
      * @param array $parameters
      * @param array $httpFixtures
      * @param string[] $expectedUrlSet
+     * @param string[] $expectedRequestPropertiesCollection
      * @param float|null $sitemapRetrieverTimeout
      */
     public function testGetUrls(
@@ -28,12 +32,21 @@ class UrlFinderTest extends AbstractBaseTestCase
         $parameters,
         $httpFixtures,
         $expectedUrlSet,
+        $expectedRequestPropertiesCollection,
         $sitemapRetrieverTimeout = null
     ) {
         $this->queueHttpFixtures($httpFixtures);
 
-        $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
-        $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
+        $webResourceService = $this->container->get(WebResourceService::class);
+        $httpClientService = $this->container->get(HttpClientService::class);
+
+        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
+
+        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
+            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
+        ]);
+
+        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
 
         $websiteService = $this->container->get(WebSiteService::class);
         $website = $websiteService->get($websiteUrl);
@@ -48,6 +61,23 @@ class UrlFinderTest extends AbstractBaseTestCase
         $urls = $urlFinder->getUrls($website, 10, $parameters);
 
         $this->assertEquals($expectedUrlSet, $urls);
+
+        $requestPropertiesCollection = [];
+
+        foreach ($httpClientService->getHistory() as $httpTransaction) {
+            /* @var RequestInterface $request */
+            $request = $httpTransaction['request'];
+
+            $requestProperties = [];
+
+            foreach (['user-agent', 'cookie', 'authorization'] as $headerKey) {
+                $requestProperties[$headerKey] = $request->getHeader($headerKey);
+            }
+
+            $requestPropertiesCollection[] = $requestProperties;
+        }
+
+        $this->assertEquals($expectedRequestPropertiesCollection, $requestPropertiesCollection);
     }
 
     /**
@@ -68,12 +98,38 @@ class UrlFinderTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'no urls; no sitemap, no rss need, no atom feed' => [
                 'websiteUrl' => 'http://example.com',
                 'parameters' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
@@ -83,6 +139,28 @@ class UrlFinderTest extends AbstractBaseTestCase
                     ),
                 ],
                 'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'no urls; sitemap contains only schemeless urls' => [
                 'websiteUrl' => 'http://example.com',
@@ -100,6 +178,18 @@ class UrlFinderTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'no urls; malformed rss url' => [
                 'websiteUrl' => 'http://example.com',
@@ -114,6 +204,23 @@ class UrlFinderTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'no urls; request exception retrieving atom feed' => [
                 'websiteUrl' => 'http://example.com',
@@ -130,6 +237,38 @@ class UrlFinderTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'from single sitemap.txt' => [
                 'websiteUrl' => 'http://example.com',
@@ -145,6 +284,18 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
                 'expectedUrlSet' => [
                     'http://example.com/from-sitemap-txt/',
+                ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
                 ],
             ],
             'from single sitemap.xml' => [
@@ -170,6 +321,18 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/two',
                     'http://example.com/three',
                 ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'from sitemap.txt and sitemap.xml' => [
                 'websiteUrl' => 'http://example.com',
@@ -190,6 +353,23 @@ class UrlFinderTest extends AbstractBaseTestCase
                 'expectedUrlSet' => [
                     'http://example.com/from-sitemap-xml/',
                     'http://example.com/from-sitemap-txt/',
+                ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
                 ],
             ],
             'from multiple sitemaps' => [
@@ -244,6 +424,28 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/eleven',
                     'http://example.com/twelve',
                 ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'from multiple sitemaps; timeout during transfer' => [
                 'websiteUrl' => 'http://example.com',
@@ -285,6 +487,23 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/ten',
                     'http://example.com/eleven',
                     'http://example.com/twelve',
+                ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
                 ],
                 'sitemapRetrieverTimeout' => 0.0001,
             ],
@@ -329,16 +548,36 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/eleven',
                     'http://example.com/twelve',
                 ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
-            'from atom feed with cookies' => [
+            'from atom feed with cookies and authorization' => [
                 'websiteUrl' => 'http://example.com',
                 'parameters' => [
-                    'cookies' => [
+                    HttpClientService::PARAMETER_KEY_COOKIES => [
                         [
                             'Name' => 'foo',
                             'Value' => 'bar',
+                            'Domain' => '.example.com',
                         ],
                     ],
+                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
+                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
                 ],
                 'httpFixtures' => [
                     HttpFixtureFactory::createNotFoundResponse(),
@@ -357,11 +596,52 @@ class UrlFinderTest extends AbstractBaseTestCase
                 'expectedUrlSet' => [
                     'http://example.com/from-atom-feed/',
                 ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                ],
             ],
-            'from rss feed' => [
+            'from rss feed with cookies and authorization' => [
                 'websiteUrl' => 'http://example.com',
                 'parameters' => [
                     'softLimit' => 10,
+                    HttpClientService::PARAMETER_KEY_COOKIES => [
+                        [
+                            'Name' => 'foo',
+                            'Value' => 'bar',
+                            'Domain' => '.example.com',
+                        ],
+                    ],
+                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
+                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
                 ],
                 'httpFixtures' => [
                     HttpFixtureFactory::createNotFoundResponse(),
@@ -379,16 +659,46 @@ class UrlFinderTest extends AbstractBaseTestCase
                 'expectedUrlSet' => [
                     'http://example.com/from-rss-feed/',
                 ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                ],
             ],
-            'from single sitemap.xml with cookies' => [
+            'from single sitemap.xml with cookies and authorization' => [
                 'websiteUrl' => 'http://example.com',
                 'parameters' => [
-                    'cookies' => [
+                    HttpClientService::PARAMETER_KEY_COOKIES => [
                         [
                             'Name' => 'foo',
                             'Value' => 'bar',
+                            'Domain' => '.example.com',
                         ],
                     ],
+                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
+                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
                 ],
                 'httpFixtures' => [
                     HttpFixtureFactory::createRobotsTxtResponse([
@@ -409,6 +719,18 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/one',
                     'http://example.com/two',
                     'http://example.com/three',
+                ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
                 ],
             ],
         ];

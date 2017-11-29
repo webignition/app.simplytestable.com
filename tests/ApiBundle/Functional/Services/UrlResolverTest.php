@@ -2,12 +2,13 @@
 
 namespace Tests\ApiBundle\Command;
 
-use Guzzle\Http\Exception\CurlException;
-use SimplyTestable\ApiBundle\Services\UrlResolver;
-use Tests\ApiBundle\Factory\CurlExceptionFactory;
+use GuzzleHttp\Exception\ConnectException;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use webignition\Url\Resolver\Resolver;
+use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
 class UrlResolverTest extends AbstractBaseTestCase
 {
@@ -28,15 +29,17 @@ class UrlResolverTest extends AbstractBaseTestCase
     public function testResolveWithCurlException($curlCode)
     {
         $this->queueHttpFixtures([
-            CurlExceptionFactory::create('', $curlCode)
+            ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo'),
         ]);
 
-        $resolver = $this->container->get(UrlResolver::class);
+        $resolver = $this->container->get(Resolver::class);
 
         try {
             $resolver->resolve('http://example.com/');
-        } catch (CurlException $curlException) {
-            $this->assertEquals($curlCode, $curlException->getErrorNo());
+        } catch (ConnectException $connectException) {
+            $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
+
+            $this->assertEquals($curlCode, $curlException->getCurlCode());
         }
     }
 
@@ -55,6 +58,23 @@ class UrlResolverTest extends AbstractBaseTestCase
         ];
     }
 
+    public function testResolveTimeout()
+    {
+        $resolver = $this->container->get(Resolver::class);
+
+        $configuration = $resolver->getConfiguration();
+
+        $reflection = new \ReflectionClass($configuration);
+        $property = $reflection->getProperty('timeoutMs');
+        $property->setAccessible(true);
+        $property->setValue($configuration, 1);
+
+        $this->expectException(ConnectException::class);
+        $this->expectExceptionMessageRegExp('/cURL error 28: Resolving timed out after [0-9]+ milliseconds/');
+
+        $resolver->resolve('http://example.com/');
+    }
+
     /**
      * @dataProvider resolveDataProvider
      *
@@ -65,7 +85,7 @@ class UrlResolverTest extends AbstractBaseTestCase
     {
         $this->queueHttpFixtures($httpFixtures);
 
-        $resolver = $this->container->get(UrlResolver::class);
+        $resolver = $this->container->get(Resolver::class);
         $resolvedUrl = $resolver->resolve('http://example.com/');
 
         $this->assertEquals($expectedResolvedUrl, $resolvedUrl);

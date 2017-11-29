@@ -14,7 +14,6 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
-use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -26,11 +25,11 @@ use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Guzzle\Http\Message\Response as GuzzleResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use GuzzleHttp\Subscriber\Mock as HttpMockSubscriber;
 
 class JobFactory
 {
@@ -53,6 +52,7 @@ class JobFactory
     const KEY_TASK_STATE = 'state';
     const KEY_TASK_WORKER_HOSTNAME = 'worker-hostname';
     const KEY_SET_PUBLIC = 'set-public';
+    const KEY_TASK_REMOTE_ID = 'remote-id';
 
     /**
      * @var array
@@ -91,7 +91,6 @@ class JobFactory
      */
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
-        $httpClientService = $this->container->get(HttpClientService::class);
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
@@ -100,10 +99,8 @@ class JobFactory
 
         $job = $this->create($jobValues, $ignoreState);
 
-        $this->resolve($job, (isset($httpFixtures['resolve']) ? $httpFixtures['resolve'] : null));
+        $this->resolve($job);
         $this->prepare($job, (isset($httpFixtures['prepare']) ? $httpFixtures['prepare'] : null), $domain);
-
-        $httpClientService->getMockPlugin()->clearQueue();
 
         if (isset($jobValues[self::KEY_STATE])) {
             $job->setState($stateService->get($jobValues[self::KEY_STATE]));
@@ -137,6 +134,13 @@ class JobFactory
                         ]);
 
                         $task->setWorker($worker);
+                        $taskIsUpdated = true;
+                    }
+
+                    if (isset($taskValues[self::KEY_TASK_REMOTE_ID])) {
+                        $remoteId = $taskValues[self::KEY_TASK_REMOTE_ID];
+
+                        $task->setRemoteId($remoteId);
                         $taskIsUpdated = true;
                     }
 
@@ -282,24 +286,18 @@ class JobFactory
 
     /**
      * @param Job $job
-     * @param array $httpFixtures
      */
-    public function resolve(Job $job, $httpFixtures = [])
+    public function resolve(Job $job)
     {
-        $httpClientService = $this->container->get(HttpClientService::class);
-        $websiteResolutionService = $this->container->get(WebsiteResolutionService::class);
+        $stateService = $this->container->get(StateService::class);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        if (empty($httpFixtures)) {
-            $httpFixtures = [
-                GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
-            ];
-        }
+        $jobResolvedState = $stateService->get(JobService::RESOLVED_STATE);
 
-        foreach ($httpFixtures as $fixture) {
-            $httpClientService->queueFixture($fixture);
-        }
+        $job->setState($jobResolvedState);
 
-        $websiteResolutionService->resolve($job);
+        $entityManager->persist($job);
+        $entityManager->flush();
     }
 
     /**
@@ -314,19 +312,24 @@ class JobFactory
 
         if (empty($httpFixtures)) {
             $httpFixtures = [
-                GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
-                GuzzleResponse::fromMessage(sprintf(
+                "HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml",
+                sprintf(
                     "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
                     SitemapFixtureFactory::load('example.com-three-urls', $domain)
-                )),
+                ),
             ];
         }
 
-        foreach ($httpFixtures as $fixture) {
-            $httpClientService->queueFixture($fixture);
-        }
+        $httpClient = $httpClientService->get();
+        $emitter = $httpClient->getEmitter();
+
+        $httpMockSubscriber = new HttpMockSubscriber($httpFixtures);
+
+        $emitter->attach($httpMockSubscriber);
 
         $jobPreparationService->prepare($job);
+
+        $emitter->detach($httpMockSubscriber);
     }
 
     /**

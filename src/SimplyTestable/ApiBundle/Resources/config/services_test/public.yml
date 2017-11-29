@@ -77,8 +77,6 @@ services:
 
   SimplyTestable\ApiBundle\Services\Team\MemberService:
 
-  SimplyTestable\ApiBundle\Services\UrlResolver:
-
   SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService:
 
   SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService:

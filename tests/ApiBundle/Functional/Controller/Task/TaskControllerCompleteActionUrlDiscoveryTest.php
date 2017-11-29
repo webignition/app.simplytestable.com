@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
-use Guzzle\Http\Message\Response;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -55,16 +54,16 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
             'user' => $userService->getPublicUser()
         ], [
             'resolve' => [
-                Response::fromMessage('HTTP/1.1 200 OK'),
+                'HTTP/1.1 200 OK',
             ],
             'prepare' => [
-                Response::fromMessage('HTTP/1.1 404'),
-                Response::fromMessage('HTTP/1.1 404'),
-                Response::fromMessage('HTTP/1.1 404'),
-                Response::fromMessage('HTTP/1.1 404'),
-                Response::fromMessage('HTTP/1.1 404'),
-                Response::fromMessage('HTTP/1.1 404'),
-                Response::fromMessage('HTTP/1.1 404'),
+                'HTTP/1.1 404',
+                'HTTP/1.1 404',
+                'HTTP/1.1 404',
+                'HTTP/1.1 404',
+                'HTTP/1.1 404',
+                'HTTP/1.1 404',
+                'HTTP/1.1 404',
             ],
         ]);
 

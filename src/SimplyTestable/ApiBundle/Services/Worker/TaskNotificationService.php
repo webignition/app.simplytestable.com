@@ -3,14 +3,14 @@ namespace SimplyTestable\ApiBundle\Services\Worker;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UrlService;
 use SimplyTestable\ApiBundle\Entity\Worker;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\ClientErrorResponseException;
-use Guzzle\Http\Exception\ServerErrorResponseException;
 use \Psr\Log\LoggerInterface;
+use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
 class TaskNotificationService
 {
@@ -79,24 +79,19 @@ class TaskNotificationService
             $request = $this->httpClientService->postRequest($requestUrl);
 
             try {
-                $request->send();
-            } catch (ClientErrorResponseException $clientErrorResponseException) {
-                $this->logger->error(sprintf(
-                    'TaskNotificationService:notifyWorker:ClientErrorResponseException [%s] [%s]',
-                    $clientErrorResponseException->getResponse()->getStatusCode(),
-                    $worker->getHostname()
-                ));
-            } catch (ServerErrorResponseException $serverErrorResponseException) {
+                $this->httpClientService->get()->send($request);
+            } catch (BadResponseException $badResponseException) {
                 $this->logger->error(sprintf(
                     'TaskNotificationService:notifyWorker:ServerErrorResponseException [%s] [%s]',
-                    $serverErrorResponseException->getResponse()->getStatusCode(),
+                    $badResponseException->getResponse()->getStatusCode(),
                     $worker->getHostname()
-
                 ));
-            } catch (CurlException $curlException) {
+            } catch (ConnectException $connectException) {
+                $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
+
                 $this->logger->error(sprintf(
                     'TaskNotificationService:notifyWorker:CurlException [%s] [%s]',
-                    $curlException->getErrorNo(),
+                    $curlException->getCurlCode(),
                     $worker->getHostname()
                 ));
             }

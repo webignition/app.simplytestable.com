@@ -2,14 +2,14 @@
 
 namespace Tests\ApiBundle\Functional\Services\Job;
 
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Message\Request;
+use GuzzleHttp\Message\RequestInterface;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\StateFactory;
@@ -73,11 +73,8 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
-        $curlException = new CurlException();
-        $curlException->setError('', $curlCode);
-
         $this->queueHttpFixtures([
-            $curlException,
+            ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo'),
         ]);
 
         $siteRootUrl = 'http://foo.example.com/';
@@ -121,8 +118,9 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
      * @param array $jobValues
      * @param array $httpFixtures
      * @param string $expectedResolvedUrl
+     * @param array $expectedRequestPropertiesCollection
      */
-    public function testResolve($jobValues, $httpFixtures, $expectedResolvedUrl)
+    public function testResolve($jobValues, $httpFixtures, $expectedResolvedUrl, $expectedRequestPropertiesCollection)
     {
         $this->queueHttpFixtures($httpFixtures);
         $httpClientService = $this->container->get(HttpClientService::class);
@@ -134,25 +132,22 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         $this->assertEquals(JobService::RESOLVED_STATE, $job->getState()->getName());
         $this->assertEquals($expectedResolvedUrl, $job->getWebsite()->getCanonicalUrl());
 
-        $jobParameters = $job->getParametersArray();
+        $requestPropertiesCollection = [];
 
-        $httpHistory = $httpClientService->getHistoryPlugin()->getAll();
-
-        foreach ($httpHistory as $httpTransaction) {
-            /* @var Request $request */
+        foreach ($httpClientService->getHistory() as $httpTransaction) {
+            /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            if (isset($jobParameters['cookies'])) {
-                $this->assertEquals([
-                    $this->cookie['name'] => $this->cookie['value'],
-                ], $request->getCookies());
+            $requestProperties = [];
+
+            foreach (['user-agent', 'cookie', 'authorization'] as $headerKey) {
+                $requestProperties[$headerKey] = $request->getHeader($headerKey);
             }
 
-            if (isset($jobParameters['http-auth-username'])) {
-                $this->assertEquals(self::HTTP_AUTH_USERNAME, $request->getUsername());
-                $this->assertEquals(self::HTTP_AUTH_PASSWORD, $request->getPassword());
-            }
+            $requestPropertiesCollection[] = $requestProperties;
         }
+
+        $this->assertEquals($expectedRequestPropertiesCollection, $requestPropertiesCollection);
     }
 
     /**
@@ -171,6 +166,18 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createSuccessResponse(),
                 ],
                 'expectedResolvedUrl' => 'http://foo.example.com/',
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => WebsiteResolutionService::URL_RESOLVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => WebsiteResolutionService::URL_RESOLVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
             ],
             'single url with cookies and http auth' => [
                 'jobValues' => [
@@ -185,10 +192,16 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
                     ],
                 ],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
                     HttpFixtureFactory::createSuccessResponse(),
                 ],
-                'expectedResolvedUrl' => 'http://foo.example.com/bar',
+                'expectedResolvedUrl' => 'http://example.com/',
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => WebsiteResolutionService::URL_RESOLVER_USER_AGENT,
+                        'cookie' => 'cookie-name=cookie-value',
+                        'authorization' => 'Basic aHR0cC11c2VyOmh0dHAtcGFzcw==',
+                    ],
+                ],
             ],
         ];
     }

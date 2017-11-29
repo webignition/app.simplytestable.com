@@ -2,18 +2,22 @@
 namespace SimplyTestable\ApiBundle\Services\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Guzzle\Http\Exception\CurlException;
+use GuzzleHttp\Exception\ConnectException;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\UrlResolver;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use webignition\Url\Url;
+use webignition\Url\Resolver\Resolver as UrlResolver;
+use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
 class WebsiteResolutionService
 {
+    const URL_RESOLVER_USER_AGENT = 'ST url resolver (http://bit.ly/RlhKCL)';
+    const CURL_TIMEOUT_MS = 10000;
+
     /**
      * @var JobService
      */
@@ -91,23 +95,34 @@ class WebsiteResolutionService
         $this->entityManager->persist($job);
         $this->entityManager->flush();
 
-        $this->urlResolver->configureForJob($job);
+        $jobParameters = $job->getParametersArray();
+
+        $this->httpClientService->setUserAgent(self::URL_RESOLVER_USER_AGENT);
+        $this->httpClientService->setCookiesFromParameters($jobParameters);
+        $this->httpClientService->setBasicHttpAuthenticationFromParameters($jobParameters);
 
         try {
-            $resolvedUrl = $this->urlResolver->resolve($job->getWebsite()->getCanonicalUrl());
+            $jobUrl = $job->getWebsite()->getCanonicalUrl();
+            $resolvedUrl = $this->urlResolver->resolve($jobUrl);
 
             if ($job->getType()->getName() == 'Full site') {
                 $resolvedUrl = $this->trimToRootUrl($resolvedUrl);
             }
 
-            if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {
+            if ($jobUrl != $resolvedUrl) {
                 $job->setWebsite($this->websiteService->get($resolvedUrl));
             }
 
             $job->setState($jobResolvedState);
-        } catch (CurlException $curlException) {
-            $this->jobService->reject($job, 'curl-' . $curlException->getErrorNo());
+        } catch (ConnectException $connectException) {
+            $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
+
+            $this->jobService->reject($job, 'curl-' . $curlException->getCurlCode());
         }
+
+        $this->httpClientService->resetUserAgent();
+        $this->httpClientService->clearCookies();
+        $this->httpClientService->clearBasicHttpAuthorization();
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();

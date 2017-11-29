@@ -278,7 +278,13 @@ class Task implements \JsonSerializable
      */
     public function getParametersArray()
     {
-        return json_decode($this->getParameters(), true);
+        $parametersArray = json_decode($this->getParameters(), true);
+
+        if (!is_array($parametersArray)) {
+            $parametersArray = [];
+        }
+
+        return $parametersArray;
     }
 
     /**
@@ -289,10 +295,6 @@ class Task implements \JsonSerializable
     public function getParameter($name)
     {
         $parametersArray = $this->getParametersArray();
-
-        if (!is_array($parametersArray)) {
-            return false;
-        }
 
         if (!isset($parametersArray[$name])) {
             return false;

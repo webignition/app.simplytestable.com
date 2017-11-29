@@ -2,12 +2,12 @@
 
 namespace Tests\ApiBundle\Factory;
 
-use Guzzle\Http\Message\Response as GuzzleResponse;
+use GuzzleHttp\Message\ResponseInterface;
 
 class HttpFixtureFactory
 {
     /**
-     * @return GuzzleResponse[]
+     * @return ResponseInterface[]
      */
     public static function createStandardJobResolveAndPrepareFixtures()
     {
@@ -25,7 +25,7 @@ class HttpFixtureFactory
      * @param string $contentType
      * @param string $body
      *
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createResponse(
         $statusCode,
@@ -55,14 +55,14 @@ class HttpFixtureFactory
             $message .= "\n\n" . $body;
         }
 
-        return GuzzleResponse::fromMessage($message);
+        return $message;
     }
 
     /**
      * @param string $contentType
      * @param string $body
      *
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createSuccessResponse($contentType = null, $body = '')
     {
@@ -70,7 +70,7 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createNotFoundResponse()
     {
@@ -78,7 +78,7 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createInternalServerErrorResponse()
     {
@@ -86,7 +86,7 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createServiceUnavailableResponse()
     {
@@ -94,7 +94,7 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createBadRequestResponse()
     {
@@ -104,7 +104,7 @@ class HttpFixtureFactory
     /**
      * @param string $location
      *
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createMovedPermanentlyRedirectResponse($location)
     {
@@ -116,7 +116,7 @@ class HttpFixtureFactory
     /**
      * @param string $location
      *
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createFoundRedirectResponse($location)
     {
@@ -126,7 +126,7 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createStandardResolveResponse()
     {
@@ -134,7 +134,7 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createStandardRobotsTxtResponse()
     {
@@ -146,7 +146,7 @@ class HttpFixtureFactory
     /**
      * @param string[] $sitemapUrls
      *
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createRobotsTxtResponse($sitemapUrls)
     {
@@ -165,7 +165,7 @@ class HttpFixtureFactory
     /**
      * @param string $domain
      *
-     * @return GuzzleResponse
+     * @return string
      */
     public static function createStandardSitemapResponse($domain = 'example.com')
     {
@@ -176,18 +176,18 @@ class HttpFixtureFactory
     }
 
     /**
-     * @return GuzzleResponse[]
+     * @return string[]
      */
     public static function createStandardCrawlPrepareResponses()
     {
         return [
-            GuzzleResponse::fromMessage("HTTP/1.0 200 OK\nContent-Type: text/plain\n\nUser-Agent: *"),
-            GuzzleResponse::fromMessage('HTTP/1.1 404'),
-            GuzzleResponse::fromMessage('HTTP/1.1 404'),
-            GuzzleResponse::fromMessage('HTTP/1.1 404'),
-            GuzzleResponse::fromMessage('HTTP/1.1 404'),
-            GuzzleResponse::fromMessage('HTTP/1.1 404'),
-            GuzzleResponse::fromMessage('HTTP/1.1 404'),
+            "HTTP/1.0 200 OK\nContent-Type: text/plain\n\nUser-Agent: *",
+            'HTTP/1.1 404',
+            'HTTP/1.1 404',
+            'HTTP/1.1 404',
+            'HTTP/1.1 404',
+            'HTTP/1.1 404',
+            'HTTP/1.1 404',
         ];
     }
 }
