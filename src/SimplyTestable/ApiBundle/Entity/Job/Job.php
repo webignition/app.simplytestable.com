@@ -463,33 +463,17 @@ class Job
     /**
      * @param string $name
      *
-     * @return bool
-     */
-    public function hasParameter($name)
-    {
-        if (!$this->hasParameters()) {
-            return false;
-        }
-
-        $parameters = json_decode($this->getParameters());
-
-        return isset($parameters->{$name});
-    }
-
-    /**
-     * @param string $name
-     *
      * @return mixed
      */
     public function getParameter($name)
     {
-        if (!$this->hasParameter($name)) {
-            return null;
+        $parametersArray = $this->getParametersArray();
+
+        if (!isset($parametersArray[$name])) {
+            return false;
         }
 
-        $parameters = json_decode($this->getParameters(), true);
-
-        return $parameters[$name];
+        return $parametersArray[$name];
     }
 
     /**
