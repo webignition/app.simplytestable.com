@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -78,15 +77,15 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $stateService = $this->container->get(StateService::class);
-        $jobInProgressState = $stateService->get(JobService::IN_PROGRESS_STATE);
+        $jobInProgressState = $stateService->get(Job::STATE_IN_PROGRESS);
 
         $this->crawlJob->setState($jobInProgressState);
 
         $entityManager->persist($this->crawlJob);
         $entityManager->flush();
 
-        $this->assertEquals(JobService::IN_PROGRESS_STATE, $this->crawlJob->getState()->getName());
-        $this->assertEquals(JobService::FAILED_NO_SITEMAP_STATE, $this->parentJob->getState()->getName());
+        $this->assertEquals(Job::STATE_IN_PROGRESS, $this->crawlJob->getState()->getName());
+        $this->assertEquals(Job::STATE_FAILED_NO_SITEMAP, $this->parentJob->getState()->getName());
     }
 
     /**
@@ -150,8 +149,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'routeParams' => [
                             CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
                         ],
-                        'expectedCrawlJobState' => JobService::COMPLETED_STATE,
-                        'expectedParentJobState' => JobService::QUEUED_STATE,
+                        'expectedCrawlJobState' => Job::STATE_COMPLETED,
+                        'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
                             'http://example.com/' => TaskService::COMPLETED_STATE,
                         ],
@@ -180,8 +179,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'routeParams' => [
                             CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
                         ],
-                        'expectedCrawlJobState' => JobService::COMPLETED_STATE,
-                        'expectedParentJobState' => JobService::QUEUED_STATE,
+                        'expectedCrawlJobState' => Job::STATE_COMPLETED,
+                        'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
                             'http://example.com/' => TaskService::COMPLETED_STATE,
                         ],
@@ -204,8 +203,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'routeParams' => [
                             CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
                         ],
-                        'expectedCrawlJobState' => JobService::IN_PROGRESS_STATE,
-                        'expectedParentJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                        'expectedCrawlJobState' => Job::STATE_IN_PROGRESS,
+                        'expectedParentJobState' => Job::STATE_FAILED_NO_SITEMAP,
                         'expectedTaskStates' => [
                             'http://example.com/' => TaskService::COMPLETED_STATE,
                             'http://example.com/1' => TaskService::QUEUED_STATE,
@@ -229,8 +228,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'routeParams' => [
                             CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
                         ],
-                        'expectedCrawlJobState' => JobService::IN_PROGRESS_STATE,
-                        'expectedParentJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+                        'expectedCrawlJobState' => Job::STATE_IN_PROGRESS,
+                        'expectedParentJobState' => Job::STATE_FAILED_NO_SITEMAP,
                         'expectedTaskStates' => [
                             'http://example.com/' => TaskService::COMPLETED_STATE,
                             'http://example.com/1' => TaskService::QUEUED_STATE,
@@ -248,8 +247,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'routeParams' => [
                             CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/1',
                         ],
-                        'expectedCrawlJobState' => JobService::COMPLETED_STATE,
-                        'expectedParentJobState' => JobService::QUEUED_STATE,
+                        'expectedCrawlJobState' => Job::STATE_COMPLETED,
+                        'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
                             'http://example.com/' => TaskService::COMPLETED_STATE,
                             'http://example.com/1' => TaskService::COMPLETED_STATE,
@@ -283,8 +282,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                         'routeParams' => [
                             CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
                         ],
-                        'expectedCrawlJobState' => JobService::COMPLETED_STATE,
-                        'expectedParentJobState' => JobService::QUEUED_STATE,
+                        'expectedCrawlJobState' => Job::STATE_COMPLETED,
+                        'expectedParentJobState' => Job::STATE_QUEUED,
                         'expectedTaskStates' => [
                             'http://example.com/' => TaskService::COMPLETED_STATE,
                         ],

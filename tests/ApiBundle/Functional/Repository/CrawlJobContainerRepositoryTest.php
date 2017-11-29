@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -62,7 +61,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $parentJob = new Job();
         $parentJob->setUser($user);
         $parentJob->setWebsite($website);
-        $parentJob->setState($stateService->get(JobService::FAILED_NO_SITEMAP_STATE));
+        $parentJob->setState($stateService->get(Job::STATE_FAILED_NO_SITEMAP));
 
         $entityManager->persist($parentJob);
         $entityManager->flush();
@@ -70,7 +69,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $crawlJob = new Job();
         $crawlJob->setUser($user);
         $crawlJob->setWebsite($website);
-        $crawlJob->setState($stateService->get(JobService::IN_PROGRESS_STATE));
+        $crawlJob->setState($stateService->get(Job::STATE_IN_PROGRESS));
 
         $entityManager->persist($crawlJob);
         $entityManager->flush();
@@ -96,14 +95,14 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $this->assertTrue(
             $this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                 $task,
-                $stateService->get(JobService::FAILED_NO_SITEMAP_STATE)
+                $stateService->get(Job::STATE_FAILED_NO_SITEMAP)
             )
         );
 
         $this->assertFalse(
             $this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                 $task,
-                $stateService->get(JobService::COMPLETED_STATE)
+                $stateService->get(Job::STATE_COMPLETED)
             )
         );
     }
@@ -162,16 +161,16 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [
-            JobService::STARTING_STATE,
-            JobService::CANCELLED_STATE,
-            JobService::COMPLETED_STATE,
-            JobService::IN_PROGRESS_STATE,
-            JobService::PREPARING_STATE,
-            JobService::QUEUED_STATE,
-            JobService::FAILED_NO_SITEMAP_STATE,
-            JobService::REJECTED_STATE,
-            JobService::RESOLVING_STATE,
-            JobService::RESOLVED_STATE,
+            Job::STATE_STARTING,
+            Job::STATE_CANCELLED,
+            Job::STATE_COMPLETED,
+            Job::STATE_IN_PROGRESS,
+            Job::STATE_PREPARING,
+            Job::STATE_QUEUED,
+            Job::STATE_FAILED_NO_SITEMAP,
+            Job::STATE_REJECTED,
+            Job::STATE_RESOLVING,
+            Job::STATE_RESOLVED,
         ];
 
         /* @var User[] $users */
@@ -182,7 +181,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
             ]);
         }
 
-        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
+        $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
         $crawlJobContainerIds = [];
 
@@ -259,7 +258,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 ],
                 'userEmail' => 'user0@example.com',
                 'stateNames' => [
-                    JobService::STARTING_STATE,
+                    Job::STATE_STARTING,
                 ],
                 'keyStatesNumerically' => true,
                 'expectedCrawlJobContainerIndices' => [
@@ -273,10 +272,10 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 ],
                 'userEmail' => 'user0@example.com',
                 'stateNames' => [
-                    JobService::STARTING_STATE,
-                    JobService::COMPLETED_STATE,
-                    JobService::PREPARING_STATE,
-                    JobService::FAILED_NO_SITEMAP_STATE,
+                    Job::STATE_STARTING,
+                    Job::STATE_COMPLETED,
+                    Job::STATE_PREPARING,
+                    Job::STATE_FAILED_NO_SITEMAP,
                 ],
                 'keyStatesNumerically' => true,
                 'expectedCrawlJobContainerIndices' => [
@@ -293,10 +292,10 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 ],
                 'userEmail' => 'user0@example.com',
                 'stateNames' => [
-                    JobService::STARTING_STATE,
-                    JobService::COMPLETED_STATE,
-                    JobService::PREPARING_STATE,
-                    JobService::FAILED_NO_SITEMAP_STATE,
+                    Job::STATE_STARTING,
+                    Job::STATE_COMPLETED,
+                    Job::STATE_PREPARING,
+                    Job::STATE_FAILED_NO_SITEMAP,
                 ],
                 'keyStatesNumerically' => false,
                 'expectedCrawlJobContainerIndices' => [
@@ -313,10 +312,10 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 ],
                 'userEmail' => 'user1@example.com',
                 'stateNames' => [
-                    JobService::STARTING_STATE,
-                    JobService::COMPLETED_STATE,
-                    JobService::PREPARING_STATE,
-                    JobService::FAILED_NO_SITEMAP_STATE,
+                    Job::STATE_STARTING,
+                    Job::STATE_COMPLETED,
+                    Job::STATE_PREPARING,
+                    Job::STATE_FAILED_NO_SITEMAP,
                 ],
                 'keyStatesNumerically' => false,
                 'expectedCrawlJobContainerIndices' => [

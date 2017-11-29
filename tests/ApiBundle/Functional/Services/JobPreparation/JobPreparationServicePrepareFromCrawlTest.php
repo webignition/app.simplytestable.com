@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services\JobPreparation;
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -85,12 +86,12 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
 
         $this->callTaskControllerCompleteAction($taskController);
 
-        $this->assertEquals(JobService::FAILED_NO_SITEMAP_STATE, $parentJob->getState()->getName());
+        $this->assertEquals(Job::STATE_FAILED_NO_SITEMAP, $parentJob->getState()->getName());
         $this->assertNull($parentJob->getTimePeriod());
 
         $this->jobPreparationService->prepareFromCrawl($crawlJobContainer);
 
-        $this->assertEquals(JobService::QUEUED_STATE, $parentJob->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, $parentJob->getState()->getName());
         $this->assertInstanceOf(TimePeriod::class, $parentJob->getTimePeriod());
 
         $timePeriod = $parentJob->getTimePeriod();

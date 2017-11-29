@@ -131,7 +131,7 @@ class JobSummaryFactory
             $this->getOwners($job)
         );
 
-        if (JobService::REJECTED_STATE === $job->getState()->getName()) {
+        if (Job::STATE_REJECTED === $job->getState()->getName()) {
             /* @var RejectionReason $jobRejectionReason */
             $jobRejectionReason = $this->jobRejectionReasonRepository->findOneBy([
                 'job' => $job,

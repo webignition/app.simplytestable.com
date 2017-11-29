@@ -10,7 +10,6 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Services\JobService;
 
 class EnqueuePrepareAllCommand extends Command
 {
@@ -87,7 +86,7 @@ class EnqueuePrepareAllCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobStartingState = $this->stateService->get(JobService::STARTING_STATE);
+        $jobStartingState = $this->stateService->get(Job::STATE_STARTING);
 
         $jobRepository = $this->entityManager->getRepository(Job::class);
         $jobIds = $jobRepository->getIdsByState($jobStartingState);

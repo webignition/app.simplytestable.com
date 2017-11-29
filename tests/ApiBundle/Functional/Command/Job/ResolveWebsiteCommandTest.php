@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -63,32 +63,32 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     public function runWithJobInWrongStateDataProvider()
     {
         return [
-            JobService::CANCELLED_STATE => [
-                'stateName' => JobService::CANCELLED_STATE,
+            Job::STATE_CANCELLED => [
+                'stateName' => Job::STATE_CANCELLED,
             ],
-            JobService::COMPLETED_STATE => [
-                'stateName' => JobService::COMPLETED_STATE,
+            Job::STATE_COMPLETED => [
+                'stateName' => Job::STATE_COMPLETED,
             ],
-            JobService::IN_PROGRESS_STATE => [
-                'stateName' => JobService::IN_PROGRESS_STATE,
+            Job::STATE_IN_PROGRESS => [
+                'stateName' => Job::STATE_IN_PROGRESS,
             ],
-            JobService::PREPARING_STATE => [
-                'stateName' => JobService::PREPARING_STATE,
+            Job::STATE_PREPARING => [
+                'stateName' => Job::STATE_PREPARING,
             ],
-            JobService::QUEUED_STATE => [
-                'stateName' => JobService::QUEUED_STATE,
+            Job::STATE_QUEUED => [
+                'stateName' => Job::STATE_QUEUED,
             ],
-            JobService::FAILED_NO_SITEMAP_STATE => [
-                'stateName' => JobService::FAILED_NO_SITEMAP_STATE,
+            Job::STATE_FAILED_NO_SITEMAP => [
+                'stateName' => Job::STATE_FAILED_NO_SITEMAP,
             ],
-            JobService::REJECTED_STATE => [
-                'stateName' => JobService::REJECTED_STATE,
+            Job::STATE_REJECTED => [
+                'stateName' => Job::STATE_REJECTED,
             ],
-            JobService::RESOLVING_STATE => [
-                'stateName' => JobService::RESOLVING_STATE,
+            Job::STATE_RESOLVING => [
+                'stateName' => Job::STATE_RESOLVING,
             ],
-            JobService::RESOLVED_STATE => [
-                'stateName' => JobService::RESOLVED_STATE,
+            Job::STATE_RESOLVED => [
+                'stateName' => Job::STATE_RESOLVED,
             ],
         ];
     }
@@ -106,7 +106,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
     }
 
     /**
@@ -132,7 +132,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
 
         /* @var Task[] $tasks */
         $tasks = $job->getTasks()->toArray();
@@ -217,7 +217,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertEquals(JobService::RESOLVED_STATE, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
 
         $this->assertTrue($resqueQueueService->contains(
             'job-prepare',

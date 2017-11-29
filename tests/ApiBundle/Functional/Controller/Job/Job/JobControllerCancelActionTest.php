@@ -2,10 +2,10 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -16,7 +16,6 @@ use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 /**
  * @group Controller/Job/JobController
@@ -71,9 +70,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
-        $jobCancelledState = $stateService->get(JobService::CANCELLED_STATE);
-        $jobQueuedState = $stateService->get(JobService::QUEUED_STATE);
+        $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
+        $jobCancelledState = $stateService->get(Job::STATE_CANCELLED);
+        $jobQueuedState = $stateService->get(Job::STATE_QUEUED);
 
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
@@ -140,8 +139,8 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
-        $jobCancelledState = $stateService->get(JobService::CANCELLED_STATE);
+        $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
+        $jobCancelledState = $stateService->get(Job::STATE_CANCELLED);
 
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);

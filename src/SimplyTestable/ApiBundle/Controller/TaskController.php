@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
@@ -135,8 +136,8 @@ class TaskController
             }
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
-                if (JobService::COMPLETED_STATE === $task->getJob()->getState()->getName()) {
-                    $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
+                if (Job::STATE_COMPLETED === $task->getJob()->getState()->getName()) {
+                    $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
                     /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
                     $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);

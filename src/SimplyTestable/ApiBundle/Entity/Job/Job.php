@@ -22,6 +22,17 @@ use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
  */
 class Job
 {
+    const STATE_STARTING = 'job-new';
+    const STATE_CANCELLED = 'job-cancelled';
+    const STATE_COMPLETED = 'job-completed';
+    const STATE_IN_PROGRESS = 'job-in-progress';
+    const STATE_PREPARING = 'job-preparing';
+    const STATE_QUEUED = 'job-queued';
+    const STATE_FAILED_NO_SITEMAP = 'job-failed-no-sitemap';
+    const STATE_REJECTED = 'job-rejected';
+    const STATE_RESOLVING = 'job-resolving';
+    const STATE_RESOLVED = 'job-resolved';
+
     /**
      * @var int
      *

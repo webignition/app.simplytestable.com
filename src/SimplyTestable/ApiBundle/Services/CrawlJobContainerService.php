@@ -105,7 +105,7 @@ class CrawlJobContainerService
             return true;
         }
 
-        if (JobService::STARTING_STATE !== $crawlJob->getState()->getName()) {
+        if (Job::STATE_STARTING !== $crawlJob->getState()->getName()) {
             return false;
         }
 
@@ -115,7 +115,7 @@ class CrawlJobContainerService
             (string)$crawlJobContainer->getParentJob()->getWebsite()
         );
 
-        $jobQueuedState = $this->stateService->get(JobService::QUEUED_STATE);
+        $jobQueuedState = $this->stateService->get(Job::STATE_QUEUED);
 
         $crawlJob->addTask($task);
         $crawlJob->setState($jobQueuedState);
@@ -138,7 +138,7 @@ class CrawlJobContainerService
      */
     private function create(Job $job)
     {
-        $jobStartingState = $this->stateService->get(JobService::STARTING_STATE);
+        $jobStartingState = $this->stateService->get(Job::STATE_STARTING);
         $crawlJobType = $this->jobTypeService->getCrawlType();
 
         $crawlJob = new Job();

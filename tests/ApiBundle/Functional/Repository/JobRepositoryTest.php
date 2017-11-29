@@ -82,7 +82,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
             ],
             'job-states[in-progress], task-states[none specified]' => [
                 'jobStateNames' => [
-                    JobService::IN_PROGRESS_STATE,
+                    Job::STATE_IN_PROGRESS,
                 ],
                 'taskStateNames' => [],
                 'expectedJobIndices' => [],
@@ -96,7 +96,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
             ],
             'job-states[in-progress], task-states[cancelled]' => [
                 'jobStateNames' => [
-                    JobService::IN_PROGRESS_STATE,
+                    Job::STATE_IN_PROGRESS,
                 ],
                 'taskStateNames' => [
                     TaskService::CANCELLED_STATE,
@@ -105,7 +105,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
             ],
             'job-states[in-progress], task-states[completed]' => [
                 'jobStateNames' => [
-                    JobService::IN_PROGRESS_STATE,
+                    Job::STATE_IN_PROGRESS,
                 ],
                 'taskStateNames' => [
                     TaskService::IN_PROGRESS_STATE,
@@ -114,8 +114,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
             ],
             'job-states[in-progress, cancelled], task-states[completed]' => [
                 'jobStateNames' => [
-                    JobService::IN_PROGRESS_STATE,
-                    JobService::CANCELLED_STATE,
+                    Job::STATE_IN_PROGRESS,
+                    Job::STATE_CANCELLED,
                 ],
                 'taskStateNames' => [
                     TaskService::COMPLETED_STATE,
@@ -153,25 +153,25 @@ class JobRepositoryTest extends AbstractBaseTestCase
         return [
             'no jobs' => [
                 'jobValuesCollection' => [],
-                'stateName' => JobService::CANCELLED_STATE,
+                'stateName' => Job::STATE_CANCELLED,
                 'expectedJobIndices' => [],
             ],
             'cancelled' => [
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
-                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
-                'stateName' => JobService::CANCELLED_STATE,
+                'stateName' => Job::STATE_CANCELLED,
                 'expectedJobIndices' => [0, 2],
             ],
         ];
@@ -204,61 +204,61 @@ class JobRepositoryTest extends AbstractBaseTestCase
         return [
             'no jobs' => [
                 'jobValuesCollection' => [],
-                'stateName' => JobService::CANCELLED_STATE,
+                'stateName' => Job::STATE_CANCELLED,
                 'expectedCount' => 0,
             ],
             'no matches' => [
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
-                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
-                'stateName' => JobService::COMPLETED_STATE,
+                'stateName' => Job::STATE_COMPLETED,
                 'expectedCount' => 0,
             ],
             'one match' => [
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
-                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
-                'stateName' => JobService::REJECTED_STATE,
+                'stateName' => Job::STATE_REJECTED,
                 'expectedCount' => 1,
             ],
             'two matches' => [
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
-                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
-                'stateName' => JobService::CANCELLED_STATE,
+                'stateName' => Job::STATE_CANCELLED,
                 'expectedCount' => 2,
             ],
         ];
@@ -327,13 +327,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'public',
@@ -349,13 +349,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'private',
@@ -371,13 +371,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'public',
@@ -393,13 +393,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'public',
@@ -415,13 +415,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'public',
@@ -437,13 +437,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'public',
@@ -459,13 +459,13 @@ class JobRepositoryTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
                         JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
                 'userName' => 'public',
