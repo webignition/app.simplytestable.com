@@ -42,11 +42,6 @@ class UrlFinder
     private $sitemapRetrieverTotalTransferTimeout;
 
     /**
-     * @var float
-     */
-    private $sitemapRetrieverTotalTransferTime;
-
-    /**
      * @var WebsiteRssFeedFinder
      */
     private $websiteRssFeedFinder;
@@ -84,8 +79,6 @@ class UrlFinder
      */
     public function getUrls(WebSite $website, $softLimit, $parameters = [])
     {
-        $this->sitemapRetrieverTotalTransferTime = 0;
-
         return $this->filterUrlsToWebsiteHost(
             $website,
             $this->collectUrls($website, $softLimit, $parameters)
