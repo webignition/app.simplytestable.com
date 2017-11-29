@@ -52,6 +52,7 @@ class JobFactory
     const KEY_TASK_STATE = 'state';
     const KEY_TASK_WORKER_HOSTNAME = 'worker-hostname';
     const KEY_SET_PUBLIC = 'set-public';
+    const KEY_TASK_REMOTE_ID = 'remote-id';
 
     /**
      * @var array
@@ -90,7 +91,6 @@ class JobFactory
      */
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
-        $httpClientService = $this->container->get(HttpClientService::class);
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
@@ -134,6 +134,13 @@ class JobFactory
                         ]);
 
                         $task->setWorker($worker);
+                        $taskIsUpdated = true;
+                    }
+
+                    if (isset($taskValues[self::KEY_TASK_REMOTE_ID])) {
+                        $remoteId = $taskValues[self::KEY_TASK_REMOTE_ID];
+
+                        $task->setRemoteId($remoteId);
                         $taskIsUpdated = true;
                     }
 

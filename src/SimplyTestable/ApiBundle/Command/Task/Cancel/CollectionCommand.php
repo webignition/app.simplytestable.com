@@ -106,7 +106,7 @@ class CollectionCommand extends Command
 
             $taskWorker = $task->getWorker();
 
-            if (empty($taskWorker)) {
+            if (empty($taskWorker) || empty($task->getRemoteId())) {
                 $this->taskService->cancel($task);
             } else {
                 if (!isset($taskIdsByWorker[$taskWorker->getHostname()])) {
