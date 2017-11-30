@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -176,14 +175,14 @@ class WorkerControllerTest extends AbstractBaseTestCase
             'no existing request' => [
                 'existingActivationRequestStateName' => null,
             ],
-            WorkerActivationRequestService::STARTING_STATE => [
-                'existingActivationRequestStateName' => WorkerActivationRequestService::STARTING_STATE,
+            WorkerActivationRequest::STATE_STARTING => [
+                'existingActivationRequestStateName' => WorkerActivationRequest::STATE_STARTING,
             ],
-            WorkerActivationRequestService::VERIFIED_STATE => [
-                'existingActivationRequestStateName' => WorkerActivationRequestService::VERIFIED_STATE,
+            WorkerActivationRequest::STATE_VERIFIED => [
+                'existingActivationRequestStateName' => WorkerActivationRequest::STATE_VERIFIED,
             ],
-            WorkerActivationRequestService::FAILED_STATE => [
-                'existingActivationRequestStateName' => WorkerActivationRequestService::FAILED_STATE,
+            WorkerActivationRequest::STATE_FAILED => [
+                'existingActivationRequestStateName' => WorkerActivationRequest::STATE_FAILED,
             ],
         ];
     }

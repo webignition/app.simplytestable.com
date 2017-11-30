@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Command\Worker;
 
 use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
+use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -52,7 +53,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         $request = $workerActivationRequestService->create($worker, $token);
 
         $this->assertEquals($worker->getHostname(), $request->getWorker()->getHostname());
-        $this->assertEquals(WorkerActivationRequestService::STARTING_STATE, $request->getState()->getName());
+        $this->assertEquals(WorkerActivationRequest::STATE_STARTING, $request->getState()->getName());
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $worker->getId(),
@@ -105,7 +106,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         $request = $workerActivationRequestService->create($worker, $token);
 
         $this->assertEquals($worker->getHostname(), $request->getWorker()->getHostname());
-        $this->assertEquals(WorkerActivationRequestService::STARTING_STATE, $request->getState()->getName());
+        $this->assertEquals(WorkerActivationRequest::STATE_STARTING, $request->getState()->getName());
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $worker->getId(),
