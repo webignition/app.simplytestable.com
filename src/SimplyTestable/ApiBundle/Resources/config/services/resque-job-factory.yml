@@ -1,5 +1,5 @@
 services:
-  SimplyTestable\ApiBundle\Services\Resque\JobFactory:
+  webignition\ResqueJobFactory\ResqueJobFactory:
     arguments:
         $queues:
           job-prepare:

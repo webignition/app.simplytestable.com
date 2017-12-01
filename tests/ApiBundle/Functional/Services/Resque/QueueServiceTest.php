@@ -4,7 +4,7 @@ namespace Tests\ApiBundle\Functional\Services\Resque;
 
 use Mockery\Mock;
 use ResqueBundle\Resque\Resque;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -16,7 +16,7 @@ class QueueServiceTest extends AbstractBaseTestCase
     private $queueService;
 
     /**
-     * @var JobFactory
+     * @var ResqueJobFactory
      */
     private $jobFactory;
 
@@ -28,7 +28,7 @@ class QueueServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->queueService = $this->container->get(QueueService::class);
-        $this->jobFactory = $this->container->get(JobFactory::class);
+        $this->jobFactory = $this->container->get(ResqueJobFactory::class);
     }
 
     /**
@@ -219,7 +219,7 @@ class QueueServiceTest extends AbstractBaseTestCase
         return new QueueService(
             $resque,
             $this->container->get('logger'),
-            $this->container->get(JobFactory::class),
+            $this->container->get(ResqueJobFactory::class),
             'test'
         );
     }
