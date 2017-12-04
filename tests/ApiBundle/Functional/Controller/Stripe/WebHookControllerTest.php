@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Postmark\Sender;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -10,13 +10,13 @@ use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use webignition\ResqueJobFactory\ResqueJobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
 {
     /**
-     * @var JobFactory
+     * @var ResqueJobFactory
      */
     private $jobFactory;
 
@@ -27,90 +27,7 @@ class JobFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = $this->container->get(JobFactory::class);
-    }
-
-    public function testCreateWithInvalidQueue()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Queue "foo" is not valid');
-        $this->expectExceptionCode(JobFactory::EXCEPTION_CODE_INVALID_QUEUE);
-
-        $this->jobFactory->create('foo');
-    }
-
-    /**
-     * @dataProvider createWithMissingRequiredArgsDataProvider
-     *
-     * @param string $queue
-     * @param array $args
-     * @param string $expectedExceptionMessage
-     */
-    public function testCreateWithMissingRequiredArgs($queue, $args, $expectedExceptionMessage)
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
-        $this->expectExceptionCode(JobFactory::EXCEPTION_CODE_MISSING_REQUIRED_ARG);
-
-        $this->jobFactory->create($queue, $args);
-    }
-
-    /**
-     * @return array
-     */
-    public function createWithMissingRequiredArgsDataProvider()
-    {
-        return [
-            'job-prepare' => [
-                'queue' => 'job-prepare',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "id" is missing',
-            ],
-            'job-resolve' => [
-                'queue' => 'job-resolve',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "id" is missing',
-            ],
-            'task-assign-collection' => [
-                'queue' => 'task-assign-collection',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "ids" is missing',
-            ],
-            'task-cancel-collection' => [
-                'queue' => 'task-cancel-collection',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "ids" is missing',
-            ],
-            'worker-activate-verify' => [
-                'queue' => 'worker-activate-verify',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "id" is missing',
-            ],
-            'stripe-event' => [
-                'queue' => 'stripe-event',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "stripeId" is missing',
-            ],
-            'scheduledjob-execute' => [
-                'queue' => 'scheduledjob-execute',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "id" is missing',
-            ],
-        ];
+        $this->jobFactory = $this->container->get(ResqueJobFactory::class);
     }
 
     /**

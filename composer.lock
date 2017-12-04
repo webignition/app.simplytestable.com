@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d22f1066e44c366e60a32a8358662d52",
+    "content-hash": "b120b36a1a789e81e91c65c861b2f9ef",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -2574,16 +2574,16 @@
         },
         {
             "name": "resquebundle/resque",
-            "version": "dev-master",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resquebundle/resque.git",
-                "reference": "8dac8857e7e95890d5c634bb893551c9b78a27a1"
+                "reference": "f5fef1b60ac111dd674630783e714417a0cc561a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resquebundle/resque/zipball/8dac8857e7e95890d5c634bb893551c9b78a27a1",
-                "reference": "8dac8857e7e95890d5c634bb893551c9b78a27a1",
+                "url": "https://api.github.com/repos/resquebundle/resque/zipball/f5fef1b60ac111dd674630783e714417a0cc561a",
+                "reference": "f5fef1b60ac111dd674630783e714417a0cc561a",
                 "shasum": ""
             },
             "require": {
@@ -2639,7 +2639,7 @@
                 "symfony",
                 "symfony3"
             ],
-            "time": "2017-04-24T10:11:17+00:00"
+            "time": "2017-11-21T18:40:42+00:00"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -4008,6 +4008,55 @@
                 "quoted-string"
             ],
             "time": "2017-05-11T11:41:31+00:00"
+        },
+        {
+            "name": "webignition/resque-job-factory",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/resque-job-factory.git",
+                "reference": "73ba4d4390195a48d56fe5508f88f08cbd447f05"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/resque-job-factory/zipball/73ba4d4390195a48d56fe5508f88f08cbd447f05",
+                "reference": "73ba4d4390195a48d56fe5508f88f08cbd447f05",
+                "shasum": ""
+            },
+            "require": {
+                "chrisboulton/php-resque": "dev-master#968b7e6a307a2079051dfc571d2fc2be0546209f",
+                "chrisboulton/php-resque-scheduler": "dev-master#5954c989026f1bbc6443c02078a655333e152242",
+                "php": ">=5.6.0",
+                "resquebundle/resque": "1.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\ResqueJobFactory\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Configuration-based factory to create Resque jobs",
+            "homepage": "https://github.com/webignition/resque-job-factory",
+            "keywords": [
+                "factory",
+                "job",
+                "resque"
+            ],
+            "time": "2017-11-30T18:53:32+00:00"
         },
         {
             "name": "webignition/robots-txt-file",
@@ -6235,16 +6284,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v3.3.13",
+            "version": "v3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "0cbc5e0f8af23dadf270371b9627f1f264cf6021"
+                "reference": "292c1a79c5c32360c62bbe67022a38c6535094d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/0cbc5e0f8af23dadf270371b9627f1f264cf6021",
-                "reference": "0cbc5e0f8af23dadf270371b9627f1f264cf6021",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/292c1a79c5c32360c62bbe67022a38c6535094d5",
+                "reference": "292c1a79c5c32360c62bbe67022a38c6535094d5",
                 "shasum": ""
             },
             "require": {
@@ -6263,7 +6312,7 @@
             "type": "symfony-bridge",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -6293,7 +6342,7 @@
             ],
             "description": "Symfony PHPUnit Bridge",
             "homepage": "https://symfony.com",
-            "time": "2017-11-07T14:16:22+00:00"
+            "time": "2017-11-22T11:41:29+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -6352,8 +6401,7 @@
         "stephenfarrell/postmark-bundle": 20,
         "webignition/html-validation-error-normaliser": 20,
         "chrisboulton/php-resque": 20,
-        "chrisboulton/php-resque-scheduler": 20,
-        "resquebundle/resque": 20
+        "chrisboulton/php-resque-scheduler": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

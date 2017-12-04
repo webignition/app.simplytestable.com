@@ -3,8 +3,8 @@ namespace SimplyTestable\ApiBundle\Services\Resque;
 
 use ResqueBundle\Resque\Resque;
 use Psr\Log\LoggerInterface;
-use SimplyTestable\ApiBundle\Resque\Job\Job;
-use ResqueBundle\Resque\Job as ResqueJob;
+use ResqueBundle\Resque\Job;
+use webignition\ResqueJobFactory\ResqueJobFactory;
 
 /**
  * Wrapper for \ResqueBundle\Resque\Resque that handles exceptions
@@ -35,20 +35,20 @@ class QueueService
     private $logger;
 
     /**
-     * @var JobFactory
+     * @var ResqueJobFactory
      */
     private $jobFactory;
 
     /**
      * @param Resque $resque
      * @param LoggerInterface $logger
-     * @param JobFactory $jobFactory
+     * @param ResqueJobFactory $jobFactory
      * @param string $environment
      */
     public function __construct(
         Resque $resque,
         LoggerInterface $logger,
-        JobFactory $jobFactory,
+        ResqueJobFactory $jobFactory,
         $environment = 'prod'
     ) {
         $this->resque = $resque;
@@ -79,14 +79,14 @@ class QueueService
      * @param string $queue
      * @param array $args
      *
-     * @return ResqueJob|null
+     * @return Job|null
      */
     private function findJobInQueue($queue, $args)
     {
         $jobs = $this->resque->getQueue($queue)->getJobs();
 
         foreach ($jobs as $job) {
-            /* @var $job ResqueJob */
+            /* @var $job Job */
 
             if ($this->match($job, $args)) {
                 return $job;
@@ -97,12 +97,12 @@ class QueueService
     }
 
     /**
-     * @param ResqueJob $job
+     * @param Job $job
      * @param array $args
      *
      * @return bool
      */
-    private function match(ResqueJob $job, $args)
+    private function match(Job $job, $args)
     {
         foreach ($args as $key => $value) {
             if (!isset($job->args[$key])) {

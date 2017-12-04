@@ -2,7 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
 use Psr\Log\LoggerInterface;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

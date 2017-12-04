@@ -5,7 +5,7 @@ namespace Tests\ApiBundle\Functional\Resque\Job;
 use SimplyTestable\ApiBundle\Model\ApplicationStateInterface;
 use SimplyTestable\ApiBundle\Resque\Job\Job;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use webignition\ResqueJobFactory\ResqueJobFactory;
 use Symfony\Component\Console\Command\Command;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
