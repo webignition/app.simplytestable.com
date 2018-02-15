@@ -36,8 +36,6 @@ abstract class AbstractBaseTestCase extends WebTestCase
         $this->container = $this->client->getKernel()->getContainer();
 
         $this->container->get('doctrine')->getConnection()->beginTransaction();
-
-        exec('redis-cli -r 1 flushall');
     }
 
     /**
