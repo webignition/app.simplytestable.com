@@ -157,6 +157,7 @@ class QueueServiceTest extends AbstractBaseTestCase
 
     public function testEnqueueSuccess()
     {
+        $this->queueService->getResque()->getQueue('tasks-notify')->clear();
         $queue = 'tasks-notify';
 
         $this->assertTrue($this->queueService->isEmpty($queue));
