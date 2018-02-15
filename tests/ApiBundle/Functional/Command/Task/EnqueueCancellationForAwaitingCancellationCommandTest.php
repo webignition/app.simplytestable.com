@@ -37,6 +37,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
     public function testRun($jobValues, $expectedResqueQueueIsEmpty, $expectedTaskIndices)
     {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-cancel-collection')->clear();
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare($jobValues);

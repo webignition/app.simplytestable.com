@@ -118,6 +118,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     public function testRunForSingleUrlJob($jobValues, $expectedTaskParameters)
     {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $jobValues[JobFactory::KEY_TYPE] = JobTypeService::SINGLE_URL_NAME;
 
@@ -204,6 +205,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     public function testRunForFullSiteJob()
     {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('job-prepare')->clear();
 
         $job = $this->jobFactory->create();
 

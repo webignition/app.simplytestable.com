@@ -178,8 +178,8 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     public function testRequestActionZeroLimit()
     {
-        exec('redis-cli -r 1 flushall');
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -202,6 +202,7 @@ class TasksControllerTest extends AbstractBaseTestCase
     public function testRequestActionNoTasksToAssign()
     {
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -227,6 +228,8 @@ class TasksControllerTest extends AbstractBaseTestCase
 
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
         $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
+
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();

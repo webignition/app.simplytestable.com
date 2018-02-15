@@ -213,6 +213,8 @@ class StartServiceTest extends AbstractBaseTestCase
         $resqueQueueService = $this->container->get(QueueService::class);
         $jobTypeService = $this->container->get(JobTypeService::class);
 
+        $resqueQueueService->getResque()->getQueue('job-resolve')->clear();
+
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
