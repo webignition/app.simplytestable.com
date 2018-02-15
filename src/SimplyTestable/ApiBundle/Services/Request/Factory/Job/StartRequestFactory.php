@@ -171,22 +171,24 @@ class StartRequestFactory
             return $collection;
         }
 
+        $selectableTaskTypes = $this->taskTypeRepository->findBy([
+            'selectable' => true,
+        ]);
+
         $requestTestTypes = $this->requestPayload->get(self::PARAMETER_TEST_TYPES);
+        array_walk($requestTestTypes, function (&$item) {
+            $item = strtolower($item);
+        });
 
-        foreach ($requestTestTypes as $taskTypeName) {
-            /* @var TaskType $taskType */
-            $taskType = $this->taskTypeRepository->findOneBy([
-                'name' => $taskTypeName,
-            ]);
+        foreach ($selectableTaskTypes as $taskType) {
+            $isEnabled = in_array(strtolower($taskType), $requestTestTypes);
 
-            if (!empty($taskType)) {
-                if ($taskType->getSelectable()) {
-                    $taskConfiguration = new TaskConfiguration();
-                    $taskConfiguration->setType($taskType);
-                    $taskConfiguration->setOptions($this->getTaskTypeOptionsFromRequest($taskType));
-                    $collection->add($taskConfiguration);
-                }
-            }
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType($taskType);
+            $taskConfiguration->setOptions($this->getTaskTypeOptionsFromRequest($taskType));
+            $taskConfiguration->setIsEnabled($isEnabled);
+
+            $collection->add($taskConfiguration);
         }
 
         return $collection;
