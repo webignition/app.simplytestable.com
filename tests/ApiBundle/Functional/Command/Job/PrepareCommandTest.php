@@ -81,6 +81,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
 
         $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('tasks-notify')->clear();
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
