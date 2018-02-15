@@ -69,9 +69,8 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedTaskValuesCollection,
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
-        exec('redis-cli -r 1 flushall');
-
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $job = $this->jobFactory->createResolveAndPrepare();
 
