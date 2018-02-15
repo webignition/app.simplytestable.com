@@ -41,6 +41,8 @@ class QueueServiceTest extends AbstractBaseTestCase
      */
     public function testContainsSuccess($jobValuesCollection, $queue, $args, $expectedContains)
     {
+        $this->queueService->getResque()->getQueue($queue)->clear();
+
         foreach ($jobValuesCollection as $jobValues) {
             $job = $this->jobFactory->create($jobValues['queue'], $jobValues['args']);
             $this->queueService->enqueue($job);
