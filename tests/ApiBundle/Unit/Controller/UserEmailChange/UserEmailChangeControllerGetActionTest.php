@@ -8,7 +8,6 @@ use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\ApiBundle\Factory\MockFactory;
 
 /**
@@ -27,9 +26,9 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
             ]),
         ]);
 
-        $this->expectException(NotFoundHttpException::class);
+        $response = $userEmailChangeController->getAction('foo@example.com');
 
-        $userEmailChangeController->getAction('foo@example.com');
+        $this->assertEquals([], json_decode($response->getContent()));
     }
 
     public function testGetActionNoEmailChangeRequest()
@@ -60,8 +59,8 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
             ]),
         ]);
 
-        $this->expectException(NotFoundHttpException::class);
+        $response = $userEmailChangeController->getAction('foo@example.com');
 
-        $userEmailChangeController->getAction('foo@example.com');
+        $this->assertEquals([], json_decode($response->getContent()));
     }
 }
