@@ -30,6 +30,7 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
     public function testRun()
     {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('job-prepare')->clear();
 
         $jobValuesCollection = [
             [

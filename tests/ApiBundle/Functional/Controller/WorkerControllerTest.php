@@ -70,6 +70,8 @@ class WorkerControllerTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 
+        $resqueQueueService->getResque()->getQueue('worker-activate-verify')->clear();
+
         $hostname = 'foo.worker.simplytestable.com';
         $token = 'token';
 
@@ -121,6 +123,8 @@ class WorkerControllerTest extends AbstractBaseTestCase
         $resqueQueueService = $this->container->get(QueueService::class);
         $stateService = $this->container->get(StateService::class);
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+
+        $resqueQueueService->getResque()->getQueue('worker-activate-verify')->clear();
 
         $this->assertEmpty($workerActivationRequestRepository->findAll());
 

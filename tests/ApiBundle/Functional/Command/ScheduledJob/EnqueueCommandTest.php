@@ -28,6 +28,7 @@ class EnqueueCommandTest extends AbstractBaseTestCase
     public function testRunEnqueuesScheduledJobExecute()
     {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('scheduledjob-execute')->clear();
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => 1,
@@ -43,6 +44,7 @@ class EnqueueCommandTest extends AbstractBaseTestCase
     public function testRunIsIdempotent()
     {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('scheduledjob-execute')->clear();
 
         $this->command->run(new ArrayInput([
             'id' => 1,

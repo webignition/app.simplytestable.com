@@ -68,6 +68,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     {
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+
+        $resqueQueueService->getResque()->getQueue('tasks-notify')->clear();
 
         $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
         $jobCancelledState = $stateService->get(Job::STATE_CANCELLED);
@@ -127,7 +130,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             json_decode($jsStaticAnalysisTask->getParameters())->{'domains-to-ignore'}
         );
 
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
         $this->assertFalse($resqueQueueService->isEmpty(
             'tasks-notify'
         ));

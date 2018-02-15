@@ -179,6 +179,7 @@ class TasksControllerTest extends AbstractBaseTestCase
     public function testRequestActionZeroLimit()
     {
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -201,6 +202,7 @@ class TasksControllerTest extends AbstractBaseTestCase
     public function testRequestActionNoTasksToAssign()
     {
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -226,6 +228,8 @@ class TasksControllerTest extends AbstractBaseTestCase
 
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
         $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
+
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -286,6 +290,9 @@ class TasksControllerTest extends AbstractBaseTestCase
         $userFactory = new UserFactory($this->container);
         $jobFactory = new JobFactory($this->container);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $taskRepository = $entityManager->getRepository(Task::class);
 
@@ -299,8 +306,6 @@ class TasksControllerTest extends AbstractBaseTestCase
             $jobs[] = $job;
             $tasks = array_merge($tasks, $job->getTasks()->toArray());
         }
-
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();

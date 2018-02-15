@@ -41,6 +41,8 @@ class QueueServiceTest extends AbstractBaseTestCase
      */
     public function testContainsSuccess($jobValuesCollection, $queue, $args, $expectedContains)
     {
+        $this->queueService->getResque()->getQueue($queue)->clear();
+
         foreach ($jobValuesCollection as $jobValues) {
             $job = $this->jobFactory->create($jobValues['queue'], $jobValues['args']);
             $this->queueService->enqueue($job);
@@ -157,6 +159,7 @@ class QueueServiceTest extends AbstractBaseTestCase
 
     public function testEnqueueSuccess()
     {
+        $this->queueService->getResque()->getQueue('tasks-notify')->clear();
         $queue = 'tasks-notify';
 
         $this->assertTrue($this->queueService->isEmpty($queue));

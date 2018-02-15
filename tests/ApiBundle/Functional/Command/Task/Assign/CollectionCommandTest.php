@@ -70,6 +70,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
         $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $job = $this->jobFactory->createResolveAndPrepare();
 

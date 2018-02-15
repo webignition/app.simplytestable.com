@@ -152,6 +152,8 @@ class WebHookControllerTest extends AbstractBaseTestCase
         $stripeEventRepository = $entityManager->getRepository(Event::class);
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
+        $resqueQueueService->getResque()->getQueue('stripe-event')->clear();
+
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
 
