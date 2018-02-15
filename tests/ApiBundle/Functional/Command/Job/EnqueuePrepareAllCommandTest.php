@@ -25,6 +25,8 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = $this->container->get(EnqueuePrepareAllCommand::class);
+
+        exec('redis-cli -r 1 flushall');
     }
 
     public function testRun()
