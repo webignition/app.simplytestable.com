@@ -219,6 +219,12 @@ class JobServiceTest extends AbstractBaseTestCase
                             'html-foo' => 'html-bar',
                         ],
                     ],
+                    [
+                        'taskType' => 'CSS validation',
+                        'options' => [
+                            'css-foo' => 'css-bar',
+                        ],
+                    ],
                 ],
             ],
             'private user, full site, parameters, all task types' => [

@@ -101,8 +101,10 @@ class JobService
         $job->setWebsite($jobConfiguration->getWebsite());
         $job->setType($jobConfiguration->getType());
 
-        foreach ($jobConfiguration->getTaskConfigurationsAsCollection()->getEnabled() as $taskConfiguration) {
-            $job->addRequestedTaskType($taskConfiguration->getType());
+        foreach ($jobConfiguration->getTaskConfigurationsAsCollection()->get() as $taskConfiguration) {
+            if ($taskConfiguration->getIsEnabled()) {
+                $job->addRequestedTaskType($taskConfiguration->getType());
+            }
 
             if ($taskConfiguration->getOptionCount()) {
                 $taskTypeOptions = new TaskTypeOptions();
