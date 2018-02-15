@@ -58,6 +58,8 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             $expectedTaskConfiguration = $expectedTaskConfigurationCollection[$taskConfigurationIndex];
 
             $this->assertEquals($expectedTaskConfiguration['type']['name'], $taskConfiguration->getType()->getName());
+            $this->assertEquals($expectedTaskConfiguration['isEnabled'], $taskConfiguration->getIsEnabled());
+
             $taskConfigurationOptions = $taskConfiguration->getOptions();
 
             if ($taskConfigurationOptions instanceof ArrayCollection) {
@@ -77,6 +79,37 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
      */
     public function createDataProvider()
     {
+        $expectedHtmlValidationOnlyTaskConfigurationCollection = [
+            [
+                'type' => [
+                    'name' => 'HTML validation',
+                ],
+                'isEnabled' => true,
+                'options' => [],
+            ],
+            [
+                'type' => [
+                    'name' => 'CSS validation',
+                ],
+                'isEnabled' => false,
+                'options' => [],
+            ],
+            [
+                'type' => [
+                    'name' => 'JS static analysis',
+                ],
+                'isEnabled' => false,
+                'options' => [],
+            ],
+            [
+                'type' => [
+                    'name' => 'Link integrity',
+                ],
+                'isEnabled' => false,
+                'options' => [],
+            ],
+        ];
+
         return [
             'missing test types and test type options' => [
                 'userEmail' => 'public@simplytestable.com',
@@ -91,24 +124,28 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                         'type' => [
                             'name' => 'HTML validation',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'CSS validation',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'JS static analysis',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'Link integrity',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                 ],
@@ -129,24 +166,28 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                         'type' => [
                             'name' => 'HTML validation',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'CSS validation',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'JS static analysis',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'Link integrity',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                 ],
@@ -164,14 +205,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
-                'expectedTaskConfigurationCollection' => [
-                    [
-                        'type' => [
-                            'name' => 'HTML validation',
-                        ],
-                        'options' => [],
-                    ],
-                ],
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [],
             ],
             'test type options not an array' => [
@@ -188,14 +222,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
-                'expectedTaskConfigurationCollection' => [
-                    [
-                        'type' => [
-                            'name' => 'HTML validation',
-                        ],
-                        'options' => [],
-                    ],
-                ],
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [],
             ],
             'test type options present, all invalid' => [
@@ -221,12 +248,28 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                         'type' => [
                             'name' => 'HTML validation',
                         ],
+                        'isEnabled' => true,
+                        'options' => [],
+                    ],
+                    [
+                        'type' => [
+                            'name' => 'CSS validation',
+                        ],
+                        'isEnabled' => false,
+                        'options' => [],
+                    ],
+                    [
+                        'type' => [
+                            'name' => 'JS static analysis',
+                        ],
+                        'isEnabled' => false,
                         'options' => [],
                     ],
                     [
                         'type' => [
                             'name' => 'Link integrity',
                         ],
+                        'isEnabled' => true,
                         'options' => [],
                     ],
                 ],
@@ -265,14 +308,32 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                         'type' => [
                             'name' => 'HTML validation',
                         ],
+                        'isEnabled' => true,
                         'options' => [
                             'html-validation-foo' => 'html-validation-bar',
                         ],
                     ],
                     [
                         'type' => [
+                            'name' => 'CSS validation',
+                        ],
+                        'isEnabled' => false,
+                        'options' => [
+                            'css-validation-foo' => 'css-validation-bar',
+                        ],
+                    ],
+                    [
+                        'type' => [
+                            'name' => 'JS static analysis',
+                        ],
+                        'isEnabled' => false,
+                        'options' => [],
+                    ],
+                    [
+                        'type' => [
                             'name' => 'Link integrity',
                         ],
+                        'isEnabled' => true,
                         'options' => [
                             'link-integrity-foo' => 'link-integrity-bar',
                         ],
@@ -293,14 +354,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
-                'expectedTaskConfigurationCollection' => [
-                    [
-                        'type' => [
-                            'name' => 'HTML validation',
-                        ],
-                        'options' => [],
-                    ],
-                ],
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [],
             ],
             'job parameters present and empty' => [
@@ -316,14 +370,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
-                'expectedTaskConfigurationCollection' => [
-                    [
-                        'type' => [
-                            'name' => 'HTML validation',
-                        ],
-                        'options' => [],
-                    ],
-                ],
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [],
             ],
             'job parameters present' => [
@@ -342,14 +389,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
-                'expectedTaskConfigurationCollection' => [
-                    [
-                        'type' => [
-                            'name' => 'HTML validation',
-                        ],
-                        'options' => [],
-                    ],
-                ],
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [
                     'job-parameter-foo' => 'job-parameter-bar',
                     'a b' => 'foobar',
@@ -371,14 +411,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
-                'expectedTaskConfigurationCollection' => [
-                    [
-                        'type' => [
-                            'name' => 'HTML validation',
-                        ],
-                        'options' => [],
-                    ],
-                ],
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [
                     'job-parameter-foo' => 'job-parameter-bar',
                     'a b' => 'foobar',
