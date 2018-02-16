@@ -108,13 +108,13 @@ class UserEmailChangeController
     /**
      * @param string $email_canonical
      *
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
     public function getAction($email_canonical)
     {
         $user = $this->userService->findUserByEmail($email_canonical);
         if (empty($user)) {
-            throw new NotFoundHttpException();
+            return new JsonResponse([]);
         }
 
         $userEmailChangeRequestRepository = $this->entityManager->getRepository(UserEmailChangeRequest::class);
@@ -123,7 +123,7 @@ class UserEmailChangeController
         ]);
 
         if (empty($emailChangeRequest)) {
-            throw new NotFoundHttpException();
+            return new JsonResponse([]);
         }
 
         return new JsonResponse($emailChangeRequest);
