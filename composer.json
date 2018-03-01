@@ -47,7 +47,7 @@
         "cron/cron-bundle": "1.2.0",
         "webignition/sitemap-model":"1.2",
         "guzzlehttp/retry-subscriber":">=2.0.2,<3",
-        "webignition/guzzle-curl-exception":">=0.1.2,<1",
+        "webignition/guzzle-curl-exception":">=0.1.4,<1",
         "webignition/resque-job-factory": ">=0.1.1,<1.0"
     },
     "require-dev": {
