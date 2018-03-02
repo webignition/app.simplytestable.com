@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "418455c360c0f81fb0cd1b2f9d4dd56c",
+    "content-hash": "cc5bc8afa27109284012ff28896a1522",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -4218,16 +4218,16 @@
         },
         {
             "name": "webignition/sitemap-model",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "6624efe40c6fbad9239412f789e655251ffc3bdb"
+                "reference": "5d49d78c59214ced45d6e8e38eb4170a39979370"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/6624efe40c6fbad9239412f789e655251ffc3bdb",
-                "reference": "6624efe40c6fbad9239412f789e655251ffc3bdb",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/5d49d78c59214ced45d6e8e38eb4170a39979370",
+                "reference": "5d49d78c59214ced45d6e8e38eb4170a39979370",
                 "shasum": ""
             },
             "require": {
@@ -4236,7 +4236,7 @@
                 "php": ">=5.6.0",
                 "simplepie/simplepie": "1.5",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/web-resource-model": ">=1.3.1,<2"
+                "webignition/web-resource-model": ">=1.3,<2"
             },
             "require-dev": {
                 "phpunit/phpunit": "~5",
@@ -4248,23 +4248,7 @@
                     "webignition\\WebResource\\Sitemap\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "webignition\\Tests\\WebResource\\Sitemap\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4277,13 +4261,9 @@
             "description": "Models a website sitemap",
             "homepage": "https://github.com/webignition/sitemap-model",
             "keywords": [
-                "sitemap"
+                "Sitemap"
             ],
-            "support": {
-                "source": "https://github.com/webignition/sitemap-model/tree/1.3.1",
-                "issues": "https://github.com/webignition/sitemap-model/issues"
-            },
-            "time": "2018-03-01T18:11:05+00:00"
+            "time": "2018-03-02T07:41:07+00:00"
         },
         {
             "name": "webignition/string-parser",
@@ -4379,16 +4359,16 @@
         },
         {
             "name": "webignition/url-resolver",
-            "version": "1.2",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url-resolver.git",
-                "reference": "3016ad04fa08eb2a0c0ce3748e75d4dd8076bbd6"
+                "reference": "1f0622b354fe3a0b7efe63f45caf1b1f462bbfe2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/3016ad04fa08eb2a0c0ce3748e75d4dd8076bbd6",
-                "reference": "3016ad04fa08eb2a0c0ce3748e75d4dd8076bbd6",
+                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/1f0622b354fe3a0b7efe63f45caf1b1f462bbfe2",
+                "reference": "1f0622b354fe3a0b7efe63f45caf1b1f462bbfe2",
                 "shasum": ""
             },
             "require": {
@@ -4440,28 +4420,28 @@
                 "url"
             ],
             "support": {
-                "source": "https://github.com/webignition/url-resolver/tree/1.2",
+                "source": "https://github.com/webignition/url-resolver/tree/1.2.1",
                 "issues": "https://github.com/webignition/url-resolver/issues"
             },
-            "time": "2018-03-01T18:18:48+00:00"
+            "time": "2018-03-02T09:09:49+00:00"
         },
         {
             "name": "webignition/web-json-model",
-            "version": "1.1.5",
+            "version": "1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-json-model.git",
-                "reference": "10a9f460c47708ba82880451162ce773297b36ed"
+                "reference": "509aa11cf2b549418fbd680cac023bc5a0e197a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-json-model/zipball/10a9f460c47708ba82880451162ce773297b36ed",
-                "reference": "10a9f460c47708ba82880451162ce773297b36ed",
+                "url": "https://api.github.com/repos/webignition/web-json-model/zipball/509aa11cf2b549418fbd680cac023bc5a0e197a3",
+                "reference": "509aa11cf2b549418fbd680cac023bc5a0e197a3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6.0",
-                "webignition/web-resource-model": ">=1.3.1,<2"
+                "webignition/web-resource-model": ">=1.3,<2"
             },
             "require-dev": {
                 "mockery/mockery": "^0.9",
@@ -4475,18 +4455,7 @@
                     "webignition\\Tests\\WebResource\\JsonDocument\\": "tests/"
                 }
             },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4502,24 +4471,20 @@
                 "json",
                 "model"
             ],
-            "support": {
-                "source": "https://github.com/webignition/web-json-model/tree/1.1.5",
-                "issues": "https://github.com/webignition/web-json-model/issues"
-            },
-            "time": "2018-03-01T18:06:45+00:00"
+            "time": "2018-03-02T09:23:55+00:00"
         },
         {
             "name": "webignition/web-page-model",
-            "version": "1.2",
+            "version": "1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "dbee915f5a81807319a28f0707b07b2fe3e08cd4"
+                "reference": "885c7b77d7a70a44ce950c84ac5cfc080f3a0cd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/dbee915f5a81807319a28f0707b07b2fe3e08cd4",
-                "reference": "dbee915f5a81807319a28f0707b07b2fe3e08cd4",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/885c7b77d7a70a44ce950c84ac5cfc080f3a0cd4",
+                "reference": "885c7b77d7a70a44ce950c84ac5cfc080f3a0cd4",
                 "shasum": ""
             },
             "require": {
@@ -4527,7 +4492,7 @@
                 "querypath/querypath": ">=3.0.0",
                 "webignition/character-set-list": ">=0.2,<1.0",
                 "webignition/internet-media-type": ">=0.1,<1.0",
-                "webignition/web-resource-model": ">=1.3.1,<2"
+                "webignition/web-resource-model": ">=1.3,<2"
             },
             "require-dev": {
                 "mockery/mockery": "^0.9",
@@ -4541,18 +4506,7 @@
                     "webignition\\Tests\\WebResource\\WebPage\\": "tests/"
                 }
             },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4568,15 +4522,11 @@
                 "model",
                 "webpage"
             ],
-            "support": {
-                "source": "https://github.com/webignition/web-page-model/tree/1.2",
-                "issues": "https://github.com/webignition/web-page-model/issues"
-            },
-            "time": "2018-03-01T18:05:01+00:00"
+            "time": "2018-03-02T07:47:04+00:00"
         },
         {
             "name": "webignition/web-resource-model",
-            "version": "1.3.1",
+            "version": "1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-model.git",
@@ -4606,18 +4556,7 @@
                     "webignition\\Tests\\WebResource\\": "tests/"
                 }
             },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4633,24 +4572,20 @@
                 "modem",
                 "web"
             ],
-            "support": {
-                "source": "https://github.com/webignition/web-resource-model/tree/1.3.1",
-                "issues": "https://github.com/webignition/web-resource-model/issues"
-            },
             "time": "2018-03-01T16:50:26+00:00"
         },
         {
             "name": "webignition/web-resource-service",
-            "version": "1.4",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-service.git",
-                "reference": "bca4ca418fdeb6904fd8acd8af686781b9d3e11e"
+                "reference": "7c5c3cb01bb84d7bac2a87ae3625f5be83b21551"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-resource-service/zipball/bca4ca418fdeb6904fd8acd8af686781b9d3e11e",
-                "reference": "bca4ca418fdeb6904fd8acd8af686781b9d3e11e",
+                "url": "https://api.github.com/repos/webignition/web-resource-service/zipball/7c5c3cb01bb84d7bac2a87ae3625f5be83b21551",
+                "reference": "7c5c3cb01bb84d7bac2a87ae3625f5be83b21551",
                 "shasum": ""
             },
             "require": {
@@ -4658,14 +4593,13 @@
                 "php": ">=5.6.0",
                 "webignition/internet-media-type": ">=0.4.4,<2.0",
                 "webignition/url": ">=1.9.14,<2.0",
-                "webignition/web-json-model": ">=1.1.5,<2",
-                "webignition/web-page-model": ">=1.2,<2",
-                "webignition/web-resource-model": ">=1.3.1,<2"
+                "webignition/web-json-model": ">=1.1.6,<2",
+                "webignition/web-page-model": ">=1.3,<2",
+                "webignition/web-resource-model": ">=1.3,<2"
             },
             "require-dev": {
                 "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~4.0",
-                "satooshi/php-coveralls": "~1.0",
+                "phpunit/phpunit": "~5.0",
                 "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
@@ -4674,23 +4608,7 @@
                     "webignition\\WebResource\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "webignition\\Tests\\WebResource\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4701,24 +4619,20 @@
                 "service",
                 "web"
             ],
-            "support": {
-                "source": "https://github.com/webignition/web-resource-service/tree/1.4",
-                "issues": "https://github.com/webignition/web-resource-service/issues"
-            },
-            "time": "2018-03-01T18:15:49+00:00"
+            "time": "2018-03-02T10:00:34+00:00"
         },
         {
             "name": "webignition/website-rss-feed-finder",
-            "version": "0.3.1",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "bfc11a1d17b27836017f990825c22eb618c041a4"
+                "reference": "f0a3f4a41db26527a36db7d47256a5630833b905"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/bfc11a1d17b27836017f990825c22eb618c041a4",
-                "reference": "bfc11a1d17b27836017f990825c22eb618c041a4",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/f0a3f4a41db26527a36db7d47256a5630833b905",
+                "reference": "f0a3f4a41db26527a36db7d47256a5630833b905",
                 "shasum": ""
             },
             "require": {
@@ -4726,7 +4640,7 @@
                 "php": ">=5.5.0",
                 "webignition/internet-media-type": ">=0.1,<1.0",
                 "webignition/url": ">=1.7.2,<2.0",
-                "webignition/web-resource-service": ">=1.4,<2"
+                "webignition/web-resource-service": ">=1.4.1,<2"
             },
             "require-dev": {
                 "phpunit/phpunit": "~5.0",
@@ -4739,18 +4653,7 @@
                     "webignition\\Tests\\WebsiteRssFeedFinder\\": "tests/"
                 }
             },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4763,26 +4666,22 @@
             "description": "Find the RSS feed from a given website base URL",
             "homepage": "https://github.com/webignition/website-rss-feed-finder",
             "keywords": [
-                "RSS"
+                "rss"
             ],
-            "support": {
-                "source": "https://github.com/webignition/website-rss-feed-finder/tree/0.3.1",
-                "issues": "https://github.com/webignition/website-rss-feed-finder/issues"
-            },
-            "time": "2018-03-01T18:26:08+00:00"
+            "time": "2018-03-02T11:12:11+00:00"
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "e9e79698497aee2a7eb799aaec4350a030f58989"
+                "reference": "49ae22328f4c62576c464d6cf566b767f766ff14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/e9e79698497aee2a7eb799aaec4350a030f58989",
-                "reference": "e9e79698497aee2a7eb799aaec4350a030f58989",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/49ae22328f4c62576c464d6cf566b767f766ff14",
+                "reference": "49ae22328f4c62576c464d6cf566b767f766ff14",
                 "shasum": ""
             },
             "require": {
@@ -4791,7 +4690,7 @@
                 "webignition/absolute-url-deriver": ">=1.3.3,<2.0",
                 "webignition/robots-txt-file": "2.0",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/web-resource-service": ">=1.4,<2"
+                "webignition/web-resource-service": ">=1.4.1,<2"
             },
             "require-dev": {
                 "phpunit/phpunit": "~5.0",
@@ -4803,23 +4702,7 @@
                     "webignition\\WebsiteSitemapFinder\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "webignition\\Tests\\WebsiteSitemapFinder\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "./vendor/bin/phpunit --colors=always"
-                ],
-                "cs": [
-                    "./vendor/bin/phpcs src tests --colors --standard=PSR2"
-                ],
-                "ci": [
-                    "@composer cs",
-                    "@composer test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4832,13 +4715,9 @@
             "description": "Finds the sitemap(.xml) for a given website",
             "homepage": "https://github.com/webignition/website-sitemap-finder",
             "keywords": [
-                "sitemap"
+                "Sitemap"
             ],
-            "support": {
-                "source": "https://github.com/webignition/website-sitemap-finder/tree/1.3.1",
-                "issues": "https://github.com/webignition/website-sitemap-finder/issues"
-            },
-            "time": "2018-03-01T18:28:05+00:00"
+            "time": "2018-03-02T11:11:59+00:00"
         },
         {
             "name": "xrstf/ip-utils",
@@ -6539,16 +6418,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v3.4.4",
+            "version": "v3.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "6a65b09b666f975dd70ec2bb9e9b1a87dbb02aca"
+                "reference": "32b06d2b0babf3216e55acfce42249321a304f03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/6a65b09b666f975dd70ec2bb9e9b1a87dbb02aca",
-                "reference": "6a65b09b666f975dd70ec2bb9e9b1a87dbb02aca",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/32b06d2b0babf3216e55acfce42249321a304f03",
+                "reference": "32b06d2b0babf3216e55acfce42249321a304f03",
                 "shasum": ""
             },
             "require": {
@@ -6601,7 +6480,7 @@
             ],
             "description": "Symfony PHPUnit Bridge",
             "homepage": "https://symfony.com",
-            "time": "2018-01-21T19:05:02+00:00"
+            "time": "2018-02-14T23:24:28+00:00"
         },
         {
             "name": "webmozart/assert",
