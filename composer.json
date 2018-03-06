@@ -35,7 +35,7 @@
         "webignition/html-validation-error-normaliser":"dev-master",
         "webignition/html-document-link-finder":">=0.7,<1.0",
         "webignition/url-resolver":">=1.2.2,<2",
-        "webignition/php-stripe-models":">=0.2.5,<1.0",
+        "webignition/php-stripe-models":">=0.2.6,<1.0",
         "egulias/email-validator":"1.1.1",
         "webignition/web-resource-service":">=1.4.1,<2",
         "chrisboulton/php-resque": "dev-master",
