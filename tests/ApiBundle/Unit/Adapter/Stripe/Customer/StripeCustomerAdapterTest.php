@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Adapter\Stripe\Customer;
+namespace Tests\ApiBundle\Unit\Adapter\Stripe\Customer;
 
 use Tests\ApiBundle\Factory\ModelFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
