@@ -97,8 +97,8 @@ class UserAccountPlanSubscriptionController
             $this->userAccountPlanService->removeCurrentForUser($user);
             return Response::create('', 400, [
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
-                'X-Stripe-Error-Param' => $stripeCardError->param,
-                'X-Stripe-Error-Code' => $stripeCardError->getCode()
+                'X-Stripe-Error-Param' => $stripeCardError->getStripeParam(),
+                'X-Stripe-Error-Code' => $stripeCardError->getStripeCode()
             ]);
         } catch (UserAccountPlanServiceException $userAccountPlanServiceException) {
             if ($userAccountPlanServiceException->isUserIsTeamMemberException()) {
@@ -150,8 +150,8 @@ class UserAccountPlanSubscriptionController
         } catch (StripeCardError $stripeCardError) {
             return Response::create('', 400, [
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
-                'X-Stripe-Error-Param' => $stripeCardError->param,
-                'X-Stripe-Error-Code' => $stripeCardError->getCode()
+                'X-Stripe-Error-Param' => $stripeCardError->getStripeParam(),
+                'X-Stripe-Error-Code' => $stripeCardError->getStripeCode()
             ]);
         }
 

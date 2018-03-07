@@ -12,8 +12,10 @@ class StripeApiFixtureFactory
      */
     public static function set($fixtures, $httpStatusCodes = [])
     {
+        $mockedNamespace = 'Stripe\HttpClient';
+
         PHPMockery::mock(
-            'Stripe',
+            $mockedNamespace,
             'curl_exec'
         )->andReturnValues(
             $fixtures
@@ -25,21 +27,21 @@ class StripeApiFixtureFactory
         }
 
         PHPMockery::mock(
-            'Stripe',
+            $mockedNamespace,
             'curl_getinfo'
         )->andReturnValues(
             $httpStatusCodes
         );
 
         PHPMockery::mock(
-            'Stripe',
+            $mockedNamespace,
             'stream_socket_client'
         )->andReturn('not relevant');
 
         $pem = file_get_contents(realpath(__DIR__ . '/../Fixtures/Data/Certs/512b-rsa-example-cert.pem'));
 
         PHPMockery::mock(
-            'Stripe',
+            $mockedNamespace,
             'stream_context_get_params'
         )->andReturn(
             [

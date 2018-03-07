@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5504c7b16d03b5af014261931a114bb",
+    "content-hash": "2b804438695fa9c5e10754d0d179ca9c",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -3030,16 +3030,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v2.1.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "5d15e78f767a751b398b9acfc37c1550db70d21d"
+                "reference": "c9523236474de73ebe51231c0acc4b3399d0ab4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/5d15e78f767a751b398b9acfc37c1550db70d21d",
-                "reference": "5d15e78f767a751b398b9acfc37c1550db70d21d",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/c9523236474de73ebe51231c0acc4b3399d0ab4c",
+                "reference": "c9523236474de73ebe51231c0acc4b3399d0ab4c",
                 "shasum": ""
             },
             "require": {
@@ -3081,7 +3081,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2015-02-20T03:00:48+00:00"
+            "time": "2015-07-28T17:53:17+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
