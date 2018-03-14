@@ -56,14 +56,17 @@ class CollectionCommandTest extends AbstractBaseTestCase
      *
      * @param array $httpFixtures
      * @param array $workerValuesCollection
+     * @param bool $assignAsRange
      * @param array $additionalArgs
      * @param int $expectedReturnCode
      * @param array $expectedTaskValuesCollection
      * @param bool $expectedTaskAssignCollectionQueueIsEmpty
+     * @throws \Exception
      */
     public function testRun(
         $httpFixtures,
         $workerValuesCollection,
+        $assignAsRange,
         $additionalArgs,
         $expectedReturnCode,
         $expectedTaskValuesCollection,
@@ -80,10 +83,15 @@ class CollectionCommandTest extends AbstractBaseTestCase
             $this->workerFactory->create($workerValues);
         }
 
+        $jobTaskIds = $job->getTaskIds();
+        $jobTaskIdsToAssign = $assignAsRange
+            ? $jobTaskIds[0] . ':' . $jobTaskIds[count($jobTaskIds) - 1]
+            : implode(',', $jobTaskIds);
+
         $returnCode = $this->command->run(
             new ArrayInput(
                 array_merge([
-                    'ids' => implode(',', $job->getTaskIds())
+                    'ids' => $jobTaskIdsToAssign,
                 ], $additionalArgs)
             ),
             new BufferedOutput()
@@ -125,6 +133,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
             'no workers' => [
                 'httpFixtures' => [],
                 'workerValuesCollection' => [],
+                'assignAsRange' => false,
                 'additionalArgs' => [],
                 'expectedReturnCode' => CollectionCommand::RETURN_CODE_FAILED_NO_WORKERS,
                 'expectedTaskValuesCollection' => [
@@ -152,6 +161,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
                     ],
                 ],
+                'assignAsRange' => false,
                 'additionalArgs' => [],
                 'expectedReturnCode' => 2,
                 'expectedTaskValuesCollection' => [
@@ -170,7 +180,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 ],
                 'expectedTaskAssignCollectionQueueIsEmpty' => false,
             ],
-            'assign to specific worker' => [
+            'assign to specific worker; comma-separated' => [
                 'httpFixtures' => [
                     HttpFixtureFactory::createSuccessResponse(
                         'application/json',
@@ -198,6 +208,62 @@ class CollectionCommandTest extends AbstractBaseTestCase
                         WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
                     ],
                 ],
+                'assignAsRange' => false,
+                'additionalArgs' => [
+                    'worker' => 'hydrogen.worker.example.com',
+                ],
+                'expectedReturnCode' => CollectionCommand::RETURN_CODE_OK,
+                'expectedTaskValuesCollection' => [
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => Task::STATE_IN_PROGRESS,
+                    ],
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => Task::STATE_IN_PROGRESS,
+                    ],
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => Task::STATE_IN_PROGRESS,
+                    ],
+                ],
+                'expectedTaskAssignCollectionQueueIsEmpty' => true,
+            ],
+            'assign to specific worker; assign all, range' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(
+                        'application/json',
+                        json_encode([
+                            [
+                                'id' => 1,
+                                'url' => 'http://example.com/one',
+                                'type' => 'html validation',
+                            ],
+                            [
+                                'id' => 2,
+                                'url' => 'http://example.com/bar%20foo',
+                                'type' => 'html validation',
+                            ],
+                            [
+                                'id' => 3,
+                                'url' => 'http://example.com/foo bar',
+                                'type' => 'html validation',
+                            ],
+                        ])
+                    ),
+                ],
+                'workerValuesCollection' => [
+                    [
+                        WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
+                    ],
+                ],
+                'assignAsRange' => true,
                 'additionalArgs' => [
                     'worker' => 'hydrogen.worker.example.com',
                 ],
