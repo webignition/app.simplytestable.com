@@ -121,7 +121,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskIds = array_filter(explode(',', $input->getArgument('ids')));
+        $taskIds = $this->createTaskIdCollection($input->getArgument('ids'));
 
         if (empty($taskIds)) {
             return self::RETURN_CODE_OK;
@@ -198,6 +198,35 @@ class CollectionCommand extends Command
         }
 
         return $response;
+    }
+
+    /**
+     * @param string $taskIdsString
+     *
+     * @return int[]
+     */
+    private function createTaskIdCollection($taskIdsString)
+    {
+        if (substr_count($taskIdsString, ',')) {
+            return array_filter(explode(',', $taskIdsString));
+        }
+
+        if (substr_count($taskIdsString, ':')) {
+            $rangeLimits = explode(':', $taskIdsString);
+
+            $start = (int)$rangeLimits[0];
+            $end = (int)$rangeLimits[1];
+
+            $idCollection = [];
+
+            for ($id = $start; $id <= $end; $id++) {
+                $idCollection[] = $id;
+            }
+
+            return $idCollection;
+        }
+
+        return [];
     }
 
     /**
