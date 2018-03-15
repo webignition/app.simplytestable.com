@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
+use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -54,6 +55,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
     /**
      * @dataProvider runDataProvider
      *
+     * @param array $resolveAndPrepareHttpFixtures
      * @param array $httpFixtures
      * @param array $workerValuesCollection
      * @param bool $assignAsRange
@@ -64,18 +66,19 @@ class CollectionCommandTest extends AbstractBaseTestCase
      * @throws \Exception
      */
     public function testRun(
-        $httpFixtures,
-        $workerValuesCollection,
+        array $resolveAndPrepareHttpFixtures,
+        array $httpFixtures,
+        array $workerValuesCollection,
         $assignAsRange,
-        $additionalArgs,
+        array $additionalArgs,
         $expectedReturnCode,
-        $expectedTaskValuesCollection,
+        array $expectedTaskValuesCollection,
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
         $resqueQueueService = $this->container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $job = $this->jobFactory->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare([], $resolveAndPrepareHttpFixtures);
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -131,6 +134,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
     {
         return [
             'no workers' => [
+                'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [],
                 'workerValuesCollection' => [],
                 'assignAsRange' => false,
@@ -153,6 +157,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedTaskAssignCollectionQueueIsEmpty' => false,
             ],
             'no workers available' => [
+                'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [
                     HttpFixtureFactory::createNotFoundResponse(),
                 ],
@@ -181,6 +186,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedTaskAssignCollectionQueueIsEmpty' => false,
             ],
             'assign to specific worker; comma-separated' => [
+                'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [
                     HttpFixtureFactory::createSuccessResponse(
                         'application/json',
@@ -235,7 +241,52 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 ],
                 'expectedTaskAssignCollectionQueueIsEmpty' => true,
             ],
+            'assign to specific worker; comma-separated, single task' => [
+                'resolveAndPrepareHttpFixtures' => [
+                    'prepare' => [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/1',
+                            ])
+                        ),
+                    ],
+                ],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(
+                        'application/json',
+                        json_encode([
+                            [
+                                'id' => 1,
+                                'url' => 'http://example.com/one',
+                                'type' => 'html validation',
+                            ],
+                        ])
+                    ),
+                ],
+                'workerValuesCollection' => [
+                    [
+                        WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
+                    ],
+                ],
+                'assignAsRange' => false,
+                'additionalArgs' => [
+                    'worker' => 'hydrogen.worker.example.com',
+                ],
+                'expectedReturnCode' => CollectionCommand::RETURN_CODE_OK,
+                'expectedTaskValuesCollection' => [
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => Task::STATE_IN_PROGRESS,
+                    ],
+                ],
+                'expectedTaskAssignCollectionQueueIsEmpty' => true,
+            ],
             'assign to specific worker; assign all, range' => [
+                'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [
                     HttpFixtureFactory::createSuccessResponse(
                         'application/json',
