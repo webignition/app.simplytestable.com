@@ -226,6 +226,12 @@ class CollectionCommand extends Command
             return $idCollection;
         }
 
+        if (ctype_digit($taskIdsString) || is_int($taskIdsString)) {
+            return [
+                (int)$taskIdsString,
+            ];
+        }
+
         return [];
     }
 
