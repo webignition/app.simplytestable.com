@@ -119,8 +119,11 @@ class UrlFinder
     private function collectUrls(WebSite $website, $softLimit, $parameters)
     {
         $urlsFromSitemap = $this->getUrlsFromSitemap($website, $softLimit, $parameters);
-
         if (count($urlsFromSitemap)) {
+            if (count($urlsFromSitemap) > $softLimit) {
+                $urlsFromSitemap = array_slice($urlsFromSitemap, 0, $softLimit);
+            }
+
             return $urlsFromSitemap;
         }
 
