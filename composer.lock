@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b804438695fa9c5e10754d0d179ca9c",
+    "content-hash": "d3fc60b3585dcbd182a03e32cea1acf4",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -1815,50 +1815,6 @@
                 "stream"
             ],
             "time": "2014-10-12T19:18:40+00:00"
-        },
-        {
-            "name": "hobnob/xml-stream-reader",
-            "version": "v1.0.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hobnob/xmlStreamReader.git",
-                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
-                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Hobnob\\XmlStreamReader": "/classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "David North",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP SAX XML Stream Reader",
-            "homepage": "https://github.com/hobnob/xmlStreamReader",
-            "keywords": [
-                "stream",
-                "xml"
-            ],
-            "time": "2015-03-10T15:52:44+00:00"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -4217,21 +4173,20 @@
         },
         {
             "name": "webignition/sitemap-model",
-            "version": "1.3.2",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "5d49d78c59214ced45d6e8e38eb4170a39979370"
+                "reference": "793a21a49488e5aba4a9098a4133b04b7ae0d921"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/5d49d78c59214ced45d6e8e38eb4170a39979370",
-                "reference": "5d49d78c59214ced45d6e8e38eb4170a39979370",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/793a21a49488e5aba4a9098a4133b04b7ae0d921",
+                "reference": "793a21a49488e5aba4a9098a4133b04b7ae0d921",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "~5",
-                "hobnob/xml-stream-reader": "1.0.8",
                 "php": ">=5.6.0",
                 "simplepie/simplepie": "1.5",
                 "webignition/url": ">=0.1,<2.0",
@@ -4262,7 +4217,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2018-03-02T07:41:07+00:00"
+            "time": "2018-03-16T07:24:44+00:00"
         },
         {
             "name": "webignition/string-parser",
@@ -4898,6 +4853,50 @@
                 "test"
             ],
             "time": "2015-05-11T14:41:42+00:00"
+        },
+        {
+            "name": "hobnob/xml-stream-reader",
+            "version": "v1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hobnob/xmlStreamReader.git",
+                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
+                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hobnob\\XmlStreamReader": "/classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David North",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP SAX XML Stream Reader",
+            "homepage": "https://github.com/hobnob/xmlStreamReader",
+            "keywords": [
+                "stream",
+                "xml"
+            ],
+            "time": "2015-03-10T15:52:44+00:00"
         },
         {
             "name": "mockery/mockery",

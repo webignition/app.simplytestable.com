@@ -421,8 +421,6 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/eight',
                     'http://example.com/nine',
                     'http://example.com/ten',
-                    'http://example.com/eleven',
-                    'http://example.com/twelve',
                 ],
                 'expectedRequestPropertiesCollection' => [
                     [
@@ -485,8 +483,6 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/eight',
                     'http://example.com/nine',
                     'http://example.com/ten',
-                    'http://example.com/eleven',
-                    'http://example.com/twelve',
                 ],
                 'expectedRequestPropertiesCollection' => [
                     [
@@ -545,8 +541,6 @@ class UrlFinderTest extends AbstractBaseTestCase
                     'http://example.com/eight',
                     'http://example.com/nine',
                     'http://example.com/ten',
-                    'http://example.com/eleven',
-                    'http://example.com/twelve',
                 ],
                 'expectedRequestPropertiesCollection' => [
                     [
