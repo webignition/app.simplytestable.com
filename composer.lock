@@ -4173,16 +4173,16 @@
         },
         {
             "name": "webignition/sitemap-model",
-            "version": "1.4",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "b8357a96145487d0264ed99cff17a7766c233593"
+                "reference": "793a21a49488e5aba4a9098a4133b04b7ae0d921"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/b8357a96145487d0264ed99cff17a7766c233593",
-                "reference": "b8357a96145487d0264ed99cff17a7766c233593",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/793a21a49488e5aba4a9098a4133b04b7ae0d921",
+                "reference": "793a21a49488e5aba4a9098a4133b04b7ae0d921",
                 "shasum": ""
             },
             "require": {
@@ -4217,7 +4217,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2018-03-15T19:19:41+00:00"
+            "time": "2018-03-16T07:24:44+00:00"
         },
         {
             "name": "webignition/string-parser",
