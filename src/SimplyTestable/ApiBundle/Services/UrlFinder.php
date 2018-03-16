@@ -260,6 +260,10 @@ class UrlFinder
             $totalTransferTime += $transferTime;
             $totalTransferTimeExceeded = $totalTransferTime > $this->sitemapRetrieverTotalTransferTimeout;
 
+            if (empty($childSitemap)) {
+                continue;
+            }
+
             $urls = array_merge($urls, $childSitemap->getUrls());
         }
 

@@ -727,6 +727,69 @@ class UrlFinderTest extends AbstractBaseTestCase
                     ],
                 ],
             ],
+            'from multiple sitemaps; transfer error on first sitemap' => [
+                'websiteUrl' => 'http://example.com',
+                'parameters' => [],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::load('example.com-index-50-sitemaps')
+                    ),
+                    HttpFixtureFactory::createNotFoundResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'http://example.com/ten',
+                            'http://example.com/eleven',
+                            'http://example.com/twelve',
+                            'http://example.com/thirteen',
+                            'http://example.com/fourteen',
+                            'http://example.com/fifteen',
+                            'http://example.com/sixteen',
+                            'http://example.com/seventeen',
+                            'http://example.com/eighteen',
+                            'http://example.com/nineteen',
+                            'http://example.com/twenty',
+                            'http://example.com/twenty-one',
+                        ])
+                    ),
+                ],
+                'expectedUrlSet' => [
+                    'http://example.com/ten',
+                    'http://example.com/eleven',
+                    'http://example.com/twelve',
+                    'http://example.com/thirteen',
+                    'http://example.com/fourteen',
+                    'http://example.com/fifteen',
+                    'http://example.com/sixteen',
+                    'http://example.com/seventeen',
+                    'http://example.com/eighteen',
+                    'http://example.com/nineteen',
+                ],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
+            ],
         ];
     }
 }
