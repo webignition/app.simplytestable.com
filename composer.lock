@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc32b06952e2c24b868e63dde8ff4353",
+    "content-hash": "dc88d7e78ae9bcd5c443ff1b6d077736",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -1961,16 +1961,16 @@
         },
         {
             "name": "kriswallsmith/buzz",
-            "version": "v0.16.0",
+            "version": "v0.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kriswallsmith/Buzz.git",
-                "reference": "bd3299b7b6be3eeeb7a2842e677685031b93aa26"
+                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/bd3299b7b6be3eeeb7a2842e677685031b93aa26",
-                "reference": "bd3299b7b6be3eeeb7a2842e677685031b93aa26",
+                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/4977b7d44dbef49cdc641f14be6512fdcfe32f12",
+                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12",
                 "shasum": ""
             },
             "require": {
@@ -2007,7 +2007,7 @@
                 "curl",
                 "http client"
             ],
-            "time": "2018-02-03T19:40:45+00:00"
+            "time": "2018-03-19T10:34:40+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -3662,31 +3662,30 @@
         },
         {
             "name": "webignition/absolute-url-deriver",
-            "version": "1.5.1",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/absolute-url-deriver.git",
-                "reference": "b7dace7091da38b6a311d44d68a4a2d8c07f3394"
+                "reference": "9c1f23ee5b609b32eefc836904254d0d481caa29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/b7dace7091da38b6a311d44d68a4a2d8c07f3394",
-                "reference": "b7dace7091da38b6a311d44d68a4a2d8c07f3394",
+                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/9c1f23ee5b609b32eefc836904254d0d481caa29",
+                "reference": "9c1f23ee5b609b32eefc836904254d0d481caa29",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
+                "php": ">=5.6.0",
                 "webignition/url": ">=1.9.8"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*",
-                "symfony/class-loader": "*"
+                "phpunit/phpunit": "~5.0",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "webignition\\Tests": "tests/",
-                    "": "src/"
+                "psr-4": {
+                    "webignition\\AbsoluteUrlDeriver\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3705,7 +3704,7 @@
                 "absolute",
                 "url"
             ],
-            "time": "2014-10-20T06:50:04+00:00"
+            "time": "2018-03-12T16:05:22+00:00"
         },
         {
             "name": "webignition/character-set-list",
@@ -3934,31 +3933,32 @@
         },
         {
             "name": "webignition/internet-media-type",
-            "version": "0.4.7",
+            "version": "0.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/internet-media-type.git",
-                "reference": "968b95796bc682c7f554c2ec671b6a97a9d5a5b0"
+                "reference": "1a5bbe38033b00b23acd5e1dd10489bb07eed77c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/968b95796bc682c7f554c2ec671b6a97a9d5a5b0",
-                "reference": "968b95796bc682c7f554c2ec671b6a97a9d5a5b0",
+                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/1a5bbe38033b00b23acd5e1dd10489bb07eed77c",
+                "reference": "1a5bbe38033b00b23acd5e1dd10489bb07eed77c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "webignition/quoted-string": ">=0.1,<1.0",
-                "webignition/string-parser": ">=0.2.2,<1.0"
+                "php": ">=5.6.0",
+                "webignition/quoted-string": ">=0.2.1,<1.0",
+                "webignition/string-parser": ">=0.2.3,<1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "~5.0",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "webignition\\Tests": "tests/",
-                    "": "src/"
+                "psr-4": {
+                    "webignition\\InternetMediaType\\": "src/",
+                    "webignition\\Tests\\InternetMediaType\\": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3980,7 +3980,7 @@
                 "media type",
                 "media-type"
             ],
-            "time": "2015-02-20T16:52:30+00:00"
+            "time": "2018-03-12T14:54:00+00:00"
         },
         {
             "name": "webignition/php-stripe-models",
@@ -4268,30 +4268,34 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.9.14",
+            "version": "1.9.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "b651aed2781260d8b25a086e766f528d1b9a675e"
+                "reference": "a4e6044bc6786a59b37d2508e87b540b5074b09a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/b651aed2781260d8b25a086e766f528d1b9a675e",
-                "reference": "b651aed2781260d8b25a086e766f528d1b9a675e",
+                "url": "https://api.github.com/repos/webignition/url/zipball/a4e6044bc6786a59b37d2508e87b540b5074b09a",
+                "reference": "a4e6044bc6786a59b37d2508e87b540b5074b09a",
                 "shasum": ""
             },
             "require": {
                 "etechnika/idna-convert": "1.0.*",
-                "php": ">=5.3.0",
+                "php": ">=5.6.0",
                 "xrstf/ip-utils": "v1.0.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "mockery/mockery": "~0.9",
+                "php-mock/php-mock-mockery": "1.1.0",
+                "phpunit/phpunit": "~5.0",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "": "src/"
+                "psr-4": {
+                    "webignition\\Url\\": "src/Url",
+                    "webignition\\NormalisedUrl\\": "src/NormalisedUrl"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -4309,7 +4313,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2015-02-13T11:52:39+00:00"
+            "time": "2018-03-14T17:25:14+00:00"
         },
         {
             "name": "webignition/url-resolver",
@@ -4409,16 +4413,16 @@
         },
         {
             "name": "webignition/web-page-model",
-            "version": "1.3",
+            "version": "1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "885c7b77d7a70a44ce950c84ac5cfc080f3a0cd4"
+                "reference": "7de19678708e24100dec3a6a4275c972dc3fbc18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/885c7b77d7a70a44ce950c84ac5cfc080f3a0cd4",
-                "reference": "885c7b77d7a70a44ce950c84ac5cfc080f3a0cd4",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/7de19678708e24100dec3a6a4275c972dc3fbc18",
+                "reference": "7de19678708e24100dec3a6a4275c972dc3fbc18",
                 "shasum": ""
             },
             "require": {
@@ -4456,7 +4460,7 @@
                 "model",
                 "webpage"
             ],
-            "time": "2018-03-02T07:47:04+00:00"
+            "time": "2018-03-19T12:49:28+00:00"
         },
         {
             "name": "webignition/web-resource-model",
@@ -4557,16 +4561,16 @@
         },
         {
             "name": "webignition/website-rss-feed-finder",
-            "version": "0.3.2",
+            "version": "0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "f0a3f4a41db26527a36db7d47256a5630833b905"
+                "reference": "6eb22ce05a7029dcb94857f3cfcd331205f6228d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/f0a3f4a41db26527a36db7d47256a5630833b905",
-                "reference": "f0a3f4a41db26527a36db7d47256a5630833b905",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/6eb22ce05a7029dcb94857f3cfcd331205f6228d",
+                "reference": "6eb22ce05a7029dcb94857f3cfcd331205f6228d",
                 "shasum": ""
             },
             "require": {
@@ -4602,7 +4606,7 @@
             "keywords": [
                 "rss"
             ],
-            "time": "2018-03-02T11:12:11+00:00"
+            "time": "2018-03-19T13:02:34+00:00"
         },
         {
             "name": "webignition/website-sitemap-finder",
@@ -4853,50 +4857,6 @@
                 "test"
             ],
             "time": "2015-05-11T14:41:42+00:00"
-        },
-        {
-            "name": "hobnob/xml-stream-reader",
-            "version": "v1.0.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hobnob/xmlStreamReader.git",
-                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
-                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Hobnob\\XmlStreamReader": "/classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "David North",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP SAX XML Stream Reader",
-            "homepage": "https://github.com/hobnob/xmlStreamReader",
-            "keywords": [
-                "stream",
-                "xml"
-            ],
-            "time": "2015-03-10T15:52:44+00:00"
         },
         {
             "name": "mockery/mockery",

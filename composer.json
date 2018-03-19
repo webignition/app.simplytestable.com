@@ -28,7 +28,7 @@
         "webignition/internet-media-type":">=0.4.4,<2.0",
         "webignition/website-sitemap-finder":">=1.3.3,<2",
         "webignition/url": ">=1.9.12",
-        "webignition/website-rss-feed-finder":">=0.3.2,<1",
+        "webignition/website-rss-feed-finder":">=0.4,<1",
         "guzzlehttp/guzzle":"~5",
         "jasonlewis/expressive-date": "1.0.*",
         "stripe/stripe-php": "3.0.0",
