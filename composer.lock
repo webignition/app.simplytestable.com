@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d3fc60b3585dcbd182a03e32cea1acf4",
+    "content-hash": "dc32b06952e2c24b868e63dde8ff4353",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -4126,24 +4126,24 @@
         },
         {
             "name": "webignition/robots-txt-file",
-            "version": "2.0",
+            "version": "2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/robots-txt-file.git",
-                "reference": "2ad8f7cde005a5d5c3c31e7b858dbb3e2a2ac397"
+                "reference": "906d4e330db47b98ea6177df2e99ec96bb98e71e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/robots-txt-file/zipball/2ad8f7cde005a5d5c3c31e7b858dbb3e2a2ac397",
-                "reference": "2ad8f7cde005a5d5c3c31e7b858dbb3e2a2ac397",
+                "url": "https://api.github.com/repos/webignition/robots-txt-file/zipball/906d4e330db47b98ea6177df2e99ec96bb98e71e",
+                "reference": "906d4e330db47b98ea6177df2e99ec96bb98e71e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0",
+                "php": ">=5.6.0",
                 "webignition/disallowed-character-terminated-string": ">=1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0",
+                "phpunit/phpunit": "~5.0",
                 "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
@@ -4169,7 +4169,7 @@
                 "parser",
                 "robots.txt"
             ],
-            "time": "2017-05-09T16:52:05+00:00"
+            "time": "2018-03-19T11:16:44+00:00"
         },
         {
             "name": "webignition/sitemap-model",
@@ -4606,23 +4606,23 @@
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "1.3.2",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "49ae22328f4c62576c464d6cf566b767f766ff14"
+                "reference": "f010bf1630788009833d556936ae74f9590ecb62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/49ae22328f4c62576c464d6cf566b767f766ff14",
-                "reference": "49ae22328f4c62576c464d6cf566b767f766ff14",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/f010bf1630788009833d556936ae74f9590ecb62",
+                "reference": "f010bf1630788009833d556936ae74f9590ecb62",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "~5",
                 "php": ">=5.6.0",
                 "webignition/absolute-url-deriver": ">=1.3.3,<2.0",
-                "webignition/robots-txt-file": "2.0",
+                "webignition/robots-txt-file": ">=2.0,<3",
                 "webignition/url": ">=0.1,<2.0",
                 "webignition/web-resource-service": ">=1.4.1,<2"
             },
@@ -4651,7 +4651,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2018-03-02T11:11:59+00:00"
+            "time": "2018-03-19T11:31:22+00:00"
         },
         {
             "name": "xrstf/ip-utils",
