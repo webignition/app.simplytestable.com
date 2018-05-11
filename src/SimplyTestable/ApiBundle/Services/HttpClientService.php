@@ -51,9 +51,9 @@ class HttpClientService
             }
         }
 
-        $this->historySubscriber = new HttpHistorySubscriber();
-        $this->cookieSubscriber = new HttpCookieSubscriber();
-        $this->retrySubscriber = $this->createRetrySubscriber();
+//        $this->historySubscriber = new HttpHistorySubscriber();
+//        $this->cookieSubscriber = new HttpCookieSubscriber();
+//        $this->retrySubscriber = $this->createRetrySubscriber();
 
         $this->httpClient = new HttpClient([
             'config' => [
@@ -64,9 +64,9 @@ class HttpClientService
             ],
         ]);
 
-        $this->enableRetrySubscriber();
-        $this->httpClient->getEmitter()->attach($this->historySubscriber);
-        $this->httpClient->getEmitter()->attach($this->cookieSubscriber);
+//        $this->enableRetrySubscriber();
+//        $this->httpClient->getEmitter()->attach($this->historySubscriber);
+//        $this->httpClient->getEmitter()->attach($this->cookieSubscriber);
     }
 
     public function enableRetrySubscriber()

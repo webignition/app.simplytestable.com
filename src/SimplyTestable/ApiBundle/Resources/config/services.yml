@@ -1,5 +1,6 @@
 imports:
     - { resource: services/http-client.yml }
+    - { resource: services/web-resource-retriever.yml }
     - { resource: services/event-listeners.yml }
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }
@@ -30,9 +31,9 @@ services:
 #        http-client: '@=service("SimplyTestable\\ApiBundle\\Services\\HttpClientService").get()'
 #        timeout-ms: 10000
 #
-#  webignition\Url\Resolver\Resolver:
-#    arguments:
-#      $configuration: '@webignition\Url\Resolver\Configuration'
+  webignition\Url\Resolver\Resolver:
+    arguments:
+      - '@GuzzleHttp\Client'
 
   simplytestable.services.sitemapfactory:
     class:  webignition\WebResource\Sitemap\Factory

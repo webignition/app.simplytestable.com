@@ -4,4 +4,4 @@ services:
       - '%curl_options%'
 
   GuzzleHttp\Client:
-    factory: 'SimplyTestable\WorkerBundle\Services\FooHttpClientService:getHttpClient'
+    factory: 'SimplyTestable\ApiBundle\Services\FooHttpClientService:getHttpClient'

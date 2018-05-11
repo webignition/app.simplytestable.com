@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use webignition\Url\Url;
-use webignition\WebResource\Service\Service as WebResourceService;
+use webignition\WebResource\Retriever as WebResourceRetriever;
 use webignition\WebResource\Sitemap\Factory as SitemapFactory;
 use webignition\WebResource\Sitemap\Sitemap;
 use webignition\WebsiteRssFeedFinder\Configuration as WebsiteRssFeedFinderConfiguration;
@@ -27,7 +27,7 @@ class UrlFinder
     private $httpClientService;
 
     /**
-     * @var WebResourceService
+     * @var WebResourceRetriever
      */
     private $webResourceService;
 
@@ -48,13 +48,13 @@ class UrlFinder
 
     /**
      * @param HttpClientService $httpClientService
-     * @param WebResourceService $webResourceService
+     * @param WebResourceRetriever $webResourceService
      * @param SitemapFactory $sitemapFactory
      * @param float|null $sitemapRetrieverTotalTransferTimeout
      */
     public function __construct(
         HttpClientService $httpClientService,
-        WebResourceService $webResourceService,
+        WebResourceRetriever $webResourceService,
         SitemapFactory $sitemapFactory,
         $sitemapRetrieverTotalTransferTimeout = null
     ) {
