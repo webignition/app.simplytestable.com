@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42ddadc91bc50db6aee3c01595f8fb37",
+    "content-hash": "eeeb604a1ab0e475f91b257c9bf7c5ba",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -3703,6 +3703,52 @@
                 "exception"
             ],
             "time": "2018-03-20T19:23:50+00:00"
+        },
+        {
+            "name": "webignition/guzzle-http-authentication-middleware",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/guzzle-http-authentication-middleware.git",
+                "reference": "44503a092c22d077df042c49c5529a9c526d1fcd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/guzzle-http-authentication-middleware/zipball/44503a092c22d077df042c49c5529a9c526d1fcd",
+                "reference": "44503a092c22d077df042c49c5529a9c526d1fcd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0",
+                "psr/http-message": "~1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "~1",
+                "phpunit/phpunit": "^5",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\Guzzle\\Middleware\\HttpAuthentication\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Http authentication middleware for Guzzle6",
+            "homepage": "https://github.com/webignition/guzzle-http-authentication-middleware",
+            "keywords": [
+                "Sitemap"
+            ],
+            "time": "2018-05-11T16:17:43+00:00"
         },
         {
             "name": "webignition/html-document-link-finder",
