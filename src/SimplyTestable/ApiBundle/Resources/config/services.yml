@@ -1,4 +1,5 @@
 imports:
+    - { resource: services/http-client.yml }
     - { resource: services/event-listeners.yml }
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }

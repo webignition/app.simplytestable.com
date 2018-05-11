@@ -1,0 +1,7 @@
+services:
+  SimplyTestable\ApiBundle\Services\FooHttpClientService:
+    arguments:
+      - '%curl_options%'
+
+  GuzzleHttp\Client:
+    factory: 'SimplyTestable\WorkerBundle\Services\FooHttpClientService:getHttpClient'
