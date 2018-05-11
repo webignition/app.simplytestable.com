@@ -16,7 +16,7 @@ use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\Exception\Exception as WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
-use webignition\WebResource\Service\Service as WebResourceService;
+use webignition\WebResource\Retriever as WebResourceRetriever;
 use webignition\WebResource\WebResource;
 use webignition\WebResource\WebPage\WebPage;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
@@ -31,7 +31,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     private $taskService;
 
     /**
-     * @var WebResourceService
+     * @var WebResourceRetriever
      */
     private $webResourceService;
 
@@ -62,7 +62,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 
     /**
      * @param TaskService $taskService
-     * @param WebResourceService $webResourceService
+     * @param WebResourceRetriever $webResourceService
      * @param HttpClientService $httpClientService
      * @param LoggerInterface $logger
      * @param StateService $stateService
@@ -70,7 +70,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      */
     public function __construct(
         TaskService $taskService,
-        WebResourceService $webResourceService,
+        WebResourceRetriever $webResourceService,
         HttpClientService $httpClientService,
         LoggerInterface $logger,
         StateService $stateService,
