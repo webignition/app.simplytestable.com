@@ -48,7 +48,8 @@
         "webignition/sitemap-model":"~3",
         "webignition/guzzle-curl-exception":"~1",
         "webignition/resque-job-factory": ">=0.1.1,<1.0",
-        "webignition/guzzle-http-authentication-middleware": ">=0.1,<1"
+        "webignition/guzzle-http-authentication-middleware": ">=0.1,<1",
+        "webignition/http-history-container": ">=0.4,<1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

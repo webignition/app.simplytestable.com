@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Message\Request;
+use GuzzleHttp\Psr7\Request;
 
 class ConnectExceptionFactory
 {

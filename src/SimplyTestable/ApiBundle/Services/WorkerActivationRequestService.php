@@ -24,7 +24,7 @@ class WorkerActivationRequestService
     /**
      * @var HttpClientService
      */
-    private $httpClientService;
+    private $fooHttpClientService;
 
     /**
      * @var UrlService $urlService
@@ -40,20 +40,20 @@ class WorkerActivationRequestService
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param HttpClientService $httpClientService
+     * @param HttpClientService $fooHttpClientService
      * @param UrlService $urlService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
         StateService $stateService,
-        HttpClientService $httpClientService,
+        HttpClientService $fooHttpClientService,
         UrlService $urlService
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->stateService = $stateService;
-        $this->httpClientService = $httpClientService;
+        $this->fooHttpClientService = $fooHttpClientService;
         $this->urlService = $urlService;
     }
 
@@ -70,7 +70,7 @@ class WorkerActivationRequestService
             'http://' . $activationRequest->getWorker()->getHostname() . '/verify/'
         );
 
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
+        $httpRequest = $this->fooHttpClientService->postRequest($requestUrl, [
             'body' => [
                 'hostname' => $activationRequest->getWorker()->getHostname(),
                 'token' => $activationRequest->getToken()
@@ -80,7 +80,7 @@ class WorkerActivationRequestService
         $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $requestUrl);
 
         try {
-            $response = $this->httpClientService->get()->send($httpRequest);
+            $response = $this->fooHttpClientService->get()->send($httpRequest);
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 

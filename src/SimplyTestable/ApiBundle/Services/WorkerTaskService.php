@@ -18,7 +18,7 @@ abstract class WorkerTaskService
     /**
      * @var HttpClientService
      */
-    protected $httpClientService;
+    protected $fooHttpClientService;
 
     /**
      * @var UrlService
@@ -33,20 +33,20 @@ abstract class WorkerTaskService
     /**
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param HttpClientService $httpClientService
+     * @param HttpClientService $fooHttpClientService
      * @param UrlService $urlService
      * @param TaskService $taskService
      */
     public function __construct(
         LoggerInterface $logger,
         StateService $stateService,
-        HttpClientService $httpClientService,
+        HttpClientService $fooHttpClientService,
         UrlService $urlService,
         TaskService $taskService
     ) {
         $this->logger = $logger;
         $this->stateService = $stateService;
-        $this->httpClientService = $httpClientService;
+        $this->fooHttpClientService = $fooHttpClientService;
         $this->urlService = $urlService;
         $this->taskService = $taskService;
     }

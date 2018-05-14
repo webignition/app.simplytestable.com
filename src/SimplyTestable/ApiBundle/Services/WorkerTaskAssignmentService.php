@@ -23,7 +23,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
     /**
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param HttpClientService $httpClientService
+     * @param HttpClientService $fooHttpClientService
      * @param UrlService $urlService
      * @param TaskService $taskService
      * @param EntityManagerInterface $entityManager
@@ -31,12 +31,12 @@ class WorkerTaskAssignmentService extends WorkerTaskService
     public function __construct(
         LoggerInterface $logger,
         StateService $stateService,
-        HttpClientService $httpClientService,
+        HttpClientService $fooHttpClientService,
         UrlService $urlService,
         TaskService $taskService,
         EntityManagerInterface $entityManager
     ) {
-        parent::__construct($logger, $stateService, $httpClientService, $urlService, $taskService);
+        parent::__construct($logger, $stateService, $fooHttpClientService, $urlService, $taskService);
 
         $this->entityManager = $entityManager;
     }
@@ -196,14 +196,14 @@ class WorkerTaskAssignmentService extends WorkerTaskService
 
         $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection/');
 
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
+        $httpRequest = $this->fooHttpClientService->postRequest($requestUrl, [
             'body' => [
                 'tasks' => $requestData
             ],
         ]);
 
         try {
-            $response = $this->httpClientService->get()->send($httpRequest);
+            $response = $this->fooHttpClientService->get()->send($httpRequest);
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 

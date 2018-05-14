@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eeeb604a1ab0e475f91b257c9bf7c5ba",
+    "content-hash": "c0cf391eee75ac0d83045da4bb53308a",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -3839,6 +3839,57 @@
                 "validation"
             ],
             "time": "2013-07-24T16:44:57+00:00"
+        },
+        {
+            "name": "webignition/http-history-container",
+            "version": "0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/http-history-container.git",
+                "reference": "fbddd76c2d2ef3c1d52df2675453c711ac68f4cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/http-history-container/zipball/fbddd76c2d2ef3c1d52df2675453c711ac68f4cb",
+                "reference": "fbddd76c2d2ef3c1d52df2675453c711ac68f4cb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0",
+                "psr/http-message": "^1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^5.0",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\HttpHistoryContainer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "A container for Guzzle history middleware",
+            "homepage": "https://github.com/webignition/http-history-container",
+            "keywords": [
+                "Guzzle",
+                "container",
+                "guzzlehttp",
+                "history",
+                "middleware",
+                "psr-7"
+            ],
+            "time": "2018-05-12T06:58:54+00:00"
         },
         {
             "name": "webignition/internet-media-type",

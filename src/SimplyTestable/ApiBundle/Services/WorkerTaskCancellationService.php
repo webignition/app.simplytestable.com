@@ -33,7 +33,7 @@ class WorkerTaskCancellationService extends WorkerTaskService
             'http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/'
         );
 
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
+        $httpRequest = $this->fooHttpClientService->postRequest($requestUrl, [
             'body' => [
                 'ids' => $remoteTaskIdsString,
             ],
@@ -44,7 +44,7 @@ class WorkerTaskCancellationService extends WorkerTaskService
         }
 
         try {
-            $this->httpClientService->get()->send($httpRequest);
+            $this->fooHttpClientService->get()->send($httpRequest);
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 

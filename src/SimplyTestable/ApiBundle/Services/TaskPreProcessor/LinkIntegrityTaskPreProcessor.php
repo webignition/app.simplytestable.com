@@ -38,7 +38,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     /**
      * @var HttpClientService
      */
-    private $httpClientService;
+    private $fooHttpClientService;
 
     /**
      * @var StateService
@@ -63,7 +63,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     /**
      * @param TaskService $taskService
      * @param WebResourceRetriever $webResourceService
-     * @param HttpClientService $httpClientService
+     * @param HttpClientService $fooHttpClientService
      * @param LoggerInterface $logger
      * @param StateService $stateService
      * @param EntityManagerInterface $entityManager
@@ -71,14 +71,14 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     public function __construct(
         TaskService $taskService,
         WebResourceRetriever $webResourceService,
-        HttpClientService $httpClientService,
+        HttpClientService $fooHttpClientService,
         LoggerInterface $logger,
         StateService $stateService,
         EntityManagerInterface $entityManager
     ) {
         $this->taskService = $taskService;
         $this->webResourceService = $webResourceService;
-        $this->httpClientService = $httpClientService;
+        $this->fooHttpClientService = $fooHttpClientService;
         $this->logger = $logger;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
@@ -321,14 +321,14 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     {
         $taskParameters = $task->getParametersArray();
 
-        $this->httpClientService->setUserAgent(self::HTTP_USER_AGENT);
-        $this->httpClientService->setCookiesFromParameters($taskParameters);
-        $this->httpClientService->setBasicHttpAuthenticationFromParameters($taskParameters);
+        $this->fooHttpClientService->setUserAgent(self::HTTP_USER_AGENT);
+        $this->fooHttpClientService->setCookiesFromParameters($taskParameters);
+        $this->fooHttpClientService->setBasicHttpAuthenticationFromParameters($taskParameters);
 
         $resource = null;
 
         try {
-            $request = $this->httpClientService->getRequest($task->getUrl());
+            $request = $this->fooHttpClientService->getRequest($task->getUrl());
             $resource = $this->webResourceService->get($request);
         } catch (WebResourceException $webResourceException) {
             $this->logger->error(sprintf(
@@ -351,9 +351,9 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
             ));
         }
 
-        $this->httpClientService->resetUserAgent();
-        $this->httpClientService->clearCookies();
-        $this->httpClientService->clearBasicHttpAuthorization();
+        $this->fooHttpClientService->resetUserAgent();
+        $this->fooHttpClientService->clearCookies();
+        $this->fooHttpClientService->clearBasicHttpAuthorization();
 
         return $resource;
     }
