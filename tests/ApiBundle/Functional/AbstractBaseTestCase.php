@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional;
 
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,7 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use GuzzleHttp\Subscriber\Mock as HttpMockSubscriber;
 
 abstract class AbstractBaseTestCase extends WebTestCase
 {
@@ -36,17 +34,6 @@ abstract class AbstractBaseTestCase extends WebTestCase
         $this->container = $this->client->getKernel()->getContainer();
 
         $this->container->get('doctrine')->getConnection()->beginTransaction();
-    }
-
-    /**
-     * @param array $fixtures
-     */
-    protected function queueHttpFixtures($fixtures)
-    {
-        $httpClientService = $this->container->get(HttpClientService::class);
-        $httpClientService->get()->getEmitter()->attach(
-            new HttpMockSubscriber($fixtures)
-        );
     }
 
     /**

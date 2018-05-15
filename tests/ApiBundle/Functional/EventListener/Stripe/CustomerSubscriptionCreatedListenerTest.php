@@ -3,16 +3,16 @@
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Psr7\Response;
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
@@ -27,7 +27,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $userService = $this->container->get(UserService::class);
 
-        $this->queueHttpFixtures([
+        $this->httpClientService->appendFixtures([
             ConnectExceptionFactory::create('CURL/28 Operation timed out'),
         ]);
 
@@ -71,8 +71,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         /* @var Mock|UserAccountPlanService $userAccountPlanService */
         $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
 
-        /* @var Mock|HttpClientService $httpClientService */
-        $httpClientService = \Mockery::mock(HttpClientService::class);
+        /* @var Mock|HttpClient $httpClient */
+        $httpClient = \Mockery::mock(HttpClient::class);
 
         /* @var Mock|EntityManagerInterface $entityManager */
         $entityManager = \Mockery::mock(EntityManagerInterface::class);
@@ -89,7 +89,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
 
         $listener = new CustomerSubscriptionCreatedListener(
             $stripeEventService,
-            $httpClientService,
+            $httpClient,
             $entityManager,
             $webClientProperties,
             $stripeService,
@@ -134,26 +134,23 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
     /**
      * @dataProvider onCustomerSubscriptionCreatedDataProvider
      *
-     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param string[] $stripeApiHttpFixtures
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnCustomerSubscriptionCreated(
-        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $stripeApiHttpFixtures,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get(HttpClientService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures([new Response()]);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -171,7 +168,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
+        $this->assertWebClientRequests($expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -181,9 +178,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
     {
         return [
             'customer.subscription.created.active' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.created.active' => [
                         'data' => [
@@ -215,9 +209,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
                 ],
             ],
             'customer.subscription.created.trialing; active card' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.created.trialing' => [
                         'data' => [
@@ -253,9 +244,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
                 ],
             ],
             'customer.subscription.created.trialing; no card' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.created.trialing' => [
                         'data' => [

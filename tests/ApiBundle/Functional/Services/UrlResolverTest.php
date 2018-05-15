@@ -3,10 +3,12 @@
 namespace Tests\ApiBundle\Command;
 
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Response;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
 use webignition\Url\Resolver\Resolver;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
@@ -22,14 +24,36 @@ class UrlResolverTest extends AbstractBaseTestCase
     ];
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->httpClientService = $this->container->get(HttpClientService::class);
+    }
+
+    /**
      * @dataProvider resolveWithCurlExceptionDataProvider
      *
      * @param $curlCode
      */
     public function testResolveWithCurlException($curlCode)
     {
-        $this->queueHttpFixtures([
-            ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo'),
+        $curlException = ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo');
+
+        $this->httpClientService->appendFixtures([
+            $curlException,
+            $curlException,
+            $curlException,
+            $curlException,
+            $curlException,
+            $curlException,
         ]);
 
         $resolver = $this->container->get(Resolver::class);
@@ -58,23 +82,6 @@ class UrlResolverTest extends AbstractBaseTestCase
         ];
     }
 
-    public function testResolveTimeout()
-    {
-        $resolver = $this->container->get(Resolver::class);
-
-        $configuration = $resolver->getConfiguration();
-
-        $reflection = new \ReflectionClass($configuration);
-        $property = $reflection->getProperty('timeoutMs');
-        $property->setAccessible(true);
-        $property->setValue($configuration, 1);
-
-        $this->expectException(ConnectException::class);
-        $this->expectExceptionMessageRegExp('/cURL error 28: Resolving timed out after [0-9]+ milliseconds/');
-
-        $resolver->resolve('http://example.com/');
-    }
-
     /**
      * @dataProvider resolveDataProvider
      *
@@ -83,7 +90,7 @@ class UrlResolverTest extends AbstractBaseTestCase
      */
     public function testResolve($httpFixtures, $expectedResolvedUrl)
     {
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $resolver = $this->container->get(Resolver::class);
         $resolvedUrl = $resolver->resolve('http://example.com/');
@@ -96,95 +103,108 @@ class UrlResolverTest extends AbstractBaseTestCase
      */
     public function resolveDataProvider()
     {
+        $successResponse = new Response();
+        $movedPermanentlyRedirectResponse = new Response(301, ['location' => 'http://foo.example.com/bar']);
+        $movedPermanentlyRedirectResponseLongUrlParts = new Response(
+            301,
+            ['location' => implode('', $this->longUrlParts)]
+        );
+
         return [
             'no change to url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://example.com/',
             ],
             'change to url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $movedPermanentlyRedirectResponse,
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://foo.example.com/bar',
             ],
             'resolves very long url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse(implode('', $this->longUrlParts)),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $movedPermanentlyRedirectResponseLongUrlParts,
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => implode('', $this->longUrlParts),
             ],
             'too many redirects' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
                 ],
                 'expectedResolvedUrl' => 'http://foo.example.com/bar',
             ],
             'meta redirect absolute url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::createMetaRedirectDocument('http://meta-redirect.example.com/')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://meta-redirect.example.com/',
             ],
             'meta redirect relative url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::createMetaRedirectDocument('/foo')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://example.com/foo',
             ],
             'meta redirect schemeless url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::createMetaRedirectDocument('//foo.example.com')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://foo.example.com',
             ],
             'meta redirect same url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::createMetaRedirectDocument('//example.com')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://example.com/',
             ],
             'meta redirect no url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::createMetaRedirectDocument(null)
                     ),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://example.com/',
             ],
             'meta redirect invalid content type' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/plain',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/plain'],
                         HtmlDocumentFactory::createMetaRedirectDocument('http//foo.example.com/')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://example.com/',
             ],

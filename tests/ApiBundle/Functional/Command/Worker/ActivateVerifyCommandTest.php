@@ -2,15 +2,17 @@
 
 namespace Tests\ApiBundle\Functional\Command\Worker;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class ActivateVerifyCommandTest extends AbstractBaseTestCase
 {
@@ -25,6 +27,11 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
     private $workerFactory;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -33,6 +40,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
 
         $this->command = $this->container->get(ActivateVerifyCommand::class);
         $this->workerFactory = new WorkerFactory($this->container);
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 
     /**
@@ -45,7 +53,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
     {
         $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $token = 'token';
         $worker = $this->workerFactory->create();
@@ -73,13 +81,13 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         return [
             'Bad Request' => [
                 'httpFixtures' => [
-                    'HTTP/1.1 400 Bad Request',
+                    new Response(400)
                 ],
                 'expectedReturnCode' => 400,
             ],
             'Service Unavailable' => [
                 'httpFixtures' => [
-                    'HTTP/1.1 503 Service Unavailable',
+                    new Response(503),
                 ],
                 'expectedReturnCode' => 503,
             ],
@@ -96,8 +104,8 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
     {
         $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
+        $this->httpClientService->appendFixtures([
+            new Response(),
         ]);
 
         $token = 'token';

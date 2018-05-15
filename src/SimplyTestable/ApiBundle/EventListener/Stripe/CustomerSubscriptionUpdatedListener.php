@@ -3,9 +3,9 @@
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Client as HttpClient;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -22,7 +22,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
 
     /**
      * @param StripeEventService $stripeEventService
-     * @param HttpClientService $httpClientService
+     * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
      * @param StripeService $webClientProperties
      * @param StripeService $stripeService
@@ -31,7 +31,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
      */
     public function __construct(
         StripeEventService $stripeEventService,
-        HttpClientService $httpClientService,
+        HttpClient $httpClient,
         EntityManagerInterface $entityManager,
         $webClientProperties,
         StripeService $stripeService,
@@ -40,7 +40,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
     ) {
         parent::__construct(
             $stripeEventService,
-            $httpClientService,
+            $httpClient,
             $entityManager,
             $webClientProperties,
             $stripeService,

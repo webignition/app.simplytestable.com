@@ -2,19 +2,27 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
-use GuzzleHttp\Message\Request;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Subscriber\Retry\RetrySubscriber as HttpRetrySubscriber;
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Cookie\SetCookie;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
+use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
+use webignition\HttpHistoryContainer\Container as HttpHistoryContainer;
 
 class HttpClientServiceTest extends AbstractBaseTestCase
 {
     /**
-     * @var HttpClientService
+     * @var TestHttpClientService
      */
     private $httpClientService;
+
+    /**
+     * @var HttpClient
+     */
+    private $httpClient;
 
     /**
      * {@inheritdoc}
@@ -24,340 +32,113 @@ class HttpClientServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->httpClient = $this->container->get(HttpClient::class);
     }
 
-    public function testSetUserAgent()
+    public function testGetHttpClient()
     {
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-            HttpFixtureFactory::createSuccessResponse(),
-            HttpFixtureFactory::createSuccessResponse(),
+        $this->assertEquals(
+            spl_object_hash($this->httpClient),
+            spl_object_hash($this->httpClientService->getHttpClient())
+        );
+    }
+
+    public function testGetHistory()
+    {
+        $this->assertInstanceOf(HttpHistoryContainer::class, $this->httpClientService->getHistory());
+    }
+
+    public function testSetCookiesClearCookies()
+    {
+        $successResponse = new Response();
+
+        $this->httpClientService->appendFixtures([
+            $successResponse,
+            $successResponse,
+            $successResponse,
         ]);
 
-        $httpClient = $this->httpClientService->get();
+        $request = new Request('GET', 'http://example.com/');
 
-        $defaultUserAgent = $httpClient::getDefaultUserAgent();
-
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $this->httpClientService->setUserAgent('foo');
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $this->httpClientService->resetUserAgent();
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $userAgentHeaderValues = [];
-
-        foreach ($this->httpClientService->getHistory() as $requestIndex => $httpTransaction) {
-            /* @var Request $sentRequest */
-            $sentRequest = $httpTransaction['request'];
-
-            $userAgentHeaderValues[] = $sentRequest->getHeader('user-agent');
-        }
-
-        $this->assertEquals(
-            [
-                $defaultUserAgent,
-                'foo',
-                $defaultUserAgent,
-            ],
-            $userAgentHeaderValues
-        );
-    }
-
-    public function testEnableDisableRetrySubscriber()
-    {
-        $this->assertTrue(
-            $this->doesHttpClientContainSubscriber('complete', HttpRetrySubscriber::class)
-        );
-
-        $this->httpClientService->disableRetrySubscriber();
-
-        $this->assertFalse(
-            $this->doesHttpClientContainSubscriber('complete', HttpRetrySubscriber::class)
-        );
-    }
-
-    /**
-     * @dataProvider createRequestDataProvider
-     *
-     * @param string $url
-     * @param array $options
-     * @param array $expectedConfig
-     */
-    public function testGetRequest($url, $options, $expectedConfig)
-    {
-        $request = $this->httpClientService->getRequest($url, $options);
-
-        $this->assertInstanceOf(RequestInterface::class, $request);
-        $this->assertEquals('GET', $request->getMethod());
-        $this->assertEquals($url, $request->getUrl());
-
-        $this->assertEquals($expectedConfig, $request->getConfig()->toArray());
-    }
-
-    /**
-     * @dataProvider createRequestDataProvider
-     *
-     * @param string $url
-     * @param array $options
-     * @param array $expectedConfig
-     */
-    public function testPostRequest($url, $options, $expectedConfig)
-    {
-        $request = $this->httpClientService->postRequest($url, $options);
-
-        $this->assertInstanceOf(RequestInterface::class, $request);
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals($url, $request->getUrl());
-
-        $this->assertEquals($expectedConfig, $request->getConfig()->toArray());
-    }
-
-    /**
-     * @return array
-     */
-    public function createRequestDataProvider()
-    {
-        return [
-            'default, no options' => [
-                'url' => 'http://example.com/foo',
-                'options' => [],
-                'expectedConfig' => [
-                    'curl' => [
-                        CURLOPT_SSL_VERIFYPEER => false,
-                        CURLOPT_SSL_VERIFYHOST => false,
-                    ],
-                    'redirect' => [
-                        'max' => 5,
-                        'strict' => false,
-                        'referer' => false,
-                        'protocols' => [
-                            'http',
-                            'https',
-                        ],
-                    ],
-                    'decode_content' => true,
-                    'verify' => false,
-                ],
-            ],
-            'has options' => [
-                'url' => 'http://example.com/foo',
-                'options' => [
-                    'allow_redirects' => [
-                        'max' => 7,
-                    ],
-                    'verify' => true,
-                ],
-                'expectedConfig' => [
-                    'curl' => [
-                        CURLOPT_SSL_VERIFYPEER => false,
-                        CURLOPT_SSL_VERIFYHOST => false,
-                    ],
-                    'redirect' => [
-                        'max' => 7,
-                        'strict' => false,
-                        'referer' => false,
-                        'protocols' => [
-                            'http',
-                            'https',
-                        ],
-                    ],
-                    'decode_content' => true,
-                    'verify' => true,
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider setCookiesDataProvider
-     *
-     * @param array $cookies
-     * @param string $expectedCookieHeaderValue
-     */
-    public function testSetCookies($cookies, $expectedCookieHeaderValue)
-    {
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-            HttpFixtureFactory::createSuccessResponse(),
+        $this->httpClient->send($request);
+        $this->httpClientService->setCookies([
+            new SetCookie([
+                'Name' => 'cookie-0-name',
+                'Value' => 'cookie-0-value',
+                'Domain' => 'example.com',
+            ]),
+            new SetCookie([
+                'Name' => 'cookie-1-name',
+                'Value' => 'cookie-1-value',
+                'Domain' => 'example.com',
+            ])
         ]);
-
-        $this->httpClientService->setCookies($cookies);
-
-        $httpClient = $this->httpClientService->get();
-
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertEquals(
-            $expectedCookieHeaderValue,
-            $request->getHeader('cookie')
-        );
+        $this->httpClient->send($request);
 
         $this->httpClientService->clearCookies();
+        $this->httpClient->send($request);
 
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
+        $history = $this->httpClientService->getHistory();
+        $requests = $history->getRequests();
 
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertFalse($request->hasHeader('cookie'));
+        $this->assertEquals('', $requests[0]->getHeaderLine('cookie'));
+        $this->assertEquals(
+            'cookie-0-name=cookie-0-value; cookie-1-name=cookie-1-value',
+            $requests[1]->getHeaderLine('cookie')
+        );
+        $this->assertEquals('', $requests[2]->getHeaderLine('cookie'));
     }
 
-    /**
-     * @return array
-     */
-    public function setCookiesDataProvider()
+    public function testSetBasicHttpAuthorizationClearBasicHttpAuthorization()
     {
-        return [
-            'none' => [
-                'cookies' => [],
-                'expectedCookieHeaderValue' => ''
-            ],
-            'single cookie' => [
-                'cookies' => [
-                    [
-                        'Name' => 'foo',
-                        'Value' => 'bar',
-                        'Domain' => '.example.com',
-                    ],
-                ],
-                'expectedCookieHeaderValue' => 'foo=bar'
-            ],
-            'two cookies' => [
-                'cookies' => [
-                    [
-                        'Name' => 'foo',
-                        'Value' => 'bar',
-                        'Domain' => '.example.com',
-                    ],
-                    [
-                        'Name' => 'bar',
-                        'Value' => 'foo',
-                        'Domain' => '.example.com',
-                    ],
-                ],
-                'expectedCookieHeaderValue' => 'foo=bar; bar=foo'
-            ],
-        ];
-    }
+        $successResponse = new Response();
 
-    public function testSetBasicHttpAuthentication()
-    {
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-            HttpFixtureFactory::createSuccessResponse(),
-            HttpFixtureFactory::createSuccessResponse(),
+        $this->httpClientService->appendFixtures([
+            $successResponse,
+            $successResponse,
+            $successResponse,
         ]);
 
-        $this->httpClientService->setBasicHttpAuthorization('user', 'password');
+        $request = new Request('GET', 'http://example.com/');
 
-        $httpClient = $this->httpClientService->get();
-
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertEquals(
-            'Basic dXNlcjpwYXNzd29yZA==',
-            $request->getHeader('authorization')
-        );
-
-        $this->httpClientService->setBasicHttpAuthorization(null, null);
-
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertEquals(
-            'Basic dXNlcjpwYXNzd29yZA==',
-            $request->getHeader('authorization')
-        );
+        $this->httpClient->send($request);
+        $this->httpClientService->setBasicHttpAuthorization(new HttpAuthenticationCredentials(
+            'username',
+            'password',
+            'example.com'
+        ));
+        $this->httpClient->send($request);
 
         $this->httpClientService->clearBasicHttpAuthorization();
+        $this->httpClient->send($request);
 
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
+        $history = $this->httpClientService->getHistory();
+        $requests = $history->getRequests();
 
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertFalse($request->hasHeader('authorization'));
+        $this->assertEquals('', $requests[0]->getHeaderLine('authorization'));
+        $this->assertEquals('Basic dXNlcm5hbWU6cGFzc3dvcmQ=', $requests[1]->getHeaderLine('authorization'));
+        $this->assertEquals('', $requests[2]->getHeaderLine('authorization'));
     }
 
-    public function testSetCookiesFromParameters()
+    public function testSetRequestHeader()
     {
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
+        $successResponse = new Response();
+
+        $this->httpClientService->appendFixtures([
+            $successResponse,
+            $successResponse,
         ]);
 
-        $parameters = [
-            HttpClientService::PARAMETER_KEY_COOKIES => [
-                [
-                    'Name' => 'foo',
-                    'Value' => 'bar',
-                    'Domain' => '.example.com',
-                ],
-            ],
-        ];
+        $request = new Request('GET', 'http://example.com/');
+        $this->httpClient->send($request);
 
-        $this->httpClientService->setCookiesFromParameters($parameters);
+        $this->httpClientService->setRequestHeader('X-Foo', 'Foo');
+        $this->httpClient->send($request);
 
-        $httpClient = $this->httpClientService->get();
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
+        $history = $this->httpClientService->getHistory();
+        $requests = $history->getRequests();
 
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertEquals(
-            'foo=bar',
-            $request->getHeader('cookie')
-        );
-    }
-
-    public function testSetBasicHttpAuthenticationFromParameters()
-    {
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-        ]);
-
-        $parameters = [
-            HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
-            HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
-        ];
-
-        $this->httpClientService->setBasicHttpAuthenticationFromParameters($parameters);
-
-        $httpClient = $this->httpClientService->get();
-        $httpClient->send($this->httpClientService->getRequest('http://example.com/'));
-
-        $request = $this->httpClientService->getHistory()->getLastRequest();
-
-        $this->assertEquals(
-            'Basic dXNlcjpwYXNzd29yZA==',
-            $request->getHeader('authorization')
-        );
-    }
-
-    /**
-     * @param string $eventName
-     * @param string $className
-     *
-     * @return bool
-     */
-    private function doesHttpClientContainSubscriber($eventName, $className)
-    {
-        $httpClient = $this->httpClientService->get();
-        $completeListeners = $httpClient->getEmitter()->listeners($eventName);
-
-        $hasSubscriber = false;
-
-        foreach ($completeListeners as $listener) {
-            $subscriber = $listener[0];
-
-            if ($subscriber instanceof $className) {
-                $hasSubscriber = true;
-            }
-        }
-
-        return $hasSubscriber;
+        $this->assertEquals('', $requests[0]->getHeaderLine('x-foo'));
+        $this->assertEquals('Foo', $requests[1]->getHeaderLine('x-foo'));
     }
 }

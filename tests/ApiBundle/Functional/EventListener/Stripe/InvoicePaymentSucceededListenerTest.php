@@ -2,10 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
@@ -14,22 +13,19 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
     /**
      * @dataProvider onInvoicePaymentSucceededDataProvider
      *
-     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnInvoicePaymentSucceeded(
-        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get(HttpClientService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures([new Response()]);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -47,7 +43,7 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
+        $this->assertWebClientRequests($expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -57,9 +53,6 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
     {
         return [
             'invoice.payment_succeeded; zero amount' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'invoice.payment_succeeded' => [
                         'data' => [
@@ -74,9 +67,6 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
                 'expectedWebClientRequestDataCollection' => [],
             ],
             'invoice.payment_succeeded; no discount' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'invoice.payment_succeeded' => [
                         'data' => [
@@ -129,9 +119,6 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
                 ],
             ],
             'invoice.payment_succeeded; has discount' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'invoice.payment_succeeded.discount' => [
                         'data' => [

@@ -3,11 +3,13 @@
 namespace Tests\ApiBundle\Functional\Services\JobPreparation;
 
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 /**
  * @group Services/JobPreparationService
@@ -35,6 +37,11 @@ abstract class AbstractJobPreparationServiceTest extends AbstractBaseTestCase
     protected $userFactory;
 
     /**
+     * @var TestHttpClientService
+     */
+    protected $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -53,5 +60,7 @@ abstract class AbstractJobPreparationServiceTest extends AbstractBaseTestCase
 
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
+
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 }
