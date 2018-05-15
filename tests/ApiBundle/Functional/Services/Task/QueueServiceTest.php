@@ -2,12 +2,14 @@
 
 namespace Tests\ApiBundle\Functional\Services\Task;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Task\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
+use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class QueueServiceTest extends AbstractBaseTestCase
@@ -58,7 +60,11 @@ class QueueServiceTest extends AbstractBaseTestCase
                 [
                     'prepare' => [
                         HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                        HttpFixtureFactory::createStandardSitemapResponse($domain),
+                        new Response(
+                            200,
+                            ['content-type' => 'text/plain'],
+                            SitemapFixtureFactory::load('example.com-three-urls', $domain)
+                        ),
                     ],
                 ]
             );
