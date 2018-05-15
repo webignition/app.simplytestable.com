@@ -2,7 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Services\Job;
 
-use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
@@ -10,10 +11,10 @@ use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\StateFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 {
@@ -40,6 +41,11 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     private $jobFactory;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -48,6 +54,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
         $this->websiteResolutionService = $this->container->get(WebsiteResolutionService::class);
         $this->jobFactory = new JobFactory($this->container);
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 
     public function testResolveJobInWrongState()
@@ -73,8 +80,15 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
-        $this->queueHttpFixtures([
-            ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo'),
+        $curlFixture = ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo');
+
+        $this->httpClientService->appendFixtures([
+            $curlFixture,
+            $curlFixture,
+            $curlFixture,
+            $curlFixture,
+            $curlFixture,
+            $curlFixture,
         ]);
 
         $siteRootUrl = 'http://foo.example.com/';
@@ -113,17 +127,20 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     }
 
     /**
-     * @dataProvider resolveDataProvider
+     * @dataProvider resolveSuccessDataProvider
      *
      * @param array $jobValues
      * @param array $httpFixtures
      * @param string $expectedResolvedUrl
      * @param array $expectedRequestPropertiesCollection
      */
-    public function testResolve($jobValues, $httpFixtures, $expectedResolvedUrl, $expectedRequestPropertiesCollection)
-    {
-        $this->queueHttpFixtures($httpFixtures);
-        $httpClientService = $this->container->get(HttpClientService::class);
+    public function testResolveSuccess(
+        $jobValues,
+        $httpFixtures,
+        $expectedResolvedUrl,
+        $expectedRequestPropertiesCollection
+    ) {
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $job = $this->jobFactory->create($jobValues);
 
@@ -134,14 +151,14 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
         $requestPropertiesCollection = [];
 
-        foreach ($httpClientService->getHistory() as $httpTransaction) {
+        foreach ($this->httpClientService->getHistory() as $httpTransaction) {
             /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
             $requestProperties = [];
 
             foreach (['user-agent', 'cookie', 'authorization'] as $headerKey) {
-                $requestProperties[$headerKey] = $request->getHeader($headerKey);
+                $requestProperties[$headerKey] = $request->getHeaderLine($headerKey);
             }
 
             $requestPropertiesCollection[] = $requestProperties;
@@ -153,17 +170,17 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     /**
      * @return array
      */
-    public function resolveDataProvider()
+    public function resolveSuccessDataProvider()
     {
         return [
-            JobTypeService::FULL_SITE_NAME => [
+            'Full site; redirects' => [
                 'jobValues' => [
                     JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
                     JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                 ],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://foo.example.com/bar'),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    new Response(301, ['location' => 'http://foo.example.com/bar']),
+                    new Response(),
                 ],
                 'expectedResolvedUrl' => 'http://foo.example.com/',
                 'expectedRequestPropertiesCollection' => [
@@ -192,7 +209,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
                     ],
                 ],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
+                    new Response(),
                 ],
                 'expectedResolvedUrl' => 'http://example.com/',
                 'expectedRequestPropertiesCollection' => [

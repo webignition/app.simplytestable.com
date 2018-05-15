@@ -484,6 +484,10 @@ class Job
      */
     public function getParametersObject()
     {
+        if (empty($this->parametersObject)) {
+            $this->parametersObject = new Parameters($this);
+        }
+
         return $this->parametersObject;
     }
 

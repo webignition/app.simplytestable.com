@@ -95,11 +95,19 @@ class WebsiteResolutionService
         $this->entityManager->persist($job);
         $this->entityManager->flush();
 
-        $jobParameters = $job->getParametersArray();
+        $jobParametersObject = $job->getParametersObject();
 
-        $this->httpClientService->setUserAgent(self::URL_RESOLVER_USER_AGENT);
-        $this->httpClientService->setCookiesFromParameters($jobParameters);
-        $this->httpClientService->setBasicHttpAuthenticationFromParameters($jobParameters);
+        $cookies = $jobParametersObject->getCookies();
+        if (!empty($cookies)) {
+            $this->httpClientService->setCookies($cookies);
+        }
+
+        $httpAuthenticationCredentials = $jobParametersObject->getHttpAuthenticationCredentials();
+        if (!$httpAuthenticationCredentials->isEmpty()) {
+            $this->httpClientService->setBasicHttpAuthorization($httpAuthenticationCredentials);
+        }
+
+        $this->httpClientService->setRequestHeader('User-Agent', self::URL_RESOLVER_USER_AGENT);
 
         try {
             $jobUrl = $job->getWebsite()->getCanonicalUrl();
@@ -119,10 +127,6 @@ class WebsiteResolutionService
 
             $this->jobService->reject($job, 'curl-' . $curlException->getCurlCode());
         }
-
-        $this->httpClientService->resetUserAgent();
-        $this->httpClientService->clearCookies();
-        $this->httpClientService->clearBasicHttpAuthorization();
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
