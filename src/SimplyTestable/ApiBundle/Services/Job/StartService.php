@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
     as UserAccountPlanEnforcementException;
+use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -112,7 +113,8 @@ class StartService
      */
     public function start(JobConfiguration $jobConfiguration)
     {
-        if (!$jobConfiguration->getWebsite()->isPubliclyRoutable()) {
+        $jobUrl = new NormalisedUrl($jobConfiguration->getWebsite());
+        if (!$jobUrl->isPubliclyRoutable()) {
             throw new JobStartServiceException(
                 'Unroutable website',
                 JobStartServiceException::CODE_UNROUTABLE_WEBSITE
