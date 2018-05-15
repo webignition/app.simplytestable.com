@@ -1,9 +1,12 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
@@ -22,14 +25,9 @@ class WorkerActivationRequestService
     private $stateService;
 
     /**
-     * @var HttpClientService
+     * @var HttpClient
      */
-    private $fooHttpClientService;
-
-    /**
-     * @var UrlService $urlService
-     */
-    private $urlService;
+    private $httpClient;
 
     /**
      * @var EntityManagerInterface
@@ -40,21 +38,18 @@ class WorkerActivationRequestService
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param HttpClientService $fooHttpClientService
-     * @param UrlService $urlService
+     * @param HttpClient $httpClient
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
         StateService $stateService,
-        HttpClientService $fooHttpClientService,
-        UrlService $urlService
+        HttpClient $httpClient
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->stateService = $stateService;
-        $this->fooHttpClientService = $fooHttpClientService;
-        $this->urlService = $urlService;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -66,21 +61,23 @@ class WorkerActivationRequestService
     {
         $this->logger->info("WorkerActivationRequestService::verify: Initialising");
 
-        $requestUrl = $this->urlService->prepare(
-            'http://' . $activationRequest->getWorker()->getHostname() . '/verify/'
-        );
+        $requestUrl = 'http://' . $activationRequest->getWorker()->getHostname() . '/verify/';
+        $postData = [
+            'hostname' => $activationRequest->getWorker()->getHostname(),
+            'token' => $activationRequest->getToken()
+        ];
 
-        $httpRequest = $this->fooHttpClientService->postRequest($requestUrl, [
-            'body' => [
-                'hostname' => $activationRequest->getWorker()->getHostname(),
-                'token' => $activationRequest->getToken()
-            ],
-        ]);
+        $httpRequest = new Request(
+            'POST',
+            $requestUrl,
+            ['content-type' => 'application/x-www-form-urlencoded'],
+            http_build_query($postData, '', '&')
+        );
 
         $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $requestUrl);
 
         try {
-            $response = $this->fooHttpClientService->get()->send($httpRequest);
+            $response = $this->httpClient->send($httpRequest);
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 
