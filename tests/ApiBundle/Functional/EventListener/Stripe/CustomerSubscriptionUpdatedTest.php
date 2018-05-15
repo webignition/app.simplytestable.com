@@ -2,10 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -15,26 +14,23 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
     /**
      * @dataProvider onCustomerSubscriptionUpdatedDataProvider
      *
-     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $stripeApiHttpFixtures
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnCustomerSubscriptionUpdated(
-        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $stripeApiHttpFixtures,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get(HttpClientService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures([new Response()]);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -52,7 +48,7 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
+        $this->assertWebClientRequests($expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -62,9 +58,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
     {
         return [
             'customer.subscription.updated.planchange; without discount; status active' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.planchange' => [
                         'data' => [
@@ -102,9 +95,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
             ],
             'customer.subscription.updated.planchange; without discount; status trialing' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.planchange' => [
                         'data' => [
@@ -144,9 +134,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
             ],
             'customer.subscription.updated.planchange; with discount; status active' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -195,9 +182,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
             ],
             'customer.subscription.updated.planchange; with discount; status trialing' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -248,9 +232,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
             ],
             'customer.subscription.updated.statuschange; trialing to active, no card' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [
@@ -287,9 +268,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
             ],
             'customer.subscription.updated.statuschange; trialing to active, has card' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [
@@ -326,9 +304,6 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
             ],
             'customer.subscription.updated.statuschange; not trialing to active' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [

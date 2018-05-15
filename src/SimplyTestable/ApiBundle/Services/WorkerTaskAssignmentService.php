@@ -1,9 +1,12 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -23,20 +26,18 @@ class WorkerTaskAssignmentService extends WorkerTaskService
     /**
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param HttpClientService $httpClientService
-     * @param UrlService $urlService
+     * @param HttpClient $httpClient
      * @param TaskService $taskService
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         LoggerInterface $logger,
         StateService $stateService,
-        HttpClientService $httpClientService,
-        UrlService $urlService,
+        HttpClient $httpClient,
         TaskService $taskService,
         EntityManagerInterface $entityManager
     ) {
-        parent::__construct($logger, $stateService, $httpClientService, $urlService, $taskService);
+        parent::__construct($logger, $stateService, $httpClient, $taskService);
 
         $this->entityManager = $entityManager;
     }
@@ -194,16 +195,16 @@ class WorkerTaskAssignmentService extends WorkerTaskService
             $requestData[] = $postFields;
         }
 
-        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection/');
-
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
-            'body' => [
-                'tasks' => $requestData
-            ],
-        ]);
+        $requestUrl = 'http://' . $worker->getHostname() . '/task/create/collection/';
+        $httpRequest = new Request(
+            'POST',
+            $requestUrl,
+            ['content-type' => 'application/x-www-form-urlencoded'],
+            http_build_query(['tasks' => $requestData], '', '&')
+        );
 
         try {
-            $response = $this->httpClientService->get()->send($httpRequest);
+            $response = $this->httpClient->send($httpRequest);
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 

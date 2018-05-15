@@ -3,8 +3,9 @@
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Psr7\Request;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 
 abstract class AbstractListener
@@ -20,9 +21,9 @@ abstract class AbstractListener
     private $webClientProperties;
 
     /**
-     * @var HttpClientService
+     * @var HttpClient
      */
-    private $httpClientService;
+    private $httpClient;
 
     /**
      * @var DispatchableEvent
@@ -36,18 +37,18 @@ abstract class AbstractListener
 
     /**
      * @param StripeEventService $stripeEventService
-     * @param HttpClientService $httpClientService
+     * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
      * @param $webClientProperties
      */
     public function __construct(
         StripeEventService $stripeEventService,
-        HttpClientService $httpClientService,
+        HttpClient $httpClient,
         EntityManagerInterface $entityManager,
         $webClientProperties
     ) {
         $this->stripeEventService = $stripeEventService;
-        $this->httpClientService = $httpClientService;
+        $this->httpClient = $httpClient;
         $this->webClientProperties = $webClientProperties;
         $this->entityManager = $entityManager;
     }
@@ -88,12 +89,15 @@ abstract class AbstractListener
             return false;
         }
 
-        try {
-            $request = $this->httpClientService->postRequest($subscriberUrl, [
-                'body' => $data,
-            ]);
+        $request = new Request(
+            'POST',
+            $subscriberUrl,
+            ['content-type' => 'application/x-www-form-urlencoded'],
+            http_build_query($data, '', '&')
+        );
 
-            $this->httpClientService->get()->send($request);
+        try {
+            $this->httpClient->send($request);
             return true;
         } catch (\Exception $e) {
             return false;

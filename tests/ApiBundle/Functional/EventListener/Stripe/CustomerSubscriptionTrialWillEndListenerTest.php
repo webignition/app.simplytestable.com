@@ -2,10 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -15,26 +14,23 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
     /**
      * @dataProvider onCustomerSubscriptionTrialWillEndDataProvider
      *
-     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $stripeApiHttpResponses
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnCustomerSubscriptionTrialWillEnd(
-        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $stripeApiHttpResponses,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get(HttpClientService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpResponses);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures([new Response()]);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -52,7 +48,7 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
+        $this->assertWebClientRequests($expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -62,9 +58,6 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
     {
         return [
             'customer.subscription.trial_will_end; without discount' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.trial_will_end' => [
                         'data' => [
@@ -97,9 +90,6 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                 ],
             ],
             'customer.subscription.trial_will_end; with discount of 20% and has card' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -143,9 +133,6 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                 ],
             ],
             'customer.subscription.trial_will_end; with discount of 30%' => [
-                'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [

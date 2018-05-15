@@ -2,10 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -29,12 +28,11 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get(HttpClientService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -52,7 +50,7 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
+        $this->assertWebClientRequests($expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -60,10 +58,12 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
      */
     public function onInvoicePaymentFailedDataProvider()
     {
+        $successResponse = new Response();
+
         return [
             'invoice.payment_failed; no card' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'stripeEventFixtures' => [
                     'invoice.payment_failed' => [],
@@ -76,7 +76,7 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
             ],
             'invoice.payment_failed; has card' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'stripeEventFixtures' => [
                     'invoice.payment_failed' => [
@@ -131,7 +131,7 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
             ],
             'invoice.payment_failed; no invoice lines' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'stripeEventFixtures' => [
                     'invoice.payment_failed.no_lines' => [
@@ -153,7 +153,6 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                     [
                         'event' =>  'invoice.payment_failed',
                         'user' => 'public@simplytestable.com',
-                        'lines' => [],
                         'invoice_id' => 'in_invoiceId',
                         'total' => 2500,
                         'amount_due' => 2600,
@@ -163,8 +162,8 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
             ],
             'invoice.payment_failed; received after customer.subscription.deleted event' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
+                    $successResponse,
                 ],
                 'stripeEventFixtures' => [
                     'customer.subscription.deleted' => [
@@ -239,7 +238,7 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
             ],
             'invoice.payment_failed; no matching customer.subscription.deleted event' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
                 ],
                 'stripeEventFixtures' => [
                     'customer.subscription.deleted' => [

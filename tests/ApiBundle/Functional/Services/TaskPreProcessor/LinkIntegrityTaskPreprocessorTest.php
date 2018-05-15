@@ -2,7 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Services\TaskPreProcessor;
 
-use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
@@ -10,13 +11,11 @@ use SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProce
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
-use webignition\WebResource\Service\Service as WebResourceService;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 {
@@ -41,6 +40,11 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
     private $taskOutputFactory;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -52,6 +56,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $this->jobFactory = new JobFactory($this->container);
         $this->taskFactory = new TaskFactory($this->container);
         $this->taskOutputFactory = new TaskOutputFactory($this->container);
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 
     /**
@@ -107,15 +112,6 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
      */
     public function testProcessWebResourceFailure($httpFixtures)
     {
-        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
-
-        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
-            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
-        ]);
-
-        $webResourceService = $this->container->get(WebResourceService::class);
-        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
-
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::LINK_INTEGRITY_TYPE,
@@ -136,7 +132,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             TaskOutputFactory::KEY_OUTPUT => 'non-relevant output',
         ]);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
@@ -152,10 +148,12 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
      */
     public function processWebResourceFailureDataProvider()
     {
+        $movedPermanentlyRedirectResponse = new Response(301, ['location' => 'http://example.com/1']);
+
         return [
             'http 404 getting web resource' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    new Response(404),
                 ],
             ],
             'curl timeout getting web resource' => [
@@ -165,20 +163,17 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'too many redirects getting web resource' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://example.com/1'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://example.com/1'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://example.com/1'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://example.com/1'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://example.com/1'),
-                    HttpFixtureFactory::createMovedPermanentlyRedirectResponse('http://example.com/1'),
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
+                    $movedPermanentlyRedirectResponse,
                 ],
             ],
             'web resource not web page' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/plain',
-                        'foo'
-                    ),
+                    new Response(200, ['content-type' => 'text/plain']),
                 ],
             ],
         ];
@@ -220,11 +215,8 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ]),
         ]);
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(
-                'text/html',
-                HtmlDocumentFactory::load('single-link')
-            ),
+        $this->httpClientService->appendFixtures([
+            new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('single-link')),
         ]);
 
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
@@ -296,11 +288,8 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             TaskOutputFactory::KEY_OUTPUT => $taskOutput,
         ]);
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(
-                'text/html',
-                HtmlDocumentFactory::load('three-links')
-            ),
+        $this->httpClientService->appendFixtures([
+            new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('three-links')),
         ]);
 
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
@@ -424,7 +413,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             }
         }
 
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
@@ -473,10 +462,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'no links in task web resource' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
-                        HtmlDocumentFactory::load('minimal')
-                    ),
+                    new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('minimal')),
                 ],
                 'taskOutputValuesCollection' => [
                     [],
@@ -494,10 +480,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'no matching results on url' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
-                        HtmlDocumentFactory::load('single-link')
-                    ),
+                    new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('single-link')),
                 ],
                 'taskOutputValuesCollection' => [
                     [],
@@ -521,10 +504,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'matching results on one url of one' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
-                        HtmlDocumentFactory::load('single-link')
-                    ),
+                    new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('single-link')),
                 ],
                 'taskOutputValuesCollection' => [
                     [],
@@ -592,11 +572,8 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             TaskOutputFactory::KEY_OUTPUT => 'foo',
         ]);
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(
-                'text/html',
-                HtmlDocumentFactory::load('minimal')
-            ),
+        $this->httpClientService->appendFixtures([
+            new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('minimal')),
         ]);
 
         $this->linkIntegrityTaskPreProcessor->process($selectedTask);
@@ -607,12 +584,12 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            $this->assertEquals('foo=bar', $request->getHeader('cookie'));
+            $this->assertEquals('foo=bar', $request->getHeaderLine('cookie'));
         }
 
         $this->assertEquals(
             LinkIntegrityTaskPreProcessor::HTTP_USER_AGENT,
-            $httpHistory->getLastRequest()->getHeader('user-agent')
+            $httpHistory->getLastRequest()->getHeaderLine('user-agent')
         );
     }
 }

@@ -2,9 +2,11 @@
 
 namespace Tests\ApiBundle\Functional\Command\Job;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -14,6 +16,7 @@ use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 {
@@ -28,6 +31,11 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     private $command;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -37,6 +45,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         $this->jobFactory = new JobFactory($this->container);
 
         $this->command = $this->container->get(ResolveWebsiteCommand::class);
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 
     /**
@@ -97,8 +106,15 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     {
         $job = $this->jobFactory->create();
 
-        $this->queueHttpFixtures([
-            ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+
+        $this->httpClientService->appendFixtures([
+            $curl28ConnectException,
+            $curl28ConnectException,
+            $curl28ConnectException,
+            $curl28ConnectException,
+            $curl28ConnectException,
+            $curl28ConnectException,
         ]);
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -124,8 +140,8 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create($jobValues);
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createStandardResolveResponse(),
+        $this->httpClientService->appendFixtures([
+            new Response(),
         ]);
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -209,8 +225,8 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create();
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createStandardResolveResponse(),
+        $this->httpClientService->appendFixtures([
+            new Response(),
         ]);
 
         $returnCode = $this->command->run(new ArrayInput([

@@ -2,22 +2,34 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Post\PostBody;
+use Psr\Http\Message\RequestInterface;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 abstract class AbstractStripeEventListenerTest extends AbstractBaseTestCase
 {
     /**
-     * @param HttpClientService $httpClientService
+     * @var TestHttpClientService
+     */
+    protected $httpClientService;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->httpClientService = $this->container->get(HttpClientService::class);
+    }
+
+    /**
      * @param array $expectedWebClientRequestDataCollection
      */
-    protected function assertWebClientRequests(
-        HttpClientService $httpClientService,
-        $expectedWebClientRequestDataCollection
-    ) {
-        $httpTransactions = $httpClientService->getHistory();
+    protected function assertWebClientRequests(array $expectedWebClientRequestDataCollection)
+    {
+        $httpTransactions = $this->httpClientService->getHistory();
 
         if (empty($expectedWebClientRequestDataCollection)) {
             $this->assertEmpty($httpTransactions);
@@ -28,12 +40,13 @@ abstract class AbstractStripeEventListenerTest extends AbstractBaseTestCase
                 /* @var RequestInterface $request */
                 $request = $httpTransaction['request'];
 
-                /* @var PostBody $requestBody */
-                $requestBody = $request->getBody();
+                $postedData = [];
+                parse_str($request->getBody()->getContents(), $postedData);
+
 
                 $this->assertEquals(
                     $expectedWebClientRequestDataCollection[$requestIndex],
-                    $requestBody->getFields()
+                    $postedData
                 );
             }
         }

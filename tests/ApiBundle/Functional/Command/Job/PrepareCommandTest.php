@@ -2,9 +2,11 @@
 
 namespace Tests\ApiBundle\Functional\Command\Job;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -13,8 +15,7 @@ use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
-use webignition\WebResource\Service\Service as WebResourceService;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class PrepareCommandTest extends AbstractBaseTestCase
 {
@@ -71,14 +72,8 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $expectedHasCrawlJob,
         $expectedTaskCount
     ) {
-        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
-        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
-            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
-        ]);
-
-        $webResourceService = $this->container->get(WebResourceService::class);
-        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
-
+        /* @var TestHttpClientService $httpClientService */
+        $httpClientService = $this->container->get(HttpClientService::class);
         $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('tasks-notify')->clear();
@@ -93,7 +88,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $job = $this->jobFactory->create($jobValues);
         $this->jobFactory->resolve($job);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $httpClientService->appendFixtures($httpFixtures);
 
         $returnCode = $this->prepareCommand->run(new ArrayInput([
             'id' => $job->getId(),
@@ -129,16 +124,20 @@ class PrepareCommandTest extends AbstractBaseTestCase
      */
     public function runDataProvider()
     {
+        $notFoundResponse = new Response(404);
+
         return [
             'job in wrong state' => [
                 'user' => 'public',
                 'jobValues' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
                 'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
@@ -149,11 +148,13 @@ class PrepareCommandTest extends AbstractBaseTestCase
                 'user' => 'public',
                 'jobValues' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
                 'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
@@ -164,11 +165,13 @@ class PrepareCommandTest extends AbstractBaseTestCase
                 'user' => 'private',
                 'jobValues' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
                 'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
@@ -189,8 +192,9 @@ class PrepareCommandTest extends AbstractBaseTestCase
                     HttpFixtureFactory::createRobotsTxtResponse([
                         'http://example.com/sitemap.xml',
                     ]),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'application/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/one',
                             'http://example.com/two',

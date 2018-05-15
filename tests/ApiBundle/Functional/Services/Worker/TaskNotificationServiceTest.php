@@ -1,16 +1,17 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Services\Resque;
+namespace Tests\ApiBundle\Functional\Services\Worker;
 
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class TaskNotificationServiceTest extends AbstractBaseTestCase
 {
@@ -20,6 +21,11 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     private $taskNotificationService;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -27,6 +33,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->taskNotificationService = $this->container->get(TaskNotificationService::class);
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 
     /**
@@ -38,7 +45,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
      */
     public function testNotify($httpFixtures, $workerValuesCollection, $expectedHttpTransactions)
     {
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $workerFactory = new WorkerFactory($this->container);
         foreach ($workerValuesCollection as $workerValues) {
@@ -47,12 +54,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
 
         $this->taskNotificationService->notify();
 
-        $httpClientService = $this->container->get(HttpClientService::class);
-        $httpClientService->get();
-
-        $httpHistory = $httpClientService->getHistory();
-
-        $this->assertCount(count($expectedHttpTransactions), $httpHistory);
+        $httpHistory = $this->httpClientService->getHistory();
 
         foreach ($httpHistory as $httpTransactionIndex => $httpTransaction) {
             $expectedHttpTransaction = $expectedHttpTransactions[$httpTransactionIndex];
@@ -62,7 +64,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
             /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            $this->assertEquals($expectedRequest['hostname'], $request->getHost());
+            $this->assertEquals($expectedRequest['hostname'], $request->getHeaderLine('host'));
 
             /* @var ResponseInterface $response */
             $response = $httpTransaction['response'];
@@ -80,6 +82,25 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
      */
     public function notifyDataProvider()
     {
+        $serviceUnavailableResponse = new Response(503);
+        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+
+        $expectedServiceUnavailableHttpTransaction = [
+            'request' => [
+                'hostname' => 'worker.simplytestable.com',
+            ],
+            'response' => [
+                'statusCode' => 503,
+            ],
+        ];
+
+        $expectedCurl38ExceptionHttpTransaction = [
+            'request' => [
+                'hostname' => 'worker.simplytestable.com',
+            ],
+            'response' => null,
+        ];
+
         return [
             'no workers' => [
                 'httpFixtures' => [],
@@ -98,7 +119,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
             ],
             'single active worker, client error response' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createBadRequestResponse(),
+                    new Response(400),
                 ],
                 'workerValuesCollection' => [
                     [
@@ -119,7 +140,12 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
             ],
             'single active worker, server error response' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createServiceUnavailableResponse(),
+                    $serviceUnavailableResponse,
+                    $serviceUnavailableResponse,
+                    $serviceUnavailableResponse,
+                    $serviceUnavailableResponse,
+                    $serviceUnavailableResponse,
+                    $serviceUnavailableResponse,
                 ],
                 'workerValuesCollection' => [
                     [
@@ -128,19 +154,22 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                     ],
                 ],
                 'expectedHttpTransactions' => [
-                    [
-                        'request' => [
-                            'hostname' => 'worker.simplytestable.com',
-                        ],
-                        'response' => [
-                            'statusCode' => 503,
-                        ],
-                    ],
+                    $expectedServiceUnavailableHttpTransaction,
+                    $expectedServiceUnavailableHttpTransaction,
+                    $expectedServiceUnavailableHttpTransaction,
+                    $expectedServiceUnavailableHttpTransaction,
+                    $expectedServiceUnavailableHttpTransaction,
+                    $expectedServiceUnavailableHttpTransaction,
                 ],
             ],
             'single active worker, curl error response' => [
                 'httpFixtures' => [
-                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+                    $curl28ConnectException,
+                    $curl28ConnectException,
+                    $curl28ConnectException,
+                    $curl28ConnectException,
+                    $curl28ConnectException,
+                    $curl28ConnectException,
                 ],
                 'workerValuesCollection' => [
                     [
@@ -149,19 +178,19 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
                     ],
                 ],
                 'expectedHttpTransactions' => [
-                    [
-                        'request' => [
-                            'hostname' => 'worker.simplytestable.com',
-                        ],
-                        'response' => null,
-                    ],
+                    $expectedCurl38ExceptionHttpTransaction,
+                    $expectedCurl38ExceptionHttpTransaction,
+                    $expectedCurl38ExceptionHttpTransaction,
+                    $expectedCurl38ExceptionHttpTransaction,
+                    $expectedCurl38ExceptionHttpTransaction,
+                    $expectedCurl38ExceptionHttpTransaction,
                 ],
             ],
             'many workers, mixed responses' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    new Response(),
+                    new Response(404),
+                    new Response(),
                 ],
                 'workerValuesCollection' => [
                     [

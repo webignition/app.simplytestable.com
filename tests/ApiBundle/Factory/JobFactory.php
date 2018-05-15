@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Factory;
 
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
@@ -27,9 +28,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Tests\ApiBundle\Services\TestHttpClientService;
 use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
-use GuzzleHttp\Subscriber\Mock as HttpMockSubscriber;
 
 class JobFactory
 {
@@ -307,29 +308,23 @@ class JobFactory
      */
     public function prepare(Job $job, $httpFixtures = [], $domain = null)
     {
+        /* @var TestHttpClientService $httpClientService */
         $httpClientService = $this->container->get(HttpClientService::class);
         $jobPreparationService = $this->container->get(JobPreparationService::class);
 
         if (empty($httpFixtures)) {
             $httpFixtures = [
-                "HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml",
-                sprintf(
-                    "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
+                new GuzzleResponse(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                new GuzzleResponse(
+                    200,
+                    ['content-type' => 'text/plain'],
                     SitemapFixtureFactory::load('example.com-three-urls', $domain)
                 ),
             ];
         }
 
-        $httpClient = $httpClientService->get();
-        $emitter = $httpClient->getEmitter();
-
-        $httpMockSubscriber = new HttpMockSubscriber($httpFixtures);
-
-        $emitter->attach($httpMockSubscriber);
-
+        $httpClientService->appendFixtures($httpFixtures);
         $jobPreparationService->prepare($job);
-
-        $emitter->detach($httpMockSubscriber);
     }
 
     /**

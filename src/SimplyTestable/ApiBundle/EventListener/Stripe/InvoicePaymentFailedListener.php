@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Client as HttpClient;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice;
@@ -32,7 +33,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
 
     /**
      * @param StripeEventService $stripeEventService
-     * @param HttpClientService $httpClientService
+     * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
      * @param $webClientProperties
      * @param StripeService $stripeService
@@ -41,7 +42,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
      */
     public function __construct(
         StripeEventService $stripeEventService,
-        HttpClientService $httpClientService,
+        HttpClient $httpClient,
         EntityManagerInterface $entityManager,
         $webClientProperties,
         StripeService $stripeService,
@@ -50,7 +51,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
     ) {
         parent::__construct(
             $stripeEventService,
-            $httpClientService,
+            $httpClient,
             $entityManager,
             $webClientProperties
         );

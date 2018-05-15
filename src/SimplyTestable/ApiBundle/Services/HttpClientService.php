@@ -1,253 +1,224 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Cookie\CookieJarInterface;
 use GuzzleHttp\Cookie\SetCookie;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Subscriber\Cookie as HttpCookieSubscriber;
-use GuzzleHttp\Subscriber\Retry\RetrySubscriber as HttpRetrySubscriber;
-use GuzzleHttp\Subscriber\History as HttpHistorySubscriber;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
+use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationMiddleware;
+use webignition\Guzzle\Middleware\RequestHeaders\RequestHeadersMiddleware;
+use webignition\HttpHistoryContainer\Container as HttpHistoryContainer;
 
 class HttpClientService
 {
-    const PARAMETER_KEY_COOKIES = 'cookies';
-    const PARAMETER_KEY_HTTP_AUTH_USERNAME = 'http-auth-username';
-    const PARAMETER_KEY_HTTP_AUTH_PASSWORD = 'http-auth-password';
+    const MIDDLEWARE_RETRY_KEY = 'retry';
+    const MIDDLEWARE_HISTORY_KEY = 'history';
+    const MIDDLEWARE_HTTP_AUTH_KEY = 'http-auth';
+    const MIDDLEWARE_REQUEST_HEADERS_KEY = 'request-headers';
+
+    const MAX_RETRIES = 5;
 
     /**
      * @var HttpClient
      */
-    private $httpClient = null;
+    private $httpClient;
 
     /**
      * @var array
      */
-    private $curlOptions = array();
+    private $curlOptions;
 
     /**
-     * @var HttpHistorySubscriber
+     * @var HttpHistoryContainer
      */
-    private $historySubscriber;
+    private $historyContainer;
 
     /**
-     * @var HttpCookieSubscriber
+     * @var HttpAuthenticationMiddleware
      */
-    private $cookieSubscriber;
+    private $httpAuthenticationMiddleware;
 
     /**
-     * @var HttpRetrySubscriber
+     * @var CookieJarInterface
      */
-    private $retrySubscriber;
+    private $cookieJar;
+
+    /**
+     * @var RequestHeadersMiddleware
+     */
+    private $requestHeadersMiddleware;
+
+    /**
+     * @var HandlerStack
+     */
+    protected $handlerStack;
 
     /**
      * @param array $curlOptions
      */
-    public function __construct($curlOptions)
+    public function __construct(array $curlOptions)
     {
-        foreach ($curlOptions as $curlOption) {
-            if (defined($curlOption['name'])) {
-                $this->curlOptions[constant($curlOption['name'])] = $curlOption['value'];
-            }
-        }
+        $this->setCurlOptions($curlOptions);
+        $this->historyContainer = new HttpHistoryContainer();
+        $this->httpAuthenticationMiddleware = new HttpAuthenticationMiddleware();
+        $this->cookieJar = new CookieJar();
+        $this->requestHeadersMiddleware = new RequestHeadersMiddleware();
+        $this->handlerStack = HandlerStack::create($this->createInitialHandler());
 
-        $this->historySubscriber = new HttpHistorySubscriber();
-        $this->cookieSubscriber = new HttpCookieSubscriber();
-        $this->retrySubscriber = $this->createRetrySubscriber();
-
-        $this->httpClient = new HttpClient([
-            'config' => [
-                'curl' => $this->curlOptions
-            ],
-            'defaults' => [
-                'verify' => false,
-            ],
-        ]);
-
-        $this->enableRetrySubscriber();
-        $this->httpClient->getEmitter()->attach($this->historySubscriber);
-        $this->httpClient->getEmitter()->attach($this->cookieSubscriber);
-    }
-
-    public function enableRetrySubscriber()
-    {
-        $this->httpClient->getEmitter()->attach($this->retrySubscriber);
-    }
-
-    public function disableRetrySubscriber()
-    {
-        $this->httpClient->getEmitter()->detach($this->retrySubscriber);
-    }
-
-    /**
-     * @param string $userAgent
-     */
-    public function setUserAgent($userAgent)
-    {
-        $defaultHeaders = $this->get()->getDefaultOption('headers');
-        $defaultHeaders['User-Agent'] = $userAgent;
-
-        $this->get()->setDefaultOption('headers', $defaultHeaders);
-    }
-
-    public function resetUserAgent()
-    {
-        $client = $this->get();
-        $this->setUserAgent($client::getDefaultUserAgent());
-    }
-
-    /**
-     * @return HttpRetrySubscriber
-     */
-    protected function createRetrySubscriber()
-    {
-        $filter = HttpRetrySubscriber::createChainFilter([
-            // Does early filter to force non-idempotent methods to NOT be retried.
-            HttpRetrySubscriber::createIdempotentFilter(),
-            // Retry curl-level errors
-            HttpRetrySubscriber::createCurlFilter(),
-            // Performs the last check, returning ``true`` or ``false`` based on
-            // if the response received a 500 or 503 status code.
-            HttpRetrySubscriber::createStatusFilter([500, 503])
-        ]);
-
-        return new HttpRetrySubscriber(['filter' => $filter]);
+        $this->httpClient = $this->create();
     }
 
     /**
      * @return HttpClient
      */
-    public function get()
+    public function getHttpClient()
     {
         return $this->httpClient;
     }
 
     /**
-     * @param string $url
-     * @param array $options
-     *
-     * @return RequestInterface
-     */
-    public function getRequest($url, array $options = [])
-    {
-        return $this->createRequest('GET', $url, $options);
-    }
-
-
-    /**
-     * @param string $url
-     * @param array $options
-     *
-     * @return RequestInterface
-     */
-    public function postRequest($url, array $options = [])
-    {
-        return $this->createRequest('POST', $url, $options);
-    }
-
-    /**
-     * @param string $method
-     * @param string $url
-     * @param array $options
-     *
-     * @return RequestInterface
-     */
-    private function createRequest($method, $url, $options)
-    {
-        $options['config'] = [
-            'curl' => $this->curlOptions
-        ];
-
-        return $this->get()->createRequest(
-            $method,
-            $url,
-            $options
-        );
-    }
-
-    /**
-     * @return HttpHistorySubscriber
+     * @return HttpHistoryContainer
      */
     public function getHistory()
     {
-        return $this->historySubscriber;
+        return $this->historyContainer;
     }
 
     /**
      * Set cookies to be sent on all requests (dependent on cookie domain/secure matching rules)
      *
-     * @param array $cookies
+     * @param SetCookie[] $cookies
      */
     public function setCookies($cookies = [])
     {
-        $this->cookieSubscriber->getCookieJar()->clear();
-        if (!empty($cookies)) {
-            foreach ($cookies as $cookie) {
-                foreach ($cookie as $key => $value) {
-                    $cookie[ucfirst($key)] = $value;
-                }
+        $this->clearCookies();
 
-                $this->cookieSubscriber->getCookieJar()->setCookie(new SetCookie($cookie));
-            }
+        if (empty($cookies)) {
+            return;
+        }
+
+        foreach ($cookies as $cookie) {
+            $this->cookieJar->setCookie($cookie);
         }
     }
 
     public function clearCookies()
     {
-        $this->cookieSubscriber->getCookieJar()->clear();
+        $this->cookieJar->clear();
     }
 
-    public function setBasicHttpAuthorization($username, $password)
+    /**
+     * @param HttpAuthenticationCredentials $httpAuthenticationCredentials
+     */
+    public function setBasicHttpAuthorization(HttpAuthenticationCredentials $httpAuthenticationCredentials)
     {
-        if (empty($username) && empty($password)) {
-            return;
-        }
-
-        $this->get()->setDefaultOption(
-            'auth',
-            [$username, $password]
-        );
+        $this->httpAuthenticationMiddleware->setHttpAuthenticationCredentials($httpAuthenticationCredentials);
     }
 
     public function clearBasicHttpAuthorization()
     {
-        $this->get()->setDefaultOption(
-            'auth',
-            null
-        );
+        $this->httpAuthenticationMiddleware->setHttpAuthenticationCredentials(new HttpAuthenticationCredentials());
     }
 
     /**
-     * @param array $parameters
+     * @param string $name
+     * @param mixed $value
      */
-    public function setCookiesFromParameters($parameters)
+    public function setRequestHeader($name, $value)
     {
-        $this->clearCookies();
-
-        $parameterBag = new ParameterBag($parameters);
-
-        if ($parameterBag->has(self::PARAMETER_KEY_COOKIES)) {
-            $this->setCookies($parameterBag->get(self::PARAMETER_KEY_COOKIES));
-        }
+        $this->requestHeadersMiddleware->setHeader($name, $value);
     }
 
     /**
-     * @param array $parameters
+     * @param array $curlOptions
      */
-    public function setBasicHttpAuthenticationFromParameters($parameters)
+    private function setCurlOptions(array $curlOptions)
     {
-        $this->clearBasicHttpAuthorization();
+        $definedCurlOptions = [];
 
-        $parameterBag = new ParameterBag($parameters);
-
-        $hasHttpAuthUserNameParameter = $parameterBag->has(self::PARAMETER_KEY_HTTP_AUTH_USERNAME);
-        $hasHttpAuthPasswordParameter = $parameterBag->has(self::PARAMETER_KEY_HTTP_AUTH_PASSWORD);
-
-        if ($hasHttpAuthUserNameParameter || $hasHttpAuthPasswordParameter) {
-            $this->setBasicHttpAuthorization(
-                $parameterBag->get(self::PARAMETER_KEY_HTTP_AUTH_USERNAME),
-                $parameterBag->get(self::PARAMETER_KEY_HTTP_AUTH_PASSWORD)
-            );
+        foreach ($curlOptions as $name => $value) {
+            if (defined($name)) {
+                $definedCurlOptions[constant($name)] = $value;
+            }
         }
+
+        $this->curlOptions = $definedCurlOptions;
+    }
+
+    /**
+     * @return HttpClient
+     */
+    private function create()
+    {
+        $this->handlerStack->push($this->httpAuthenticationMiddleware, self::MIDDLEWARE_HTTP_AUTH_KEY);
+        $this->handlerStack->push($this->requestHeadersMiddleware, self::MIDDLEWARE_REQUEST_HEADERS_KEY);
+        $this->enableRetryMiddleware();
+        $this->handlerStack->push(Middleware::history($this->historyContainer), self::MIDDLEWARE_HISTORY_KEY);
+
+        return new HttpClient([
+            'curl' => $this->curlOptions,
+            'verify' => false,
+            'handler' => $this->handlerStack,
+            'max_retries' => self::MAX_RETRIES,
+            'cookies' => $this->cookieJar,
+        ]);
+    }
+
+    public function disableRetryMiddleware()
+    {
+        $this->handlerStack->remove(self::MIDDLEWARE_RETRY_KEY);
+    }
+
+    public function enableRetryMiddleware()
+    {
+        $this->disableRetryMiddleware();
+        $this->handlerStack->push(Middleware::retry($this->createRetryDecider()), self::MIDDLEWARE_RETRY_KEY);
+    }
+
+    /**
+     * @return callable|null
+     */
+    protected function createInitialHandler()
+    {
+        return null;
+    }
+
+    /**
+     * @return \Closure
+     */
+    private function createRetryDecider()
+    {
+        return function (
+            $retries,
+            RequestInterface $request,
+            ResponseInterface $response = null,
+            GuzzleException $exception = null
+        ) {
+            if (in_array($request->getMethod(), ['POST'])) {
+                return false;
+            }
+
+            if ($retries >= self::MAX_RETRIES) {
+                return false;
+            }
+
+            if ($exception instanceof ConnectException) {
+                return true;
+            }
+
+            if ($response instanceof ResponseInterface && $response->getStatusCode() >= 500) {
+                return true;
+            }
+
+            return false;
+        };
     }
 }

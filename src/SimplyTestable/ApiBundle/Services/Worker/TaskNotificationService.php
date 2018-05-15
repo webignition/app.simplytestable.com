@@ -1,13 +1,15 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services\Worker;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Request;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
-use SimplyTestable\ApiBundle\Services\UrlService;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use \Psr\Log\LoggerInterface;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
@@ -25,14 +27,9 @@ class TaskNotificationService
     private $stateService;
 
     /**
-     * @var HttpClientService
+     * @var HttpClient
      */
-    private $httpClientService;
-
-    /**
-     * @var UrlService
-     */
-    protected $urlService;
+    private $httpClient;
 
     /**
      * @var LoggerInterface
@@ -47,21 +44,18 @@ class TaskNotificationService
     /**
      * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
-     * @param HttpClientService $httpClientService
-     * @param UrlService $urlService
+     * @param HttpClient $httpClient
      * @param LoggerInterface $logger
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         StateService $stateService,
-        HttpClientService $httpClientService,
-        UrlService $urlService,
+        HttpClient $httpClient,
         LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
-        $this->httpClientService = $httpClientService;
-        $this->urlService = $urlService;
+        $this->httpClient = $httpClient;
         $this->logger = $logger;
 
         $this->workerRepository = $entityManager->getRepository(Worker::class);
@@ -75,11 +69,10 @@ class TaskNotificationService
         ]);
 
         foreach ($workers as $worker) {
-            $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/tasks/notify/');
-            $request = $this->httpClientService->postRequest($requestUrl);
+            $request = new Request('POST', 'http://' . $worker->getHostname() . '/tasks/notify/');
 
             try {
-                $this->httpClientService->get()->send($request);
+                $this->httpClient->send($request);
             } catch (BadResponseException $badResponseException) {
                 $this->logger->error(sprintf(
                     'TaskNotificationService:notifyWorker:ServerErrorResponseException [%s] [%s]',

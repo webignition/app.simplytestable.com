@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services\JobPreparation;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -45,7 +46,7 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
         $expectedAmmendments,
         $expectedTasks
     ) {
-        $this->queueHttpFixtures($httpFixtures);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -100,6 +101,8 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
      */
     public function prepareDataProvider()
     {
+        $notFoundResponse = new Response(404);
+
         return [
             'no urls found, public user' => [
                 'jobValues' => [
@@ -107,13 +110,13 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                 ],
                 'user' => 'public',
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJobContainer' => false,
@@ -129,13 +132,13 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                 ],
                 'user' => 'private',
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedJobState' => Job::STATE_FAILED_NO_SITEMAP,
                 'expectedHasCrawlJobContainer' => true,
@@ -190,22 +193,19 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
                     HttpFixtureFactory::createRobotsTxtResponse([
                         'http://example.com/sitemap.xml',
                     ]),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
-                        SitemapFixtureFactory::generate([
-                            'http://example.com/one',
-                            'http://example.com/two',
-                            'http://example.com/three',
-                            'http://example.com/four',
-                            'http://example.com/five',
-                            'http://example.com/six',
-                            'http://example.com/seven',
-                            'http://example.com/eight',
-                            'http://example.com/nine',
-                            'http://example.com/ten',
-                            'http://example.com/eleven',
-                        ])
-                    ),
+                    new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                        'http://example.com/one',
+                        'http://example.com/two',
+                        'http://example.com/three',
+                        'http://example.com/four',
+                        'http://example.com/five',
+                        'http://example.com/six',
+                        'http://example.com/seven',
+                        'http://example.com/eight',
+                        'http://example.com/nine',
+                        'http://example.com/ten',
+                        'http://example.com/eleven',
+                    ])),
                 ],
                 'expectedJobState' => Job::STATE_QUEUED,
                 'expectedHasCrawlJobContainer' => false,

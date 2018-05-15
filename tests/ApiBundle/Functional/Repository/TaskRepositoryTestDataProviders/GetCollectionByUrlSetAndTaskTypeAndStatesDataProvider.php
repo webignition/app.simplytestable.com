@@ -2,9 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 
@@ -63,28 +63,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                 'httpFixturesCollection' => [
                     [
                         'prepare' => [
-                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                            HttpFixtureFactory::createSuccessResponse(
-                                'application/xml',
-                                SitemapFixtureFactory::generate([
-                                    'http://example.com/foo bar',
-                                    'http://example.com/foo%20bar',
-                                    'http://example.com/foo%2520bar',
-                                ])
-                            ),
+                            new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                            new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])),
                         ],
                     ],
                     [
                         'prepare' => [
-                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                            HttpFixtureFactory::createSuccessResponse(
-                                'application/xml',
-                                SitemapFixtureFactory::generate([
-                                    'http://example.com/foo bar',
-                                    'http://example.com/foo%20bar',
-                                    'http://example.com/foo%2520bar',
-                                ])
-                            ),
+                            new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                            new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])),
                         ],
                     ],
                 ],
@@ -157,28 +151,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                 'httpFixturesCollection' => [
                     [
                         'prepare' => [
-                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                            HttpFixtureFactory::createSuccessResponse(
-                                'application/xml',
-                                SitemapFixtureFactory::generate([
-                                    'http://example.com/foo bar',
-                                    'http://example.com/foo%20bar',
-                                    'http://example.com/foo%2520bar',
-                                ])
-                            ),
+                            new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                            new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])),
                         ],
                     ],
                     [
                         'prepare' => [
-                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                            HttpFixtureFactory::createSuccessResponse(
-                                'application/xml',
-                                SitemapFixtureFactory::generate([
-                                    'http://example.com/foo bar',
-                                    'http://example.com/foo%20bar',
-                                    'http://example.com/foo%2520bar',
-                                ])
-                            ),
+                            new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                            new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])),
                         ],
                     ],
                 ],
@@ -252,28 +240,22 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                 'httpFixturesCollection' => [
                     [
                         'prepare' => [
-                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                            HttpFixtureFactory::createSuccessResponse(
-                                'application/xml',
-                                SitemapFixtureFactory::generate([
-                                    'http://example.com/foo bar',
-                                    'http://example.com/foo%20bar',
-                                    'http://example.com/foo%2520bar',
-                                ])
-                            ),
+                            new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                            new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])),
                         ],
                     ],
                     [
                         'prepare' => [
-                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                            HttpFixtureFactory::createSuccessResponse(
-                                'application/xml',
-                                SitemapFixtureFactory::generate([
-                                    'http://example.com/foo bar',
-                                    'http://example.com/foo%20bar',
-                                    'http://example.com/foo%2520bar',
-                                ])
-                            ),
+                            new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                            new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])),
                         ],
                     ],
                 ],

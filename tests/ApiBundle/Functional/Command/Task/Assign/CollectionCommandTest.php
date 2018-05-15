@@ -2,16 +2,18 @@
 
 namespace Tests\ApiBundle\Functional\Command\Task\Assign;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class CollectionCommandTest extends AbstractBaseTestCase
 {
@@ -75,12 +77,14 @@ class CollectionCommandTest extends AbstractBaseTestCase
         array $expectedTaskValuesCollection,
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
+        /* @var TestHttpClientService $httpClientService */
+        $httpClientService = $this->container->get(HttpClientService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $job = $this->jobFactory->createResolveAndPrepare([], $resolveAndPrepareHttpFixtures);
 
-        $this->queueHttpFixtures($httpFixtures);
+        $httpClientService->appendFixtures($httpFixtures);
 
         foreach ($workerValuesCollection as $workerValues) {
             $this->workerFactory->create($workerValues);
@@ -159,7 +163,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
             'no workers available' => [
                 'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    new Response(404),
                 ],
                 'workerValuesCollection' => [
                     [
@@ -188,26 +192,23 @@ class CollectionCommandTest extends AbstractBaseTestCase
             'assign to specific worker; comma-separated' => [
                 'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/json',
-                        json_encode([
-                            [
-                                'id' => 1,
-                                'url' => 'http://example.com/one',
-                                'type' => 'html validation',
-                            ],
-                            [
-                                'id' => 2,
-                                'url' => 'http://example.com/bar%20foo',
-                                'type' => 'html validation',
-                            ],
-                            [
-                                'id' => 3,
-                                'url' => 'http://example.com/foo bar',
-                                'type' => 'html validation',
-                            ],
-                        ])
-                    ),
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
+                        [
+                            'id' => 1,
+                            'url' => 'http://example.com/one',
+                            'type' => 'html validation',
+                        ],
+                        [
+                            'id' => 2,
+                            'url' => 'http://example.com/bar%20foo',
+                            'type' => 'html validation',
+                        ],
+                        [
+                            'id' => 3,
+                            'url' => 'http://example.com/foo bar',
+                            'type' => 'html validation',
+                        ],
+                    ])),
                 ],
                 'workerValuesCollection' => [
                     [
@@ -244,26 +245,20 @@ class CollectionCommandTest extends AbstractBaseTestCase
             'assign to specific worker; comma-separated, single task' => [
                 'resolveAndPrepareHttpFixtures' => [
                     'prepare' => [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/1',
-                            ])
-                        ),
+                        new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                        new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                            'http://example.com/1',
+                        ])),
                     ],
                 ],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/json',
-                        json_encode([
-                            [
-                                'id' => 1,
-                                'url' => 'http://example.com/one',
-                                'type' => 'html validation',
-                            ],
-                        ])
-                    ),
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
+                        [
+                            'id' => 1,
+                            'url' => 'http://example.com/one',
+                            'type' => 'html validation',
+                        ],
+                    ])),
                 ],
                 'workerValuesCollection' => [
                     [
@@ -288,26 +283,23 @@ class CollectionCommandTest extends AbstractBaseTestCase
             'assign to specific worker; assign all, range' => [
                 'resolveAndPrepareHttpFixtures' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/json',
-                        json_encode([
-                            [
-                                'id' => 1,
-                                'url' => 'http://example.com/one',
-                                'type' => 'html validation',
-                            ],
-                            [
-                                'id' => 2,
-                                'url' => 'http://example.com/bar%20foo',
-                                'type' => 'html validation',
-                            ],
-                            [
-                                'id' => 3,
-                                'url' => 'http://example.com/foo bar',
-                                'type' => 'html validation',
-                            ],
-                        ])
-                    ),
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
+                        [
+                            'id' => 1,
+                            'url' => 'http://example.com/one',
+                            'type' => 'html validation',
+                        ],
+                        [
+                            'id' => 2,
+                            'url' => 'http://example.com/bar%20foo',
+                            'type' => 'html validation',
+                        ],
+                        [
+                            'id' => 3,
+                            'url' => 'http://example.com/foo bar',
+                            'type' => 'html validation',
+                        ],
+                    ])),
                 ],
                 'workerValuesCollection' => [
                     [

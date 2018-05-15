@@ -2,8 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Repository\TaskRepositoryTestDataProviders;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 
@@ -22,15 +22,12 @@ trait GetCountByJobDataProvider
                     ],
                 ],
                 'prepareHttpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
-                        SitemapFixtureFactory::generate([
-                            'http://example.com/1',
-                            'http://example.com/2',
-                            'http://example.com/3',
-                        ])
-                    ),
+                    new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                    new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                        'http://example.com/1',
+                        'http://example.com/2',
+                        'http://example.com/3',
+                    ])),
                 ],
                 'expectedTaskCount' => 3,
             ],
@@ -41,17 +38,14 @@ trait GetCountByJobDataProvider
                     ],
                 ],
                 'prepareHttpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
-                        SitemapFixtureFactory::generate([
-                            'http://example.com/1',
-                            'http://example.com/2',
-                            'http://example.com/3',
-                            'http://example.com/4',
-                            'http://example.com/5',
-                        ])
-                    ),
+                    new Response(200, ['content-type' => 'text/plain'], 'sitemap: sitemap.xml'),
+                    new Response(200, ['content-type' => 'application/xml'], SitemapFixtureFactory::generate([
+                        'http://example.com/1',
+                        'http://example.com/2',
+                        'http://example.com/3',
+                        'http://example.com/4',
+                        'http://example.com/5',
+                    ])),
                 ],
                 'expectedTaskCount' => 5,
             ],

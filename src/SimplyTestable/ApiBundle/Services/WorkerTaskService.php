@@ -1,6 +1,8 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
+use GuzzleHttp\Client as HttpClient;
 use Psr\Log\LoggerInterface;
 
 abstract class WorkerTaskService
@@ -16,14 +18,9 @@ abstract class WorkerTaskService
     protected $stateService;
 
     /**
-     * @var HttpClientService
+     * @var HttpClient
      */
-    protected $httpClientService;
-
-    /**
-     * @var UrlService
-     */
-    protected $urlService;
+    protected $httpClient;
 
     /**
      * @var TaskService
@@ -33,21 +30,18 @@ abstract class WorkerTaskService
     /**
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param HttpClientService $httpClientService
-     * @param UrlService $urlService
+     * @param HttpClient $httpClient
      * @param TaskService $taskService
      */
     public function __construct(
         LoggerInterface $logger,
         StateService $stateService,
-        HttpClientService $httpClientService,
-        UrlService $urlService,
+        HttpClient $httpClient,
         TaskService $taskService
     ) {
         $this->logger = $logger;
         $this->stateService = $stateService;
-        $this->httpClientService = $httpClientService;
-        $this->urlService = $urlService;
+        $this->httpClient = $httpClient;
         $this->taskService = $taskService;
     }
 }

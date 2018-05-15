@@ -2,19 +2,19 @@
 
 namespace Tests\ApiBundle\Functional\Command\Task\Cancel;
 
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Post\PostBody;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class CollectionCommandTest extends AbstractBaseTestCase
 {
@@ -62,6 +62,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedHttpTransactions,
         $expectedTaskStates
     ) {
+        /* @var TestHttpClientService $httpClientService */
         $httpClientService = $this->container->get(HttpClientService::class);
 
         foreach ($workerValuesCollection as $workerValues) {
@@ -69,10 +70,9 @@ class CollectionCommandTest extends AbstractBaseTestCase
         }
 
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
-
-        $this->queueHttpFixtures($httpFixtures);
-
         $httpClientService->getHistory()->clear();
+
+        $httpClientService->appendFixtures($httpFixtures);
 
         $returnCode = $this->command->run(new ArrayInput([
             'ids' => implode(',', $job->getTaskIds()),
@@ -92,12 +92,12 @@ class CollectionCommandTest extends AbstractBaseTestCase
             /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            /* @var PostBody $requestBody */
-            $requestBody = $request->getBody();
+            $postedData = [];
+            parse_str($request->getBody()->getContents(), $postedData);
 
-            $requestTaskIds = $requestBody->getField('ids');
+            $requestTaskIds = $postedData['ids'];
 
-            $this->assertEquals($expectedRequest['hostname'], $request->getHost());
+            $this->assertEquals($expectedRequest['hostname'], $request->getUri()->getHost());
             $this->assertEquals($expectedRequest['ids'], $requestTaskIds);
 
             /* @var ResponseInterface $response */
@@ -123,6 +123,10 @@ class CollectionCommandTest extends AbstractBaseTestCase
      */
     public function runDataProvider()
     {
+        $successResponse = new Response();
+        $notFoundResponse = new Response(404);
+        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+
         return [
             'tasks have no worker' => [
                 'httpFixtures' => [],
@@ -137,8 +141,8 @@ class CollectionCommandTest extends AbstractBaseTestCase
             ],
             'tasks have workers' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse(),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $successResponse,
+                    $successResponse,
                 ],
                 'workerValuesCollection' => [
                     [
@@ -195,9 +199,9 @@ class CollectionCommandTest extends AbstractBaseTestCase
             ],
             'tasks have workers; request failures' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
-                    HttpFixtureFactory::createSuccessResponse(),
+                    $notFoundResponse,
+                    $curl28ConnectException,
+                    $successResponse,
                 ],
                 'workerValuesCollection' => [
                     [

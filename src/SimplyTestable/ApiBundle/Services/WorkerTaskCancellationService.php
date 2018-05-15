@@ -1,8 +1,10 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
@@ -29,22 +31,20 @@ class WorkerTaskCancellationService extends WorkerTaskService
             $remoteTaskIdsString
         ));
 
-        $requestUrl = $this->urlService->prepare(
-            'http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/'
+        $requestUrl = 'http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/';
+        $httpRequest = new Request(
+            'POST',
+            $requestUrl,
+            ['content-type' => 'application/x-www-form-urlencoded'],
+            http_build_query(['ids' => $remoteTaskIdsString], '', '&')
         );
-
-        $httpRequest = $this->httpClientService->postRequest($requestUrl, [
-            'body' => [
-                'ids' => $remoteTaskIdsString,
-            ],
-        ]);
 
         foreach ($tasks as $task) {
             $this->taskService->cancel($task);
         }
 
         try {
-            $this->httpClientService->get()->send($httpRequest);
+            $this->httpClient->send($httpRequest);
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 

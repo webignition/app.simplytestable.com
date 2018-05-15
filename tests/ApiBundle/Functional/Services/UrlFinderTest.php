@@ -2,63 +2,61 @@
 
 namespace Tests\ApiBundle\Command;
 
-use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UrlFinder;
-use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\AtomFeedFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\RssFeedFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use webignition\WebResource\Service\Configuration as WebResourceServiceConfiguration;
-use webignition\WebResource\Service\Service as WebResourceService;
+use Tests\ApiBundle\Services\TestHttpClientService;
+use webignition\WebResource\Retriever as WebResourceRetriever;
+use webignition\WebResource\Sitemap\Factory as SitemapFactory;
+use webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder;
+use webignition\WebsiteSitemapFinder\WebsiteSitemapFinder;
 
 class UrlFinderTest extends AbstractBaseTestCase
 {
     /**
      * @dataProvider getUrlsDataProvider
      *
-     * @param string $websiteUrl
-     * @param array $parameters
+     * @param Job $job
      * @param array $httpFixtures
      * @param string[] $expectedUrlSet
      * @param string[] $expectedRequestPropertiesCollection
      * @param float|null $sitemapRetrieverTimeout
      */
     public function testGetUrls(
-        $websiteUrl,
-        $parameters,
+        Job $job,
         $httpFixtures,
         $expectedUrlSet,
         $expectedRequestPropertiesCollection,
         $sitemapRetrieverTimeout = null
     ) {
-        $this->queueHttpFixtures($httpFixtures);
-
-        $webResourceService = $this->container->get(WebResourceService::class);
+        /* @var TestHttpClientService $httpClientService */
         $httpClientService = $this->container->get(HttpClientService::class);
+        $webResourceRetriever = $this->container->get(WebResourceRetriever::class);
+        $sitemapFactory = $this->container->get(SitemapFactory::class);
+        $websiteSitemapFinder = $this->container->get(WebsiteSitemapFinder::class);
+        $websiteRssFeedFinder = $this->container->get(WebsiteRssFeedFinder::class);
 
-        $webResourceServiceConfiguration = $this->container->get(WebResourceServiceConfiguration::class);
-
-        $updatedWebResourceServiceConfiguration = $webResourceServiceConfiguration->createFromCurrent([
-            WebResourceServiceConfiguration::CONFIG_RETRY_WITH_URL_ENCODING_DISABLED => false,
-        ]);
-
-        $webResourceService->setConfiguration($updatedWebResourceServiceConfiguration);
-
-        $websiteService = $this->container->get(WebSiteService::class);
-        $website = $websiteService->get($websiteUrl);
+        $httpClientService->appendFixtures($httpFixtures);
 
         $urlFinder = new UrlFinder(
-            $this->container->get(HttpClientService::class),
-            $webResourceService,
-            $this->container->get('simplytestable.services.sitemapfactory'),
+            $httpClientService,
+            $webResourceRetriever,
+            $sitemapFactory,
+            $websiteSitemapFinder,
+            $websiteRssFeedFinder,
             $sitemapRetrieverTimeout
         );
 
-        $urls = $urlFinder->getUrls($website, 10, $parameters);
+        $urls = $urlFinder->getUrls($job, 10);
 
         $this->assertEquals($expectedUrlSet, $urls);
 
@@ -71,7 +69,7 @@ class UrlFinderTest extends AbstractBaseTestCase
             $requestProperties = [];
 
             foreach (['user-agent', 'cookie', 'authorization'] as $headerKey) {
-                $requestProperties[$headerKey] = $request->getHeader($headerKey);
+                $requestProperties[$headerKey] = $request->getHeaderLine($headerKey);
             }
 
             $requestPropertiesCollection[] = $requestProperties;
@@ -85,17 +83,18 @@ class UrlFinderTest extends AbstractBaseTestCase
      */
     public function getUrlsDataProvider()
     {
+        $notFoundResponse = new Response(404);
+
         return [
             'no urls; no sitemap, no rss need, no atom feed, no web page' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedUrlSet' => [],
                 'expectedRequestPropertiesCollection' => [
@@ -124,19 +123,20 @@ class UrlFinderTest extends AbstractBaseTestCase
                         'cookie' => '',
                         'authorization' => '',
                     ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
                 ],
             ],
             'no urls; no sitemap, no rss need, no atom feed' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
-                        HtmlDocumentFactory::load('minimal')
-                    ),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('minimal')),
                 ],
                 'expectedUrlSet' => [],
                 'expectedRequestPropertiesCollection' => [
@@ -163,19 +163,19 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'no urls; sitemap contains only schemeless urls' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'example.com/one',
                             'example.com/two'
                         ])
                     ),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
                 ],
                 'expectedUrlSet' => [],
                 'expectedRequestPropertiesCollection' => [
@@ -192,16 +192,12 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'no urls; malformed rss url' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
-                        HtmlDocumentFactory::load('malformed-rss-url')
-                    ),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('malformed-rss-url')),
+                    $notFoundResponse,
                 ],
                 'expectedUrlSet' => [],
                 'expectedRequestPropertiesCollection' => [
@@ -212,6 +208,11 @@ class UrlFinderTest extends AbstractBaseTestCase
                     ],
                     [
                         'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
                         'cookie' => '',
                         'authorization' => '',
                     ],
@@ -223,18 +224,14 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'no urls; request exception retrieving atom feed' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
-                        HtmlDocumentFactory::load('atom-feed')
-                    ),
-                    HttpFixtureFactory::createNotFoundResponse(),
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    new Response(200, ['content-type' => 'text/html'], HtmlDocumentFactory::load('atom-feed')),
+                    $notFoundResponse,
                 ],
                 'expectedUrlSet' => [],
                 'expectedRequestPropertiesCollection' => [
@@ -264,23 +261,19 @@ class UrlFinderTest extends AbstractBaseTestCase
                         'authorization' => '',
                     ],
                     [
-                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
                         'cookie' => '',
                         'authorization' => '',
                     ],
                 ],
             ],
             'from single sitemap.txt' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createRobotsTxtResponse([
                         'http://example.com/sitemap.txt',
                     ]),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/plain',
-                        'http://example.com/from-sitemap-txt/'
-                    ),
+                    new Response(200, ['content-type' => 'text/plain'], 'http://example.com/from-sitemap-txt/'),
                 ],
                 'expectedUrlSet' => [
                     'http://example.com/from-sitemap-txt/',
@@ -299,14 +292,14 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'from single sitemap.xml' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createRobotsTxtResponse([
                         'http://example.com/sitemap.xml',
                     ]),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'application/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -335,20 +328,17 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'from sitemap.txt and sitemap.xml' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    $notFoundResponse,
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/from-sitemap-xml/',
                         ])
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/plain',
-                        'http://example.com/from-sitemap-txt/'
-                    ),
+                    new Response(200, ['content-type' => 'text/plain'], 'http://example.com/from-sitemap-txt/'),
                 ],
                 'expectedUrlSet' => [
                     'http://example.com/from-sitemap-xml/',
@@ -373,16 +363,16 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'from multiple sitemaps' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createRobotsTxtResponse([
                         'http://example.com/sitemap1.xml',
                         'http://example.com/sitemap2.xml',
                         'http://example.com/sitemap3.xml',
                     ]),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -392,8 +382,9 @@ class UrlFinderTest extends AbstractBaseTestCase
                             'http://example.com/six',
                         ])
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/seven',
                             'http://example.com/eight',
@@ -403,8 +394,9 @@ class UrlFinderTest extends AbstractBaseTestCase
                             'http://example.com/twelve',
                         ])
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/thirteen',
                         ])
@@ -446,16 +438,17 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'from multiple sitemaps; timeout during transfer' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::load('example.com-index-50-sitemaps')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -504,16 +497,17 @@ class UrlFinderTest extends AbstractBaseTestCase
                 'sitemapRetrieverTimeout' => 0.0001,
             ],
             'from multiple sitemaps; url soft limit reached' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::load('example.com-index-50-sitemaps')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -561,29 +555,30 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'from atom feed with cookies and authorization' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [
-                    HttpClientService::PARAMETER_KEY_COOKIES => [
+                'job' => $this->createJob('http://example.com/', [
+                    'cookies' => [
                         [
                             'Name' => 'foo',
                             'Value' => 'bar',
                             'Domain' => '.example.com',
                         ],
                     ],
-                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
-                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
-                ],
+                    'http-auth-username' => 'user',
+                    'http-auth-password' => 'password',
+                ]),
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::load('atom-feed')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/atom+xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'application/atom+xml'],
                         AtomFeedFactory::load('example')
                     ),
                 ],
@@ -617,36 +612,40 @@ class UrlFinderTest extends AbstractBaseTestCase
                         'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
                     ],
                     [
-                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
                         'cookie' => 'foo=bar',
                         'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
                     ],
                 ],
             ],
             'from rss feed with cookies and authorization' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [
-                    'softLimit' => 10,
-                    HttpClientService::PARAMETER_KEY_COOKIES => [
+                'job' => $this->createJob('http://example.com/', [
+                    'cookies' => [
                         [
                             'Name' => 'foo',
                             'Value' => 'bar',
                             'Domain' => '.example.com',
                         ],
                     ],
-                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
-                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
-                ],
+                    'http-auth-username' => 'user',
+                    'http-auth-password' => 'password',
+                ]),
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/html',
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    $notFoundResponse,
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html']
+                    ),
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
                         HtmlDocumentFactory::load('rss-feed')
                     ),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/rss+xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'application/rss+xml'],
                         RssFeedFactory::load('example')
                     ),
                 ],
@@ -675,31 +674,36 @@ class UrlFinderTest extends AbstractBaseTestCase
                         'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
                     ],
                     [
-                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
+                        'cookie' => 'foo=bar',
+                        'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::FEED_FINDER_USER_AGENT,
                         'cookie' => 'foo=bar',
                         'authorization' => 'Basic dXNlcjpwYXNzd29yZA==',
                     ],
                 ],
             ],
             'from single sitemap.xml with cookies and authorization' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [
-                    HttpClientService::PARAMETER_KEY_COOKIES => [
+                'job' => $this->createJob('http://example.com/', [
+                    'cookies' => [
                         [
                             'Name' => 'foo',
                             'Value' => 'bar',
                             'Domain' => '.example.com',
                         ],
                     ],
-                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_USERNAME => 'user',
-                    HttpClientService::PARAMETER_KEY_HTTP_AUTH_PASSWORD => 'password',
-                ],
+                    'http-auth-username' => 'user',
+                    'http-auth-password' => 'password',
+                ]),
                 'httpFixtures' => [
                     HttpFixtureFactory::createRobotsTxtResponse([
                         'http://example.com/sitemap.xml',
                     ]),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'application/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/one',
                             'http://example.com/two',
@@ -728,17 +732,18 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
             'from multiple sitemaps; transfer error on first sitemap' => [
-                'websiteUrl' => 'http://example.com',
-                'parameters' => [],
+                $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::load('example.com-index-50-sitemaps')
                     ),
-                    HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'text/xml',
+                    $notFoundResponse,
+                    new Response(
+                        200,
+                        ['content-type' => 'text/xml'],
                         SitemapFixtureFactory::generate([
                             'http://example.com/ten',
                             'http://example.com/eleven',
@@ -791,5 +796,23 @@ class UrlFinderTest extends AbstractBaseTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param string $canonicalUrl
+     * @param array $parameters
+     *
+     * @return Job
+     */
+    private function createJob($canonicalUrl, array $parameters)
+    {
+        $website = new WebSite();
+        $website->setCanonicalUrl($canonicalUrl);
+
+        $job = new Job();
+        $job->setWebsite($website);
+        $job->setParameters(json_encode($parameters));
+
+        return $job;
     }
 }
