@@ -438,7 +438,7 @@ class Job
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
-        $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $this->getParametersArray());
+        $this->parametersObject = null;
     }
 
     /**

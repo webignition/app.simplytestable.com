@@ -37,14 +37,16 @@ class HttpFixtureFactory
      */
     public static function createStandardCrawlPrepareResponses()
     {
+        $notFoundResponse = new Response(404);
+
         return [
-            "HTTP/1.0 200 OK\nContent-Type: text/plain\n\nUser-Agent: *",
-            'HTTP/1.1 404',
-            'HTTP/1.1 404',
-            'HTTP/1.1 404',
-            'HTTP/1.1 404',
-            'HTTP/1.1 404',
-            'HTTP/1.1 404',
+            new Response(200, ['content-type' => 'text/plain'], 'User-Agent: *'),
+            $notFoundResponse,
+            $notFoundResponse,
+            $notFoundResponse,
+            $notFoundResponse,
+            $notFoundResponse,
+            $notFoundResponse,
         ];
     }
 }

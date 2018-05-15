@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
+use GuzzleHttp\Psr7\Response;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -43,6 +44,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
         $jobFactory = new JobFactory($this->container);
         $userService = $this->container->get(UserService::class);
 
+        $notFoundResponse = new Response(404);
+
         $job = $jobFactory->createResolveAndPrepare([
             'type' => JobTypeService::FULL_SITE_NAME,
             'siteRootUrl' => 'http://example.com',
@@ -52,16 +55,16 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
             'user' => $userService->getPublicUser()
         ], [
             'resolve' => [
-                'HTTP/1.1 200 OK',
+                new Response(),
             ],
             'prepare' => [
-                'HTTP/1.1 404',
-                'HTTP/1.1 404',
-                'HTTP/1.1 404',
-                'HTTP/1.1 404',
-                'HTTP/1.1 404',
-                'HTTP/1.1 404',
-                'HTTP/1.1 404',
+                $notFoundResponse,
+                $notFoundResponse,
+                $notFoundResponse,
+                $notFoundResponse,
+                $notFoundResponse,
+                $notFoundResponse,
+                $notFoundResponse,
             ],
         ]);
 
