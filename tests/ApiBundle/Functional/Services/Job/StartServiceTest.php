@@ -44,14 +44,22 @@ class StartServiceTest extends AbstractBaseTestCase
         $this->websiteService = $this->container->get(WebSiteService::class);
     }
 
-    public function testStartWithUnroutableWebsite()
+    /**
+     * @dataProvider startWithInvalidWebsiteDataProvider
+     *
+     * @param string $url
+     *
+     * @throws JobStartServiceException
+     * @throws UserAccountPlanEnforcementException
+     */
+    public function testStartWithInvalidWebsite($url)
     {
         $this->expectException(JobStartServiceException::class);
         $this->expectExceptionMessage('Unroutable website');
         $this->expectExceptionCode(JobStartServiceException::CODE_UNROUTABLE_WEBSITE);
 
         $website = new WebSite();
-        $website->setCanonicalUrl('http://foo');
+        $website->setCanonicalUrl($url);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setWebsite($website);
@@ -59,6 +67,27 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobStartService = $this->createJobStartService();
 
         $jobStartService->start($jobConfiguration);
+    }
+
+    /**
+     * @return array
+     */
+    public function startWithInvalidWebsiteDataProvider()
+    {
+        return [
+            'unroutable host' => [
+                'url' => 'http://foo',
+            ],
+            'unix-like local path' => [
+                'url' => '/home/users/foo',
+            ],
+            'windows-like local path' => [
+                'url' => 'c:\Users\foo\Desktop\file.html',
+            ],
+            'not even close' => [
+                'url' => 'vertical-align:top',
+            ],
+        ];
     }
 
     /**
