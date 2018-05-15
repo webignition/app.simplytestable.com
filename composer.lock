@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0cf391eee75ac0d83045da4bb53308a",
+    "content-hash": "695b4391cd213b0078561179a27d6d74",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -3749,6 +3749,55 @@
                 "Sitemap"
             ],
             "time": "2018-05-11T16:17:43+00:00"
+        },
+        {
+            "name": "webignition/guzzle-request-headers-middleware",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/guzzle-request-headers-middleware.git",
+                "reference": "6594152c92f7bd9d52e37fe2687bba858702e7e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/guzzle-request-headers-middleware/zipball/6594152c92f7bd9d52e37fe2687bba858702e7e0",
+                "reference": "6594152c92f7bd9d52e37fe2687bba858702e7e0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0",
+                "psr/http-message": "~1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "~1",
+                "phpunit/phpunit": "^5",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\Guzzle\\Middleware\\RequestHeaders\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Middleware for setting headers on all requests sent by a Guzzle 6 client",
+            "homepage": "https://github.com/webignition/guzzle-request-headers-middleware",
+            "keywords": [
+                "Guzzle",
+                "headers",
+                "middleware",
+                "psr7"
+            ],
+            "time": "2018-05-14T12:05:14+00:00"
         },
         {
             "name": "webignition/html-document-link-finder",

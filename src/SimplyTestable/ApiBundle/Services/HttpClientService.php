@@ -14,6 +14,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationMiddleware;
+use webignition\Guzzle\Middleware\RequestHeaders\RequestHeadersMiddleware;
 use webignition\HttpHistoryContainer\Container as HttpHistoryContainer;
 
 class HttpClientService
@@ -21,6 +22,7 @@ class HttpClientService
     const MIDDLEWARE_RETRY_KEY = 'retry';
     const MIDDLEWARE_HISTORY_KEY = 'history';
     const MIDDLEWARE_HTTP_AUTH_KEY = 'http-auth';
+    const MIDDLEWARE_REQUEST_HEADERS_KEY = 'request-headers';
 
     const MAX_RETRIES = 5;
 
@@ -50,6 +52,11 @@ class HttpClientService
     private $cookieJar;
 
     /**
+     * @var RequestHeadersMiddleware
+     */
+    private $requestHeadersMiddleware;
+
+    /**
      * @var HandlerStack
      */
     protected $handlerStack;
@@ -63,6 +70,7 @@ class HttpClientService
         $this->historyContainer = new HttpHistoryContainer();
         $this->httpAuthenticationMiddleware = new HttpAuthenticationMiddleware();
         $this->cookieJar = new CookieJar();
+        $this->requestHeadersMiddleware = new RequestHeadersMiddleware();
         $this->handlerStack = HandlerStack::create($this->createInitialHandler());
 
         $this->httpClient = $this->create();
@@ -87,7 +95,7 @@ class HttpClientService
     /**
      * Set cookies to be sent on all requests (dependent on cookie domain/secure matching rules)
      *
-     * @param array $cookies
+     * @param SetCookie[] $cookies
      */
     public function setCookies($cookies = [])
     {
@@ -98,11 +106,7 @@ class HttpClientService
         }
 
         foreach ($cookies as $cookie) {
-            foreach ($cookie as $key => $value) {
-                $cookie[ucfirst($key)] = $value;
-            }
-
-            $this->cookieJar->setCookie(new SetCookie($cookie));
+            $this->cookieJar->setCookie($cookie);
         }
     }
 
@@ -122,6 +126,15 @@ class HttpClientService
     public function clearBasicHttpAuthorization()
     {
         $this->httpAuthenticationMiddleware->setHttpAuthenticationCredentials(new HttpAuthenticationCredentials());
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function setRequestHeader($name, $value)
+    {
+        $this->requestHeadersMiddleware->setHeader($name, $value);
     }
 
     /**
@@ -146,6 +159,7 @@ class HttpClientService
     private function create()
     {
         $this->handlerStack->push($this->httpAuthenticationMiddleware, self::MIDDLEWARE_HTTP_AUTH_KEY);
+        $this->handlerStack->push($this->requestHeadersMiddleware, self::MIDDLEWARE_REQUEST_HEADERS_KEY);
         $this->enableRetryMiddleware();
         $this->handlerStack->push(Middleware::history($this->historyContainer), self::MIDDLEWARE_HISTORY_KEY);
 

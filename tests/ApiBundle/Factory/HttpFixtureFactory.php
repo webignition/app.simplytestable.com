@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
 
 class HttpFixtureFactory
 {
@@ -156,10 +157,7 @@ class HttpFixtureFactory
             $sitemapLines[] = 'sitemap: ' . $sitemapUrl;
         }
 
-        return static::createSuccessResponse(
-            'text/plain',
-            implode("\n", $sitemapLines)
-        );
+        return new Response(200, ['content-type' => 'text/plain'], implode("\n", $sitemapLines));
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Model\Job\Parameters;
 use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
 
 /**
@@ -136,6 +138,11 @@ class Job
      * @ORM\Column(type="boolean")
      */
     private $isPublic = false;
+
+    /**
+     * @var Parameters
+     */
+    private $parametersObject;
 
     public function __construct()
     {
@@ -431,6 +438,7 @@ class Job
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
+        $this->parametersObject = new Parameters($this);
     }
 
     /**
@@ -469,6 +477,14 @@ class Job
         }
 
         return $parametersArray;
+    }
+
+    /**
+     * @return Parameters
+     */
+    public function getParametersObject()
+    {
+        return $this->parametersObject;
     }
 
     /**
