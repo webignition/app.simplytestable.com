@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "695b4391cd213b0078561179a27d6d74",
+    "content-hash": "98d1c8eb887716d082578f46ffb6c864",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -3891,16 +3891,16 @@
         },
         {
             "name": "webignition/http-history-container",
-            "version": "0.4",
+            "version": "0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/http-history-container.git",
-                "reference": "fbddd76c2d2ef3c1d52df2675453c711ac68f4cb"
+                "reference": "7542942842c3f161650838ac4ff14b52c3f0349b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/http-history-container/zipball/fbddd76c2d2ef3c1d52df2675453c711ac68f4cb",
-                "reference": "fbddd76c2d2ef3c1d52df2675453c711ac68f4cb",
+                "url": "https://api.github.com/repos/webignition/http-history-container/zipball/7542942842c3f161650838ac4ff14b52c3f0349b",
+                "reference": "7542942842c3f161650838ac4ff14b52c3f0349b",
                 "shasum": ""
             },
             "require": {
@@ -3938,7 +3938,7 @@
                 "middleware",
                 "psr-7"
             ],
-            "time": "2018-05-12T06:58:54+00:00"
+            "time": "2018-05-15T12:07:58+00:00"
         },
         {
             "name": "webignition/internet-media-type",

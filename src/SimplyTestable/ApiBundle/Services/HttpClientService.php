@@ -202,6 +202,10 @@ class HttpClientService
             ResponseInterface $response = null,
             GuzzleException $exception = null
         ) {
+            if (in_array($request->getMethod(), ['POST'])) {
+                return false;
+            }
+
             if ($retries >= self::MAX_RETRIES) {
                 return false;
             }

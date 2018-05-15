@@ -2,18 +2,18 @@
 
 namespace Tests\ApiBundle\Command;
 
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Post\PostBody;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use Tests\ApiBundle\Factory\ConnectExceptionFactory;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
 {
@@ -60,7 +60,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
     }
 
     /**
-     * @dataProvider assignCollectionDataProvider
+     * @dataProvider assignCollectionSuccessDataProvider
      *
      * @param array $httpFixtures
      * @param array $workerValuesCollection
@@ -69,7 +69,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
      * @param array $expectedHttpTransactions
      * @param string[] $expectedTaskStateNames
      */
-    public function testAssignCollection(
+    public function testAssignCollectionSuccess(
         $httpFixtures,
         $workerValuesCollection,
         $taskIndicesToAssign,
@@ -77,6 +77,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         $expectedHttpTransactions,
         $expectedTaskStateNames
     ) {
+        /* @var TestHttpClientService $httpClientService */
         $httpClientService = $this->container->get(HttpClientService::class);
 
         $jobFactory = new JobFactory($this->container);
@@ -96,9 +97,8 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             }
         }
 
-        $this->queueHttpFixtures($httpFixtures);
-
         $httpClientService->getHistory()->clear();
+        $httpClientService->appendFixtures($httpFixtures);
 
         $workers = [];
         foreach ($workerValuesCollection as $workerValues) {
@@ -121,13 +121,11 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             /* @var RequestInterface $request */
             $request = $httpTransaction['request'];
 
-            /* @var PostBody $requestBody */
-            $requestBody = $request->getBody();
+            $postedData = [];
+            parse_str($request->getBody()->getContents(), $postedData);
 
-            $requestTasksData = $requestBody->getField('tasks');
-
-            $this->assertEquals($expectedRequest['hostname'], $request->getHost());
-            $this->assertEquals($expectedRequest['tasksData'], $requestTasksData);
+            $this->assertEquals($expectedRequest['hostname'], $request->getUri()->getHost());
+            $this->assertEquals($expectedRequest['tasksData'], $postedData['tasks']);
 
             /* @var ResponseInterface $response */
             $response = $httpTransaction['response'];
@@ -149,15 +147,18 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
     /**
      * @return array
      */
-    public function assignCollectionDataProvider()
+    public function assignCollectionSuccessDataProvider()
     {
         $couldNotAssignToAnyWorkersReturnCode =
             WorkerTaskAssignmentService::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;
 
+        $serviceUnavailableResponse = new Response(503);
+        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+
         return [
             'single task, single worker, success' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse('application/json', json_encode([
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 100,
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
@@ -206,7 +207,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             ],
             'single task, single worker, http failure' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createServiceUnavailableResponse(),
+                    $serviceUnavailableResponse,
                 ],
                 'workerValuesCollection' => [
                     [
@@ -249,7 +250,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             ],
             'single task, single worker, curl failure' => [
                 'httpFixtures' => [
-                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+                    $curl28ConnectException,
                 ],
                 'workerValuesCollection' => [
                     [
@@ -290,8 +291,8 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             ],
             'single task, two workers, http failure for first, succeeds with second' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createServiceUnavailableResponse(),
-                    HttpFixtureFactory::createSuccessResponse('application/json', json_encode([
+                    $serviceUnavailableResponse,
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 100,
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
@@ -358,28 +359,28 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             ],
             'multiple tasks, multiple workers, success' => [
                 'httpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse('application/json', json_encode([
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 100,
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             'url' => 'http://example.com/one',
                         ],
                     ])),
-                    HttpFixtureFactory::createSuccessResponse('application/json', json_encode([
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 556,
-                            'type' => TaskTypeService::CSS_VALIDATION_TYPE,
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             'url' => 'http://example.com/one',
                         ],
                     ])),
-                    HttpFixtureFactory::createSuccessResponse('application/json', json_encode([
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 32,
                             'type' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
                             'url' => 'http://example.com/one',
                         ],
                     ])),
-                    HttpFixtureFactory::createSuccessResponse('application/json', json_encode([
+                    new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 32,
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
