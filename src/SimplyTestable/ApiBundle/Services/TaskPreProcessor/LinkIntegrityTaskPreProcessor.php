@@ -2,8 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\TooManyRedirectsException;
+use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
@@ -13,13 +12,14 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
-use webignition\WebResource\Exception\Exception as WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
+use webignition\WebResource\Exception\HttpException;
+use webignition\WebResource\Exception\TransportException;
 use webignition\WebResource\Retriever as WebResourceRetriever;
 use webignition\WebResource\WebResource;
 use webignition\WebResource\WebPage\WebPage;
-use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
+use webignition\WebResourceInterfaces\WebPageInterface;
 
 class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 {
@@ -33,12 +33,12 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     /**
      * @var WebResourceRetriever
      */
-    private $webResourceService;
+    private $webResourceRetriever;
 
     /**
      * @var HttpClientService
      */
-    private $fooHttpClientService;
+    private $httpClientService;
 
     /**
      * @var StateService
@@ -63,7 +63,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     /**
      * @param TaskService $taskService
      * @param WebResourceRetriever $webResourceService
-     * @param HttpClientService $fooHttpClientService
+     * @param HttpClientService $httpClientService
      * @param LoggerInterface $logger
      * @param StateService $stateService
      * @param EntityManagerInterface $entityManager
@@ -71,14 +71,14 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     public function __construct(
         TaskService $taskService,
         WebResourceRetriever $webResourceService,
-        HttpClientService $fooHttpClientService,
+        HttpClientService $httpClientService,
         LoggerInterface $logger,
         StateService $stateService,
         EntityManagerInterface $entityManager
     ) {
         $this->taskService = $taskService;
-        $this->webResourceService = $webResourceService;
-        $this->fooHttpClientService = $fooHttpClientService;
+        $this->webResourceRetriever = $webResourceService;
+        $this->httpClientService = $httpClientService;
         $this->logger = $logger;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
@@ -109,7 +109,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
             return false;
         }
 
-        $webResource = $this->getWebResource($task);
+        $webResource = $this->retrieveWebPage($task);
         if (!$webResource instanceof WebPage) {
             return false;
         }
@@ -315,46 +315,54 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     /**
      * @param Task $task
      *
-     * @return WebResource|null
+     * @return WebPageInterface|null
      */
-    private function getWebResource(Task $task)
+    private function retrieveWebPage(Task $task)
     {
-        $taskParameters = $task->getParametersArray();
+        $taskParametersObject = $task->getParametersObject();
 
-        $this->fooHttpClientService->setUserAgent(self::HTTP_USER_AGENT);
-        $this->fooHttpClientService->setCookiesFromParameters($taskParameters);
-        $this->fooHttpClientService->setBasicHttpAuthenticationFromParameters($taskParameters);
+        $cookies = $taskParametersObject->getCookies();
+        if (!empty($cookies)) {
+            $this->httpClientService->setCookies($cookies);
+        }
 
-        $resource = null;
+        $httpAuthenticationCredentials = $taskParametersObject->getHttpAuthenticationCredentials();
+        if (!$httpAuthenticationCredentials->isEmpty()) {
+            $this->httpClientService->setBasicHttpAuthorization($httpAuthenticationCredentials);
+        }
+
+        $this->httpClientService->setRequestHeader('User-Agent', self::HTTP_USER_AGENT);
+
+        $webPage = null;
+        $request = new Request('GET', $task->getUrl());
 
         try {
-            $request = $this->fooHttpClientService->getRequest($task->getUrl());
-            $resource = $this->webResourceService->get($request);
-        } catch (WebResourceException $webResourceException) {
-            $this->logger->error(sprintf(
-                'LinkIntegrityTaskPreProcessor::getWebResource [%s][http exception][%s]',
-                $task->getUrl(),
-                $webResourceException->getResponse()->getStatusCode()
-            ));
-        } catch (ConnectException $connectException) {
-            $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
+            $webPage = $this->webResourceRetriever->retrieve($request);
 
+            if (!$webPage instanceof WebPageInterface) {
+                $webPage = null;
+            }
+        } catch (HttpException $httpException) {
             $this->logger->error(sprintf(
-                'LinkIntegrityTaskPreProcessor::getWebResource [%s][curl exception][%s]',
+                'LinkIntegrityTaskPreProcessor::retrieveWebPage [%s][http exception][%s]',
                 $task->getUrl(),
-                $curlException->getCurlCode()
+                $httpException->getResponse()->getStatusCode()
             ));
-        } catch (TooManyRedirectsException $tooManyRedirectsException) {
+        } catch (TransportException $transportException) {
             $this->logger->error(sprintf(
-                'LinkIntegrityTaskPreProcessor::getWebResource [%s][http exception][too many redirects]',
-                $task->getUrl()
+                'LinkIntegrityTaskPreProcessor::retrieveWebPage [%s][transport exception][%s]',
+                $task->getUrl(),
+                $transportException->getCode()
+            ));
+        } catch (\Exception $exception) {
+            $this->logger->error(sprintf(
+                'LinkIntegrityTaskPreProcessor::retrieveWebPage [%s][generic exception][%s][%s]',
+                $task->getUrl(),
+                $exception->getMessage(),
+                $exception->getCode()
             ));
         }
 
-        $this->fooHttpClientService->resetUserAgent();
-        $this->fooHttpClientService->clearCookies();
-        $this->fooHttpClientService->clearBasicHttpAuthorization();
-
-        return $resource;
+        return $webPage;
     }
 }

@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Model\Parameters;
 
 /**
  *
@@ -106,6 +107,11 @@ class Task implements \JsonSerializable
      * @ORM\Column(type="text", nullable=true)
      */
     protected $parameters;
+
+    /**
+     * @var Parameters
+     */
+    private $parametersObject;
 
     /**
      * @return integer
@@ -266,6 +272,7 @@ class Task implements \JsonSerializable
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
+        $this->parametersObject = new Parameters($this->url, $this->getParametersArray());
     }
 
     /**
@@ -296,6 +303,18 @@ class Task implements \JsonSerializable
         }
 
         return $parametersArray;
+    }
+
+    /**
+     * @return Parameters
+     */
+    public function getParametersObject()
+    {
+        if (empty($this->parametersObject)) {
+            $this->parametersObject = new Parameters($this->url, $this->getParametersArray());
+        }
+
+        return $this->parametersObject;
     }
 
     /**
