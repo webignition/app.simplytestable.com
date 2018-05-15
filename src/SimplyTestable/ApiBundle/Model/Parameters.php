@@ -1,9 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Model\Job;
+namespace SimplyTestable\ApiBundle\Model;
 
 use GuzzleHttp\Cookie\SetCookie;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
 use webignition\NormalisedUrl\NormalisedUrl;
 
@@ -14,10 +13,9 @@ class Parameters
     const PARAMETER_HTTP_AUTH_PASSWORD = 'http-auth-password';
 
     /**
-     * @var Job
+     * @var string
      */
-    private $job;
-
+    private $url;
 
     /**
      * @var array
@@ -25,12 +23,13 @@ class Parameters
     private $parameters = [];
 
     /**
-     * @param Job $job
+     * @param string $url
+     * @param array $parameters
      */
-    public function __construct(Job $job)
+    public function __construct($url, array $parameters)
     {
-        $this->job = $job;
-        $this->parameters = $job->getParametersArray();
+        $this->url = $url;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -74,9 +73,9 @@ class Parameters
             ? $this->parameters[self::PARAMETER_HTTP_AUTH_PASSWORD]
             : null;
 
-        $taskUrl = new NormalisedUrl($this->job->getWebsite()->getCanonicalUrl());
+        $urlObject = new NormalisedUrl($this->url);
 
-        return new HttpAuthenticationCredentials($username, $password, $taskUrl->getHost());
+        return new HttpAuthenticationCredentials($username, $password, $urlObject->getHost());
     }
 
     /**

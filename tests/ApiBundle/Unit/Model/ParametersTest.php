@@ -1,10 +1,8 @@
 <?php
 
-namespace Tests\ApiBundle\Unit\Model\Job;
+namespace Tests\ApiBundle\Unit\Model;
 
-use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\WebSite;
-use SimplyTestable\ApiBundle\Model\Job\Parameters;
+use SimplyTestable\ApiBundle\Model\Parameters;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
 
 class ParametersTest extends \PHPUnit_Framework_TestCase
@@ -12,19 +10,12 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getCookiesDataProvider
      *
-     * @param array $jobParametersArray
+     * @param array $parametersArray
      * @param array $expectedCookieStrings
      */
-    public function testGetCookies(array $jobParametersArray, array $expectedCookieStrings)
+    public function testGetCookies(array $parametersArray, array $expectedCookieStrings)
     {
-        $website = new WebSite();
-        $website->setCanonicalUrl('http://example.com/');
-
-        $job = new Job();
-        $job->setParameters(json_encode($jobParametersArray));
-        $job->setWebsite($website);
-
-        $parametersObject = new Parameters($job);
+        $parametersObject = new Parameters('http://example.com/', $parametersArray);
 
         $cookies = $parametersObject->getCookies();
 
@@ -42,17 +33,17 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'no parameters' => [
-                'jobParametersArray' => [],
+                'parametersArray' => [],
                 'expectedCookieStrings' => [],
             ],
             'empty cookies in parameters' => [
-                'jobParametersArray' => [
+                'parametersArray' => [
                     'cookies' => [],
                 ],
                 'expectedCookieStrings' => [],
             ],
             'has cookies; lowercase keys' => [
-                'jobParametersArray' => [
+                'parametersArray' => [
                     'cookies' => [
                         [
                             'name' => 'cookie-0',
@@ -72,7 +63,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'has cookies; uppercase keys' => [
-                'jobParametersArray' => [
+                'parametersArray' => [
                     'cookies' => [
                         [
                             'NAME' => 'cookie-0',
@@ -92,7 +83,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'has cookies; ucfirst keys' => [
-                'jobParametersArray' => [
+                'parametersArray' => [
                     'cookies' => [
                         [
                             'Name' => 'cookie-0',
@@ -117,23 +108,16 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getHttpAuthenticationCredentialsDataProvider
      *
-     * @param string $jobUrl
-     * @param array $jobParametersArray
+     * @param string $url
+     * @param array $parametersArray
      * @param array $expectedHttpAuthenticationCredentialsValues
      */
     public function testGetHttpAuthenticationCredentials(
-        $jobUrl,
-        array $jobParametersArray,
+        $url,
+        array $parametersArray,
         array $expectedHttpAuthenticationCredentialsValues
     ) {
-        $website = new WebSite();
-        $website->setCanonicalUrl($jobUrl);
-
-        $job = new Job();
-        $job->setParameters(json_encode($jobParametersArray));
-        $job->setWebsite($website);
-
-        $parametersObject = new Parameters($job);
+        $parametersObject = new Parameters($url, $parametersArray);
 
         $httpAuthenticationCredentials = $parametersObject->getHttpAuthenticationCredentials();
 
@@ -162,8 +146,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'no parameters' => [
-                'jobUrl' => 'http://example.com/',
-                'jobParametersArray' => [],
+                'url' => 'http://example.com/',
+                'parametersArray' => [],
                 'expectedHttpAuthenticationCredentialsValues' => [
                     'username' => '',
                     'password' => '',
@@ -171,8 +155,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'http auth parameters; no username, has password' => [
-                'jobUrl' => 'http://example.com/',
-                'jobParametersArray' => [
+                'url' => 'http://example.com/',
+                'parametersArray' => [
                     'http-auth-password' => 'password value',
                 ],
                 'expectedHttpAuthenticationCredentialsValues' => [
@@ -182,8 +166,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'http auth parameters; has username, no password' => [
-                'jobUrl' => 'http://example.com/',
-                'jobParametersArray' => [
+                'url' => 'http://example.com/',
+                'parametersArray' => [
                     'http-auth-username' => 'username value',
                 ],
                 'expectedHttpAuthenticationCredentialsValues' => [
@@ -193,8 +177,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'http auth parameters; has username, has password' => [
-                'jobUrl' => 'http://example.com/',
-                'jobParametersArray' => [
+                'url' => 'http://example.com/',
+                'parametersArray' => [
                     'http-auth-username' => 'username value',
                     'http-auth-password' => 'password value',
                 ],
@@ -205,8 +189,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'http auth parameters; different domain' => [
-                'jobUrl' => 'http://example.org/',
-                'jobParametersArray' => [
+                'url' => 'http://example.org/',
+                'parametersArray' => [
                     'http-auth-username' => 'username value',
                     'http-auth-password' => 'password value',
                 ],
@@ -217,8 +201,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'http auth parameters; different domain, subdomain' => [
-                'jobUrl' => 'http://foo.example.org/',
-                'jobParametersArray' => [
+                'url' => 'http://foo.example.org/',
+                'parametersArray' => [
                     'http-auth-username' => 'username value',
                     'http-auth-password' => 'password value',
                 ],

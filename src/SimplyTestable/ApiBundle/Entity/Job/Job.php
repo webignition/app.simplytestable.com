@@ -12,7 +12,7 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use SimplyTestable\ApiBundle\Model\Job\Parameters;
+use SimplyTestable\ApiBundle\Model\Parameters;
 use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
 
 /**
@@ -438,7 +438,7 @@ class Job
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
-        $this->parametersObject = new Parameters($this);
+        $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $this->getParametersArray());
     }
 
     /**
@@ -485,7 +485,7 @@ class Job
     public function getParametersObject()
     {
         if (empty($this->parametersObject)) {
-            $this->parametersObject = new Parameters($this);
+            $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $this->getParametersArray());
         }
 
         return $this->parametersObject;
