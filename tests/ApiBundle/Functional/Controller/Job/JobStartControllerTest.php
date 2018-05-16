@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,34 +94,68 @@ class JobStartControllerTest extends AbstractBaseTestCase
         $this->assertEquals(Job::STATE_STARTING, $newJob->getState()->getName());
     }
 
-    public function testStartActionUnroutableWebsite()
+    /**
+     * @dataProvider startActionInvalidWebsiteDataProvider
+     *
+     * @param string $siteRootUrl
+     * @param string $expectedRejectedUrl
+     */
+    public function testStartActionInvalidWebsite($siteRootUrl, $expectedRejectedUrl)
     {
         $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
-        $siteRootUrl = 'foo';
-
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
 
         $this->setUser($userService->getPublicUser());
 
+        /* @var RedirectResponse $response */
         $response = $this->jobStartController->startAction($request);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[0];
+        $this->assertEquals(
+            sprintf('http://localhost/job/%s/%s/', $expectedRejectedUrl, $job->getId()),
+            $response->getTargetUrl()
+        );
 
         /* @var RejectionReason $jobRejectionReason */
         $jobRejectionReason = $jobRejectionReasonRepository->findOneBy([
             'job' => $job,
         ]);
 
-        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
         $this->assertEquals('unroutable', $jobRejectionReason->getReason());
         $this->assertNull($jobRejectionReason->getConstraint());
+    }
+
+    /**
+     * @return array
+     */
+    public function startActionInvalidWebsiteDataProvider()
+    {
+        return [
+            'unroutable host' => [
+                'siteRootUrl' => 'http://foo/',
+                'expectedRejectedUrl' => 'http://foo/',
+            ],
+            'unix-like local path' => [
+                'siteRootUrl' => '/home/users/foo',
+                'expectedRejectedUrl' => '/home/users/foo',
+            ],
+            'windows-like local path' => [
+                'siteRootUrl' => 'c:\Users\foo\Desktop\file.html',
+                'expectedRejectedUrl' => 'c:%5CUsers%5Cfoo%5CDesktop%5Cfile.html',
+            ],
+            'not even close' => [
+                'siteRootUrl' => 'vertical-align:top',
+                'expectedRejectedUrl' => 'vertical-align:top',
+            ],
+        ];
     }
 
     public function testStartActionAccountPlanLimitReached()
