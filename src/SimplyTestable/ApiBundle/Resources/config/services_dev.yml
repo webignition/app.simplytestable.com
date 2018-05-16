@@ -1,3 +1,0 @@
-services:
-  SimplyTestable\ApiBundle\Services\UrlService:
-    class:  SimplyTestable\ApiBundle\Services\DevUrlService
