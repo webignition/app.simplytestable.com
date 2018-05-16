@@ -1,4 +1,5 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,7 +35,11 @@ class WebSiteService
      */
     public function get($canonicalUrl)
     {
-        $normalisedUrl = (string)new NormalisedUrl($canonicalUrl);
+        $normalisedUrlObject = new NormalisedUrl($canonicalUrl);
+
+        $normalisedUrl = in_array($normalisedUrlObject->getScheme(), ['http', 'https'])
+            ? (string)$normalisedUrlObject
+            : $canonicalUrl;
 
         $website = $this->websiteRepository->findOneBy([
             'canonicalUrl' => $normalisedUrl,
