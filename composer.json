@@ -57,8 +57,8 @@
         "symfony/phpunit-bridge": "^3.0",
         "phpunit/phpunit": "~5.0",
         "squizlabs/php_codesniffer": "3.*",
-        "mockery/mockery": "~0.9",
-        "php-mock/php-mock-mockery": "1.1.0"
+        "mockery/mockery": "^1.0",
+        "php-mock/php-mock-mockery": "1.2.0"
     },
     "scripts": {
         "symfony-scripts": [
