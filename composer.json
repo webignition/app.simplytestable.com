@@ -44,7 +44,7 @@
         "webignition/web-resource-model": "~3",
         "webignition/web-json-model": "~3",
         "webignition/web-page-model": "~3",
-        "cron/cron-bundle": "1.2.0",
+        "cron/cron-bundle": "1.2.3",
         "webignition/sitemap-model":"~3",
         "webignition/guzzle-curl-exception":"~1",
         "webignition/resque-job-factory": ">=0.1.1,<1.0",

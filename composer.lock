@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2e3593c555965c1ae13f2c8fcbac6cf",
+    "content-hash": "774d87598c75ca8c3236cdd1cf6d756b",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -241,28 +241,28 @@
         },
         {
             "name": "cron/cron-bundle",
-            "version": "1.2.0",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Cron/Symfony-Bundle.git",
-                "reference": "da00dc22f6d14d1680699dfa138b066dbc3fce26"
+                "reference": "aeeb3f0c38b83a44a0ae9049a0bc00c68544347f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Cron/Symfony-Bundle/zipball/da00dc22f6d14d1680699dfa138b066dbc3fce26",
-                "reference": "da00dc22f6d14d1680699dfa138b066dbc3fce26",
+                "url": "https://api.github.com/repos/Cron/Symfony-Bundle/zipball/aeeb3f0c38b83a44a0ae9049a0bc00c68544347f",
+                "reference": "aeeb3f0c38b83a44a0ae9049a0bc00c68544347f",
                 "shasum": ""
             },
             "require": {
                 "cron/cron": "^1.0.1",
                 "doctrine/doctrine-bundle": "^1.3",
                 "doctrine/orm": "^2.4",
-                "php": ">=5.3.0",
-                "symfony/framework-bundle": "^2.5|^3.0"
+                "php": ">=5.5.0",
+                "symfony/framework-bundle": "^2.5|^3.0|^4.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.0",
-                "symfony/symfony": "^2.4|^3.0"
+                "symfony/symfony": "^2.4|^3.0|^4.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -286,7 +286,7 @@
                 }
             ],
             "description": "Symfony cron",
-            "time": "2017-04-11T18:56:17+00:00"
+            "time": "2018-03-30T21:10:00+00:00"
         },
         {
             "name": "doctrine/annotations",
