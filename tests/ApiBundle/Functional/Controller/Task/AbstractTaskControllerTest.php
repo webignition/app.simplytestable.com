@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -12,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
@@ -41,7 +41,7 @@ abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
     protected function callCompleteAction()
     {
         return $this->taskController->completeAction(
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(CompleteRequestFactory::class),

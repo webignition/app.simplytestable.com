@@ -4,10 +4,10 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use Tests\ApiBundle\Factory\MockFactory;
 use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -185,7 +185,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     private function callCancelAction($siteRootUrl, $testId)
     {
         return $this->jobController->cancelAction(
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get(JobService::class),
             $this->container->get(CrawlJobContainerService::class),
             $this->container->get(JobPreparationService::class),

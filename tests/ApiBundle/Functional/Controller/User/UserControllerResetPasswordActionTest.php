@@ -4,10 +4,10 @@ namespace Tests\ApiBundle\Functional\Controller\User;
 
 use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
 /**
@@ -111,7 +111,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
     private function callResetPasswordAction(Request $request, User $user)
     {
         return $this->userController->resetPasswordAction(
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get(UserManipulator::class),
             $request,
             $user->getConfirmationToken()

@@ -6,10 +6,10 @@ use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
+use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -65,7 +65,6 @@ class ProcessCommandTest extends AbstractBaseTestCase
     {
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var LoggerInterface $logger */
@@ -105,7 +104,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
             ]);
 
         $command = new ProcessCommand(
-            $applicationStateService,
+            MockFactory::createApplicationStateService(),
             $entityManager,
             $logger,
             $eventDispatcher

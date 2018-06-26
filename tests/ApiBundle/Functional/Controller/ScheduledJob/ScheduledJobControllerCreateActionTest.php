@@ -5,7 +5,6 @@ namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -13,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
@@ -182,7 +182,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
     {
         $jobConfigurationCreateController = new JobConfigurationController(
             $this->container->get('router'),
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get(ConfigurationService::class)
         );
 

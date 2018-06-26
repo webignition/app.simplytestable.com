@@ -5,7 +5,6 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -16,6 +15,7 @@ use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Tests\ApiBundle\Factory\JobFactory;
+use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -324,7 +324,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
     private function callTaskControllerCompleteAction(TaskController $taskController)
     {
         return $taskController->completeAction(
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(CompleteRequestFactory::class),
