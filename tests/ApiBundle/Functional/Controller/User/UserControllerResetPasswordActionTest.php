@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\User;
 
+use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\HttpFoundation\Request;
@@ -111,7 +112,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
     {
         return $this->userController->resetPasswordAction(
             $this->container->get(ApplicationStateService::class),
-            $this->container->get('fos_user.util.user_manipulator'),
+            $this->container->get(UserManipulator::class),
             $request,
             $user->getConfirmationToken()
         );

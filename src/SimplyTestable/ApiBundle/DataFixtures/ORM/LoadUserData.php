@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -37,7 +38,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
     public function load(ObjectManager $manager)
     {
         $userService = $this->container->get(UserService::class);
-        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
+        $userManipulator = $this->container->get(UserManipulator::class);
         $userRepository = $manager->getRepository(User::class);
 
         $publicUser = $userRepository->findOneBy([

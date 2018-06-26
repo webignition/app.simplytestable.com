@@ -2,8 +2,8 @@
 
 namespace Tests\ApiBundle\Factory;
 
+use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Team\Service;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -88,8 +88,7 @@ class UserFactory
      */
     public function activate(User $user)
     {
-        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-
+        $userManipulator = $this->container->get(UserManipulator::class);
         $userManipulator->activate($user->getEmail());
     }
 

@@ -1,0 +1,18 @@
+services:
+  FOS\UserBundle\Util\TokenGeneratorInterface:
+    alias: fos_user.util.token_generator
+
+  FOS\UserBundle\Util\CanonicalizerInterface:
+    alias: fos_user.util.canonicalizer.default
+
+  FOS\UserBundle\Util\UserManipulator:
+    alias: fos_user.util.user_manipulator
+
+  Cron\CronBundle\Cron\Manager:
+    alias: cron.manager
+
+  ResqueBundle\Resque\Resque:
+    alias: resque
+
+  MZ\PostmarkBundle\Postmark\Message:
+    alias: postmark.message
