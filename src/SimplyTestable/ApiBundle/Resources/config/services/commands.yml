@@ -1,8 +1,4 @@
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
