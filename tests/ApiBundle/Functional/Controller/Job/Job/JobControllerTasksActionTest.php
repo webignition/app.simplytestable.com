@@ -330,6 +330,9 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             ->shouldReceive('isInReadOnlyMode')
             ->andReturn(false);
 
+        /* @var Mock|TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService */
+        $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+
         return $taskController->completeAction(
             $applicationStateService,
             $this->container->get(ResqueQueueService::class),
@@ -342,7 +345,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $this->container->get(TaskOutputJoinerFactory::class),
             $this->container->get(TaskPostProcessorFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class)
+            $taskTypeDomainsToIgnoreService
         );
     }
 }

@@ -37,15 +37,20 @@ abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
     }
 
     /**
+     * @param TaskTypeDomainsToIgnoreService|null $taskTypeDomainsToIgnoreService
      * @return Response
      */
-    protected function callCompleteAction()
+    protected function callCompleteAction($taskTypeDomainsToIgnoreService = null)
     {
         /* @var Mock|ApplicationStateService $applicationStateService */
         $applicationStateService = \Mockery::mock(ApplicationStateService::class);
         $applicationStateService
             ->shouldReceive('isInReadOnlyMode')
             ->andReturn(false);
+
+        if (empty($taskTypeDomainsToIgnoreService)) {
+            $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+        }
 
         return $this->taskController->completeAction(
             $applicationStateService,
@@ -59,7 +64,7 @@ abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
             $this->container->get(TaskOutputJoinerFactory::class),
             $this->container->get(TaskPostProcessorFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class)
+            $taskTypeDomainsToIgnoreService
         );
     }
 }
