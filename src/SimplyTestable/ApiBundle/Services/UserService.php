@@ -1,8 +1,10 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Doctrine\UserManager;
+use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGenerator;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
@@ -28,13 +30,13 @@ class UserService
     private $canonicalizer;
 
     /**
-     * @param UserManager $userManager
+     * @param UserManagerInterface $userManager
      * @param EntityManagerInterface $entityManager
      * @param TokenGeneratorInterface $tokenGenerator
      * @param CanonicalizerInterface $canonicalizer
      */
     public function __construct(
-        UserManager $userManager,
+        UserManagerInterface $userManager,
         EntityManagerInterface $entityManager,
         TokenGeneratorInterface $tokenGenerator,
         CanonicalizerInterface $canonicalizer
