@@ -1,12 +1,3 @@
 imports:
-    - { resource: services_test/commands.yml }
     - { resource: services_test/public.yml }
     - { resource: services_test/test_services.yml }
-
-services:
-  SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
-    class:   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService
-    arguments:
-      $domainsToIgnoreByTaskType:
-        "css validation": '%css_validation_domains_to_ignore%'
-        "js static analysis": '%js_static_analysis_domains_to_ignore%'
