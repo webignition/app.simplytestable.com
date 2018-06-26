@@ -9,18 +9,13 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
-    SimplyTestable\ApiBundle\Command\:
-        resource: '../../src/SimplyTestable/ApiBundle/Command'
-        public: true
-        tags: ['console.command']
-
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     SimplyTestable\ApiBundle\:
         resource: '../../src/SimplyTestable/ApiBundle/*'
         # you can exclude directories or files
         # but if a service is unused, it's removed anyway
-        exclude: '../../src/SimplyTestable/ApiBundle/{Command,Entity,Exception,Repository,Request}'
+        exclude: '../../src/SimplyTestable/ApiBundle/{Entity,Exception,Repository,Request}'
 
     # controllers are imported separately to make sure they're public
     # and have a tag that allows actions to type-hint services
@@ -28,3 +23,8 @@ services:
         resource: '../../src/SimplyTestable/ApiBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    # add more services, or override services that need manual wiring
+    # AppBundle\Service\ExampleService:
+    #     arguments:
+    #         $someArgument: 'some_value'

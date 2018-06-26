@@ -92,10 +92,6 @@ services:
   SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
 
   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
-    arguments:
-      $domainsToIgnoreByTaskType:
-        "css validation": '%css_validation_domains_to_ignore%'
-        "js static analysis": '%js_static_analysis_domains_to_ignore%'
 
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
 

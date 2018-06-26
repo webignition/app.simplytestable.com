@@ -1,7 +1,11 @@
+## Define all commands as public to allow them to be retrieved from the container in functional tests
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
+  SimplyTestable\ApiBundle\Command\:
+      resource: '../../../Command'
+      public: true
+      autowire: true
+      autoconfigure: true
+      tags: ['console.command']
 
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
     arguments:
