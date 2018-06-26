@@ -184,6 +184,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
         $job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
         ]);
+
         $jobFactory->cancel($job);
 
         $response = $this->jobStartController->startAction($request);
