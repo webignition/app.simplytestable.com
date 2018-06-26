@@ -99,3 +99,6 @@ services:
 
   FOS\UserBundle\Util\UserManipulator:
     alias: fos_user.util.user_manipulator
+
+  FOS\UserBundle\Security\LoginManagerInterface:
+    alias: fos_user.security.login_manager

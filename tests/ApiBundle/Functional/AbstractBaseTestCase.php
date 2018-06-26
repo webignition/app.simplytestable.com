@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional;
 
+use FOS\UserBundle\Security\LoginManagerInterface;
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -101,11 +102,12 @@ abstract class AbstractBaseTestCase extends WebTestCase
     private function setRequestUserInSession(User $user)
     {
         $session = $this->container->get('session');
-        $loginManager = $this->container->get('fos_user.security.login_manager');
+
+        /* @var \FOS\UserBundle\Security\LoginManager $loginManager */
+        $loginManager = $this->container->get(LoginManagerInterface::class);
         $firewallName = $this->container->getParameter('fos_user.firewall_name');
 
         $loginManager->loginUser($firewallName, $user);
-
         $this->container->get('session')->set(
             '_security_' . $firewallName,
             serialize($this->container->get('security.token_storage')->getToken())
