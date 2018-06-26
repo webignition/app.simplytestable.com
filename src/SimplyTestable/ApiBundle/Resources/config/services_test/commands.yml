@@ -5,10 +5,6 @@ services:
     autoconfigure: true
     public: true
 
-  SimplyTestable\ApiBundle\Command\:
-      resource: '../../../Command'
-      tags: ['console.command']
-
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
