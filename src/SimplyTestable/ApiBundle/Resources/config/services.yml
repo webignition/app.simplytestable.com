@@ -12,34 +12,11 @@ services:
   FOS\UserBundle\Util\TokenGeneratorInterface:
     alias: fos_user.util.token_generator
 
-#  webignition\WebResource\Service\Configuration:
-#    arguments:
-#        $configurationValues:
-#          allow-unknown-resource-types: true
-#          retry-with-url-encoding-disabled: true
-#          content-type-web-resource-map: '%content_type_web_resource_map%'
-#
-#  webignition\WebResource\Service\Service:
-#    calls:
-#      - [setConfiguration, ['@webignition\WebResource\Service\Configuration']]
-#
-#  webignition\Url\Resolver\Configuration:
-#    arguments:
-#      $configurationValues:
-#        follow-meta-redirects: true
-#        retry-with-url-encoding-disabled: true
-#        http-client: '@=service("SimplyTestable\\ApiBundle\\Services\\HttpClientService").get()'
-#        timeout-ms: 10000
-#
   webignition\Url\Resolver\Resolver:
     arguments:
       - '@GuzzleHttp\Client'
 
   webignition\WebResource\Sitemap\Factory:
-
-#  SimplyTestable\ApiBundle\Services\HttpClientService:
-#    arguments:
-#        $curlOptions: '%curl_options%'
 
   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
     arguments:
