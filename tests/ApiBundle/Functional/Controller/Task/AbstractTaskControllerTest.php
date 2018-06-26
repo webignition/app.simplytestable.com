@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
@@ -40,8 +41,14 @@ abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
      */
     protected function callCompleteAction()
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
         return $this->taskController->completeAction(
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(CompleteRequestFactory::class),

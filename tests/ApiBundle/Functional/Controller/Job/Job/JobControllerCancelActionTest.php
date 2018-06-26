@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -184,8 +185,14 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
      */
     private function callCancelAction($siteRootUrl, $testId)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
         return $this->jobController->cancelAction(
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get(JobService::class),
             $this->container->get(CrawlJobContainerService::class),
             $this->container->get(JobPreparationService::class),

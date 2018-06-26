@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -180,9 +181,15 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
      */
     private function createJobConfiguration(User $user)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
         $jobConfigurationCreateController = new JobConfigurationController(
             $this->container->get('router'),
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get(ConfigurationService::class)
         );
 

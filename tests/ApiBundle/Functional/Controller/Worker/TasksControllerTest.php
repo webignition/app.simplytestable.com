@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Worker;
 
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -377,8 +378,14 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     private function callRequestAction(Request $request)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
         return $this->tasksController->requestAction(
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get('doctrine.orm.entity_manager'),
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
