@@ -2,6 +2,8 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    public: true
+    tags: ['console.command']
 
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
     arguments:
