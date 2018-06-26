@@ -11,6 +11,7 @@ services:
 
     SimplyTestable\ApiBundle\Command\:
         resource: '../../src/SimplyTestable/ApiBundle/Command'
+        public: true
         tags: [console.command]
 
     # makes classes in src/AppBundle available to be used as services
