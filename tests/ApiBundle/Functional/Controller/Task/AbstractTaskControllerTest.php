@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -40,6 +39,11 @@ abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
      */
     protected function callCompleteAction()
     {
+        $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService();
+        $taskTypeDomainsToIgnoreService
+            ->shouldReceive('getForTaskType')
+            ->andReturn([]);
+
         return $this->taskController->completeAction(
             MockFactory::createApplicationStateService(),
             $this->container->get(ResqueQueueService::class),
@@ -52,7 +56,7 @@ abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
             $this->container->get(TaskOutputJoinerFactory::class),
             $this->container->get(TaskPostProcessorFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class)
+            $taskTypeDomainsToIgnoreService
         );
     }
 }

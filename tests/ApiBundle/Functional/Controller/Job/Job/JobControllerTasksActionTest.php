@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -335,7 +334,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $this->container->get(TaskOutputJoinerFactory::class),
             $this->container->get(TaskPostProcessorFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class)
+            MockFactory::createTaskTypeDomainsToIgnoreService()
         );
     }
 }
