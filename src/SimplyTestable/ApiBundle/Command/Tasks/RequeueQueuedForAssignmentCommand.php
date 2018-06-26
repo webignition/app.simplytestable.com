@@ -1,15 +1,16 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\Tasks;
 
 use Doctrine\ORM\EntityManagerInterface;
-use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StateService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RequeueQueuedForAssignmentCommand extends BaseCommand
+class RequeueQueuedForAssignmentCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
