@@ -1,6 +1,7 @@
 imports:
     - { resource: services_test/commands.yml }
     - { resource: services_test/public.yml }
+    - { resource: services_test/resque-job-factory.public.yml }
     - { resource: services_test/test_services.yml }
 
 services:
