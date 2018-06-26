@@ -9,6 +9,11 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
+    # For silencing deprecation notices. Remove when https://github.com/resquebundle/resque/pull/33 is merged.
+    ResqueBundle\Resque\Command\:
+        resource: '../../vendor/resquebundle/resque/Command'
+        tags: [console.command]
+
     SimplyTestable\ApiBundle\Command\:
         resource: '../../src/SimplyTestable/ApiBundle/Command'
         tags: [console.command]
