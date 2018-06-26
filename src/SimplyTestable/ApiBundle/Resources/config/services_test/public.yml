@@ -124,3 +124,11 @@ services:
   webignition\Url\Resolver\Resolver:
     arguments:
       - '@GuzzleHttp\Client'
+
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
+
+  GuzzleHttp\Client:
+    factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
