@@ -15,6 +15,7 @@ security:
             provider: fos_user_bundle
             http_basic:
                 realm: "Simply Testable Core Application"
+            logout_on_user_change: true
 
     access_control:
         - { path: ^/job/, role: ROLE_USER }

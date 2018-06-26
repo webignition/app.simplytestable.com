@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -323,8 +324,17 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     private function callTaskControllerCompleteAction(TaskController $taskController)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
+        /* @var Mock|TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService */
+        $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+
         return $taskController->completeAction(
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(CompleteRequestFactory::class),
@@ -335,7 +345,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $this->container->get(TaskOutputJoinerFactory::class),
             $this->container->get(TaskPostProcessorFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class)
+            $taskTypeDomainsToIgnoreService
         );
     }
 }

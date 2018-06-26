@@ -1,11 +1,10 @@
 imports:
-    - { resource: services_test/commands.yml }
     - { resource: services_test/public.yml }
+    - { resource: services_test/resque-job-factory.public.yml }
     - { resource: services_test/test_services.yml }
 
 services:
   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
-    class:   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService
     arguments:
       $domainsToIgnoreByTaskType:
         "css validation": '%css_validation_domains_to_ignore%'

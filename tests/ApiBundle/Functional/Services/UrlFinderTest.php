@@ -15,10 +15,6 @@ use Tests\ApiBundle\Factory\RssFeedFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Services\TestHttpClientService;
-use webignition\WebResource\Retriever as WebResourceRetriever;
-use webignition\WebResource\Sitemap\Factory as SitemapFactory;
-use webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder;
-use webignition\WebsiteSitemapFinder\WebsiteSitemapFinder;
 
 class UrlFinderTest extends AbstractBaseTestCase
 {
@@ -40,21 +36,10 @@ class UrlFinderTest extends AbstractBaseTestCase
     ) {
         /* @var TestHttpClientService $httpClientService */
         $httpClientService = $this->container->get(HttpClientService::class);
-        $webResourceRetriever = $this->container->get(WebResourceRetriever::class);
-        $sitemapFactory = $this->container->get(SitemapFactory::class);
-        $websiteSitemapFinder = $this->container->get(WebsiteSitemapFinder::class);
-        $websiteRssFeedFinder = $this->container->get(WebsiteRssFeedFinder::class);
-
         $httpClientService->appendFixtures($httpFixtures);
 
-        $urlFinder = new UrlFinder(
-            $httpClientService,
-            $webResourceRetriever,
-            $sitemapFactory,
-            $websiteSitemapFinder,
-            $websiteRssFeedFinder,
-            $sitemapRetrieverTimeout
-        );
+        $urlFinder = $this->container->get(UrlFinder::class);
+        $urlFinder->setSitemapRetrieverTotalTransferTimeout($sitemapRetrieverTimeout);
 
         $urls = $urlFinder->getUrls($job, 10);
 

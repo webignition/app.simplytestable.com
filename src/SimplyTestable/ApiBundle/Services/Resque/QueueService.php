@@ -68,7 +68,7 @@ class QueueService
         try {
             return !is_null($this->findJobInQueue($queue, $args));
         } catch (\CredisException $credisException) {
-            $this->logger->warning('ResqueQueueService::enqueue: Redis error ['.$credisException->getMessage().']');
+            $this->logger->warning('ResqueQueueService::contains: Redis error ['.$credisException->getMessage().']');
         }
 
         return false;

@@ -373,6 +373,8 @@ class JobFactory
     {
         $jobController = $this->container->get(JobController::class);
 
+        $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+
         $jobController->cancelAction(
             $this->container->get(ApplicationStateService::class),
             $this->container->get(JobService::class),
@@ -381,7 +383,7 @@ class JobFactory
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class),
+            $taskTypeDomainsToIgnoreService,
             $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
         );

@@ -50,11 +50,6 @@ class PrepareCommand extends Command
     private $crawlJobContainerService;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var array
      */
     private $predefinedDomainsToIgnore;
@@ -69,7 +64,6 @@ class PrepareCommand extends Command
      * @param ResqueJobFactory $resqueJobFactory
      * @param JobPreparationService $jobPreparationService
      * @param CrawlJobContainerService $crawlJobContainerService
-     * @param LoggerInterface $logger
      * @param EntityManagerInterface $entityManager,
      * @param array $predefinedDomainsToIgnore
      * @param string|null $name
@@ -80,7 +74,6 @@ class PrepareCommand extends Command
         ResqueJobFactory $resqueJobFactory,
         JobPreparationService $jobPreparationService,
         CrawlJobContainerService $crawlJobContainerService,
-        LoggerInterface $logger,
         EntityManagerInterface $entityManager,
         $predefinedDomainsToIgnore,
         $name = null
@@ -92,7 +85,6 @@ class PrepareCommand extends Command
         $this->resqueJobFactory = $resqueJobFactory;
         $this->jobPreparationService = $jobPreparationService;
         $this->crawlJobContainerService = $crawlJobContainerService;
-        $this->logger = $logger;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
         $this->entityManager = $entityManager;
     }
@@ -124,11 +116,6 @@ class PrepareCommand extends Command
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
-
-        $this->logger->info(sprintf(
-            'simplytestable:job:prepare running for job [%s]',
-            $input->getArgument('id')
-        ));
 
         $jobRepository = $this->entityManager->getRepository(Job::class);
 
@@ -166,19 +153,7 @@ class PrepareCommand extends Command
                     );
                 }
             }
-
-            $this->logger->info(sprintf(
-                'simplytestable:job:prepare: queued up [%s] tasks covering [%s] urls and [%s] task types',
-                $job->getTasks()->count(),
-                $job->getUrlCount(),
-                count($job->getRequestedTaskTypes())
-            ));
         } catch (JobPreparationException $jobPreparationServiceException) {
-            $this->logger->info(sprintf(
-                'simplytestable:job:prepare: nothing to do, job has a state of [%s]',
-                $job->getState()->getName()
-            ));
-
             return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
         }
 

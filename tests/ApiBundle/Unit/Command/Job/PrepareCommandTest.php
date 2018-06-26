@@ -38,7 +38,6 @@ class PrepareCommandTest extends \PHPUnit_Framework_TestCase
             $resqueJobFactory,
             MockFactory::createJobPreparationService(),
             MockFactory::createCrawlJobContainerService(),
-            MockFactory::createLogger(),
             MockFactory::createEntityManager(),
             []
         );

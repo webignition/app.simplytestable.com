@@ -221,8 +221,15 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
      */
     private function callTaskControllerCompleteAction(TaskController $taskController)
     {
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
+        $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+
         return $taskController->completeAction(
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(CompleteRequestFactory::class),
@@ -233,7 +240,7 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
             $this->container->get(TaskOutputJoinerFactory::class),
             $this->container->get(TaskPostProcessorFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class)
+            $taskTypeDomainsToIgnoreService
         );
     }
 }

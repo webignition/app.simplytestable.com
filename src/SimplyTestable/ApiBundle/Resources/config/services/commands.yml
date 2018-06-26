@@ -2,6 +2,7 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    public: true
 
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
     arguments:
@@ -10,7 +11,6 @@ services:
       $resqueJobFactory: '@webignition\ResqueJobFactory\ResqueJobFactory'
       $jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       $crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
-      $logger: '@logger'
       $entityManager: '@doctrine.orm.entity_manager'
       $predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'

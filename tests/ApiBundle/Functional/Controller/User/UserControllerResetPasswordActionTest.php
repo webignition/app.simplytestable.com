@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\User;
 
 use FOS\UserBundle\Util\UserManipulator;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\HttpFoundation\Request;
@@ -110,8 +111,14 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
      */
     private function callResetPasswordAction(Request $request, User $user)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
+        $applicationStateService = \Mockery::mock(ApplicationStateService::class);
+        $applicationStateService
+            ->shouldReceive('isInReadOnlyMode')
+            ->andReturn(false);
+
         return $this->userController->resetPasswordAction(
-            $this->container->get(ApplicationStateService::class),
+            $applicationStateService,
             $this->container->get(UserManipulator::class),
             $request,
             $user->getConfirmationToken()

@@ -91,8 +91,49 @@ services:
 
   SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
 
-  SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
-
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
 
   SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:
+
+  FOS\UserBundle\Util\UserManipulator:
+    alias: fos_user.util.user_manipulator
+
+  FOS\UserBundle\Security\LoginManagerInterface:
+    alias: fos_user.security.login_manager
+
+  SimplyTestable\ApiBundle\Services\UserAccountPlanService:
+    arguments:
+        $entityManager: '@doctrine.orm.entity_manager'
+        $userService: '@SimplyTestable\ApiBundle\Services\UserService'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
+        $defaultTrialPeriod: '%default_trial_period%'
+
+  SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
+
+  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+
+  SimplyTestable\ApiBundle\Services\UrlFinder:
+
+  webignition\Url\Resolver\Resolver:
+    arguments:
+      - '@GuzzleHttp\Client'
+
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
+
+  GuzzleHttp\Client:
+    factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
+
+  SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
+    arguments:
+      $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
+      $parameters: "%stripe_webhook_developer_notification%"

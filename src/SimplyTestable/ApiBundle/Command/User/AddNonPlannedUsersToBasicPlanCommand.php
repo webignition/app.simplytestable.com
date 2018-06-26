@@ -1,4 +1,5 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\User;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -6,11 +7,11 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Command\BaseCommand;
 
-class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
+class AddNonPlannedUsersToBasicPlanCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;

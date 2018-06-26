@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
 use GuzzleHttp\Psr7\Response;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -10,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
@@ -117,7 +119,13 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
             $this->container->get('request_stack')->push($request);
             $this->container->get(CompleteRequestFactory::class)->init($request);
 
-            $this->callCompleteAction();
+            /* @var Mock|TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService */
+            $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+            $taskTypeDomainsToIgnoreService
+                ->shouldReceive('getForTaskType')
+                ->andReturn([]);
+
+            $this->callCompleteAction($taskTypeDomainsToIgnoreService);
 
             $this->assertEquals($expectedCrawlJobState, $this->crawlJob->getState());
             $this->assertEquals($expectedParentJobState, $this->parentJob->getState());
