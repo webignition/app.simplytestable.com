@@ -96,3 +96,6 @@ services:
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
 
   SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:
+
+  FOS\UserBundle\Util\UserManipulator:
+    alias: fos_user.util.user_manipulator
