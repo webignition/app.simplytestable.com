@@ -120,3 +120,7 @@ services:
         - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
 
   SimplyTestable\ApiBundle\Services\UrlFinder:
+
+  webignition\Url\Resolver\Resolver:
+    arguments:
+      - '@GuzzleHttp\Client'
