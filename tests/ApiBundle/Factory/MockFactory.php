@@ -8,6 +8,7 @@ use FOS\UserBundle\Util\UserManipulator;
 use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
@@ -885,12 +886,25 @@ class MockFactory
     }
 
     /**
+     * @param array $taskTypeNameToDomainsToIgnoreMap
+     *
      * @return Mock|TaskTypeDomainsToIgnoreService
      */
-    public static function createTaskTypeDomainsToIgnoreService()
+    public static function createTaskTypeDomainsToIgnoreService(array $taskTypeNameToDomainsToIgnoreMap = [])
     {
         /* @var Mock|TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService */
         $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+
+        if (!empty($taskTypeNameToDomainsToIgnoreMap)) {
+            foreach ($taskTypeNameToDomainsToIgnoreMap as $taskTypeName => $domainsToIgnore) {
+                $taskTypeDomainsToIgnoreService
+                    ->shouldReceive('getForTaskType')
+                    ->withArgs(function (TaskType $taskType) use ($taskTypeName) {
+                        return $taskType->getName() === $taskTypeName;
+                    })
+                    ->andReturn($domainsToIgnore);
+            }
+        }
 
         return $taskTypeDomainsToIgnoreService;
     }

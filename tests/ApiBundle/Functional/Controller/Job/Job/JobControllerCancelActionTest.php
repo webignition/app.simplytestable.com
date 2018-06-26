@@ -4,10 +4,11 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use Symfony\Component\HttpFoundation\Response;
+use Tests\ApiBundle\Factory\MockFactory;
 use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -98,7 +99,19 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
-        $response = $this->callCancelAction($crawlJob->getWebsite()->getCanonicalUrl(), $crawlJob->getId());
+        $cssValidationDomainsToIgnore = $this->container->getParameter('css_validation_domains_to_ignore');
+        $jsStaticAnalysisDomainsToIgnore = $this->container->getParameter('js_static_analysis_domains_to_ignore');
+
+        $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService([
+            'CSS validation' => $cssValidationDomainsToIgnore,
+            'JS static analysis' => $jsStaticAnalysisDomainsToIgnore,
+        ]);
+
+        $response = $this->callCancelAction(
+            $crawlJob->getWebsite()->getCanonicalUrl(),
+            $crawlJob->getId(),
+            $taskTypeDomainsToIgnoreService
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -121,12 +134,12 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         }
 
         $this->assertEquals(
-            $this->container->getParameter('css_validation_domains_to_ignore'),
+            $cssValidationDomainsToIgnore,
             json_decode($cssValidationTask->getParameters())->{'domains-to-ignore'}
         );
 
         $this->assertEquals(
-            $this->container->getParameter('js_static_analysis_domains_to_ignore'),
+            $jsStaticAnalysisDomainsToIgnore,
             json_decode($jsStaticAnalysisTask->getParameters())->{'domains-to-ignore'}
         );
 
@@ -165,9 +178,15 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
+        $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService([
+            'CSS validation' => $this->container->getParameter('css_validation_domains_to_ignore'),
+            'JS static analysis' => $this->container->getParameter('js_static_analysis_domains_to_ignore'),
+        ]);
+
         $response = $this->callCancelAction(
             $parentJob->getWebsite()->getCanonicalUrl(),
-            $parentJob->getId()
+            $parentJob->getId(),
+            $taskTypeDomainsToIgnoreService
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -179,20 +198,25 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     /**
      * @param string $siteRootUrl
      * @param int $testId
+     * @param TaskTypeDomainsToIgnoreService|null $taskTypeDomainsToIgnoreService
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    private function callCancelAction($siteRootUrl, $testId)
+    private function callCancelAction($siteRootUrl, $testId, $taskTypeDomainsToIgnoreService = null)
     {
+        if (empty($taskTypeDomainsToIgnoreService)) {
+            $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService();
+        }
+
         return $this->jobController->cancelAction(
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get(JobService::class),
             $this->container->get(CrawlJobContainerService::class),
             $this->container->get(JobPreparationService::class),
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
             $this->container->get(StateService::class),
-            $this->container->get(TaskTypeDomainsToIgnoreService::class),
+            $taskTypeDomainsToIgnoreService,
             $siteRootUrl,
             $testId
         );

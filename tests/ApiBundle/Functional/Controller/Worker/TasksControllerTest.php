@@ -4,7 +4,7 @@ namespace Tests\ApiBundle\Functional\Controller\Worker;
 
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use Tests\ApiBundle\Factory\MockFactory;
 use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -378,7 +378,7 @@ class TasksControllerTest extends AbstractBaseTestCase
     private function callRequestAction(Request $request)
     {
         return $this->tasksController->requestAction(
-            $this->container->get(ApplicationStateService::class),
+            MockFactory::createApplicationStateService(),
             $this->container->get('doctrine.orm.entity_manager'),
             $this->container->get(ResqueQueueService::class),
             $this->container->get(ResqueJobFactory::class),
