@@ -132,3 +132,8 @@ services:
 
   GuzzleHttp\Client:
     factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
+
+  SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
+    arguments:
+      $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
+      $parameters: "%stripe_webhook_developer_notification%"
