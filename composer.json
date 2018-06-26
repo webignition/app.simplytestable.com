@@ -76,9 +76,15 @@
         ],
         "test-unit": "./vendor/bin/phpunit --colors tests/ApiBundle/Unit/",
         "test-functional": "./vendor/bin/phpunit --colors tests/ApiBundle/Functional/",
+        "test-unit-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/ApiBundle/Unit/",
+        "test-functional-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/ApiBundle/Functional/",
         "test": [
             "@composer test-unit",
             "@composer test-functional"
+        ],
+        "test-stop": [
+            "@composer test-unit-stop",
+            "@composer test-functional-stop"
         ]
     },
     "minimum-stability": "stable",
