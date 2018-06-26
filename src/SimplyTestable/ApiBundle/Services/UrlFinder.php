@@ -57,22 +57,26 @@ class UrlFinder
      * @param SitemapFactory $sitemapFactory
      * @param WebsiteSitemapFinder $websiteSitemapFinder
      * @param WebsiteRssFeedFinder $websiteRssFeedFinder
-     * @param float|null $sitemapRetrieverTotalTransferTimeout
      */
     public function __construct(
         HttpClientService $httpClientService,
         WebResourceRetriever $webResourceService,
         SitemapFactory $sitemapFactory,
         WebsiteSitemapFinder $websiteSitemapFinder,
-        WebsiteRssFeedFinder $websiteRssFeedFinder,
-        $sitemapRetrieverTotalTransferTimeout = null
+        WebsiteRssFeedFinder $websiteRssFeedFinder
     ) {
         $this->httpClientService = $httpClientService;
         $this->webResourceRetriever = $webResourceService;
         $this->sitemapFactory = $sitemapFactory;
         $this->websiteSitemapFinder = $websiteSitemapFinder;
         $this->websiteRssFeedFinder = $websiteRssFeedFinder;
+    }
 
+    /**
+     * @param int $sitemapRetrieverTotalTransferTimeout
+     */
+    public function setSitemapRetrieverTotalTransferTimeout($sitemapRetrieverTotalTransferTimeout)
+    {
         $this->sitemapRetrieverTotalTransferTimeout = (empty($sitemapRetrieverTotalTransferTimeout))
             ? self::DEFAULT_SITEMAP_RETRIEVER_TOTAL_TRANSFER_TIMEOUT
             : $sitemapRetrieverTotalTransferTimeout;

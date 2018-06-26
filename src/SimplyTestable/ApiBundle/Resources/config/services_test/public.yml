@@ -118,3 +118,5 @@ services:
     arguments:
       $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+
+  SimplyTestable\ApiBundle\Services\UrlFinder:
