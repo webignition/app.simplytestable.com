@@ -9,11 +9,6 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
-    # For silencing deprecation notices. Remove when https://github.com/resquebundle/resque/pull/33 is merged.
-    ResqueBundle\Resque\Command\:
-        resource: '../../vendor/resquebundle/resque/Command'
-        tags: [console.command]
-
     SimplyTestable\ApiBundle\Command\:
         resource: '../../src/SimplyTestable/ApiBundle/Command'
         tags: [console.command]
@@ -33,7 +28,11 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    # add more services, or override services that need manual wiring
-    # AppBundle\Service\ExampleService:
-    #     arguments:
-    #         $someArgument: 'some_value'
+    # For silencing deprecation notices
+    ResqueBundle\Resque\Command\:
+        resource: '../../vendor/resquebundle/resque/Command'
+        tags: [console.command]
+
+    Cron\CronBundle\Command\:
+        resource: '../../vendor/cron/cron-bundle/Command'
+        tags: [console.command]

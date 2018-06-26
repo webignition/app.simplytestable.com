@@ -2505,16 +2505,16 @@
         },
         {
             "name": "resquebundle/resque",
-            "version": "2.0.5",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resquebundle/resque.git",
-                "reference": "8742b7fd0635c5d0ae1ca00b56aa4ee67f5470f6"
+                "reference": "762727ad1a2e06465e73ef8af282514f794795f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resquebundle/resque/zipball/8742b7fd0635c5d0ae1ca00b56aa4ee67f5470f6",
-                "reference": "8742b7fd0635c5d0ae1ca00b56aa4ee67f5470f6",
+                "url": "https://api.github.com/repos/resquebundle/resque/zipball/762727ad1a2e06465e73ef8af282514f794795f3",
+                "reference": "762727ad1a2e06465e73ef8af282514f794795f3",
                 "shasum": ""
             },
             "require": {
@@ -2570,7 +2570,7 @@
                 "symfony",
                 "symfony3"
             ],
-            "time": "2018-04-01T23:38:20+00:00"
+            "time": "2018-06-26T11:55:22+00:00"
         },
         {
             "name": "sensio/distribution-bundle",
