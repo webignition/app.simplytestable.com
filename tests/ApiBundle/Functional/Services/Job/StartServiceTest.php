@@ -13,7 +13,6 @@ use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -99,7 +98,6 @@ class StartServiceTest extends AbstractBaseTestCase
      * @param string $isLimitReachedMethodName
      * @param $isLimitReachedReturnValue
      * @param $isUserCreditLimitReached
-     * @param string $constraintName
      * @param array $expectedException
      */
     public function testStartFailsAccountPlanEnforcement(
@@ -109,7 +107,6 @@ class StartServiceTest extends AbstractBaseTestCase
         $isLimitReachedMethodName,
         $isLimitReachedReturnValue,
         $isUserCreditLimitReached,
-        $constraintName,
         $expectedException
     ) {
         $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
@@ -165,7 +162,6 @@ class StartServiceTest extends AbstractBaseTestCase
                 'isLimitReachedMethodName' => 'isFullSiteJobLimitReachedForWebSite',
                 'isLimitReachedReturnValue' => true,
                 'isCreditLimitReached' => false,
-                'constraintName' => JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME,
                 'expectedException' => [
                     'class' => UserAccountPlanEnforcementException::class,
                     'message' => 'Full site job limit reached for website',
@@ -179,7 +175,6 @@ class StartServiceTest extends AbstractBaseTestCase
                 'isLimitReachedMethodName' => 'isSingleUrlLimitReachedForWebsite',
                 'isLimitReachedReturnValue' => true,
                 'isCreditLimitReached' => false,
-                'constraintName' => JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME,
                 'expectedException' => [
                     'class' => UserAccountPlanEnforcementException::class,
                     'message' => 'Single URL job limit reached for website',
@@ -193,7 +188,6 @@ class StartServiceTest extends AbstractBaseTestCase
                 'isLimitReachedMethodName' => 'isFullSiteJobLimitReachedForWebSite',
                 'isLimitReachedReturnValue' => false,
                 'isCreditLimitReached' => true,
-                'constraintName' => JobUserAccountPlanEnforcementService::CREDITS_PER_MONTH_CONSTRAINT_NAME,
                 'expectedException' => [
                     'class' => UserAccountPlanEnforcementException::class,
                     'message' => 'Credit limit reached',
@@ -339,7 +333,6 @@ class StartServiceTest extends AbstractBaseTestCase
             QueueService::class,
             StateService::class,
             UserAccountPlanService::class,
-            ResqueJobFactory::class,
             'doctrine.orm.entity_manager',
         ];
 
@@ -363,7 +356,6 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices[QueueService::class],
             $requiredServices[StateService::class],
             $requiredServices[UserAccountPlanService::class],
-            $requiredServices[ResqueJobFactory::class],
             $requiredServices['doctrine.orm.entity_manager']
         );
     }
