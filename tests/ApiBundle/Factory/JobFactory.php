@@ -29,7 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Tests\ApiBundle\Services\TestHttpClientService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
 class JobFactory
@@ -379,7 +378,6 @@ class JobFactory
             $this->container->get(CrawlJobContainerService::class),
             $this->container->get(JobPreparationService::class),
             $this->container->get(ResqueQueueService::class),
-            $this->container->get(ResqueJobFactory::class),
             $this->container->get(StateService::class),
             $this->container->get(TaskTypeDomainsToIgnoreService::class),
             $job->getWebsite()->getCanonicalUrl(),
