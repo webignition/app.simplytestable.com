@@ -21,7 +21,6 @@ services:
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      $resqueJobFactory: '@webignition\ResqueJobFactory\ResqueJobFactory'
       $websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
       $jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       $entityManager: '@doctrine.orm.entity_manager'
