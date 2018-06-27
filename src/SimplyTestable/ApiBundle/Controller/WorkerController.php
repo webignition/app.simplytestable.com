@@ -5,8 +5,8 @@ namespace SimplyTestable\ApiBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
@@ -33,11 +33,6 @@ class WorkerController
     private $resqueQueueService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @var WorkerActivationRequestService
      */
     private $workerActivationRequestService;
@@ -51,7 +46,6 @@ class WorkerController
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param WorkerActivationRequestService $workerActivationRequestService
      * @param StateService $stateService
      */
@@ -59,14 +53,12 @@ class WorkerController
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         WorkerActivationRequestService $workerActivationRequestService,
         StateService $stateService
     ) {
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->workerActivationRequestService = $workerActivationRequestService;
         $this->stateService = $stateService;
     }
@@ -130,12 +122,7 @@ class WorkerController
         $this->entityManager->persist($activationRequest);
         $this->entityManager->flush();
 
-        $this->resqueQueueService->enqueue(
-            $this->resqueJobFactory->create(
-                'worker-activate-verify',
-                ['id' => $activationRequest->getWorker()->getId()]
-            )
-        );
+        $this->resqueQueueService->enqueue(new ActivateVerifyJob(['id' => $activationRequest->getWorker()->getId()]));
 
         return new Response();
     }
