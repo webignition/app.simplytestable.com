@@ -457,14 +457,6 @@ class Job
     }
 
     /**
-     * @return string
-     */
-    public function getParametersHash()
-    {
-        return md5($this->getParameters());
-    }
-
-    /**
      * @return Parameters
      */
     public function getParametersObject()
