@@ -47,7 +47,6 @@
         "cron/cron-bundle": "1.2.3",
         "webignition/sitemap-model":"~3",
         "webignition/guzzle-curl-exception":"~1",
-        "webignition/resque-job-factory": ">=1.0.1,<2",
         "webignition/guzzle-http-authentication-middleware": ">=0.1,<1",
         "webignition/http-history-container": ">=0.5,<1",
         "webignition/guzzle-request-headers-middleware": ">=0.1,<1"
