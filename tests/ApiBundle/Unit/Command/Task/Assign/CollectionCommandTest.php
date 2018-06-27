@@ -16,7 +16,6 @@ class CollectionCommandTest extends \PHPUnit_Framework_TestCase
             MockFactory::createEntityManager(),
             MockFactory::createTaskPreProcessorFactory(),
             MockFactory::createResqueQueueService(),
-            MockFactory::createResqueJobFactory(),
             MockFactory::createStateService(),
             MockFactory::createWorkerTaskAssignmentService(),
             MockFactory::createLogger()

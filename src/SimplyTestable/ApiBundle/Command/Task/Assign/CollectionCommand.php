@@ -1,4 +1,5 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -6,8 +7,8 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
@@ -46,11 +47,6 @@ class CollectionCommand extends Command
     private $resqueQueueService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @var StateService
      */
     private $stateService;
@@ -70,7 +66,6 @@ class CollectionCommand extends Command
      * @param EntityManagerInterface $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
      * @param WorkerTaskAssignmentService $workerTaskAssignmentService
      * @param LoggerInterface $logger
@@ -81,7 +76,6 @@ class CollectionCommand extends Command
         EntityManagerInterface $entityManager,
         TaskPreProcessorFactory $taskPreProcessorFactory,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
         WorkerTaskAssignmentService $workerTaskAssignmentService,
         LoggerInterface $logger,
@@ -93,7 +87,6 @@ class CollectionCommand extends Command
         $this->entityManager = $entityManager;
         $this->taskPreprocessorFactory = $taskPreProcessorFactory;
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
         $this->workerTaskAssignmentService = $workerTaskAssignmentService;
         $this->logger = $logger;
@@ -240,11 +233,6 @@ class CollectionCommand extends Command
      */
     private function requeueAssignment($taskIds)
     {
-        $this->resqueQueueService->enqueue(
-            $this->resqueJobFactory->create(
-                'task-assign-collection',
-                ['ids' => implode(',', $taskIds)]
-            )
-        );
+        $this->resqueQueueService->enqueue(new AssignCollectionJob(['ids' => implode(',', $taskIds)]));
     }
 }
