@@ -393,7 +393,6 @@ class Job
 
     /**
      * @param Ammendment $ammendment
-     * @return Job
      */
     public function addAmmendment(Ammendment $ammendment)
     {
@@ -489,22 +488,6 @@ class Job
         }
 
         return $this->parametersObject;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getParameter($name)
-    {
-        $parametersArray = $this->getParametersArray();
-
-        if (!isset($parametersArray[$name])) {
-            return false;
-        }
-
-        return $parametersArray[$name];
     }
 
     /**
