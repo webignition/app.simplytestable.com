@@ -12,15 +12,12 @@ class ProcessEventJobTest extends AbstractJobTest
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $job = $this->createJob(
-            ['stripeId' => 'evt_2c6KUnrLeIFqQv'],
-            self::QUEUE,
-            $this->container->get(ProcessCommand::class)
+        $job = new ProcessEventJob(['stripeId' => 'evt_2c6KUnrLeIFqQv']);
+        $this->initialiseJob($job, $this->container->get(ProcessCommand::class));
+
+        $this->assertEquals(
+            ProcessCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            $this->runInMaintenanceReadOnlyMode($job)
         );
-        $this->assertInstanceOf(ProcessEventJob::class, $job);
-
-        $returnCode = $this->runInMaintenanceReadOnlyMode($job);
-
-        $this->assertEquals(ProcessCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
     }
 }
