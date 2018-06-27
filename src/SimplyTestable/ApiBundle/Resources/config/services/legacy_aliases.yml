@@ -11,8 +11,5 @@ services:
   Cron\CronBundle\Cron\Manager:
     alias: cron.manager
 
-  ResqueBundle\Resque\Resque:
-    alias: resque
-
   MZ\PostmarkBundle\Postmark\Message:
     alias: postmark.message
