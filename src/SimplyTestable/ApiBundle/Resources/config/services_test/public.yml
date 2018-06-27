@@ -111,3 +111,13 @@ services:
 
   FOS\UserBundle\Security\LoginManager:
     alias: fos_user.security.login_manager
+
+  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+
+  SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
