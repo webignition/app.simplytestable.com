@@ -17,16 +17,13 @@ class AssignCollectionJobTest extends AbstractJobTest
      */
     public function testRunInMaintenanceReadOnlyMode($args)
     {
-        $job = $this->createJob(
-            $args,
-            self::QUEUE,
-            $this->container->get(CollectionCommand::class)
+        $job = new AssignCollectionJob($args);
+        $this->initialiseJob($job, $this->container->get(CollectionCommand::class));
+
+        $this->assertEquals(
+            CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            $this->runInMaintenanceReadOnlyMode($job)
         );
-        $this->assertInstanceOf(AssignCollectionJob::class, $job);
-
-        $returnCode = $this->runInMaintenanceReadOnlyMode($job);
-
-        $this->assertEquals(CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
     }
 
     /**

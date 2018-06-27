@@ -12,15 +12,9 @@ class NotifyJobTest extends AbstractJobTest
 
     public function testRun()
     {
-        $job = $this->createJob(
-            [],
-            self::QUEUE,
-            $this->container->get(TaskNotificationCommand::class)
-        );
-        $this->assertInstanceOf(NotifyJob::class, $job);
+        $job = new NotifyJob();
+        $this->initialiseJob($job, $this->container->get(TaskNotificationCommand::class));
 
-        $returnCode = $job->run([]);
-
-        $this->assertEquals(true, $returnCode);
+        $this->assertEquals(true, $job->run([]));
     }
 }
