@@ -1,11 +1,12 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -39,11 +40,6 @@ class ExecuteCommand extends Command
     private $resqueQueueService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @var EntityManagerInterface
      */
     private $entityManager;
@@ -61,7 +57,6 @@ class ExecuteCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param EntityManagerInterface $entityManager
      * @param JobStartService $jobStartService
      * @param JobService $jobService
@@ -70,7 +65,6 @@ class ExecuteCommand extends Command
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         EntityManagerInterface $entityManager,
         JobStartService $jobStartService,
         JobService $jobService,
@@ -80,7 +74,6 @@ class ExecuteCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->entityManager = $entityManager;
         $this->jobStartService = $jobStartService;
         $this->jobService = $jobService;
@@ -107,12 +100,7 @@ class ExecuteCommand extends Command
 
         if ($this->applicationStateService->isInReadOnlyMode()) {
             if (!$this->resqueQueueService->contains('scheduledjob-execute', ['id' => $id])) {
-                $this->resqueQueueService->enqueue(
-                    $this->resqueJobFactory->create(
-                        'scheduledjob-execute',
-                        ['id' => $id]
-                    )
-                );
+                $this->resqueQueueService->enqueue(new ExecuteJob(['id' => $id]));
             }
 
             $output->writeln('In maintenance read-only mode, re-queueing');
