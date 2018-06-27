@@ -28,7 +28,6 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
@@ -615,31 +614,6 @@ class MockFactory
         }
 
         return $resqueQueueService;
-    }
-
-    /**
-     * @param array $calls
-     *
-     * @return Mock|ResqueJobFactory
-     */
-    public static function createResqueJobFactory($calls = [])
-    {
-        /* @var Mock|ResqueJobFactory $resqueJobFactory */
-        $resqueJobFactory = \Mockery::mock(ResqueJobFactory::class);
-
-        if (isset($calls['create'])) {
-            $callValues = $calls['create'];
-
-            $withArgs = $callValues['withArgs'];
-            $return = $callValues['return'];
-
-            $resqueJobFactory
-                ->shouldReceive('create')
-                ->withArgs($withArgs)
-                ->andReturn($return);
-        }
-
-        return $resqueJobFactory;
     }
 
     /**
