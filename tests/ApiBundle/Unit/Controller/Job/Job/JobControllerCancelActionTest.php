@@ -2,13 +2,6 @@
 
 namespace Tests\ApiBundle\Unit\Controller\Job\Job;
 
-use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
-use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Tests\ApiBundle\Factory\MockFactory;
@@ -32,13 +25,12 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         $jobController->cancelAction(
             $applicationStateService,
-            \Mockery::mock(JobService::class),
-            \Mockery::mock(CrawlJobContainerService::class),
-            \Mockery::mock(JobPreparationService::class),
-            \Mockery::mock(ResqueQueueService::class),
-            \Mockery::mock(ResqueJobFactory::class),
-            \Mockery::mock(StateService::class),
-            \Mockery::mock(TaskTypeDomainsToIgnoreService::class),
+            MockFactory::createJobService(),
+            MockFactory::createCrawlJobContainerService(),
+            MockFactory::createJobPreparationService(),
+            MockFactory::createResqueQueueService(),
+            MockFactory::createStateService(),
+            MockFactory::createTaskTypeDomainsToIgnoreService(),
             self::CANONICAL_URL,
             self::JOB_ID
         );
@@ -62,13 +54,12 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         $jobController->cancelAction(
             $applicationStateService,
-            \Mockery::mock(JobService::class),
-            \Mockery::mock(CrawlJobContainerService::class),
-            \Mockery::mock(JobPreparationService::class),
-            \Mockery::mock(ResqueQueueService::class),
-            \Mockery::mock(ResqueJobFactory::class),
-            \Mockery::mock(StateService::class),
-            \Mockery::mock(TaskTypeDomainsToIgnoreService::class),
+            MockFactory::createJobService(),
+            MockFactory::createCrawlJobContainerService(),
+            MockFactory::createJobPreparationService(),
+            MockFactory::createResqueQueueService(),
+            MockFactory::createStateService(),
+            MockFactory::createTaskTypeDomainsToIgnoreService(),
             self::CANONICAL_URL,
             self::JOB_ID
         );
