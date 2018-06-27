@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
@@ -21,7 +21,6 @@ class TasksController
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
      * @param TaskQueueService $taskQueueService
      * @param Request $request
@@ -32,7 +31,6 @@ class TasksController
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
         TaskQueueService $taskQueueService,
         Request $request
@@ -106,15 +104,10 @@ class TasksController
             $entityManager->flush();
         }
 
-        $resqueQueueService->enqueue(
-            $resqueJobFactory->create(
-                'task-assign-collection',
-                [
-                    'ids' => implode(',', $taskIds),
-                    'worker' => $workerHostname,
-                ]
-            )
-        );
+        $resqueQueueService->enqueue(new AssignCollectionJob([
+            'ids' => implode(',', $taskIds),
+            'worker' => $workerHostname,
+        ]));
 
         return new Response();
     }

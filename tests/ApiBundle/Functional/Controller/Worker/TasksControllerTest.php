@@ -4,8 +4,8 @@ namespace Tests\ApiBundle\Functional\Controller\Worker;
 
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use Tests\ApiBundle\Factory\MockFactory;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -227,7 +227,6 @@ class TasksControllerTest extends AbstractBaseTestCase
         $jobFactory = new JobFactory($this->container);
 
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
-        $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
 
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
@@ -237,15 +236,10 @@ class TasksControllerTest extends AbstractBaseTestCase
         $job = $jobFactory->createResolveAndPrepare();
         $task = $job->getTasks()->first();
 
-        $resqueQueueService->enqueue(
-            $resqueJobFactory->create(
-                'task-assign-collection',
-                [
-                    'ids' => $task->getId(),
-                    'worker' => $worker->getHostname(),
-                ]
-            )
-        );
+        $resqueQueueService->enqueue(new AssignCollectionJob([
+            'ids' => $task->getId(),
+            'worker' => $worker->getHostname(),
+        ]));
 
         $request = new Request(
             [],
@@ -381,7 +375,6 @@ class TasksControllerTest extends AbstractBaseTestCase
             MockFactory::createApplicationStateService(),
             $this->container->get('doctrine.orm.entity_manager'),
             $this->container->get(ResqueQueueService::class),
-            $this->container->get(ResqueJobFactory::class),
             $this->container->get(StateService::class),
             $this->container->get(TaskQueueService::class),
             $request

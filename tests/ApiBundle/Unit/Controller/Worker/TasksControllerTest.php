@@ -36,7 +36,6 @@ class TasksControllerTest extends \PHPUnit_Framework_TestCase
             MockFactory::createApplicationStateService(true),
             MockFactory::createEntityManager(),
             MockFactory::createResqueQueueService(),
-            MockFactory::createResqueJobFactory(),
             MockFactory::createStateService(),
             MockFactory::createTaskQueueService(),
             new Request()
