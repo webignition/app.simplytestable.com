@@ -12,13 +12,13 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tests\ApiBundle\Factory\JobFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
 /**
  * @group Controller/Job/StartController
  */
-class JobStartControllerTest extends AbstractBaseTestCase
+class JobStartControllerTest extends AbstractControllerTest
 {
     /**
      * @var StartController

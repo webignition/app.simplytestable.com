@@ -56,33 +56,6 @@ abstract class CommandJob extends Job
             return true;
         }
 
-        return $this->handleNonZeroReturnCode($returnCode, $output);
-    }
-
-    /**
-     * @param int $returnCode
-     * @param BufferedOutput $output
-     *
-     * @return int
-     */
-    private function handleNonZeroReturnCode($returnCode, $output)
-    {
-        $logger = $this->getContainer()->get('logger');
-
-        $logger->error(sprintf(
-            '%s: task [%s] returned %s',
-            get_class($this),
-            $this->getIdentifier(),
-            $returnCode
-        ));
-
-        $logger->error(sprintf(
-            '%s: task [%s] output %s',
-            get_class($this),
-            $this->getIdentifier(),
-            trim($output->fetch())
-        ));
-
         return $returnCode;
     }
 }

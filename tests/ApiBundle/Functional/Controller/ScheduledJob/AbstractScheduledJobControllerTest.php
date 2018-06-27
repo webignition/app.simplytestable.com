@@ -3,9 +3,9 @@
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
 use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractScheduledJobControllerTest extends AbstractBaseTestCase
+abstract class AbstractScheduledJobControllerTest extends AbstractControllerTest
 {
     /**
      * @var ScheduledJobController

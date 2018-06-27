@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractJobControllerTest extends AbstractBaseTestCase
+abstract class AbstractJobControllerTest extends AbstractControllerTest
 {
     /**
      * @var UserFactory

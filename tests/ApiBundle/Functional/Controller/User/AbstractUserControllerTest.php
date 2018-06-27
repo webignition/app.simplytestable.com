@@ -4,9 +4,9 @@ namespace Tests\ApiBundle\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractUserControllerTest extends AbstractBaseTestCase
+abstract class AbstractUserControllerTest extends AbstractControllerTest
 {
     /**
      * @var UserController

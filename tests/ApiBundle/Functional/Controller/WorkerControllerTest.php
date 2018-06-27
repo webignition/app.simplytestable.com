@@ -8,13 +8,12 @@ use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\WorkerFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @group Controller/WorkerController
  */
-class WorkerControllerTest extends AbstractBaseTestCase
+class WorkerControllerTest extends AbstractControllerTest
 {
     /**
      * @var WorkerController

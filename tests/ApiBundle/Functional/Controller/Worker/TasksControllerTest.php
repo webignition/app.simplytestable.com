@@ -11,14 +11,14 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
 /**
  * @group Controller/Worker/TasksController
  */
-class TasksControllerTest extends AbstractBaseTestCase
+class TasksControllerTest extends AbstractControllerTest
 {
     /**
      * @var TasksController

@@ -12,12 +12,11 @@ use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 /**
  * @group Controller/Maintenance
  */
-class MaintenanceControllerTest extends AbstractBaseTestCase
+class MaintenanceControllerTest extends AbstractControllerTest
 {
     /**
      * @var MaintenanceController

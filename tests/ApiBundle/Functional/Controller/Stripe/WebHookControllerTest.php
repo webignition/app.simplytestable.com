@@ -14,13 +14,13 @@ use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
 /**
  * @group Controller/Stripe/WebHookController
  */
-class WebHookControllerTest extends AbstractBaseTestCase
+class WebHookControllerTest extends AbstractControllerTest
 {
     /**
      * @var WebHookController
