@@ -1,10 +1,10 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services\Resque;
 
 use ResqueBundle\Resque\Resque;
 use Psr\Log\LoggerInterface;
 use ResqueBundle\Resque\Job;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 
 /**
  * Wrapper for \ResqueBundle\Resque\Resque that handles exceptions
@@ -35,26 +35,18 @@ class QueueService
     private $logger;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $jobFactory;
-
-    /**
      * @param Resque $resque
      * @param LoggerInterface $logger
-     * @param ResqueJobFactory $jobFactory
      * @param string $environment
      */
     public function __construct(
         Resque $resque,
         LoggerInterface $logger,
-        ResqueJobFactory $jobFactory,
         $environment = 'prod'
     ) {
         $this->resque = $resque;
         $this->environment = $environment;
         $this->logger = $logger;
-        $this->jobFactory = $jobFactory;
     }
 
     /**
