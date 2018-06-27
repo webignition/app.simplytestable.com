@@ -28,3 +28,12 @@ services:
         resource: '../../src/SimplyTestable/ApiBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    # For silencing deprecation notices
+    ResqueBundle\Resque\Command\:
+        resource: '../../vendor/resquebundle/resque/Command'
+        tags: [console.command]
+
+    Cron\CronBundle\Command\:
+        resource: '../../vendor/cron/cron-bundle/Command'
+        tags: [console.command]
