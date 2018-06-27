@@ -38,7 +38,3 @@ before_script:
 
 script:
   - composer test-stop
-
-matrix:
-  allow_failures:
-  - php: 7.2
