@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services\Resque;
 
 use Mockery\Mock;
+use Psr\Log\LoggerInterface;
 use ResqueBundle\Resque\Job;
 use ResqueBundle\Resque\Resque;
 use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
@@ -131,7 +132,13 @@ class QueueServiceTest extends AbstractBaseTestCase
             ->with($queue)
             ->andThrow($credisException);
 
-        $queueService = $this->createQueueService($resque);
+        /* @var LoggerInterface|Mock $logger */
+        $logger = \Mockery::mock(LoggerInterface::class);
+        $logger
+            ->shouldReceive('warning')
+            ->with('ResqueQueueService::contains: Redis error []');
+
+        $queueService = $this->createQueueService($resque, $logger);
 
         $queueService->contains($queue);
     }
@@ -157,23 +164,35 @@ class QueueServiceTest extends AbstractBaseTestCase
             ->shouldReceive('enqueue')
             ->andThrow($credisException);
 
-        $queueService = $this->createQueueService($resque);
+        /* @var LoggerInterface|Mock $logger */
+        $logger = \Mockery::mock(LoggerInterface::class);
+        $logger
+            ->shouldReceive('warning')
+            ->with('ResqueQueueService::enqueue: Redis error []');
+
+        $queueService = $this->createQueueService($resque, $logger);
         $queueService->enqueue(new NotifyJob());
     }
 
     public function testIsEmptyFailure()
     {
+        $queue = 'tasks-notify';
         $credisException = \Mockery::mock(\CredisException::class);
 
         /* @var Mock|Resque $resque */
         $resque = \Mockery::mock(Resque::class);
         $resque
-            ->shouldReceive('enqueue')
+            ->shouldReceive('getQueue')
+            ->with($queue)
             ->andThrow($credisException);
 
-        $queueService = $this->createQueueService($resque);
+        /* @var LoggerInterface|Mock $logger */
+        $logger = \Mockery::mock(LoggerInterface::class);
+        $logger
+            ->shouldReceive('warning')
+            ->with('ResqueQueueService::isEmpty: Redis error []');
 
-        $queue = 'tasks-notify';
+        $queueService = $this->createQueueService($resque, $logger);
         $queueService->isEmpty($queue);
     }
 
@@ -187,13 +206,14 @@ class QueueServiceTest extends AbstractBaseTestCase
     /**
      * @param Resque $resque
      *
+     * @param LoggerInterface $logger
      * @return QueueService
      */
-    private function createQueueService(Resque $resque)
+    private function createQueueService(Resque $resque, LoggerInterface $logger)
     {
         return new QueueService(
             $resque,
-            $this->container->get('logger'),
+            $logger,
             'test'
         );
     }
