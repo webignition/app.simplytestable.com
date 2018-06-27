@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -52,7 +53,9 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
     {
         return [
             'no parent parameters, non-www parent url' => [
-                'crawlJob' => $this->createCrawlJob(),
+                'crawlJob' => $this->createCrawlJob([
+                    'canonical_url' => 'http://example.com/',
+                ]),
                 'parentUrl' => 'http://example.com/',
                 'taskUrl' => 'http://example.com/foo',
                 'expectedTaskParameters' => [
@@ -63,7 +66,9 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
                 ],
             ],
             'no parent parameters, www parent url' => [
-                'crawlJob' => $this->createCrawlJob(),
+                'crawlJob' => $this->createCrawlJob([
+                    'canonical_url' => 'http://example.com/',
+                ]),
                 'parentUrl' => 'http://www.example.com/',
                 'taskUrl' => 'http://www.example.com/foo',
                 'expectedTaskParameters' => [
@@ -75,6 +80,7 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
             ],
             'with parent parameters, non-www parent url' => [
                 'crawlJob' => $this->createCrawlJob([
+                    'canonical_url' => 'http://example.com/',
                     'parameters' => json_encode([
                         'foo' => 'bar',
                     ]),
@@ -103,6 +109,12 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
 
         if (isset($crawlJobValues['parameters'])) {
             $crawlJob->setParametersString($crawlJobValues['parameters']);
+        }
+
+        if (isset($crawlJobValues['canonical_url'])) {
+            $website = new WebSite();
+            $website->setCanonicalUrl($crawlJobValues['canonical_url']);
+            $crawlJob->setWebsite($website);
         }
 
         return $crawlJob;
