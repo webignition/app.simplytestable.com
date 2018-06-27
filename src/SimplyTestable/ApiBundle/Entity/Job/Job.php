@@ -465,26 +465,18 @@ class Job
     }
 
     /**
-     * @return array
-     */
-    public function getParametersArray()
-    {
-        $parametersArray = json_decode($this->getParameters(), true);
-
-        if (!is_array($parametersArray)) {
-            $parametersArray = [];
-        }
-
-        return $parametersArray;
-    }
-
-    /**
      * @return Parameters
      */
     public function getParametersObject()
     {
         if (empty($this->parametersObject)) {
-            $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $this->getParametersArray());
+            $parametersArray = json_decode($this->getParameters(), true);
+
+            if (!is_array($parametersArray)) {
+                $parametersArray = [];
+            }
+
+            $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $parametersArray);
         }
 
         return $this->parametersObject;

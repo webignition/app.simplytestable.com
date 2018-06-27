@@ -117,7 +117,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals($expectedUserEmail, $job->getUser()->getEmail());
         $this->assertEquals($expectedWebsiteUrl, $job->getWebsite()->getCanonicalUrl());
         $this->assertEquals($expectedJobTypeName, $job->getType()->getName());
-        $this->assertEquals($expectedJobParameters, $job->getParametersArray());
+        $this->assertEquals($expectedJobParameters, $job->getParametersObject()->getAsArray());
         $this->assertEquals($jobStartingState, $job->getState());
 
         $jobTaskTypes = $job->getTaskTypeCollection()->get();
