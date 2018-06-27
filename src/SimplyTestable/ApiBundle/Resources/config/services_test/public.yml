@@ -108,3 +108,6 @@ services:
       - '@SimplyTestable\ApiBundle\Services\StripeService'
       - '@SimplyTestable\ApiBundle\Services\Team\Service'
       - '%default_trial_period%'
+
+  FOS\UserBundle\Security\LoginManager:
+    alias: fos_user.security.login_manager
