@@ -15,3 +15,4 @@ parameters:
     postmark_from_name: "postmark from name"
     postmark_use_ssl: true
     postmark_timeout: 60
+    container.autowiring.strict_mode: true
