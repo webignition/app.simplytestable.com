@@ -62,7 +62,7 @@ class UrlDiscoveryTaskService
         if ($crawlJob->hasParameters()) {
             $taskParameters = array_merge(
                 $taskParameters,
-                json_decode($crawlJob->getParameters(), true)
+                $crawlJob->getParametersObject()->getAsArray()
             );
         }
 
