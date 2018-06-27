@@ -3,7 +3,6 @@ imports:
     - { resource: services/web-resource-retriever.yml }
     - { resource: services/event-listeners.yml }
     - { resource: services/commands.yml }
-    - { resource: services/resque-job-factory.yml }
     - { resource: services/legacy_aliases.yml }
 
 services:
