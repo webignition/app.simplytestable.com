@@ -121,3 +121,24 @@ services:
     arguments:
       $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
+
+  webignition\WebResource\Sitemap\Factory:
+
+  webignition\WebsiteSitemapFinder\WebsiteSitemapFinder:
+
+  webignition\WebResource\Retriever:
+    factory: 'SimplyTestable\ApiBundle\Services\WebResourceRetrieverFactory:create'
+
+  webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder:
+
+  webignition\Url\Resolver\Resolver:
+
+  SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
+    arguments:
+      $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
+      $parameters: "%stripe_webhook_developer_notification%"
+
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
+    arguments:
+      $taskPreprocessors:
+        - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
