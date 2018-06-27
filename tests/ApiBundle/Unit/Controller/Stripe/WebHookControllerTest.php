@@ -38,7 +38,6 @@ class WebHookControllerTest extends \PHPUnit_Framework_TestCase
             MockFactory::createEntityManager(),
             MockFactory::createStripeEventService(),
             MockFactory::createResqueQueueService(),
-            MockFactory::createResqueJobFactory(),
             MockFactory::createStripeWebHookMailNotificationSender(),
             $request
         );

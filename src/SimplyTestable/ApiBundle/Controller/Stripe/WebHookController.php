@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Stripe;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use webignition\ResqueJobFactory\ResqueJobFactory;
+use SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
@@ -19,7 +19,6 @@ class WebHookController
      * @param EntityManagerInterface $entityManager
      * @param StripeEventService $stripeEventService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param StripeWebHookMailNotificationSender $stripeWebHookMailNotification
      * @param Request $request
      *
@@ -29,7 +28,6 @@ class WebHookController
         EntityManagerInterface $entityManager,
         StripeEventService $stripeEventService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         StripeWebHookMailNotificationSender $stripeWebHookMailNotification,
         Request $request
     ) {
@@ -74,12 +72,7 @@ class WebHookController
             $user
         );
 
-        $resqueQueueService->enqueue(
-            $resqueJobFactory->create(
-                'stripe-event',
-                ['stripeId' => $stripeEvent->getStripeId()]
-            )
-        );
+        $resqueQueueService->enqueue(new ProcessEventJob(['stripeId' => $stripeEvent->getStripeId()]));
 
         return new JsonResponse($stripeEvent);
     }
