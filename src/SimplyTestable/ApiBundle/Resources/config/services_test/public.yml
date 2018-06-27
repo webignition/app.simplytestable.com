@@ -145,3 +145,6 @@ services:
 
   test.usermanipulator:
     alias: FOS\UserBundle\Util\UserManipulator
+
+  GuzzleHttp\Client:
+    factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
