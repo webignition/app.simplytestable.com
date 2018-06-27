@@ -2,13 +2,13 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job;
 
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
 /**
  * @group Controller/Job/JobListController
  */
-class JobListControllerTest extends AbstractBaseTestCase
+class JobListControllerTest extends AbstractControllerTest
 {
     public function testCountActionGetRequest()
     {

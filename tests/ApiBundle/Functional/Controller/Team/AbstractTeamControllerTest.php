@@ -5,9 +5,9 @@ namespace Tests\ApiBundle\Functional\Controller\Team;
 use SimplyTestable\ApiBundle\Controller\TeamController;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractTeamControllerTest extends AbstractBaseTestCase
+abstract class AbstractTeamControllerTest extends AbstractControllerTest
 {
     /**
      * @var TeamController

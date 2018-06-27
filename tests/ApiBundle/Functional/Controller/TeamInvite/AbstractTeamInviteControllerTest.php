@@ -3,13 +3,11 @@
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
 use SimplyTestable\ApiBundle\Controller\TeamInviteController;
-use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use Symfony\Component\HttpFoundation\Request;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractTeamInviteControllerTest extends AbstractBaseTestCase
+abstract class AbstractTeamInviteControllerTest extends AbstractControllerTest
 {
     /**
      * @var TeamInviteController

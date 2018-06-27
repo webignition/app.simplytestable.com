@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * @group Controller/UserCreationController
  */
-class UserCreationControllerTest extends AbstractBaseTestCase
+class UserCreationControllerTest extends AbstractControllerTest
 {
     /**
      * @var UserCreationController

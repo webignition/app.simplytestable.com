@@ -7,9 +7,9 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractUserEmailChangeControllerTest extends AbstractBaseTestCase
+abstract class AbstractUserEmailChangeControllerTest extends AbstractControllerTest
 {
     /**
      * @var UserEmailChangeController

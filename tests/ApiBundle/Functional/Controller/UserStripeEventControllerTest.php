@@ -5,12 +5,11 @@ namespace Tests\ApiBundle\Functional\Controller;
 use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 /**
  * @group Controller/UserStripeEventController
  */
-class UserStripeEventControllerTest extends AbstractBaseTestCase
+class UserStripeEventControllerTest extends AbstractControllerTest
 {
     /**
      * @var UserStripeEventController

@@ -11,12 +11,12 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\MockFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
+use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
 
-abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
+abstract class AbstractTaskControllerTest extends AbstractControllerTest
 {
     /**
      * @var TaskController
