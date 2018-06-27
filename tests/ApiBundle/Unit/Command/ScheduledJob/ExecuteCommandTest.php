@@ -16,16 +16,6 @@ class ExecuteCommandTest extends \PHPUnit_Framework_TestCase
 
         $resqueExecuteJob = \Mockery::mock(ExecuteJob::class);
 
-        $resqueJobFactory = MockFactory::createResqueJobFactory([
-            'create' => [
-                'withArgs' => [
-                    'scheduledjob-execute',
-                    ['id' => $scheduledJobId]
-                ],
-                'return' => $resqueExecuteJob,
-            ],
-        ]);
-
         $resqueQueueService = MockFactory::createResqueQueueService([
             'contains' => [
                 'withArgs' => [
@@ -39,10 +29,22 @@ class ExecuteCommandTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
+        $resqueQueueService
+            ->shouldReceive('contains')
+            ->with('scheduledjob-execute', ['id' => $scheduledJobId])
+            ->andReturn(false);
+
+        $resqueQueueService
+            ->shouldReceive('enqueue')
+            ->withArgs(function (ExecuteJob $executeJob) use ($scheduledJobId) {
+                $this->assertEquals($scheduledJobId, $executeJob->args['id']);
+
+                return true;
+            });
+
         $command = new ExecuteCommand(
             MockFactory::createApplicationStateService(true),
             $resqueQueueService,
-            $resqueJobFactory,
             MockFactory::createEntityManager(),
             MockFactory::createJobStartService(),
             MockFactory::createJobService()
