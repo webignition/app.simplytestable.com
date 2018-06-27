@@ -428,7 +428,7 @@ class ModelFactory
         }
 
         if (isset($jobValues[self::JOB_PARAMETERS])) {
-            $job->setParameters($jobValues[self::JOB_PARAMETERS]);
+            $job->setParametersString($jobValues[self::JOB_PARAMETERS]);
         }
 
         return $job;

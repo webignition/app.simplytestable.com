@@ -32,7 +32,7 @@ class ParametersTest extends AbstractBaseTestCase
     public function testSetPersistGetParameters()
     {
         $job = $this->jobFactory->create();
-        $job->setParameters(json_encode(array(
+        $job->setParametersString(json_encode(array(
             'foo' => 'bar'
         )));
 
@@ -49,7 +49,7 @@ class ParametersTest extends AbstractBaseTestCase
         $value = 'value-ɸ';
 
         $job = $this->jobFactory->create();
-        $job->setParameters(json_encode(array(
+        $job->setParametersString(json_encode(array(
             $key => $value
         )));
 

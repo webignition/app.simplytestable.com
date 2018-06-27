@@ -434,7 +434,7 @@ class Job
     /**
      * @param string $parameters
      */
-    public function setParameters($parameters)
+    public function setParametersString($parameters)
     {
         $this->parameters = $parameters;
         $this->parametersObject = null;

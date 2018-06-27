@@ -102,7 +102,7 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
         $crawlJob = new Job();
 
         if (isset($crawlJobValues['parameters'])) {
-            $crawlJob->setParameters($crawlJobValues['parameters']);
+            $crawlJob->setParametersString($crawlJobValues['parameters']);
         }
 
         return $crawlJob;
