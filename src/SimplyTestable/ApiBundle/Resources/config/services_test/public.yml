@@ -100,3 +100,11 @@ services:
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
 
   SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:
+
+  SimplyTestable\ApiBundle\Services\UserAccountPlanService:
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@SimplyTestable\ApiBundle\Services\UserService'
+      - '@SimplyTestable\ApiBundle\Services\StripeService'
+      - '@SimplyTestable\ApiBundle\Services\Team\Service'
+      - '%default_trial_period%'
