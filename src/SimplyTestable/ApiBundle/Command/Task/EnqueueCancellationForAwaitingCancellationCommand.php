@@ -1,10 +1,11 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\Task;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\Console\Command\Command;
@@ -37,16 +38,10 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
     private $resqueQueueService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param string|null $name
      */
     public function __construct(
@@ -54,7 +49,6 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
         EntityManagerInterface $entityManager,
         StateService $stateService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         $name = null
     ) {
         parent::__construct($name);
@@ -63,7 +57,6 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
     }
 
     /**
@@ -100,13 +93,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
         }
 
         $output->writeln('Enqueuing for cancellation tasks '.  implode(',', $taskIds));
-
-        $this->resqueQueueService->enqueue(
-            $this->resqueJobFactory->create(
-                'task-cancel-collection',
-                ['ids' => implode(',', $taskIds)]
-            )
-        );
+        $this->resqueQueueService->enqueue(new CancelCollectionJob(['ids' => implode(',', $taskIds)]));
 
         return self::RETURN_CODE_OK;
     }
