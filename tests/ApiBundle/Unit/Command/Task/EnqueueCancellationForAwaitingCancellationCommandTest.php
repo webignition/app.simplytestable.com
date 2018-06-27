@@ -15,8 +15,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends \PHPUnit_Fra
             MockFactory::createApplicationStateService(true),
             MockFactory::createEntityManager(),
             MockFactory::createStateService(),
-            MockFactory::createResqueQueueService(),
-            MockFactory::createResqueJobFactory()
+            MockFactory::createResqueQueueService()
         );
 
         $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());
