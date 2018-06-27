@@ -1,4 +1,5 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -6,13 +7,13 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
     as UserAccountPlanEnforcementException;
 use webignition\NormalisedUrl\NormalisedUrl;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -56,11 +57,6 @@ class StartService
     private $userAccountPlanService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @var JobRepository
      */
     private $jobRepository;
@@ -78,7 +74,6 @@ class StartService
      * @param ResqueQueueService $resqueQueueService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
@@ -89,7 +84,6 @@ class StartService
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        ResqueJobFactory $resqueJobFactory,
         EntityManagerInterface $entityManager
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
@@ -99,7 +93,6 @@ class StartService
         $this->resqueQueueService = $resqueQueueService;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->entityManager = $entityManager;
 
         $this->jobRepository = $entityManager->getRepository(Job::class);
@@ -187,12 +180,7 @@ class StartService
             $this->entityManager->flush();
         }
 
-        $this->resqueQueueService->enqueue(
-            $this->resqueJobFactory->create(
-                'job-resolve',
-                ['id' => $job->getId()]
-            )
-        );
+        $this->resqueQueueService->enqueue(new ResolveJob(['id' => $job->getId()]));
 
         return $job;
     }
