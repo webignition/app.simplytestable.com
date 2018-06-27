@@ -9,7 +9,6 @@ services:
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      $resqueJobFactory: '@webignition\ResqueJobFactory\ResqueJobFactory'
       $jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       $crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       $logger: '@logger'
