@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Factory;
 
-use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\Team\Service;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -45,7 +44,11 @@ class UserFactory
     public function createAndActivateUser($userValues = [])
     {
         $user = $this->create($userValues);
-        $this->activate($user);
+        $user->setEnabled(true);
+
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         return $user;
     }
@@ -81,15 +84,6 @@ class UserFactory
         }
 
         return $user;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function activate(User $user)
-    {
-        $userManipulator = $this->container->get(UserManipulator::class);
-        $userManipulator->activate($user->getEmail());
     }
 
     /**
