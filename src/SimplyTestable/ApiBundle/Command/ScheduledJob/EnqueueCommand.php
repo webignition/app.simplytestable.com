@@ -1,8 +1,9 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
 use Psr\Log\LoggerInterface;
-use webignition\ResqueJobFactory\ResqueJobFactory;
+use SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,31 +18,23 @@ class EnqueueCommand extends Command
     private $resqueQueueService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param LoggerInterface $logger
      * @param string|null $name
      */
     public function __construct(
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         LoggerInterface $logger,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->logger = $logger;
     }
 
@@ -77,13 +70,7 @@ class EnqueueCommand extends Command
                 'simplytestable:scheduledjob:enqueue [' . $scheduleJobId. '] already in execute queue'
             );
         } else {
-            $this->resqueQueueService->enqueue(
-                $this->resqueJobFactory->create(
-                    'scheduledjob-execute',
-                    ['id' => $scheduleJobId]
-                )
-            );
-
+            $this->resqueQueueService->enqueue(new ExecuteJob(['id' => $scheduleJobId]));
             $this->logger->notice('simplytestable:scheduledjob:enqueue [' . $scheduleJobId . '] enqueuing');
         }
 
