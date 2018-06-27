@@ -142,3 +142,6 @@ services:
     arguments:
       $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
+
+  test.usermanipulator:
+    alias: FOS\UserBundle\Util\UserManipulator
