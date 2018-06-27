@@ -453,7 +453,7 @@ class Job
      */
     public function hasParameters()
     {
-        return $this->getParameters() != '';
+        return !empty($this->parameters);
     }
 
     /**
@@ -462,7 +462,7 @@ class Job
     public function getParametersObject()
     {
         if (empty($this->parametersObject)) {
-            $parametersArray = json_decode($this->getParameters(), true);
+            $parametersArray = json_decode($this->parameters, true);
 
             if (!is_array($parametersArray)) {
                 $parametersArray = [];
