@@ -14,7 +14,6 @@ class ResolveWebsiteCommandTest extends \PHPUnit_Framework_TestCase
         $command = new ResolveWebsiteCommand(
             MockFactory::createApplicationStateService(true),
             MockFactory::createResqueQueueService(),
-            MockFactory::createResqueJobFactory(),
             MockFactory::createWebsiteResolutionService(),
             MockFactory::createJobPreparationService(),
             MockFactory::createEntityManager(),

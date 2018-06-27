@@ -4,11 +4,12 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
+use SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob;
+use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,11 +36,6 @@ class ResolveWebsiteCommand extends Command
     private $resqueQueueService;
 
     /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
-
-    /**
      * @var WebsiteResolutionService
      */
     private $websiteResolutionService;
@@ -62,7 +58,6 @@ class ResolveWebsiteCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param WebsiteResolutionService $websiteResolutionService
      * @param JobPreparationService $jobPreparationService
      * @param EntityManagerInterface $entityManager
@@ -72,7 +67,6 @@ class ResolveWebsiteCommand extends Command
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
         EntityManagerInterface $entityManager,
@@ -83,7 +77,6 @@ class ResolveWebsiteCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
@@ -140,20 +133,9 @@ class ResolveWebsiteCommand extends Command
             }
 
             $this->jobPreparationService->prepare($job);
-
-            $this->resqueQueueService->enqueue(
-                $this->resqueJobFactory->create(
-                    'task-assign-collection',
-                    ['ids' => implode(',', $job->getTaskIds())]
-                )
-            );
+            $this->resqueQueueService->enqueue(new AssignCollectionJob(['ids' => implode(',', $job->getTaskIds())]));
         } else {
-            $this->resqueQueueService->enqueue(
-                $this->resqueJobFactory->create(
-                    'job-prepare',
-                    ['id' => $job->getId()]
-                )
-            );
+            $this->resqueQueueService->enqueue(new PrepareJob(['id' => $job->getId()]));
         }
 
         return self::RETURN_CODE_OK;
