@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Postmark\Sender;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -375,7 +374,6 @@ class WebHookControllerTest extends AbstractBaseTestCase
             $this->container->get('doctrine.orm.entity_manager'),
             $this->container->get(StripeEventService::class),
             $this->container->get(ResqueQueueService::class),
-            $this->container->get(ResqueJobFactory::class),
             $this->container->get(StripeWebHookMailNotificationSender::class),
             $request
         );
