@@ -1,10 +1,11 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\Console\Command\Command;
@@ -20,11 +21,6 @@ class EnqueuePrepareAllCommand extends Command
      * @var ResqueQueueService
      */
     private $resqueQueueService;
-
-    /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
 
     /**
      * @var StateService
@@ -43,7 +39,6 @@ class EnqueuePrepareAllCommand extends Command
 
     /**
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
      * @param ApplicationStateService $applicationStateService
      * @param EntityManagerInterface $entityManager
@@ -51,7 +46,6 @@ class EnqueuePrepareAllCommand extends Command
      */
     public function __construct(
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
@@ -60,7 +54,6 @@ class EnqueuePrepareAllCommand extends Command
         parent::__construct($name);
 
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
@@ -94,13 +87,7 @@ class EnqueuePrepareAllCommand extends Command
 
         foreach ($jobIds as $jobId) {
             $output->writeln('Enqueuing prepare for job '.$jobId);
-
-            $this->resqueQueueService->enqueue(
-                $this->resqueJobFactory->create(
-                    'job-prepare',
-                    ['id' => $jobId]
-                )
-            );
+            $this->resqueQueueService->enqueue(new PrepareJob(['id' => $jobId]));
         }
 
         return self::RETURN_CODE_OK;

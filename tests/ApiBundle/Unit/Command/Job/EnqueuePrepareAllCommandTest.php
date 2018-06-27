@@ -13,7 +13,6 @@ class EnqueuePrepareAllCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new EnqueuePrepareAllCommand(
             MockFactory::createResqueQueueService(),
-            MockFactory::createResqueJobFactory(),
             MockFactory::createStateService(),
             MockFactory::createApplicationStateService(true),
             MockFactory::createEntityManager()
