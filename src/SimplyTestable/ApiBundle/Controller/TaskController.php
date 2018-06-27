@@ -9,11 +9,11 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
@@ -57,7 +57,6 @@ class TaskController
     /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param CompleteRequestFactory $completeRequestFactory
      * @param TaskService $taskService
      * @param JobService $jobService
@@ -73,7 +72,6 @@ class TaskController
     public function completeAction(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         CompleteRequestFactory $completeRequestFactory,
         TaskService $taskService,
         JobService $jobService,
@@ -163,11 +161,7 @@ class TaskController
                     }
                 }
 
-                $resqueQueueService->enqueue(
-                    $resqueJobFactory->create(
-                        'tasks-notify'
-                    )
-                );
+                $resqueQueueService->enqueue(new NotifyJob());
             }
         }
 

@@ -18,7 +18,6 @@ use Tests\ApiBundle\Factory\MockFactory;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
@@ -105,10 +104,6 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
             $services[ResqueQueueService::class] = MockFactory::createResqueQueueService();
         }
 
-        if (!isset($services[ResqueJobFactory::class])) {
-            $services[ResqueJobFactory::class] = MockFactory::createResqueJobFactory();
-        }
-
         if (!isset($services[CompleteRequestFactory::class])) {
             $services[CompleteRequestFactory::class] = MockFactory::createCompleteRequestFactory();
         }
@@ -148,7 +143,6 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
         return $taskController->completeAction(
             $services[ApplicationStateService::class],
             $services[ResqueQueueService::class],
-            $services[ResqueJobFactory::class],
             $services[CompleteRequestFactory::class],
             $services[TaskService::class],
             $services[JobService::class],

@@ -18,7 +18,6 @@ use Tests\ApiBundle\Factory\MockFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
@@ -325,7 +324,6 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         return $taskController->completeAction(
             MockFactory::createApplicationStateService(),
             $this->container->get(ResqueQueueService::class),
-            $this->container->get(ResqueJobFactory::class),
             $this->container->get(CompleteRequestFactory::class),
             $this->container->get(TaskService::class),
             $this->container->get(JobService::class),
