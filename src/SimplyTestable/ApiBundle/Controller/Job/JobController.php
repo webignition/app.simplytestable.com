@@ -7,13 +7,14 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob;
+use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -266,7 +267,6 @@ class JobController
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param JobPreparationService $jobPreparationService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
      * @param TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService
      * @param string $site_root_url
@@ -280,7 +280,6 @@ class JobController
         CrawlJobContainerService $crawlJobContainerService,
         JobPreparationService $jobPreparationService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
         TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService,
         $site_root_url,
@@ -310,7 +309,6 @@ class JobController
                     $crawlJobContainerService,
                     $jobPreparationService,
                     $resqueQueueService,
-                    $resqueJobFactory,
                     $stateService,
                     $taskTypeDomainsToIgnoreService,
                     $site_root_url,
@@ -333,12 +331,7 @@ class JobController
                 }
 
                 $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
-
-                $resqueQueueService->enqueue(
-                    $resqueJobFactory->create(
-                        'tasks-notify'
-                    )
-                );
+                $resqueQueueService->enqueue(new NotifyJob());
             }
         }
 
@@ -367,12 +360,7 @@ class JobController
         }
 
         if (count($taskIdsToCancel) > 0) {
-            $resqueQueueService->enqueue(
-                $resqueJobFactory->create(
-                    'task-cancel-collection',
-                    ['ids' => implode(',', $taskIdsToCancel)]
-                )
-            );
+            $resqueQueueService->enqueue(new CancelCollectionJob(['ids' => implode(',', $taskIdsToCancel)]));
         }
 
         return new Response();

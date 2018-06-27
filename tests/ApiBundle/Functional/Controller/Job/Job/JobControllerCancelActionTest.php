@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\MockFactory;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
@@ -214,7 +213,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             $this->container->get(CrawlJobContainerService::class),
             $this->container->get(JobPreparationService::class),
             $this->container->get(ResqueQueueService::class),
-            $this->container->get(ResqueJobFactory::class),
             $this->container->get(StateService::class),
             $taskTypeDomainsToIgnoreService,
             $siteRootUrl,
