@@ -146,7 +146,7 @@ class CrawlJobContainerService
         $crawlJob->setState($jobStartingState);
         $crawlJob->setUser($job->getUser());
         $crawlJob->setWebsite($job->getWebsite());
-        $crawlJob->setParametersString($job->getParameters());
+        $crawlJob->setParametersString($job->getParametersString());
 
         $this->entityManager->persist($crawlJob);
 

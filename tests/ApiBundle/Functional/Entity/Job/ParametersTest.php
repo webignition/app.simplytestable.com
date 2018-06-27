@@ -40,7 +40,7 @@ class ParametersTest extends AbstractBaseTestCase
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $this->assertEquals('{"foo":"bar"}', $job->getParameters());
+        $this->assertEquals('{"foo":"bar"}', $job->getParametersString());
     }
 
     public function testUtf8()
@@ -57,6 +57,6 @@ class ParametersTest extends AbstractBaseTestCase
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $this->assertEquals('{"key-\u0278":"value-\u0278"}', $job->getParameters());
+        $this->assertEquals('{"key-\u0278":"value-\u0278"}', $job->getParametersString());
     }
 }

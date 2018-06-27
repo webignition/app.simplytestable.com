@@ -443,7 +443,7 @@ class Job
     /**
      * @return string
      */
-    public function getParameters()
+    public function getParametersString()
     {
         return $this->parameters;
     }
