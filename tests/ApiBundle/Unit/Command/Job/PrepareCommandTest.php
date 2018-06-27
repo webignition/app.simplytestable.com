@@ -14,28 +14,18 @@ class PrepareCommandTest extends \PHPUnit_Framework_TestCase
     {
         $jobId = 1;
 
-        $resqueJobPrepareJob = \Mockery::mock(PrepareJob::class);
+        $resqueQueueService = MockFactory::createResqueQueueService();
+        $resqueQueueService
+            ->shouldReceive('enqueue')
+            ->withArgs(function (PrepareJob $prepareJob) use ($jobId) {
+                $this->assertEquals(['id' => $jobId], $prepareJob->args);
 
-        $resqueJobFactory = MockFactory::createResqueJobFactory([
-            'create' => [
-                'withArgs' => [
-                    'job-prepare',
-                    ['id' => $jobId]
-                ],
-                'return' => $resqueJobPrepareJob,
-            ],
-        ]);
-
-        $resqueQueueService = MockFactory::createResqueQueueService([
-            'enqueue' => [
-                'with' => $resqueJobPrepareJob,
-            ],
-        ]);
+                return true;
+            });
 
         $command = new PrepareCommand(
             MockFactory::createApplicationStateService(true),
             $resqueQueueService,
-            $resqueJobFactory,
             MockFactory::createJobPreparationService(),
             MockFactory::createCrawlJobContainerService(),
             MockFactory::createLogger(),

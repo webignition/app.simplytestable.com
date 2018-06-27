@@ -1,14 +1,17 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Command\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
+use SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob;
+use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
+use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use webignition\ResqueJobFactory\ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,11 +36,6 @@ class PrepareCommand extends Command
      * @var ResqueQueueService
      */
     private $resqueQueueService;
-
-    /**
-     * @var ResqueJobFactory
-     */
-    private $resqueJobFactory;
 
     /**
      * @var JobPreparationService
@@ -66,7 +64,6 @@ class PrepareCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
-     * @param ResqueJobFactory $resqueJobFactory
      * @param JobPreparationService $jobPreparationService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param LoggerInterface $logger
@@ -77,7 +74,6 @@ class PrepareCommand extends Command
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
-        ResqueJobFactory $resqueJobFactory,
         JobPreparationService $jobPreparationService,
         CrawlJobContainerService $crawlJobContainerService,
         LoggerInterface $logger,
@@ -89,7 +85,6 @@ class PrepareCommand extends Command
 
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
-        $this->resqueJobFactory = $resqueJobFactory;
         $this->jobPreparationService = $jobPreparationService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->logger = $logger;
@@ -115,12 +110,7 @@ class PrepareCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($this->applicationStateService->isInReadOnlyMode()) {
-            $this->resqueQueueService->enqueue(
-                $this->resqueJobFactory->create(
-                    'job-prepare',
-                    ['id' => (int)$input->getArgument('id')]
-                )
-            );
+            $this->resqueQueueService->enqueue(new PrepareJob(['id' => (int)$input->getArgument('id')]));
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
@@ -149,21 +139,14 @@ class PrepareCommand extends Command
             $this->jobPreparationService->prepare($job);
 
             if ($job->getTasks()->count()) {
-                $this->resqueQueueService->enqueue(
-                    $this->resqueJobFactory->create(
-                        'tasks-notify'
-                    )
-                );
+                $this->resqueQueueService->enqueue(new NotifyJob());
             } else {
                 if ($this->crawlJobContainerService->hasForJob($job)) {
                     $crawlJob = $this->crawlJobContainerService->getForJob($job)->getCrawlJob();
 
-                    $this->resqueQueueService->enqueue(
-                        $this->resqueJobFactory->create(
-                            'task-assign-collection',
-                            ['ids' => $crawlJob->getTasks()->first()->getId()]
-                        )
-                    );
+                    $this->resqueQueueService->enqueue(new AssignCollectionJob([
+                        'ids' => $crawlJob->getTasks()->first()->getId()
+                    ]));
                 }
             }
 
