@@ -50,8 +50,9 @@ services:
 
   SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
     arguments:
-      $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
-      $parameters: "%stripe_webhook_developer_notification%"
+      - '@Postmark\PostmarkClient'
+      - '@logger'
+      - '%stripe_webhook_developer_notification%'
 
   # Needs to be explicitly defined to be used in a resque context
   # Is otherwise autowired and autoconfigured correctly when injected from the main DIC
@@ -71,3 +72,9 @@ services:
   webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder:
     arguments:
       - '@GuzzleHttp\Client'
+
+  Postmark\PostmarkClient:
+    arguments:
+      - '%postmark_api_key%'
+    calls:
+      - [setClient, ['@GuzzleHttp\Client']]
