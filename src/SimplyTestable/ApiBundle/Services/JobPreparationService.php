@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Model\Parameters;
 use webignition\NormalisedUrl\NormalisedUrl;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationServiceException;
@@ -267,6 +268,7 @@ class JobPreparationService
         $requestedTaskTypes = $job->getRequestedTaskTypes();
 
         $newTaskState = $this->stateService->get(Task::STATE_QUEUED);
+        $jobParameters = $job->getParameters();
 
         foreach ($urls as $url) {
             $comparatorUrl = new NormalisedUrl($url);
@@ -282,10 +284,11 @@ class JobPreparationService
 
                     $job->addTask($task);
 
-                    $parameters = [];
+                    $taskParameters = new Parameters();
+                    $taskParameters->merge($jobParameters);
 
                     if ($taskTypeOptions->getOptionCount()) {
-                        $parameters = $taskTypeOptions->getOptions();
+                         $taskParameters->merge(new Parameters($taskTypeOptions->getOptions()));
 
                         $domainsToIgnore = $this->getDomainsToIgnore(
                             $taskTypeOptions,
@@ -293,16 +296,11 @@ class JobPreparationService
                         );
 
                         if (count($domainsToIgnore)) {
-                            $parameters['domains-to-ignore'] = $domainsToIgnore;
+                            $taskParameters->set('domains-to-ignore', $domainsToIgnore);
                         }
                     }
 
-                    if ($job->hasParameters()) {
-                        $parameters = array_merge($parameters, $job->getParameters()->getAsArray());
-                    }
-
-                    $task->setParameters(json_encode($parameters));
-
+                    $task->setParameters((string)$taskParameters);
                     $this->entityManager->persist($task);
                 }
 
