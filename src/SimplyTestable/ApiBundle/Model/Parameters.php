@@ -101,6 +101,17 @@ class Parameters
     }
 
     /**
+     * @param Parameters $parameters
+     */
+    public function merge(Parameters $parameters)
+    {
+        $this->parameters = array_merge(
+            $this->parameters,
+            $parameters->getAsArray()
+        );
+    }
+
+    /**
      * @param string $key
      *
      * @return bool

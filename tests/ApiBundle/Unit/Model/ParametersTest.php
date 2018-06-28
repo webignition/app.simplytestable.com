@@ -253,4 +253,67 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar-value', $parameters->get('bar-key'));
         $this->assertNull($parameters->get('foobar-key'));
     }
+
+    /**
+     * @dataProvider mergeDataProvider
+     *
+     * @param Parameters $originalParameters
+     * @param Parameters $mergeParameters
+     * @param array $expectedParametersArray
+     */
+    public function testMerge(
+        Parameters $originalParameters,
+        Parameters $mergeParameters,
+        array $expectedParametersArray
+    ) {
+        $originalParameters->merge($mergeParameters);
+        $this->assertEquals($expectedParametersArray, $originalParameters->getAsArray());
+    }
+
+    /**
+     * @return array
+     */
+    public function mergeDataProvider()
+    {
+        return [
+            'both empty' => [
+                'originalParameters' =>  new Parameters(),
+                'mergeParameters' =>  new Parameters(),
+                'expectedParametersArray' =>  [],
+            ],
+            'original parameters empty' => [
+                'originalParameters' =>  new Parameters(),
+                'mergeParameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'expectedParametersArray' =>  [
+                    'foo' => 'bar',
+                ],
+            ],
+            'merge parameters empty' => [
+                'originalParameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'mergeParameters' =>  new Parameters(),
+                'expectedParametersArray' =>  [
+                    'foo' => 'bar',
+                ],
+            ],
+            'merge parameters overwrite original parameters' => [
+                'originalParameters' =>  new Parameters([
+                    'foo' => 'original-foo-value',
+                    'foobar' => 'foobar-value',
+                ]),
+                'mergeParameters' =>  new Parameters([
+                    'foo' => 'updated-foo-value',
+                    'bar' => 'bar-value'
+                ]),
+                'expectedParametersArray' =>  [
+                    'foo' => 'updated-foo-value',
+                    'foobar' => 'foobar-value',
+                    'bar' => 'bar-value'
+                ],
+            ],
+        ];
+    }
 }
