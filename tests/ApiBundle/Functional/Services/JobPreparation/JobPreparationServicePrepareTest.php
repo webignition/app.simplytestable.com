@@ -70,8 +70,8 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
         if ($expectedHasCrawlJobContainer) {
             $crawlJob = $this->crawlJobContainerService->getForJob($job)->getCrawlJob();
             $this->assertEquals(
-                $job->getParametersObject()->getAsArray(),
-                $crawlJob->getParametersObject()->getAsArray()
+                $job->getParameters()->getAsArray(),
+                $crawlJob->getParameters()->getAsArray()
             );
         }
 

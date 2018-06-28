@@ -298,7 +298,7 @@ class JobPreparationService
                     }
 
                     if ($job->hasParameters()) {
-                        $parameters = array_merge($parameters, $job->getParametersObject()->getAsArray());
+                        $parameters = array_merge($parameters, $job->getParameters()->getAsArray());
                     }
 
                     $task->setParameters(json_encode($parameters));

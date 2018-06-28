@@ -459,7 +459,7 @@ class Job
     /**
      * @return Parameters
      */
-    public function getParametersObject()
+    public function getParameters()
     {
         if (empty($this->parametersObject)) {
             $parametersArray = json_decode($this->parameters, true);

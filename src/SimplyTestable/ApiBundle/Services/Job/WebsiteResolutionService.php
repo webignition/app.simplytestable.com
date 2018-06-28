@@ -95,7 +95,7 @@ class WebsiteResolutionService
         $this->entityManager->persist($job);
         $this->entityManager->flush();
 
-        $jobParametersObject = $job->getParametersObject();
+        $jobParametersObject = $job->getParameters();
 
         $cookies = $jobParametersObject->getCookies();
         if (!empty($cookies)) {
