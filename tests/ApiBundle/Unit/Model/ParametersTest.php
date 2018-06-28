@@ -316,4 +316,66 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider jsonSerializeDataProvider
+     *
+     * @param Parameters $parameters
+     * @param array $expectedSerializedParameters
+     */
+    public function testJsonSerialize(Parameters $parameters, array $expectedSerializedParameters)
+    {
+        $this->assertEquals($expectedSerializedParameters, $parameters->jsonSerialize());
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerializeDataProvider()
+    {
+        return [
+            'empty' => [
+                'parameters' =>  new Parameters(),
+                'expectedSerializedParameters' =>  [],
+            ],
+            'non-empty' => [
+                'parameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'expectedSerializedParameters' =>  [
+                    'foo' => 'bar',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider toStringDataProvider
+     *
+     * @param Parameters $parameters
+     * @param string $expectedParametersString
+     */
+    public function testToString(Parameters $parameters, $expectedParametersString)
+    {
+        $this->assertEquals($expectedParametersString, (string)$parameters);
+    }
+
+    /**
+     * @return array
+     */
+    public function toStringDataProvider()
+    {
+        return [
+            'empty' => [
+                'parameters' =>  new Parameters(),
+                'expectedParametersString' =>  '',
+            ],
+            'non-empty' => [
+                'parameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'expectedParametersString' =>  '{"foo":"bar"}',
+            ],
+        ];
+    }
 }

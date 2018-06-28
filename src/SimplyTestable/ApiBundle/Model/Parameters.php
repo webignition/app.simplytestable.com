@@ -6,7 +6,7 @@ use GuzzleHttp\Cookie\SetCookie;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
 use webignition\NormalisedUrl\NormalisedUrl;
 
-class Parameters
+class Parameters implements \JsonSerializable
 {
     const PARAMETER_KEY_COOKIES = 'cookies';
     const PARAMETER_HTTP_AUTH_USERNAME = 'http-auth-username';
@@ -119,5 +119,21 @@ class Parameters
     private function has($key)
     {
         return array_key_exists($key, $this->parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return empty($this->parameters) ? '' : json_encode($this);
     }
 }
