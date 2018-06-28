@@ -226,4 +226,156 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $parameters = new Parameters($parametersArray);
         $this->assertEquals($parametersArray, $parameters->getAsArray());
     }
+
+    public function testGet()
+    {
+        $parameters = new Parameters([
+            'foo-key' => 'foo-value',
+            'bar-key' => 'bar-value',
+        ]);
+
+        $this->assertEquals('foo-value', $parameters->get('foo-key'));
+        $this->assertEquals('bar-value', $parameters->get('bar-key'));
+        $this->assertNull($parameters->get('foobar-key'));
+    }
+
+    public function testSet()
+    {
+        $parameters = new Parameters();
+
+        $this->assertNull($parameters->get('foo-key'));
+        $this->assertNull($parameters->get('bar-key'));
+
+        $parameters->set('foo-key', 'foo-value');
+        $parameters->set('bar-key', 'bar-value');
+
+        $this->assertEquals('foo-value', $parameters->get('foo-key'));
+        $this->assertEquals('bar-value', $parameters->get('bar-key'));
+        $this->assertNull($parameters->get('foobar-key'));
+    }
+
+    /**
+     * @dataProvider mergeDataProvider
+     *
+     * @param Parameters $originalParameters
+     * @param Parameters $mergeParameters
+     * @param array $expectedParametersArray
+     */
+    public function testMerge(
+        Parameters $originalParameters,
+        Parameters $mergeParameters,
+        array $expectedParametersArray
+    ) {
+        $originalParameters->merge($mergeParameters);
+        $this->assertEquals($expectedParametersArray, $originalParameters->getAsArray());
+    }
+
+    /**
+     * @return array
+     */
+    public function mergeDataProvider()
+    {
+        return [
+            'both empty' => [
+                'originalParameters' =>  new Parameters(),
+                'mergeParameters' =>  new Parameters(),
+                'expectedParametersArray' =>  [],
+            ],
+            'original parameters empty' => [
+                'originalParameters' =>  new Parameters(),
+                'mergeParameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'expectedParametersArray' =>  [
+                    'foo' => 'bar',
+                ],
+            ],
+            'merge parameters empty' => [
+                'originalParameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'mergeParameters' =>  new Parameters(),
+                'expectedParametersArray' =>  [
+                    'foo' => 'bar',
+                ],
+            ],
+            'merge parameters overwrite original parameters' => [
+                'originalParameters' =>  new Parameters([
+                    'foo' => 'original-foo-value',
+                    'foobar' => 'foobar-value',
+                ]),
+                'mergeParameters' =>  new Parameters([
+                    'foo' => 'updated-foo-value',
+                    'bar' => 'bar-value'
+                ]),
+                'expectedParametersArray' =>  [
+                    'foo' => 'updated-foo-value',
+                    'foobar' => 'foobar-value',
+                    'bar' => 'bar-value'
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider jsonSerializeDataProvider
+     *
+     * @param Parameters $parameters
+     * @param array $expectedSerializedParameters
+     */
+    public function testJsonSerialize(Parameters $parameters, array $expectedSerializedParameters)
+    {
+        $this->assertEquals($expectedSerializedParameters, $parameters->jsonSerialize());
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerializeDataProvider()
+    {
+        return [
+            'empty' => [
+                'parameters' =>  new Parameters(),
+                'expectedSerializedParameters' =>  [],
+            ],
+            'non-empty' => [
+                'parameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'expectedSerializedParameters' =>  [
+                    'foo' => 'bar',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider toStringDataProvider
+     *
+     * @param Parameters $parameters
+     * @param string $expectedParametersString
+     */
+    public function testToString(Parameters $parameters, $expectedParametersString)
+    {
+        $this->assertEquals($expectedParametersString, (string)$parameters);
+    }
+
+    /**
+     * @return array
+     */
+    public function toStringDataProvider()
+    {
+        return [
+            'empty' => [
+                'parameters' =>  new Parameters(),
+                'expectedParametersString' =>  '',
+            ],
+            'non-empty' => [
+                'parameters' =>  new Parameters([
+                    'foo' => 'bar',
+                ]),
+                'expectedParametersString' =>  '{"foo":"bar"}',
+            ],
+        ];
+    }
 }

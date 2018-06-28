@@ -6,7 +6,7 @@ use GuzzleHttp\Cookie\SetCookie;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
 use webignition\NormalisedUrl\NormalisedUrl;
 
-class Parameters
+class Parameters implements \JsonSerializable
 {
     const PARAMETER_KEY_COOKIES = 'cookies';
     const PARAMETER_HTTP_AUTH_USERNAME = 'http-auth-username';
@@ -20,7 +20,7 @@ class Parameters
     /**
      * @param array $parameters
      */
-    public function __construct(array $parameters)
+    public function __construct(array $parameters = [])
     {
         $this->parameters = $parameters;
     }
@@ -84,10 +84,56 @@ class Parameters
     /**
      * @param string $key
      *
+     * @return mixed|null
+     */
+    public function get($key)
+    {
+        return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : null;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function set($key, $value)
+    {
+        $this->parameters[$key] = $value;
+    }
+
+    /**
+     * @param Parameters $parameters
+     */
+    public function merge(Parameters $parameters)
+    {
+        $this->parameters = array_merge(
+            $this->parameters,
+            $parameters->getAsArray()
+        );
+    }
+
+    /**
+     * @param string $key
+     *
      * @return bool
      */
     private function has($key)
     {
         return array_key_exists($key, $this->parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return empty($this->parameters) ? '' : json_encode($this);
     }
 }

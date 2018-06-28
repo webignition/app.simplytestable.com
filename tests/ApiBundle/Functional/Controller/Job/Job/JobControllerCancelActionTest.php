@@ -134,12 +134,12 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         $this->assertEquals(
             $cssValidationDomainsToIgnore,
-            $cssValidationTask->getParameters()->getAsArray()['domains-to-ignore']
+            $cssValidationTask->getParameters()->get('domains-to-ignore')
         );
 
         $this->assertEquals(
             $jsStaticAnalysisDomainsToIgnore,
-            $jsStaticAnalysisTask->getParameters()->getAsArray()['domains-to-ignore']
+            $jsStaticAnalysisTask->getParameters()->get('domains-to-ignore')
         );
 
         $this->assertFalse($resqueQueueService->isEmpty(
