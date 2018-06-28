@@ -278,7 +278,7 @@ class Task implements \JsonSerializable
     /**
      * @return string
      */
-    public function getParameters()
+    public function getParametersString()
     {
         return $this->parameters;
     }

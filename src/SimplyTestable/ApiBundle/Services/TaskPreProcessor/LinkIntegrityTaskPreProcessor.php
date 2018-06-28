@@ -142,15 +142,10 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
                 return true;
             }
 
-            $taskParameters = $task->getParameters();
-
-            $parameters = empty($taskParameters)
-                ? []
-                : json_decode($task->getParameters(), true);
-
+            $parameters = $task->getParametersObject()->getAsArray();
             $parameters['excluded-urls'] = $this->getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults);
-            $task->setParameters(json_encode($parameters));
 
+            $task->setParameters(json_encode($parameters));
             $task->setOutput($output);
 
             $this->entityManager->persist($task);
