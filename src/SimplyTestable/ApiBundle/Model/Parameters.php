@@ -20,7 +20,7 @@ class Parameters
     /**
      * @param array $parameters
      */
-    public function __construct(array $parameters)
+    public function __construct(array $parameters = [])
     {
         $this->parameters = $parameters;
     }
@@ -79,6 +79,25 @@ class Parameters
     public function getAsArray()
     {
         return $this->parameters;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    public function get($key)
+    {
+        return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : null;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function set($key, $value)
+    {
+        $this->parameters[$key] = $value;
     }
 
     /**

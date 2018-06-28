@@ -226,4 +226,31 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $parameters = new Parameters($parametersArray);
         $this->assertEquals($parametersArray, $parameters->getAsArray());
     }
+
+    public function testGet()
+    {
+        $parameters = new Parameters([
+            'foo-key' => 'foo-value',
+            'bar-key' => 'bar-value',
+        ]);
+
+        $this->assertEquals('foo-value', $parameters->get('foo-key'));
+        $this->assertEquals('bar-value', $parameters->get('bar-key'));
+        $this->assertNull($parameters->get('foobar-key'));
+    }
+
+    public function testSet()
+    {
+        $parameters = new Parameters();
+
+        $this->assertNull($parameters->get('foo-key'));
+        $this->assertNull($parameters->get('bar-key'));
+
+        $parameters->set('foo-key', 'foo-value');
+        $parameters->set('bar-key', 'bar-value');
+
+        $this->assertEquals('foo-value', $parameters->get('foo-key'));
+        $this->assertEquals('bar-value', $parameters->get('bar-key'));
+        $this->assertNull($parameters->get('foobar-key'));
+    }
 }
