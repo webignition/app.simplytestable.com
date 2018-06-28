@@ -49,7 +49,8 @@
         "webignition/guzzle-curl-exception":"~1",
         "webignition/guzzle-http-authentication-middleware": ">=0.1,<1",
         "webignition/http-history-container": ">=0.5,<1",
-        "webignition/guzzle-request-headers-middleware": ">=0.1,<1"
+        "webignition/guzzle-request-headers-middleware": ">=0.1,<1",
+        "wildbit/postmark-php": "^2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.0",

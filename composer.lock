@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1a0595bc15ea12ab388dd8078c824bb",
+    "content-hash": "8eb48cdf724aea6098ee8b0c17f813db",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -4784,6 +4784,40 @@
                 "Sitemap"
             ],
             "time": "2018-05-11T14:34:29+00:00"
+        },
+        {
+            "name": "wildbit/postmark-php",
+            "version": "2.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wildbit/postmark-php.git",
+                "reference": "10fbcc61216ddee5f944c3082d16a8c858a998ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wildbit/postmark-php/zipball/10fbcc61216ddee5f944c3082d16a8c858a998ea",
+                "reference": "10fbcc61216ddee5f944c3082d16a8c858a998ea",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Postmark\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The officially supported client for Postmark (http://postmarkapp.com)",
+            "time": "2017-12-13T14:35:57+00:00"
         },
         {
             "name": "xrstf/ip-utils",
