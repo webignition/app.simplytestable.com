@@ -294,7 +294,7 @@ class Task implements \JsonSerializable
     /**
      * @return Parameters
      */
-    public function getParametersObject()
+    public function getParameters()
     {
         if (empty($this->parametersObject)) {
             $this->createParametersObject();

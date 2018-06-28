@@ -142,7 +142,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
                 return true;
             }
 
-            $parameters = $task->getParametersObject()->getAsArray();
+            $parameters = $task->getParameters()->getAsArray();
             $parameters['excluded-urls'] = $this->getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults);
 
             $task->setParameters(json_encode($parameters));
@@ -314,7 +314,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      */
     private function retrieveWebPage(Task $task)
     {
-        $taskParametersObject = $task->getParametersObject();
+        $taskParametersObject = $task->getParameters();
 
         $cookies = $taskParametersObject->getCookies();
         if (!empty($cookies)) {
