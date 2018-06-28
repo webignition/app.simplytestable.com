@@ -272,7 +272,7 @@ class Task implements \JsonSerializable
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
-        $this->parametersObject = new Parameters($this->url, $this->getParametersArray());
+        $this->createParametersObject();
     }
 
     /**
@@ -292,26 +292,12 @@ class Task implements \JsonSerializable
     }
 
     /**
-     * @return array
-     */
-    public function getParametersArray()
-    {
-        $parametersArray = json_decode($this->getParameters(), true);
-
-        if (!is_array($parametersArray)) {
-            $parametersArray = [];
-        }
-
-        return $parametersArray;
-    }
-
-    /**
      * @return Parameters
      */
     public function getParametersObject()
     {
         if (empty($this->parametersObject)) {
-            $this->parametersObject = new Parameters($this->url, $this->getParametersArray());
+            $this->createParametersObject();
         }
 
         return $this->parametersObject;
@@ -352,5 +338,16 @@ class Task implements \JsonSerializable
         }
 
         return $taskData;
+    }
+
+    private function createParametersObject()
+    {
+        $parametersArray = json_decode($this->parameters, true);
+
+        if (!is_array($parametersArray)) {
+            $parametersArray = [];
+        }
+
+        $this->parametersObject = new Parameters($this->url, $parametersArray);
     }
 }
