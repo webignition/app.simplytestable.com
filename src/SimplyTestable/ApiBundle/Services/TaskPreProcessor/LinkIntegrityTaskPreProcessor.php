@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Model\Parameters;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -142,10 +143,11 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
                 return true;
             }
 
-            $parameters = $task->getParameters()->getAsArray();
-            $parameters['excluded-urls'] = $this->getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults);
+            $task->getParameters()->set(
+                'excluded-urls',
+                $this->getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults)
+            );
 
-            $task->setParameters(json_encode($parameters));
             $task->setOutput($output);
 
             $this->entityManager->persist($task);
