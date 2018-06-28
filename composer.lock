@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ff5751a2a4cd85d3af2efb45f7a235b",
+    "content-hash": "62cba0032d7f1485a80f1bd989ea7841",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -2708,16 +2708,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v3.0.0",
+            "version": "v5.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "c9523236474de73ebe51231c0acc4b3399d0ab4c"
+                "reference": "bb3d932721977d1110b766b842f72cb32712b7f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/c9523236474de73ebe51231c0acc4b3399d0ab4c",
-                "reference": "c9523236474de73ebe51231c0acc4b3399d0ab4c",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/bb3d932721977d1110b766b842f72cb32712b7f1",
+                "reference": "bb3d932721977d1110b766b842f72cb32712b7f1",
                 "shasum": ""
             },
             "require": {
@@ -2759,7 +2759,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2015-07-28T17:53:17+00:00"
+            "time": "2017-12-20T21:47:27+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
