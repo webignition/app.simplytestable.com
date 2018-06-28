@@ -321,7 +321,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
             $this->httpClientService->setCookies($cookies);
         }
 
-        $httpAuthenticationCredentials = $taskParametersObject->getHttpAuthenticationCredentials();
+        $httpAuthenticationCredentials = $taskParametersObject->getHttpAuthenticationCredentials($task->getUrl());
         if (!$httpAuthenticationCredentials->isEmpty()) {
             $this->httpClientService->setBasicHttpAuthorization($httpAuthenticationCredentials);
         }

@@ -15,7 +15,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCookies(array $parametersArray, array $expectedCookieStrings)
     {
-        $parametersObject = new Parameters('http://example.com/', $parametersArray);
+        $parametersObject = new Parameters($parametersArray);
 
         $cookies = $parametersObject->getCookies();
 
@@ -117,9 +117,9 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         array $parametersArray,
         array $expectedHttpAuthenticationCredentialsValues
     ) {
-        $parametersObject = new Parameters($url, $parametersArray);
+        $parametersObject = new Parameters($parametersArray);
 
-        $httpAuthenticationCredentials = $parametersObject->getHttpAuthenticationCredentials();
+        $httpAuthenticationCredentials = $parametersObject->getHttpAuthenticationCredentials($url);
 
         $this->assertInstanceOf(HttpAuthenticationCredentials::class, $httpAuthenticationCredentials);
 
@@ -223,7 +223,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
             'foobar-key' => 'foobar',
         ];
 
-        $parameters = new Parameters('http://example.com', $parametersArray);
+        $parameters = new Parameters($parametersArray);
         $this->assertEquals($parametersArray, $parameters->getAsArray());
     }
 }

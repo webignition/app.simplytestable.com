@@ -13,22 +13,15 @@ class Parameters
     const PARAMETER_HTTP_AUTH_PASSWORD = 'http-auth-password';
 
     /**
-     * @var string
-     */
-    private $url;
-
-    /**
      * @var array
      */
     private $parameters = [];
 
     /**
-     * @param string $url
      * @param array $parameters
      */
-    public function __construct($url, array $parameters)
+    public function __construct(array $parameters)
     {
-        $this->url = $url;
         $this->parameters = $parameters;
     }
 
@@ -60,9 +53,11 @@ class Parameters
     }
 
     /**
+     * @param string $url
+     *
      * @return HttpAuthenticationCredentials
      */
-    public function getHttpAuthenticationCredentials()
+    public function getHttpAuthenticationCredentials($url)
     {
         if (!$this->has(self::PARAMETER_HTTP_AUTH_USERNAME)) {
             return new HttpAuthenticationCredentials();
@@ -73,7 +68,7 @@ class Parameters
             ? $this->parameters[self::PARAMETER_HTTP_AUTH_PASSWORD]
             : null;
 
-        $urlObject = new NormalisedUrl($this->url);
+        $urlObject = new NormalisedUrl($url);
 
         return new HttpAuthenticationCredentials($username, $password, $urlObject->getHost());
     }
