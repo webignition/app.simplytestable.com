@@ -318,22 +318,6 @@ class Task implements \JsonSerializable
     }
 
     /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getParameter($name)
-    {
-        $parametersArray = $this->getParametersArray();
-
-        if (!isset($parametersArray[$name])) {
-            return false;
-        }
-
-        return $parametersArray[$name];
-    }
-
-    /**
      * @return array
      */
     public function jsonSerialize()
