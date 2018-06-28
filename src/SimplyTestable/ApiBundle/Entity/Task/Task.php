@@ -288,7 +288,7 @@ class Task implements \JsonSerializable
      */
     public function getParametersHash()
     {
-        return md5($this->getParameters());
+        return md5($this->parameters);
     }
 
     /**
