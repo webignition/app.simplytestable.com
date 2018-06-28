@@ -76,5 +76,3 @@ services:
   Postmark\PostmarkClient:
     arguments:
       - '%postmark_api_key%'
-    calls:
-      - [setClient, ['@GuzzleHttp\Client']]
