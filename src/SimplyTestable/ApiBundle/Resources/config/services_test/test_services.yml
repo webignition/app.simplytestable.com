@@ -9,6 +9,3 @@ services:
     class:   Tests\ApiBundle\Services\TestHttpClientService
     arguments:
       - '%curl_options%'
-
-  SimplyTestable\ApiBundle\Services\Postmark\Sender:
-    class:   SimplyTestable\ApiBundle\Services\Postmark\TestSender

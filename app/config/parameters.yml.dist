@@ -11,8 +11,4 @@ parameters:
     admin_user_password: setThis!
     default_trial_period: 30
     postmark_api_key: "postmark api key"
-    postmark_from_email: "postmark from email"
-    postmark_from_name: "postmark from name"
-    postmark_use_ssl: true
-    postmark_timeout: 60
     container.autowiring.strict_mode: true

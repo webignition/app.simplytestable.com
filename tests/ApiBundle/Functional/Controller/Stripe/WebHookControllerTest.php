@@ -2,20 +2,21 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Stripe;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use SimplyTestable\ApiBundle\Services\Postmark\Sender;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Tests\ApiBundle\Functional\Controller\AbstractControllerTest;
+use Tests\ApiBundle\Services\TestHttpClientService;
 
 /**
  * @group Controller/Stripe/WebHookController
@@ -28,6 +29,11 @@ class WebHookControllerTest extends AbstractControllerTest
     private $webHookController;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -35,10 +41,15 @@ class WebHookControllerTest extends AbstractControllerTest
         parent::setUp();
 
         $this->webHookController = $this->container->get(WebHookController::class);
+        $this->httpClientService = $this->container->get(HttpClientService::class);
     }
 
     public function testIndexActionPostRequest()
     {
+        $this->httpClientService->appendFixtures([
+            $this->createPostmarkSuccessResponse(),
+        ]);
+
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
@@ -87,6 +98,7 @@ class WebHookControllerTest extends AbstractControllerTest
         ]);
 
         $response = $this->getClientResponse();
+
         $this->assertTrue($response->isSuccessful());
     }
 
@@ -121,6 +133,10 @@ class WebHookControllerTest extends AbstractControllerTest
 
     public function testIndexActionEventAsPostData()
     {
+        $this->httpClientService->appendFixtures([
+            $this->createPostmarkSuccessResponse(),
+        ]);
+
         $request = new Request([], [
             'event' => json_encode(StripeEventFixtureFactory::load('customer.updated')),
         ]);
@@ -145,6 +161,10 @@ class WebHookControllerTest extends AbstractControllerTest
         $stripeCustomer,
         $expectedResponseData
     ) {
+        $this->httpClientService->appendFixtures([
+            $this->createPostmarkSuccessResponse(),
+        ]);
+
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get(ResqueQueueService::class);
 
@@ -190,12 +210,14 @@ class WebHookControllerTest extends AbstractControllerTest
 
         $this->assertEquals($expectedResponseData, $responseData);
 
-        $mailSender = $this->container->get(Sender::class);
+        $httpHistory = $this->httpClientService->getHistory();
 
-        /* @var ArrayCollection $mailHistory */
-        $mailHistory = $mailSender->getHistory();
+        $this->assertEquals(1, $httpHistory->count());
+        $lastRequest = $httpHistory->getLastRequest();
+        $lastRequestUri = $lastRequest->getUri();
 
-        $this->assertCount(1, $mailHistory);
+        $this->assertStringStartsWith('Postmark-PHP', $lastRequest->getHeaderLine('User-Agent'));
+        $this->assertEquals('/email', $lastRequestUri->getPath());
 
         $this->assertTrue($resqueQueueService->contains(
             'stripe-event',
@@ -377,5 +399,16 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->container->get(StripeWebHookMailNotificationSender::class),
             $request
         );
+    }
+
+    private function createPostmarkSuccessResponse()
+    {
+        return HttpFixtureFactory::createPostmarkResponse(200, [
+            'To' => 'user@example.com',
+            'SubmittedAt' => '2014-02-17T07:25:01.4178645-05:00',
+            'MessageId' => '0a129aee-e1cd-480d-b08d-4f48548ff48d',
+            'ErrorCode' => 0,
+            'Message' => 'OK',
+        ]);
     }
 }

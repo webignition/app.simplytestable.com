@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1a0595bc15ea12ab388dd8078c824bb",
+    "content-hash": "df2f4855177a53299a6278f91cab93b3",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -1868,56 +1868,6 @@
             "time": "2014-01-12T16:20:24+00:00"
         },
         {
-            "name": "kriswallsmith/buzz",
-            "version": "v0.16.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kriswallsmith/Buzz.git",
-                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/4977b7d44dbef49cdc641f14be6512fdcfe32f12",
-                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/psr7": "^1.4",
-                "php": "^5.4 || ^7.0"
-            },
-            "require-dev": {
-                "php-http/client-integration-tests": "^0.6.2",
-                "symfony/phpunit-bridge": "^3.4 || ^4.0"
-            },
-            "suggest": {
-                "ext-curl": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Buzz\\": "lib/Buzz"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kris Wallsmith",
-                    "email": "kris.wallsmith@gmail.com",
-                    "homepage": "http://kriswallsmith.net/"
-                }
-            ],
-            "description": "Lightweight HTTP client",
-            "homepage": "https://github.com/kriswallsmith/Buzz",
-            "keywords": [
-                "curl",
-                "http client"
-            ],
-            "time": "2018-03-19T10:34:40+00:00"
-        },
-        {
             "name": "masterminds/html5",
             "version": "2.3.0",
             "source": {
@@ -2797,54 +2747,6 @@
                 "rss"
             ],
             "time": "2017-04-17T07:29:31+00:00"
-        },
-        {
-            "name": "stephenfarrell/postmark-bundle",
-            "version": "dev-master",
-            "target-dir": "MZ/PostmarkBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/stephenfarrell/PostmarkBundle.git",
-                "reference": "09eb492d79e823ee256f75b2d2f16df01dc5d146"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/stephenfarrell/PostmarkBundle/zipball/09eb492d79e823ee256f75b2d2f16df01dc5d146",
-                "reference": "09eb492d79e823ee256f75b2d2f16df01dc5d146",
-                "shasum": ""
-            },
-            "require": {
-                "kriswallsmith/buzz": ">=0.9",
-                "php": ">=5.3.2",
-                "symfony/framework-bundle": ">=2"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-0": {
-                    "MZ\\PostmarkBundle": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Miguel Perez",
-                    "email": "miguel@miguelpz.com"
-                },
-                {
-                    "name": "Stephen Farrell"
-                }
-            ],
-            "description": "A minor update of Miguel Perez's no-longer maintained code from https://github.com/miguel250/PostmarkBundle to allow for Symfony 3 compatibility. All credit/kudos/thanks for the work should obviously go to him",
-            "homepage": "https://github.com/stephenfarrell",
-            "keywords": [
-                "api",
-                "mailer",
-                "postmark"
-            ],
-            "time": "2016-09-12T19:08:08+00:00"
         },
         {
             "name": "stripe/stripe-php",
@@ -4786,6 +4688,40 @@
             "time": "2018-05-11T14:34:29+00:00"
         },
         {
+            "name": "wildbit/postmark-php",
+            "version": "2.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wildbit/postmark-php.git",
+                "reference": "10fbcc61216ddee5f944c3082d16a8c858a998ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wildbit/postmark-php/zipball/10fbcc61216ddee5f944c3082d16a8c858a998ea",
+                "reference": "10fbcc61216ddee5f944c3082d16a8c858a998ea",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Postmark\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The officially supported client for Postmark (http://postmarkapp.com)",
+            "time": "2017-12-13T14:35:57+00:00"
+        },
+        {
             "name": "xrstf/ip-utils",
             "version": "v1.0.0",
             "source": {
@@ -4988,6 +4924,56 @@
                 "test"
             ],
             "time": "2016-01-20T08:20:44+00:00"
+        },
+        {
+            "name": "kriswallsmith/buzz",
+            "version": "v0.16.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kriswallsmith/Buzz.git",
+                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/4977b7d44dbef49cdc641f14be6512fdcfe32f12",
+                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/psr7": "^1.4",
+                "php": "^5.4 || ^7.0"
+            },
+            "require-dev": {
+                "php-http/client-integration-tests": "^0.6.2",
+                "symfony/phpunit-bridge": "^3.4 || ^4.0"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Buzz\\": "lib/Buzz"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com",
+                    "homepage": "http://kriswallsmith.net/"
+                }
+            ],
+            "description": "Lightweight HTTP client",
+            "homepage": "https://github.com/kriswallsmith/Buzz",
+            "keywords": [
+                "curl",
+                "http client"
+            ],
+            "time": "2018-03-19T10:34:40+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -6551,7 +6537,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "stephenfarrell/postmark-bundle": 20,
         "webignition/html-validation-error-normaliser": 20,
         "chrisboulton/php-resque": 20,
         "chrisboulton/php-resque-scheduler": 20

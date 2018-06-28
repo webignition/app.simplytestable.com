@@ -24,7 +24,6 @@
         "doctrine/migrations": "~1.5",
         "doctrine/doctrine-migrations-bundle": "^1",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
-        "stephenfarrell/postmark-bundle": "dev-master#09eb492d79e823ee256f75b2d2f16df01dc5d146",
         "webignition/internet-media-type":">=0.4.4,<2.0",
         "webignition/website-sitemap-finder":"~2",
         "webignition/url": "~2",
@@ -49,7 +48,8 @@
         "webignition/guzzle-curl-exception":"~1",
         "webignition/guzzle-http-authentication-middleware": ">=0.1,<1",
         "webignition/http-history-container": ">=0.5,<1",
-        "webignition/guzzle-request-headers-middleware": ">=0.1,<1"
+        "webignition/guzzle-request-headers-middleware": ">=0.1,<1",
+        "wildbit/postmark-php": "^2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.0",
