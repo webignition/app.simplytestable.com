@@ -9,3 +9,12 @@ services:
     class:   Tests\ApiBundle\Services\TestHttpClientService
     arguments:
       - '%curl_options%'
+
+  # Need to inject our guzzle client into the postmark client to enable regular HTTP mocking in tests
+  # We don't to this for the dev/prod service as Postmark\PostmarkClient depends on the client constructor being
+  # passed the base url for correct behaviour.
+  Postmark\PostmarkClient:
+    arguments:
+      - '%postmark_api_key%'
+    calls:
+      - [setClient, ['@GuzzleHttp\Client']]

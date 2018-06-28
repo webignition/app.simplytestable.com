@@ -149,9 +149,3 @@ services:
 
   GuzzleHttp\Client:
     factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
-
-  Postmark\PostmarkClient:
-    arguments:
-      - '%postmark_api_key%'
-    calls:
-      - [setClient, ['@GuzzleHttp\Client']]
