@@ -10,6 +10,3 @@ services:
 
   Cron\CronBundle\Cron\Manager:
     alias: cron.manager
-
-  MZ\PostmarkBundle\Postmark\Message:
-    alias: postmark.message

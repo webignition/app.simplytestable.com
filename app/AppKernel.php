@@ -18,7 +18,6 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
-            new MZ\PostmarkBundle\MZPostmarkBundle(),
             new ResqueBundle\Resque\ResqueBundle(),
             new Cron\CronBundle\CronCronBundle(),
         );
