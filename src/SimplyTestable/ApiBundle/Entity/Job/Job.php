@@ -393,7 +393,6 @@ class Job
 
     /**
      * @param Ammendment $ammendment
-     * @return Job
      */
     public function addAmmendment(Ammendment $ammendment)
     {
@@ -435,7 +434,7 @@ class Job
     /**
      * @param string $parameters
      */
-    public function setParameters($parameters)
+    public function setParametersString($parameters)
     {
         $this->parameters = $parameters;
         $this->parametersObject = null;
@@ -444,7 +443,7 @@ class Job
     /**
      * @return string
      */
-    public function getParameters()
+    public function getParametersString()
     {
         return $this->parameters;
     }
@@ -454,57 +453,25 @@ class Job
      */
     public function hasParameters()
     {
-        return $this->getParameters() != '';
-    }
-
-    /**
-     * @return string
-     */
-    public function getParametersHash()
-    {
-        return md5($this->getParameters());
-    }
-
-    /**
-     * @return array
-     */
-    public function getParametersArray()
-    {
-        $parametersArray = json_decode($this->getParameters(), true);
-
-        if (!is_array($parametersArray)) {
-            $parametersArray = [];
-        }
-
-        return $parametersArray;
+        return !empty($this->parameters);
     }
 
     /**
      * @return Parameters
      */
-    public function getParametersObject()
+    public function getParameters()
     {
         if (empty($this->parametersObject)) {
-            $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $this->getParametersArray());
+            $parametersArray = json_decode($this->parameters, true);
+
+            if (!is_array($parametersArray)) {
+                $parametersArray = [];
+            }
+
+            $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $parametersArray);
         }
 
         return $this->parametersObject;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getParameter($name)
-    {
-        $parametersArray = $this->getParametersArray();
-
-        if (!isset($parametersArray[$name])) {
-            return false;
-        }
-
-        return $parametersArray[$name];
     }
 
     /**

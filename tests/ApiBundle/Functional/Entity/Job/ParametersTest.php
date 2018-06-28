@@ -32,7 +32,7 @@ class ParametersTest extends AbstractBaseTestCase
     public function testSetPersistGetParameters()
     {
         $job = $this->jobFactory->create();
-        $job->setParameters(json_encode(array(
+        $job->setParametersString(json_encode(array(
             'foo' => 'bar'
         )));
 
@@ -40,7 +40,7 @@ class ParametersTest extends AbstractBaseTestCase
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $this->assertEquals('{"foo":"bar"}', $job->getParameters());
+        $this->assertEquals('{"foo":"bar"}', $job->getParametersString());
     }
 
     public function testUtf8()
@@ -49,7 +49,7 @@ class ParametersTest extends AbstractBaseTestCase
         $value = 'value-ɸ';
 
         $job = $this->jobFactory->create();
-        $job->setParameters(json_encode(array(
+        $job->setParametersString(json_encode(array(
             $key => $value
         )));
 
@@ -57,6 +57,6 @@ class ParametersTest extends AbstractBaseTestCase
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $this->assertEquals('{"key-\u0278":"value-\u0278"}', $job->getParameters());
+        $this->assertEquals('{"key-\u0278":"value-\u0278"}', $job->getParametersString());
     }
 }

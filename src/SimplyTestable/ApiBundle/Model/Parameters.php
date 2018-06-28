@@ -79,6 +79,14 @@ class Parameters
     }
 
     /**
+     * @return array
+     */
+    public function getAsArray()
+    {
+        return $this->parameters;
+    }
+
+    /**
      * @param string $key
      *
      * @return bool

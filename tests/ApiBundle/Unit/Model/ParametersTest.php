@@ -214,4 +214,16 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    public function testGetAsArray()
+    {
+        $parametersArray = [
+            'foo-key' => 1,
+            'bar-key' => 2,
+            'foobar-key' => 'foobar',
+        ];
+
+        $parameters = new Parameters('http://example.com', $parametersArray);
+        $this->assertEquals($parametersArray, $parameters->getAsArray());
+    }
 }

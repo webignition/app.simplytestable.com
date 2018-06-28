@@ -155,7 +155,7 @@ class UrlFinder
      */
     private function getUrlsFromSitemap(Job $job, $softLimit)
     {
-        $jobParametersObject = $job->getParametersObject();
+        $jobParametersObject = $job->getParameters();
 
         $cookies = $jobParametersObject->getCookies();
         if (!empty($cookies)) {

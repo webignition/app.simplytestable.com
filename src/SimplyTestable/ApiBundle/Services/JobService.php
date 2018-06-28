@@ -120,7 +120,7 @@ class JobService
         $jobConfigurationParameters = $jobConfiguration->getParameters();
 
         if (!empty($jobConfigurationParameters)) {
-            $job->setParameters($jobConfigurationParameters);
+            $job->setParametersString($jobConfigurationParameters);
         }
 
         $startingState = $this->stateService->get(Job::STATE_STARTING);

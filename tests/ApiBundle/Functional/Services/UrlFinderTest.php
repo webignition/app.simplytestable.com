@@ -811,7 +811,7 @@ class UrlFinderTest extends AbstractBaseTestCase
 
         $job = new Job();
         $job->setWebsite($website);
-        $job->setParameters(json_encode($parameters));
+        $job->setParametersString(json_encode($parameters));
 
         return $job;
     }
