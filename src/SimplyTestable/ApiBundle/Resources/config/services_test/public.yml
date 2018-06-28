@@ -135,8 +135,9 @@ services:
 
   SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
     arguments:
-      $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
-      $parameters: "%stripe_webhook_developer_notification%"
+      - '@Postmark\PostmarkClient'
+      - '@logger'
+      - '%stripe_webhook_developer_notification%'
 
   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
     arguments:
@@ -148,3 +149,9 @@ services:
 
   GuzzleHttp\Client:
     factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
+
+  Postmark\PostmarkClient:
+    arguments:
+      - '%postmark_api_key%'
+    calls:
+      - [setClient, ['@GuzzleHttp\Client']]

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Services;
 
+use Postmark\Models\DynamicResponseModel;
 use Postmark\Models\PostmarkException;
 use Postmark\PostmarkClient;
 use Psr\Log\LoggerInterface;
@@ -41,11 +42,13 @@ class StripeWebHookMailNotificationSender
     /**
      * @param string $rawWebHookData
      * @param string $eventType
+     *
+     * @return DynamicResponseModel
      */
     public function send($rawWebHookData, $eventType)
     {
         try {
-            $this->postmarkClient->sendEmail(
+            return $this->postmarkClient->sendEmail(
                 $this->parameters['sender_email'],
                 $this->parameters['recipient_email'],
                 str_replace('{{ event-type }}', $eventType, $this->parameters['subject']),
@@ -54,7 +57,7 @@ class StripeWebHookMailNotificationSender
             );
         } catch (PostmarkException $postmarkException) {
             $this->logger->error(sprintf(
-                'Postmark failure [%s] [$s]',
+                'Postmark failure [%s] [%s]',
                 $postmarkException->httpStatusCode,
                 $postmarkException->postmarkApiErrorCode
             ), [
