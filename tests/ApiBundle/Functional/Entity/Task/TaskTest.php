@@ -53,6 +53,7 @@ class TaskTest extends AbstractBaseTestCase
 
         $entityManager->clear();
 
+        /* @var Task $retrievedTask */
         $retrievedTask = $taskRepository->find($taskId);
 
         $this->assertEquals(
@@ -62,7 +63,7 @@ class TaskTest extends AbstractBaseTestCase
 
         $this->assertEquals(
             '{"key-\u0278":"value-\u0278"}',
-            $retrievedTask->getParameters()
+            $retrievedTask->getParametersString()
         );
     }
 }

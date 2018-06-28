@@ -43,7 +43,7 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
         $this->assertEquals(Task::STATE_QUEUED, $urlDiscoveryTask->getState()->getName());
         $this->assertEquals($crawlJob, $urlDiscoveryTask->getJob());
         $this->assertEquals($taskUrl, $urlDiscoveryTask->getUrl());
-        $this->assertEquals($expectedTaskParameters, $urlDiscoveryTask->getParametersArray());
+        $this->assertEquals($expectedTaskParameters, $urlDiscoveryTask->getParameters()->getAsArray());
     }
 
     /**

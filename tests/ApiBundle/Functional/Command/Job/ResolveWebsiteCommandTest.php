@@ -155,7 +155,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         $tasks = $job->getTasks()->toArray();
 
         foreach ($tasks as $taskIndex => $task) {
-            $this->assertEquals($expectedTaskParameters[$taskIndex], $task->getParametersArray());
+            $this->assertEquals($expectedTaskParameters[$taskIndex], $task->getParameters()->getAsArray());
         }
 
         $this->assertTrue($resqueQueueService->contains(

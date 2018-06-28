@@ -85,16 +85,17 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
             $this->assertEquals($expectedAmmendment['constraint']['name'], $ammendment->getConstraint()->getName());
         }
 
+        /* @var Task[] $tasks */
         $tasks = $job->getTasks();
         $this->assertCount(count($expectedTasks), $tasks);
 
-        foreach ($job->getTasks() as $taskIndex => $task) {
+        foreach ($tasks as $taskIndex => $task) {
             /* @var Task $task */
             $expectedTask = $expectedTasks[$taskIndex];
 
             $this->assertEquals($expectedTask, [
                 'url' => $task->getUrl(),
-                'parameters' => $task->getParametersArray(),
+                'parameters' => $task->getParameters()->getAsArray(),
             ]);
         }
     }
