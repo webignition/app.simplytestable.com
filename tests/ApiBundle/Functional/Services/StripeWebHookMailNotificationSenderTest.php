@@ -9,6 +9,7 @@ use Postmark\PostmarkClient;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
+use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Services\TestHttpClientService;
 
@@ -38,7 +39,7 @@ class StripeWebHookMailNotificationSenderTest extends AbstractBaseTestCase
     public function testSendSuccess()
     {
         $this->httpClientService->appendFixtures([
-            $this->createPostmarkHttpResponse(200, [
+            HttpFixtureFactory::createPostmarkResponse(200, [
                 'To' => 'user@example.com',
                 'SubmittedAt' => '2014-02-17T07:25:01.4178645-05:00',
                 'MessageId' => '0a129aee-e1cd-480d-b08d-4f48548ff48d',
@@ -104,14 +105,10 @@ class StripeWebHookMailNotificationSenderTest extends AbstractBaseTestCase
         return [
             'HTTP 401 Unauthorized (missing or incorrect API token)' => [
                 'httpFixtures' => [
-                    new Response(
-                        401,
-                        ['Content-Type' => 'application/json'],
-                        json_encode([
-                            'ErrorCode' => 10,
-                            'Message' => 'foo'
-                        ])
-                    ),
+                    HttpFixtureFactory::createPostmarkResponse(401, [
+                        'ErrorCode' => 10,
+                        'Message' => 'foo'
+                    ]),
                 ],
                 'expectedLoggerMessage' => 'Postmark failure [401] []',
             ],
@@ -132,21 +129,6 @@ class StripeWebHookMailNotificationSenderTest extends AbstractBaseTestCase
             $postmarkClient,
             $logger,
             $this->container->getParameter('stripe_webhook_developer_notification')
-        );
-    }
-
-    /**
-     * @param int $statusCode
-     * @param array $responseData
-     *
-     * @return Response
-     */
-    private function createPostmarkHttpResponse($statusCode, array $responseData)
-    {
-        return new Response(
-            $statusCode,
-            ['Content-Type' => 'application/json'],
-            json_encode($responseData)
         );
     }
 

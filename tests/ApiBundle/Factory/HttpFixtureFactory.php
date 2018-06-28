@@ -49,4 +49,19 @@ class HttpFixtureFactory
             $notFoundResponse,
         ];
     }
+
+    /**
+     * @param int $statusCode
+     * @param array $responseData
+     *
+     * @return Response
+     */
+    public static function createPostmarkResponse($statusCode, array $responseData)
+    {
+        return new Response(
+            $statusCode,
+            ['Content-Type' => 'application/json'],
+            json_encode($responseData)
+        );
+    }
 }
