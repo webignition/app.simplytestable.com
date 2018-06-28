@@ -102,7 +102,9 @@ class WebsiteResolutionService
             $this->httpClientService->setCookies($cookies);
         }
 
-        $httpAuthenticationCredentials = $jobParametersObject->getHttpAuthenticationCredentials();
+        $httpAuthenticationCredentials = $jobParametersObject->getHttpAuthenticationCredentials(
+            $job->getWebsite()->getCanonicalUrl()
+        );
         if (!$httpAuthenticationCredentials->isEmpty()) {
             $this->httpClientService->setBasicHttpAuthorization($httpAuthenticationCredentials);
         }

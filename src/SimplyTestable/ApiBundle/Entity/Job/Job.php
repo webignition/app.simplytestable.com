@@ -468,7 +468,7 @@ class Job
                 $parametersArray = [];
             }
 
-            $this->parametersObject = new Parameters($this->website->getCanonicalUrl(), $parametersArray);
+            $this->parametersObject = new Parameters($parametersArray);
         }
 
         return $this->parametersObject;

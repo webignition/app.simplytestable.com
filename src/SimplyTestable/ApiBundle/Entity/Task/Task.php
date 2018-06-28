@@ -348,6 +348,6 @@ class Task implements \JsonSerializable
             $parametersArray = [];
         }
 
-        $this->parametersObject = new Parameters($this->url, $parametersArray);
+        $this->parametersObject = new Parameters($parametersArray);
     }
 }
