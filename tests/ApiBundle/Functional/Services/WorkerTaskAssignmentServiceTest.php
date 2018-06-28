@@ -181,7 +181,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -224,7 +223,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -267,7 +265,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -318,7 +315,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -333,7 +329,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -409,12 +404,10 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                                 [
                                     'url' => 'http://example.com/bar%20foo',
                                     'type' => TaskTypeService::CSS_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -429,7 +422,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/one',
                                     'type' => TaskTypeService::CSS_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
@@ -444,7 +436,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 [
                                     'url' => 'http://example.com/bar%20foo',
                                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                                    'parameters' => '[]',
                                 ],
                             ],
                         ],
