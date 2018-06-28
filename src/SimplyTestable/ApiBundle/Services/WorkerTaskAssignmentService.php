@@ -186,7 +186,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
                 'type' => (string)$task->getType()
             );
 
-            $taskParameters = $task->getParameters();
+            $taskParameters = $task->getParametersString();
 
             if (!empty($taskParameters)) {
                 $postFields['parameters'] = $taskParameters;

@@ -301,7 +301,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
         $this->assertNotEmpty($selectedTaskOutput);
         $this->assertEquals($expectedTaskOutput, $selectedTaskOutput->getOutput());
-        $this->assertEquals($expectedTaskParameters, $selectedTask->getParametersArray());
+        $this->assertEquals($expectedTaskParameters, $selectedTask->getParameters()->getAsArray());
     }
 
     /**
