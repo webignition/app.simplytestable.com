@@ -31,7 +31,7 @@
         "guzzlehttp/guzzle":"~6",
         "stripe/stripe-php": "5.8.0",
         "webignition/html-validation-error-normaliser":"^1",
-        "webignition/html-document-link-finder":">=0.7,<1.0",
+        "webignition/html-document-link-finder":"^3.1",
         "webignition/url-resolver":"~2",
         "webignition/php-stripe-models":">=0.2.6,<1.0",
         "egulias/email-validator":"1.1.1",
