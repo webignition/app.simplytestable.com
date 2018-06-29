@@ -34,7 +34,7 @@
         "webignition/html-document-link-finder":"^3.1",
         "webignition/url-resolver":"~2",
         "webignition/php-stripe-models":">=0.2.6,<1.0",
-        "egulias/email-validator":"1.1.1",
+        "egulias/email-validator":"^2",
         "webignition/web-resource-retriever":">=0.7,<1",
         "chrisboulton/php-resque": "dev-master",
         "chrisboulton/php-resque-scheduler": "dev-master",
