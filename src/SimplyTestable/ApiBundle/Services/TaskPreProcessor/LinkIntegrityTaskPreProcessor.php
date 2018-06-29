@@ -1,4 +1,5 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,7 @@ use webignition\WebResource\Retriever as WebResourceRetriever;
 use webignition\WebResource\WebResource;
 use webignition\WebResource\WebPage\WebPage;
 use webignition\WebResourceInterfaces\WebPageInterface;
+use webignition\HtmlDocumentLinkUrlFinder\Configuration as LinkUrlFinderConfiguration;
 
 class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 {
@@ -166,8 +168,10 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     private function findWebResourceLinks(Task $task, WebResource $webResource)
     {
         $linkFinder = new HtmlDocumentLinkUrlFinder();
-        $linkFinder->setSourceUrl($task->getUrl());
-        $linkFinder->setSourceContent($webResource->getContent());
+        $linkFinder->setConfiguration(new LinkUrlFinderConfiguration([
+            LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE_URL => $task->getUrl(),
+            LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE => $webResource,
+        ]));
 
         return $linkFinder->getAll();
     }
