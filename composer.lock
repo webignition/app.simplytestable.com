@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46abb51f715b6afa8e1a58de1b809a1a",
+    "content-hash": "0b781b872da8989d63a0c07bc7df5aaa",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -3720,28 +3720,34 @@
         },
         {
             "name": "webignition/html-document-link-finder",
-            "version": "0.7",
+            "version": "3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/html-document-link-url-finder.git",
-                "reference": "a36f9c26d52b4c0c1e7fc4d362a8d9b386a0b42a"
+                "reference": "13809046806e6268a44099e510aad987e0c17e69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-document-link-url-finder/zipball/a36f9c26d52b4c0c1e7fc4d362a8d9b386a0b42a",
-                "reference": "a36f9c26d52b4c0c1e7fc4d362a8d9b386a0b42a",
+                "url": "https://api.github.com/repos/webignition/html-document-link-url-finder/zipball/13809046806e6268a44099e510aad987e0c17e69",
+                "reference": "13809046806e6268a44099e510aad987e0c17e69",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "webignition/absolute-url-deriver": ">=1.4",
-                "webignition/url": "*"
+                "php": ">=5.6.0",
+                "webignition/absolute-url-deriver": "^1.4",
+                "webignition/url": ">2, <3",
+                "webignition/web-page-model": "^3"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1",
+                "phpunit/phpunit": "^5",
+                "squizlabs/php_codesniffer": "^3"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "webignition\\Tests": "tests/",
-                    "": "src/"
+                "psr-4": {
+                    "webignition\\HtmlDocumentLinkUrlFinder\\": "src/",
+                    "webignition\\Tests\\HtmlDocumentLinkUrlFinder\\": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3762,7 +3768,7 @@
                 "linkifier",
                 "validation"
             ],
-            "time": "2014-08-28T16:04:19+00:00"
+            "time": "2018-04-17T15:54:47+00:00"
         },
         {
             "name": "webignition/html-validation-error-normaliser",
@@ -4886,56 +4892,6 @@
                 "test"
             ],
             "time": "2016-01-20T08:20:44+00:00"
-        },
-        {
-            "name": "kriswallsmith/buzz",
-            "version": "v0.16.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kriswallsmith/Buzz.git",
-                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/4977b7d44dbef49cdc641f14be6512fdcfe32f12",
-                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/psr7": "^1.4",
-                "php": "^5.4 || ^7.0"
-            },
-            "require-dev": {
-                "php-http/client-integration-tests": "^0.6.2",
-                "symfony/phpunit-bridge": "^3.4 || ^4.0"
-            },
-            "suggest": {
-                "ext-curl": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Buzz\\": "lib/Buzz"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kris Wallsmith",
-                    "email": "kris.wallsmith@gmail.com",
-                    "homepage": "http://kriswallsmith.net/"
-                }
-            ],
-            "description": "Lightweight HTTP client",
-            "homepage": "https://github.com/kriswallsmith/Buzz",
-            "keywords": [
-                "curl",
-                "http client"
-            ],
-            "time": "2018-03-19T10:34:40+00:00"
         },
         {
             "name": "mockery/mockery",
