@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
@@ -82,7 +83,7 @@ class UserEmailChangeController
         }
 
         $validator = new EmailValidator();
-        $isEmailValid = $validator->isValid($new_email);
+        $isEmailValid = $validator->isValid($new_email, new RFCValidation());
 
         if (!$isEmailValid) {
             throw new BadRequestHttpException();
