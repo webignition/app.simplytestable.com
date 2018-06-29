@@ -7,7 +7,6 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
-use SimplyTestable\ApiBundle\Model\Parameters;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -19,7 +18,6 @@ use webignition\InternetMediaType\InternetMediaType;
 use webignition\WebResource\Exception\HttpException;
 use webignition\WebResource\Exception\TransportException;
 use webignition\WebResource\Retriever as WebResourceRetriever;
-use webignition\WebResource\WebResource;
 use webignition\WebResource\WebPage\WebPage;
 use webignition\WebResourceInterfaces\WebPageInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration as LinkUrlFinderConfiguration;
@@ -161,16 +159,16 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 
     /**
      * @param Task $task
-     * @param WebResource $webResource
+     * @param WebPageInterface $webPage
      *
      * @return array
      */
-    private function findWebResourceLinks(Task $task, WebResource $webResource)
+    private function findWebResourceLinks(Task $task, WebPageInterface $webPage)
     {
         $linkFinder = new HtmlDocumentLinkUrlFinder();
         $linkFinder->setConfiguration(new LinkUrlFinderConfiguration([
             LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE_URL => $task->getUrl(),
-            LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE => $webResource,
+            LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE => $webPage,
         ]));
 
         return $linkFinder->getAll();
