@@ -9,7 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Tests\ApiBundle\Factory\MockFactory;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 
-abstract class AbstractScheduledJobControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractScheduledJobControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $services

@@ -7,7 +7,7 @@ use Tests\ApiBundle\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class CanonicaliseTaskOutputCommandTest extends \PHPUnit_Framework_TestCase
+class CanonicaliseTaskOutputCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunCommandInMaintenanceReadOnlyMode()
     {

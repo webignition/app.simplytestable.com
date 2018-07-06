@@ -152,6 +152,8 @@ class StripeServiceTest extends AbstractBaseTestCase
         $userAccountPlan->setPlan($plan);
 
         $this->stripeService->subscribe($userAccountPlan);
+
+        $this->addToAssertionCount(1);
     }
 
     public function testUnsubscribeNoSubscription()
@@ -164,6 +166,8 @@ class StripeServiceTest extends AbstractBaseTestCase
         $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
 
         $this->stripeService->unsubscribe($userAccountPlan);
+
+        $this->addToAssertionCount(1);
     }
 
     public function testUnsubscribeHasSubscription()
@@ -177,6 +181,8 @@ class StripeServiceTest extends AbstractBaseTestCase
         $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
 
         $this->stripeService->unsubscribe($userAccountPlan);
+
+        $this->addToAssertionCount(1);
     }
 
     /**

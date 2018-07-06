@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\MockFactory;
 
-abstract class AbstractUserAccountPlanSubscriptionControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractUserAccountPlanSubscriptionControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $services

@@ -13,7 +13,7 @@ use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class UpdateDataCommandTest extends \PHPUnit_Framework_TestCase
+class UpdateDataCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunInMaintenanceReadOnlyMode()
     {

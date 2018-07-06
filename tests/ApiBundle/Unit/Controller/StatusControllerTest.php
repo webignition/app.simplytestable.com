@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * @group Controller/StatusController
  */
-class StatusControllerTest extends \PHPUnit_Framework_TestCase
+class StatusControllerTest extends \PHPUnit\Framework\TestCase
 {
     public function testIndexAction()
     {

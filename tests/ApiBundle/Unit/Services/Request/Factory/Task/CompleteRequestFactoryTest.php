@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use webignition\InternetMediaType\InternetMediaType;
 
-class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
+class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use MockeryPHPUnitIntegration;
 

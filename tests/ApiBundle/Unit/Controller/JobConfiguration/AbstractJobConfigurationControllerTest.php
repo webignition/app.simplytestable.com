@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use Symfony\Component\Routing\RouterInterface;
 use Tests\ApiBundle\Factory\MockFactory;
 
-abstract class AbstractJobConfigurationControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractJobConfigurationControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $services

@@ -8,7 +8,7 @@ use Tests\ApiBundle\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class PrepareCommandTest extends \PHPUnit_Framework_TestCase
+class PrepareCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunInMaintenanceReadOnlyMode()
     {

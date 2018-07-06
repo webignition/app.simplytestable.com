@@ -7,7 +7,7 @@ use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Adapter\Stripe\Customer\StripeCustomerAdapter;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
-class StripeCustomerAdapterTest extends \PHPUnit_Framework_TestCase
+class StripeCustomerAdapterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var StripeCustomerAdapter

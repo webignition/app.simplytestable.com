@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 /**
  * @group Controller/UserCreationController
  */
-class UserCreationControllerTest extends \PHPUnit_Framework_TestCase
+class UserCreationControllerTest extends \PHPUnit\Framework\TestCase
 {
     public function testActivateActionInMaintenanceReadOnlyMode()
     {

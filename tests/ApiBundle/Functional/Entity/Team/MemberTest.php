@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Entity\Task;
+namespace Tests\ApiBundle\Functional\Entity\Team;
 
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -32,5 +32,15 @@ class MemberTest extends AbstractBaseTestCase
 
         $entityManager->persist($member);
         $entityManager->flush();
+
+        $memberId = $member->getId();
+
+        $entityManager->clear();
+
+        $memberRepository = $entityManager->getRepository(Member::class);
+
+        $retrievedMember = $memberRepository->find($memberId);
+
+        $this->assertSame($member->getId(), $retrievedMember->getId());
     }
 }

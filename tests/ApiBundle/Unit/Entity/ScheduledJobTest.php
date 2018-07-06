@@ -5,7 +5,7 @@ namespace Tests\ApiBundle\Unit\Entity;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class ScheduledJobTest extends \PHPUnit_Framework_TestCase
+class ScheduledJobTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

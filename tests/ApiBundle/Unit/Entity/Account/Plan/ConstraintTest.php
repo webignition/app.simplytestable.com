@@ -4,7 +4,7 @@ namespace Tests\ApiBundle\Unit\Entity\Account\Plan;
 
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
-class ConstraintTest extends \PHPUnit_Framework_TestCase
+class ConstraintTest extends \PHPUnit\Framework\TestCase
 {
     public function testJsonSerialize()
     {

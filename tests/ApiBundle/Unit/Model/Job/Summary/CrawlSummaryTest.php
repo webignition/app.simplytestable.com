@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Model\Job\Summary\CrawlSummary;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class CrawlSummaryTest extends \PHPUnit_Framework_TestCase
+class CrawlSummaryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

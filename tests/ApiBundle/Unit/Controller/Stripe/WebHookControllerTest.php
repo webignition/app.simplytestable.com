@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @group Controller/Stripe/WebHookController
  */
-class WebHookControllerTest extends \PHPUnit_Framework_TestCase
+class WebHookControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider indexActionNoEventContentDataProvider

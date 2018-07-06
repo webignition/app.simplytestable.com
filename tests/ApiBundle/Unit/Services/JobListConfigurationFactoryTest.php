@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Request\Job\ListRequest;
 use SimplyTestable\ApiBundle\Services\JobListConfigurationFactory;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class JobListConfigurationFactoryTest extends \PHPUnit_Framework_TestCase
+class JobListConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var JobListConfigurationFactory

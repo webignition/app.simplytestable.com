@@ -140,7 +140,7 @@ class QueueServiceTest extends AbstractBaseTestCase
 
         $queueService = $this->createQueueService($resque, $logger);
 
-        $queueService->contains($queue);
+        $this->assertFalse($queueService->contains($queue));
     }
 
     public function testEnqueueSuccess()
@@ -171,7 +171,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             ->with('ResqueQueueService::enqueue: Redis error []');
 
         $queueService = $this->createQueueService($resque, $logger);
-        $queueService->enqueue(new NotifyJob());
+        $this->assertNull($queueService->enqueue(new NotifyJob()));
     }
 
     public function testIsEmptyFailure()
@@ -193,7 +193,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             ->with('ResqueQueueService::isEmpty: Redis error []');
 
         $queueService = $this->createQueueService($resque, $logger);
-        $queueService->isEmpty($queue);
+        $this->assertFalse($queueService->isEmpty($queue));
     }
 
     public function testGetResque()

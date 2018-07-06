@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Request\Job\StartRequest;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class StartRequestTest extends \PHPUnit_Framework_TestCase
+class StartRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider createDataProvider

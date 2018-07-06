@@ -33,6 +33,16 @@ class CanonicalUrlTest extends AbstractBaseTestCase
 
         $this->entityManager->persist($webSite);
         $this->entityManager->flush();
+
+        $websiteId = $webSite->getId();
+
+        $this->entityManager->close();
+
+        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
+
+        $retrievedWebSite = $websiteRepository->find($websiteId);
+
+        $this->assertSame($webSite->getId(), $retrievedWebSite->getId());
     }
 
     public function testUtf8()

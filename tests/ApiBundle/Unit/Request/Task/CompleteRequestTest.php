@@ -9,7 +9,7 @@ use Tests\ApiBundle\Factory\InternetMediaTypeFactory;
 use Tests\ApiBundle\Factory\StateFactory;
 use webignition\InternetMediaType\InternetMediaType;
 
-class CompleteRequestTest extends \PHPUnit_Framework_TestCase
+class CompleteRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider createDataProvider

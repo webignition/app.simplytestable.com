@@ -4,7 +4,7 @@ namespace Tests\ApiBundle\Unit\Entity;
 
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends \PHPUnit\Framework\TestCase
 {
     public function testJsonSerialize()
     {

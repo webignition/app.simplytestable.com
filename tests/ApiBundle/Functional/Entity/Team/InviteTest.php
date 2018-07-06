@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Entity\Task;
+namespace Tests\ApiBundle\Functional\Entity\Team;
 
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;

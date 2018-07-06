@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Component\HttpFoundation\Request;
 
-class RequestAdapterTest extends \PHPUnit_Framework_TestCase
+class RequestAdapterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getCollectionDataProvider
