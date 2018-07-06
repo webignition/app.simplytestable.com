@@ -21,7 +21,7 @@ use Tests\ApiBundle\Factory\ModelFactory;
 /**
  * @group Controller/Job/StartController
  */
-class JobStartControllerTest extends \PHPUnit_Framework_TestCase
+class JobStartControllerTest extends \PHPUnit\Framework\TestCase
 {
     public function testStartActionInMaintenanceReadOnlyMode()
     {

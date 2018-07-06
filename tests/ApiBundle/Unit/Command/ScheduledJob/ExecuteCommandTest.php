@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class ExecuteCommandTest extends \PHPUnit_Framework_TestCase
+class ExecuteCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunInMaintenanceReadOnlyMode()
     {

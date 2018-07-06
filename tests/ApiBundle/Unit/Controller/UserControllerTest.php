@@ -13,7 +13,7 @@ use Tests\ApiBundle\Factory\MockFactory;
 /**
  * @group Controller/UserController
  */
-class UserControllerTest extends \PHPUnit_Framework_TestCase
+class UserControllerTest extends \PHPUnit\Framework\TestCase
 {
     const EMAIL = 'user@example.com';
 

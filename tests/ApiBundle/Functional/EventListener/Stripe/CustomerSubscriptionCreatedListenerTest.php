@@ -284,6 +284,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
     {
         parent::tearDown();
 
+        $this->addToAssertionCount(\Mockery::getContainer()->mockery_getExpectationCount());
+
         \Mockery::close();
     }
 }

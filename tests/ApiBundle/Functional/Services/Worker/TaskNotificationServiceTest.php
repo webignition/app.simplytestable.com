@@ -56,24 +56,28 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
 
         $httpHistory = $this->httpClientService->getHistory();
 
-        foreach ($httpHistory as $httpTransactionIndex => $httpTransaction) {
-            $expectedHttpTransaction = $expectedHttpTransactions[$httpTransactionIndex];
-            $expectedRequest = $expectedHttpTransaction['request'];
-            $expectedResponse = $expectedHttpTransaction['response'];
+        if (count($expectedHttpTransactions)) {
+            foreach ($httpHistory as $httpTransactionIndex => $httpTransaction) {
+                $expectedHttpTransaction = $expectedHttpTransactions[$httpTransactionIndex];
+                $expectedRequest = $expectedHttpTransaction['request'];
+                $expectedResponse = $expectedHttpTransaction['response'];
 
-            /* @var RequestInterface $request */
-            $request = $httpTransaction['request'];
+                /* @var RequestInterface $request */
+                $request = $httpTransaction['request'];
 
-            $this->assertEquals($expectedRequest['hostname'], $request->getHeaderLine('host'));
+                $this->assertEquals($expectedRequest['hostname'], $request->getHeaderLine('host'));
 
-            /* @var ResponseInterface $response */
-            $response = $httpTransaction['response'];
+                /* @var ResponseInterface $response */
+                $response = $httpTransaction['response'];
 
-            if (is_null($expectedResponse)) {
-                $this->assertNull($response);
-            } else {
-                $this->assertEquals($expectedResponse['statusCode'], $response->getStatusCode());
+                if (is_null($expectedResponse)) {
+                    $this->assertNull($response);
+                } else {
+                    $this->assertEquals($expectedResponse['statusCode'], $response->getStatusCode());
+                }
             }
+        } else {
+            $this->assertCount(0, $httpHistory);
         }
     }
 

@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\MockFactory;
 
-abstract class AbstractUserEmailChangeControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractUserEmailChangeControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $services

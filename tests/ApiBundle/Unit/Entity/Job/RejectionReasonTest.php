@@ -5,7 +5,7 @@ namespace Tests\ApiBundle\Unit\Entity\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class RejectionReasonTest extends \PHPUnit_Framework_TestCase
+class RejectionReasonTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

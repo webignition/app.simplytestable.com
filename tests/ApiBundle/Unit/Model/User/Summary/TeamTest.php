@@ -4,7 +4,7 @@ namespace Tests\ApiBundle\Unit\User\Summary;
 
 use SimplyTestable\ApiBundle\Model\User\Summary\Team as TeamSummary;
 
-class TeamTest extends \PHPUnit_Framework_TestCase
+class TeamTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

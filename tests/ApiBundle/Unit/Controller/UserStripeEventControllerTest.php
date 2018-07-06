@@ -13,7 +13,7 @@ use Tests\ApiBundle\Factory\ModelFactory;
 /**
  * @group Controller/UserStripeEventController
  */
-class UserStripeEventControllerTest extends \PHPUnit_Framework_TestCase
+class UserStripeEventControllerTest extends \PHPUnit\Framework\TestCase
 {
     public function testListActionPublicUser()
     {

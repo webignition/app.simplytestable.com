@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\ApplicationStatus;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class ApplicationStatusTest extends \PHPUnit_Framework_TestCase
+class ApplicationStatusTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfi
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaskConfigurationCollection

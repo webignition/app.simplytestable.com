@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Model\User\Summary\PlanConstraints;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class PlanConstraintsTest extends \PHPUnit_Framework_TestCase
+class PlanConstraintsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

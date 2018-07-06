@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Model\User\Summary\StripeCustomer as StripeCustomer
 use SimplyTestable\ApiBundle\Model\User\Summary\Team as TeamSummary;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class SummaryTest extends \PHPUnit_Framework_TestCase
+class SummaryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

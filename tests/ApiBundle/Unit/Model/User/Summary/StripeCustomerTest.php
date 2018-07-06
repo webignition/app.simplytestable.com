@@ -7,7 +7,7 @@ use Tests\ApiBundle\Factory\ModelFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
-class StripeCustomerTest extends \PHPUnit_Framework_TestCase
+class StripeCustomerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

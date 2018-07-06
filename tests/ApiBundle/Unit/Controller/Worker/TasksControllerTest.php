@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 /**
  * @group Controller/Worker/TasksController
  */
-class TasksControllerTest extends \PHPUnit_Framework_TestCase
+class TasksControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TasksController

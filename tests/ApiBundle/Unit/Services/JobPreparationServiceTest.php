@@ -21,7 +21,7 @@ use Tests\ApiBundle\Factory\ModelFactory;
 /**
  * @group Services/JobPreparationService
  */
-class JobPreparationServiceTest extends \PHPUnit_Framework_TestCase
+class JobPreparationServiceTest extends \PHPUnit\Framework\TestCase
 {
     public function testPrepareJobInWrongState()
     {

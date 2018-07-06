@@ -12,7 +12,7 @@ use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 
-abstract class AbstractTeamControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTeamControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $services

@@ -11,7 +11,7 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class TaskTest extends \PHPUnit_Framework_TestCase
+class TaskTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

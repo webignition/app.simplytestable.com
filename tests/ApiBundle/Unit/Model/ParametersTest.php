@@ -5,7 +5,7 @@ namespace Tests\ApiBundle\Unit\Model;
 use SimplyTestable\ApiBundle\Model\Parameters;
 use webignition\Guzzle\Middleware\HttpAuthentication\HttpAuthenticationCredentials;
 
-class ParametersTest extends \PHPUnit_Framework_TestCase
+class ParametersTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getCookiesDataProvider

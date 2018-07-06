@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class RetrievalServiceTest extends \PHPUnit_Framework_TestCase
+class RetrievalServiceTest extends \PHPUnit\Framework\TestCase
 {
     public function testRetrieveFailure()
     {

@@ -13,7 +13,7 @@ use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class RemoveUnusedOutputCommandTest extends \PHPUnit_Framework_TestCase
+class RemoveUnusedOutputCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunCommandInMaintenanceReadOnlyMode()
     {

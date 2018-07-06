@@ -5,7 +5,7 @@ namespace Tests\ApiBundle\Unit\Entity\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class AmmendmentTest extends \PHPUnit_Framework_TestCase
+class AmmendmentTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

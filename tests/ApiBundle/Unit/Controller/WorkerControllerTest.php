@@ -16,7 +16,7 @@ use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 /**
  * @group Controller/WorkerController
  */
-class WorkerControllerTest extends \PHPUnit_Framework_TestCase
+class WorkerControllerTest extends \PHPUnit\Framework\TestCase
 {
     public function testActivateActionInMaintenanceReadOnlyMode()
     {

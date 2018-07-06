@@ -7,7 +7,7 @@ use Tests\ApiBundle\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class AddNonPlannedUsersToBasicPlanCommandTest extends \PHPUnit_Framework_TestCase
+class AddNonPlannedUsersToBasicPlanCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunInMaintenanceReadOnlyModeReturnsStatusCode1()
     {

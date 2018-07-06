@@ -5,7 +5,7 @@ namespace Tests\ApiBundle\Unit\Entity\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

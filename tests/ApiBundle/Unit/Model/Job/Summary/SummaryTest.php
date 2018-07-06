@@ -12,7 +12,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\ModelFactory;
 
-class SummaryTest extends \PHPUnit_Framework_TestCase
+class SummaryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider jsonSerializeDataProvider

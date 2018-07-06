@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use Symfony\Component\Routing\RouterInterface;
 
-abstract class AbstractJobControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractJobControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param Mock|RetrievalService $jobRetrievalService

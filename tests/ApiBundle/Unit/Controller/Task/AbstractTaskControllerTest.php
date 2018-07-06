@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\MockFactory;
 
-abstract class AbstractTaskControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTaskControllerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $services

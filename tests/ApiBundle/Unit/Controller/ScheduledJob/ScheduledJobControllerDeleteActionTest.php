@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Unit\Controller\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Tests\ApiBundle\Factory\MockFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -59,6 +60,8 @@ class ScheduledJobControllerDeleteActionTest extends AbstractScheduledJobControl
             ])
         ]);
 
-        $scheduledJobController->deleteAction(self::SCHEDULED_JOB_ID);
+        $response = $scheduledJobController->deleteAction(self::SCHEDULED_JOB_ID);
+
+        $this->assertInstanceOf(Response::class, $response);
     }
 }
