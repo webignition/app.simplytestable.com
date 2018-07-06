@@ -21,7 +21,7 @@
         "symfony/symfony": "3.4.*",
         "twig/twig": "^2.0",
         "friendsofsymfony/user-bundle": "2.1.2",
-        "doctrine/migrations": "~1.5",
+        "doctrine/migrations": "~1.8",
         "doctrine/doctrine-migrations-bundle": "^1",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
         "webignition/internet-media-type":">=0.4.4,<2.0",
