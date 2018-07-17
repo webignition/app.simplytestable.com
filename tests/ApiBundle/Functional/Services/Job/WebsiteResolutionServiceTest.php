@@ -52,9 +52,9 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->websiteResolutionService = $this->container->get(WebsiteResolutionService::class);
-        $this->jobFactory = new JobFactory($this->container);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->websiteResolutionService = self::$container->get(WebsiteResolutionService::class);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     public function testResolveJobInWrongState()
@@ -77,7 +77,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
      */
     public function testResolveRejectionDueToCurlException($curlCode, $expectedRejectionReason)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $curlFixture = ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo');

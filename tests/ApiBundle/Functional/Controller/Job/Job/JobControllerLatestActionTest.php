@@ -24,7 +24,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_latest', [
+            'url' => self::$container->get('router')->generate('job_job_latest', [
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
         ]);
@@ -54,7 +54,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         $callSetPublic,
         $expectedIsNotFound
     ) {
-        $jobService = $this->container->get(JobService::class);
+        $jobService = self::$container->get(JobService::class);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         $ownerUser = $users[$owner];
@@ -85,9 +85,9 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         }
 
         $response = $this->jobController->latestAction(
-            $this->container->get(WebSiteService::class),
-            $this->container->get(UserService::class),
-            $this->container->get(TeamService::class),
+            self::$container->get(WebSiteService::class),
+            self::$container->get(UserService::class),
+            self::$container->get(TeamService::class),
             $requesterUser,
             $job->getWebsite()->getCanonicalUrl()
         );
@@ -151,7 +151,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 
     public function testForLeaderInTeamWhereLatestTestDoesNotExist()
     {
-        $teamService = $this->container->get(TeamService::class);
+        $teamService = self::$container->get(TeamService::class);
 
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
@@ -167,9 +167,9 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         $this->expectException(NotFoundHttpException::class);
 
         $this->jobController->latestAction(
-            $this->container->get(WebSiteService::class),
-            $this->container->get(UserService::class),
-            $this->container->get(TeamService::class),
+            self::$container->get(WebSiteService::class),
+            self::$container->get(UserService::class),
+            self::$container->get(TeamService::class),
             $leader,
             'http://example.com'
         );

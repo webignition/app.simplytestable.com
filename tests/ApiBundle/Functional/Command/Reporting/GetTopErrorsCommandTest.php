@@ -25,7 +25,7 @@ class GetTopErrorsCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(GetTopErrorsCommand::class);
+        $this->command = self::$container->get(GetTopErrorsCommand::class);
     }
 
     /**
@@ -74,8 +74,8 @@ class GetTopErrorsCommandTest extends AbstractBaseTestCase
         $args,
         $expectedReportData
     ) {
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

@@ -14,7 +14,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 {
     public function testCreateActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_email_change_request_create', [
             'email_canonical' =>  $this->user->getEmail(),
             'new_email' => 'foo@example.com',
@@ -112,7 +112,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 
     public function testCreateActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $emailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $newEmail = 'new-email@example.com';

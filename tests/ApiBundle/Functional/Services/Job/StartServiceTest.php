@@ -40,7 +40,7 @@ class StartServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->websiteService = $this->container->get(WebSiteService::class);
+        $this->websiteService = self::$container->get(WebSiteService::class);
     }
 
     /**
@@ -109,10 +109,10 @@ class StartServiceTest extends AbstractBaseTestCase
         $isUserCreditLimitReached,
         $expectedException
     ) {
-        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $jobUserAccountPlanEnforcementService = self::$container->get(JobUserAccountPlanEnforcementService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $user,
             UserFactory::KEY_PLAN_NAME => $plan,
@@ -199,8 +199,8 @@ class StartServiceTest extends AbstractBaseTestCase
 
     public function testReuseExistingJob()
     {
-        $userService = $this->container->get(UserService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $userService = self::$container->get(UserService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $user = $userService->getPublicUser();
         $jobType = $jobTypeService->getFullSiteType();
@@ -233,12 +233,12 @@ class StartServiceTest extends AbstractBaseTestCase
      */
     public function testStart($userEmail, $url, $jobTypeName, $expectedIsPublic)
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $resqueQueueService->getResque()->getQueue('job-resolve')->clear();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -344,7 +344,7 @@ class StartServiceTest extends AbstractBaseTestCase
 
         foreach ($requiredServiceIds as $requiredServiceId) {
             if (!array_key_exists($requiredServiceId, $requiredServices)) {
-                $requiredServices[$requiredServiceId] = $this->container->get($requiredServiceId);
+                $requiredServices[$requiredServiceId] = self::$container->get($requiredServiceId);
             }
         }
 

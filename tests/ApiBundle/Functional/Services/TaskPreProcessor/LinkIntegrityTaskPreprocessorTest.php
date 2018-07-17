@@ -51,12 +51,12 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->linkIntegrityTaskPreProcessor = $this->container->get(LinkIntegrityTaskPreProcessor::class);
+        $this->linkIntegrityTaskPreProcessor = self::$container->get(LinkIntegrityTaskPreProcessor::class);
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->taskFactory = new TaskFactory($this->container);
-        $this->taskOutputFactory = new TaskOutputFactory($this->container);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->taskFactory = new TaskFactory(self::$container);
+        $this->taskOutputFactory = new TaskOutputFactory(self::$container);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     /**
@@ -544,7 +544,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
     public function testProcessSettingHttpProperties()
     {
-        $httpClientService = $this->container->get(HttpClientService::class);
+        $httpClientService = self::$container->get(HttpClientService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [

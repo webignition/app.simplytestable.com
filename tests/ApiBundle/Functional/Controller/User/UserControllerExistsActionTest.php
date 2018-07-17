@@ -11,11 +11,11 @@ class UserControllerExistsActionTest extends AbstractUserControllerTest
 {
     public function testExistsActionGetRequest()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
         $adminUser = $userService->getAdminUser();
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_exists', [
             'email_canonical' => $publicUser->getEmail(),
         ]);

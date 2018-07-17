@@ -19,7 +19,7 @@ abstract class AbstractUserAccountPlanSubscriptionControllerTest extends Abstrac
     {
         parent::setUp();
 
-        $this->userAccountPlanSubscriptionController = $this->container->get(
+        $this->userAccountPlanSubscriptionController = self::$container->get(
             UserAccountPlanSubscriptionController::class
         );
     }

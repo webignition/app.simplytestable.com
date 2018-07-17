@@ -39,11 +39,11 @@ class JobRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $this->jobRepository = $entityManager->getRepository(Job::class);
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     /**
@@ -55,7 +55,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetByStatesAndTaskStates($jobStateNames, $taskStateNames, $expectedJobIndices)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $jobs = $this->createJobsForAllJobStatesWithTasksForAllTaskStates();
 
@@ -134,7 +134,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetIdsByState($jobValuesCollection, $stateName, $expectedJobIndices)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $jobs = $this->createJobs($jobValuesCollection);
@@ -186,7 +186,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetCountByState($jobValuesCollection, $stateName, $expectedCount)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $this->createJobs($jobValuesCollection);
@@ -287,8 +287,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
-        $websiteService = $this->container->get(WebSiteService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $jobType = $jobTypeService->get($jobTypeName);
         $website = $websiteService->get($websiteUrl);
@@ -487,7 +487,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetIsPublicByJobId($jobValues, $callSetPublic, $expectedIsPublic)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
 
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
@@ -552,10 +552,10 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     private function createJobsForAllJobStatesWithTasksForAllTaskStates()
     {
-        $jobService = $this->container->get(JobService::class);
-        $taskService = $this->container->get(TaskService::class);
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobService = self::$container->get(JobService::class);
+        $taskService = self::$container->get(TaskService::class);
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = array_merge($jobService->getFinishedStateNames(), $jobService->getIncompleteStateNames());
 

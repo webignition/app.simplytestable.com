@@ -25,7 +25,7 @@ class RemoveUnusedOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(RemoveUnusedOutputCommand::class);
+        $this->command = self::$container->get(RemoveUnusedOutputCommand::class);
     }
 
     /**
@@ -44,11 +44,11 @@ class RemoveUnusedOutputCommandTest extends AbstractBaseTestCase
         $args,
         $expectedTaskOutputIndicesInUse
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $taskOutputRepository = $entityManager->getRepository(Output::class);
 
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

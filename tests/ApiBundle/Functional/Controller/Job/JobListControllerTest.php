@@ -12,7 +12,7 @@ class JobListControllerTest extends AbstractControllerTest
 {
     public function testCountActionGetRequest()
     {
-        $requestUrl = $this->container->get('router')->generate('job_joblist_count');
+        $requestUrl = self::$container->get('router')->generate('job_joblist_count');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -30,7 +30,7 @@ class JobListControllerTest extends AbstractControllerTest
 
     public function testListActionGetRequest()
     {
-        $requestUrl = $this->container->get('router')->generate(
+        $requestUrl = self::$container->get('router')->generate(
             'job_joblist_list',
             [
                 'limit' => 0,
@@ -65,7 +65,7 @@ class JobListControllerTest extends AbstractControllerTest
     public function testWebsitesActionGetRequest()
     {
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_joblist_websites'),
+            'url' => self::$container->get('router')->generate('job_joblist_websites'),
         ]);
 
         $response = $this->getClientResponse();

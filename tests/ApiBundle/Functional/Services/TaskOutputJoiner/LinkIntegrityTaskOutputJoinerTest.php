@@ -28,8 +28,8 @@ class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->linkIntegrityTaskOutputJoiner = $this->container->get(LinkIntegrityTaskOutputJoiner::class);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->linkIntegrityTaskOutputJoiner = self::$container->get(LinkIntegrityTaskOutputJoiner::class);
     }
 
     /**

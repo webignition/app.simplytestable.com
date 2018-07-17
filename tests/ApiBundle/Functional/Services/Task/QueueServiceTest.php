@@ -31,8 +31,8 @@ class QueueServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskQueueService = $this->container->get(QueueService::class);
-        $this->jobFactory = new JobFactory($this->container);
+        $this->taskQueueService = self::$container->get(QueueService::class);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     public function testGetNextWithNoJobs()

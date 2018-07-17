@@ -31,9 +31,9 @@ abstract class AbstractTeamInviteControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->teamInviteController = $this->container->get(TeamInviteController::class);
+        $this->teamInviteController = self::$container->get(TeamInviteController::class);
 
-        $this->userFactory = new UserFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
         $this->users = $this->userFactory->createPublicPrivateAndTeamUserSet();
     }
 }

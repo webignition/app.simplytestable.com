@@ -27,7 +27,7 @@ class TaskTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
         $this->taskOutputRepository = $this->entityManager->getRepository(Output::class);
     }
 

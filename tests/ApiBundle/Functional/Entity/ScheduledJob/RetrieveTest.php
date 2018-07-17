@@ -20,7 +20,7 @@ class RetrieveTest extends ScheduledJobTest
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         $this->originalScheduledJob = $this->getScheduledJob();

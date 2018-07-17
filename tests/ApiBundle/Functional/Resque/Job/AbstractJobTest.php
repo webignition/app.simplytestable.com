@@ -17,8 +17,8 @@ abstract class AbstractJobTest extends AbstractBaseTestCase
     protected function initialiseJob(Job $job, Command $command)
     {
         $job->setKernelOptions([
-            'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
-            'kernel.environment' => $this->container->getParameter('kernel.environment'),
+            'kernel.root_dir' => self::$container->getParameter('kernel.root_dir'),
+            'kernel.environment' => self::$container->getParameter('kernel.environment'),
             'command' => $command,
         ]);
     }
@@ -30,7 +30,7 @@ abstract class AbstractJobTest extends AbstractBaseTestCase
      */
     public function runInMaintenanceReadOnlyMode(Job $job)
     {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $applicationStateService = self::$container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateInterface::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $job->run([]);

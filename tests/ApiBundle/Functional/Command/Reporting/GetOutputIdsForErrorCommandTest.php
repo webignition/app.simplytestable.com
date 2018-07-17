@@ -24,7 +24,7 @@ class GetOutputIdsForErrorCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(GetOutputIdsForErrorCommand::class);
+        $this->command = self::$container->get(GetOutputIdsForErrorCommand::class);
     }
 
     /**
@@ -78,8 +78,8 @@ class GetOutputIdsForErrorCommandTest extends AbstractBaseTestCase
             ],
         ];
 
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $job = $jobFactory->createResolveAndPrepare();
 
@@ -112,8 +112,8 @@ class GetOutputIdsForErrorCommandTest extends AbstractBaseTestCase
         $args,
         $expectedTaskOutputIndices
     ) {
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

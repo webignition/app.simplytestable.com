@@ -9,7 +9,7 @@ class TeamControllerGetActionTest extends AbstractTeamControllerTest
 {
     public function testGetActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('team_get');
 
         $this->getCrawler([

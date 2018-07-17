@@ -25,8 +25,8 @@ class ParametersTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
     }
 
     public function testSetPersistGetParameters()

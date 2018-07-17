@@ -28,8 +28,8 @@ class RetrievalServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userFactory = new UserFactory($this->container);
-        $this->jobFactory = new JobFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     /**
@@ -40,8 +40,8 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveFailure($userTeamStatus, $jobOwnerTeamStatus)
     {
-        $jobRetrievalService = $this->container->get(RetrievalService::class);
-        $teamService = $this->container->get(Service::class);
+        $jobRetrievalService = self::$container->get(RetrievalService::class);
+        $teamService = self::$container->get(Service::class);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'user@example.com',
@@ -129,13 +129,13 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveSuccess($owner, $requester, $callSetPublic)
     {
-        $jobRetrievalService = $this->container->get(RetrievalService::class);
+        $jobRetrievalService = self::$container->get(RetrievalService::class);
 
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $owner = $users[$owner];
         $requester = $users[$requester];
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $owner,

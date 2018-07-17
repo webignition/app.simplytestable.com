@@ -39,10 +39,10 @@ class CollectionCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(CollectionCommand::class);
+        $this->command = self::$container->get(CollectionCommand::class);
 
-        $this->workerFactory = new WorkerFactory($this->container);
-        $this->jobFactory = new JobFactory($this->container);
+        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     public function testRunNoTaskIds()
@@ -78,8 +78,8 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
         /* @var TestHttpClientService $httpClientService */
-        $httpClientService = $this->container->get(HttpClientService::class);
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $httpClientService = self::$container->get(HttpClientService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $job = $this->jobFactory->createResolveAndPrepare([], $resolveAndPrepareHttpFixtures);

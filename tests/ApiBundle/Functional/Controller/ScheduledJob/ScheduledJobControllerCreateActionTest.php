@@ -24,16 +24,16 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 {
     public function testCreateActionPostRequest()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
         $this->setUser($user);
 
         $this->createJobConfiguration($user);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('scheduledjob_create');
 
         $this->getCrawler([
@@ -58,7 +58,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 
     public function testCreateActionUnknownJobConfiguration()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         $this->setUser($user);
@@ -85,7 +85,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
      */
     public function testCreateActionMalformedRequest($requestData, $expectedResponseErrorHeader)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -128,7 +128,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 
     public function testCreateActionFailureScheduleJobAlreadyExists()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -152,10 +152,10 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 
     public function testCreateActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -181,9 +181,9 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
     private function createJobConfiguration(User $user)
     {
         $jobConfigurationCreateController = new JobConfigurationController(
-            $this->container->get('router'),
+            self::$container->get('router'),
             MockFactory::createApplicationStateService(),
-            $this->container->get(ConfigurationService::class)
+            self::$container->get(ConfigurationService::class)
         );
 
         $request = new Request([], [
@@ -196,10 +196,10 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
         ]);
 
         $jobConfigurationCreateController->createAction(
-            $this->container->get(UserService::class),
-            $this->container->get(WebSiteService::class),
-            $this->container->get(TaskTypeService::class),
-            $this->container->get(JobTypeService::class),
+            self::$container->get(UserService::class),
+            self::$container->get(WebSiteService::class),
+            self::$container->get(TaskTypeService::class),
+            self::$container->get(JobTypeService::class),
             $user,
             $request
         );
@@ -214,9 +214,9 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
     private function callCreateAction(Request $request, User $user)
     {
         return $this->scheduledJobController->createAction(
-            $this->container->get(UserService::class),
-            $this->container->get(ConfigurationService::class),
-            $this->container->get(CronModifierValidationService::class),
+            self::$container->get(UserService::class),
+            self::$container->get(ConfigurationService::class),
+            self::$container->get(CronModifierValidationService::class),
             $user,
             $request
         );

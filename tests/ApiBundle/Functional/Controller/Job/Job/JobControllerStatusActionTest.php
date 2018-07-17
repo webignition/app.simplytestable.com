@@ -18,7 +18,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_status', [
+            'url' => self::$container->get('router')->generate('job_job_status', [
                 'test_id' => $job->getId(),
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])

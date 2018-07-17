@@ -34,12 +34,12 @@ class UserPostActivationPropertiesTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->create();
 
-        $planFactory = new PlanFactory($this->container);
+        $planFactory = new PlanFactory(self::$container);
         $this->plan = $planFactory->create();
     }
 

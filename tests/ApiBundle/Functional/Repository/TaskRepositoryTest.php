@@ -58,11 +58,11 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $this->taskRepository = $entityManager->getRepository(Task::class);
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     /**
@@ -152,7 +152,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
      */
     public function testFindUrlsByJobAndState($jobValues, $taskStateName, $expectedUrls)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
 
@@ -211,8 +211,8 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskStateName,
         $expectedCount
     ) {
-        $stateService = $this->container->get(StateService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 
@@ -241,7 +241,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskStateName,
         $expectedTaskIndices
     ) {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
@@ -284,8 +284,8 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     ) {
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $stateService = $this->container->get(StateService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $taskType = $taskTypeService->get($taskTypeName);
         $states = $stateService->getCollection($stateNames);
@@ -332,7 +332,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskStateName,
         $expectedTaskOutputValues
     ) {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($taskStateName);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
@@ -341,7 +341,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
@@ -388,7 +388,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskStateNames,
         $expectedTaskIndices
     ) {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
@@ -430,7 +430,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $stateNamesToExclude,
         $expectedCount
     ) {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
@@ -440,7 +440,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $tasks = $this->getTasksFromJobCollection($jobs);
         $statesToExclude = $stateService->getCollection($stateNamesToExclude);
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
@@ -480,7 +480,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $job = $jobs[$jobIndex];
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
@@ -516,7 +516,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $job = $jobs[$jobIndex];
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
@@ -541,7 +541,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetCountByJobAndStates($jobValuesCollection, $jobIndex, $stateNames, $expectedTaskCount)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $states = $stateService->getCollection($stateNames);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
@@ -569,8 +569,8 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskTypeName,
         $expectedOutputIndices
     ) {
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $taskOutputRepository = $entityManager->getRepository(Output::class);
 
         $taskType = $taskTypeService->get($taskTypeName);
@@ -582,7 +582,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
@@ -628,7 +628,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskFactory = new TaskFactory($this->container);
+        $taskFactory = new TaskFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskEndDateTimeCollection[$taskIndex])) {
@@ -666,7 +666,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $tasks = $this->getTasksFromJobCollection($jobs);
         $selectedTask = $tasks[$taskIndex];
 
-        $taskFactory = new TaskFactory($this->container);
+        $taskFactory = new TaskFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskEndDateTimeCollection[$taskIndex])) {
@@ -674,7 +674,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
             }
         }
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
@@ -709,14 +709,14 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $periodEnd,
         $expectedCount
     ) {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $allUsers = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $allUsers);
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskFactory = new TaskFactory($this->container);
+        $taskFactory = new TaskFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskEndDateTimeCollection[$taskIndex])) {

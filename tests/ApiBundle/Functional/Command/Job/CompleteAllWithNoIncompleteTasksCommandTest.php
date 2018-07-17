@@ -36,9 +36,9 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(CompleteAllWithNoIncompleteTasksCommand::class);
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->command = self::$container->get(CompleteAllWithNoIncompleteTasksCommand::class);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     /**
@@ -57,8 +57,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
         $expectedReturnCode,
         $expectedJobStateNames
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 

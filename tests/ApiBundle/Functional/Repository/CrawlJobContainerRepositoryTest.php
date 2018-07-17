@@ -38,21 +38,21 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $this->crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     public function testDoesCrawlTaskParentStateMatchState()
     {
-        $websiteService = $this->container->get(WebSiteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stateService = $this->container->get(StateService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $website = $websiteService->get('http://example.com/');
         $user = $userFactory->create();
@@ -155,9 +155,9 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $keyStatesNumerically,
         $expectedCrawlJobContainerIndices
     ) {
-        $stateService = $this->container->get(StateService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [
             Job::STATE_STARTING,

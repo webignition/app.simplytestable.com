@@ -35,15 +35,15 @@ class MaintenanceControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->controller = $this->container->get(MaintenanceController::class);
+        $this->controller = self::$container->get(MaintenanceController::class);
 
-        $this->applicationStateService = $this->container->get(ApplicationStateService::class);
+        $this->applicationStateService = self::$container->get(ApplicationStateService::class);
     }
 
     public function testEnableBackupReadOnlyAction()
     {
         $this->controller->enableBackupReadOnlyAction(
-            $this->container->get(EnableBackupReadOnlyCommand::class)
+            self::$container->get(EnableBackupReadOnlyCommand::class)
         );
 
         $this->assertEquals(
@@ -55,7 +55,7 @@ class MaintenanceControllerTest extends AbstractControllerTest
     public function testEnableReadOnlyAction()
     {
         $this->controller->enableReadOnlyAction(
-            $this->container->get(EnableReadOnlyCommand::class)
+            self::$container->get(EnableReadOnlyCommand::class)
         );
 
         $this->assertEquals(
@@ -67,7 +67,7 @@ class MaintenanceControllerTest extends AbstractControllerTest
     public function testDisableReadOnlyAction()
     {
         $this->controller->disableReadOnlyAction(
-            $this->container->get(DisableReadOnlyCommand::class)
+            self::$container->get(DisableReadOnlyCommand::class)
         );
 
         $this->assertEquals(
@@ -79,11 +79,11 @@ class MaintenanceControllerTest extends AbstractControllerTest
     public function testLeaveReadOnlyAction()
     {
         $this->controller->leaveReadOnlyAction(
-            $this->container->get(DisableReadOnlyCommand::class),
-            $this->container->get(EnqueuePrepareAllCommand::class),
-            $this->container->get(RequeueQueuedForAssignmentCommand::class),
-            $this->container->get(TaskNotificationCommand::class),
-            $this->container->get(EnqueueCancellationForAwaitingCancellationCommand::class)
+            self::$container->get(DisableReadOnlyCommand::class),
+            self::$container->get(EnqueuePrepareAllCommand::class),
+            self::$container->get(RequeueQueuedForAssignmentCommand::class),
+            self::$container->get(TaskNotificationCommand::class),
+            self::$container->get(EnqueueCancellationForAwaitingCancellationCommand::class)
         );
 
         $this->assertEquals(

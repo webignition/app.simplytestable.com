@@ -33,7 +33,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $this->scheduledJobService = self::$container->get(ScheduledJobService::class);
     }
 
     public function testCreateMatchingScheduledJobExists()
@@ -96,7 +96,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
         $isRecurring,
         $expectedCronJobCommand
     ) {
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
 
         $scheduledJob = $this->scheduledJobService->create($jobConfiguration, $schedule, $cronModifier, $isRecurring);
@@ -145,7 +145,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetInvalidId()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $scheduledJob = $this->scheduledJobService->get(0);
@@ -155,13 +155,13 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetSuccessForNonTeamUser()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $scheduledJob = $scheduledJobFactory->create([
             ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
@@ -176,11 +176,11 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetFailureForNonTeamUser()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $scheduledJob = $scheduledJobFactory->create([
             ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
@@ -197,11 +197,11 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetForTeamUsers()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $leaderScheduledJob = $scheduledJobFactory->create([
             ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
@@ -228,11 +228,11 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetFailureForTeamUsers()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $scheduledJob = $scheduledJobFactory->create([
             ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
@@ -258,7 +258,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
      */
     public function testGetList($scheduledJobValuesCollection, $userName, $expectedScheduledJobIndices)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
@@ -266,8 +266,8 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
         $scheduledJobs = [];
 
         if (!empty($scheduledJobValuesCollection)) {
-            $scheduledJobFactory = new ScheduledJobFactory($this->container);
-            $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+            $scheduledJobFactory = new ScheduledJobFactory(self::$container);
+            $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
 
             foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
                 $jobConfigurationValues = $scheduledJobValues[ScheduledJobFactory::KEY_JOB_CONFIGURATION];
@@ -380,8 +380,8 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testDelete()
     {
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $scheduledJob = $scheduledJobFactory->create([
             ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create(),
@@ -399,8 +399,8 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testUpdateHasMatchingScheduledJob()
     {
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $jobConfiguration = $jobConfigurationFactory->create();
 
@@ -447,8 +447,8 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
         $isRecurring,
         $expectedJobConfigurationLabel
     ) {
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
 
@@ -536,9 +536,9 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testRemoveAllForTeamUser()
     {
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
-        $userFactory = new UserFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users['leader'];
 
@@ -561,11 +561,11 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testRemoveAllSuccess()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $user = $userService->getPublicUser();
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
 
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $user,

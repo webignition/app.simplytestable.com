@@ -30,11 +30,11 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $this->jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
@@ -42,7 +42,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
     public function testDeleteActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_delete', [
             'label' => $this->jobConfiguration->getLabel(),
         ]);
@@ -61,7 +61,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
     public function testDeleteActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_delete', [
             'label' => $this->jobConfiguration->getLabel(),
         ]);
@@ -79,11 +79,11 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
     public function testDeleteActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
         $response = $this->jobConfigurationController->deleteAction(
-            $this->container->get('doctrine.orm.entity_manager'),
+            self::$container->get('doctrine.orm.entity_manager'),
             $this->jobConfiguration->getLabel()
         );
 

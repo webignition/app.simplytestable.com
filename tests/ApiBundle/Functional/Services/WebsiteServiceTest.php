@@ -16,7 +16,7 @@ class WebsiteServiceTest extends AbstractBaseTestCase
      */
     public function testGet($url, $expectedWebsiteCanonicalUrl)
     {
-        $websiteService = $this->container->get(WebSiteService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
         $website = $websiteService->get($url);
 
         $this->assertInstanceOf(Website::class, $website);

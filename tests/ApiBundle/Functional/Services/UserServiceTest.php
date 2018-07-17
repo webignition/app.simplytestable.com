@@ -21,7 +21,7 @@ class UserServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userService = $this->container->get(UserService::class);
+        $this->userService = self::$container->get(UserService::class);
     }
 
     public function testGetPublicUser()
@@ -34,7 +34,7 @@ class UserServiceTest extends AbstractBaseTestCase
 
     public function testGetAdminUser()
     {
-        $adminUserEmail = $this->container->getParameter('admin_user_email');
+        $adminUserEmail = self::$container->getParameter('admin_user_email');
         $adminUser = $this->userService->getAdminUser();
 
         $this->assertInstanceOf(User::class, $adminUser);
@@ -49,7 +49,7 @@ class UserServiceTest extends AbstractBaseTestCase
      */
     public function testIsPublicUser($userEmail, $expectedIsPublicUser)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -82,7 +82,7 @@ class UserServiceTest extends AbstractBaseTestCase
      */
     public function testIsSpecialUser($userEmail, $expectedIsSpecialUser)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -155,7 +155,7 @@ class UserServiceTest extends AbstractBaseTestCase
 
     public function testGetConfirmationToken()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $user = $userFactory->create();
         $this->assertNotEmpty($user->getConfirmationToken());

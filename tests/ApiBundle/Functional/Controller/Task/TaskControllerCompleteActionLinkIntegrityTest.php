@@ -31,7 +31,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
     {
         parent::setUp();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $this->job = $jobFactory->createResolveAndPrepare([
             'siteRootUrl' => 'http://example.com/',
             'type' => JobTypeService::FULL_SITE_NAME,
@@ -55,7 +55,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
         $expectedTaskStates,
         $expectedTaskOutputValuesCollection
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $this->setJobTypeConstraintLimits();
 
@@ -84,7 +84,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
         }
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->get('request_stack')->push($request);
+        self::$container->get('request_stack')->push($request);
 
         $response = $this->callCompleteAction();
 
@@ -279,10 +279,10 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
 
     private function setJobTypeConstraintLimits()
     {
-        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobUserAccountPlanEnforcementService = self::$container->get(JobUserAccountPlanEnforcementService::class);
+        $userService = self::$container->get(UserService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
         $userAccountPlan = $userAccountPlanService->getForUser($user);

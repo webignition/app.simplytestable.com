@@ -35,10 +35,10 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $this->taskOutputRepository = $entityManager->getRepository(Output::class);
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     /**
@@ -59,10 +59,10 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $offset,
         $expectedTaskOutputIndices
     ) {
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -191,10 +191,10 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $limit,
         $expectedTaskOutputIndices
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -304,10 +304,10 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $limit,
         $expectedTaskOutputIndices
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -453,8 +453,8 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $limit,
         $expectedHashes
     ) {
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -588,8 +588,8 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $hash,
         $expectedTaskOutputIndices
     ) {
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

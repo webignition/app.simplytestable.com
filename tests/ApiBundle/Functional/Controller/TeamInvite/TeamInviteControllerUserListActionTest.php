@@ -12,7 +12,7 @@ class TeamInviteControllerUserListActionTest extends AbstractTeamInviteControlle
 {
     public function testUserListActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_userlist');
 
         $this->getCrawler([
@@ -41,7 +41,7 @@ class TeamInviteControllerUserListActionTest extends AbstractTeamInviteControlle
 
     public function testUserListActionHasInvites()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $user = $this->users['private'];
         $teamInviteService->get($this->users['leader'], $user);
@@ -61,12 +61,12 @@ class TeamInviteControllerUserListActionTest extends AbstractTeamInviteControlle
 
     public function testUserListActionHasInvitesPremiumPlanUser()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $user = $this->users['private'];
         $teamInviteService->get($this->users['leader'], $user);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
         $userAccountPlanFactory->create($user, 'agency');
 
         $response = $this->teamInviteController->userListAction($user);

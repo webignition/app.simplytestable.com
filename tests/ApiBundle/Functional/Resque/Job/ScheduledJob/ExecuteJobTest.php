@@ -13,7 +13,7 @@ class ExecuteJobTest extends AbstractJobTest
     public function testRunInMaintenanceReadOnlyMode()
     {
         $job = new ExecuteJob(['id' => 1]);
-        $this->initialiseJob($job, $this->container->get(ExecuteCommand::class));
+        $this->initialiseJob($job, self::$container->get(ExecuteCommand::class));
 
         $this->assertEquals(
             ExecuteCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,

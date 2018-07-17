@@ -34,9 +34,9 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->workerTaskAssignmentService = $this->container->get(WorkerTaskAssignmentService::class);
+        $this->workerTaskAssignmentService = self::$container->get(WorkerTaskAssignmentService::class);
 
-        $this->workerFactory = new WorkerFactory($this->container);
+        $this->workerFactory = new WorkerFactory(self::$container);
     }
 
     public function testAssignCollectionNoWorkers()
@@ -78,9 +78,9 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         $expectedTaskStateNames
     ) {
         /* @var TestHttpClientService $httpClientService */
-        $httpClientService = $this->container->get(HttpClientService::class);
+        $httpClientService = self::$container->get(HttpClientService::class);
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::HTML_VALIDATION_TYPE,

@@ -34,9 +34,9 @@ class JobListServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobListService = $this->container->get(JobListService::class);
+        $this->jobListService = self::$container->get(JobListService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->defaultConfigurationValues = [
@@ -44,7 +44,7 @@ class JobListServiceTest extends AbstractBaseTestCase
         ];
 
 
-        $jobLoader = new JobLoader($this->container);
+        $jobLoader = new JobLoader(self::$container);
         $this->jobs = $jobLoader->load('jobs.yml', $users);
     }
 

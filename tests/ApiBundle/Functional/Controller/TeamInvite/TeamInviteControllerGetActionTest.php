@@ -16,7 +16,7 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
 {
     public function testGetActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_get', [
             'invitee_email' => 'new-user@example.com',
         ]);
@@ -41,7 +41,7 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
      */
     public function testGetActionClientFailure($inviterName, $inviteeEmail, $expectedResponseError)
     {
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
         $userAccountPlanFactory->create($this->users['private'], 'agency');
 
         $inviter = $this->users[$inviterName];
@@ -136,8 +136,8 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
             UserFactory::KEY_EMAIL => 'new-user-has-invite@example.com',
         ]);
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $teamInviteService = $this->container->get(InviteService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $userRepository = $entityManager->getRepository(User::class);
         $inviteRepository = $entityManager->getRepository(Invite::class);

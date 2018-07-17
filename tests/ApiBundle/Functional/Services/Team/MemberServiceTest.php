@@ -30,8 +30,8 @@ class MemberServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->memberService = $this->container->get(MemberService::class);
-        $userFactory = new UserFactory($this->container);
+        $this->memberService = self::$container->get(MemberService::class);
+        $userFactory = new UserFactory(self::$container);
 
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }
@@ -54,7 +54,7 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testAddSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
@@ -73,9 +73,9 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testRemove()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
-        $teamService = $this->container->get(Service::class);
+        $teamService = self::$container->get(Service::class);
 
         /* @var Team $team */
         $team = $teamRepository->findOneBy([
@@ -106,7 +106,7 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testContains()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
@@ -121,7 +121,7 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testGetTeamByMember()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
@@ -137,7 +137,7 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testGetMembers()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */

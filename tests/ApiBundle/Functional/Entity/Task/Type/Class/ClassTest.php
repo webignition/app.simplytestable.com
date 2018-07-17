@@ -9,7 +9,7 @@ class ClassTest extends AbstractBaseTestCase
 {
     public function testPersistAndRetrieve()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $name = 'name-ɸ';
         $description = 'description-ɸ';

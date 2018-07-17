@@ -30,9 +30,9 @@ class JobListQueryBuilderFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobListQueryBuilderFactory = $this->container->get(JobListQueryBuilderFactory::class);
+        $this->jobListQueryBuilderFactory = self::$container->get(JobListQueryBuilderFactory::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }
 

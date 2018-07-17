@@ -19,6 +19,6 @@ abstract class AbstractScheduledJobControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->scheduledJobController = $this->container->get(ScheduledJobController::class);
+        $this->scheduledJobController = self::$container->get(ScheduledJobController::class);
     }
 }

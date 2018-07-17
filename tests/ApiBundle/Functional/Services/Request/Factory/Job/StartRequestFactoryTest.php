@@ -31,18 +31,18 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
         $expectedTaskConfigurationCollection,
         $expectedJobParameters
     ) {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
 
         $request = new Request($requestQuery, $requestRequest, $requestAttributes);
 
-        $this->container->get('request_stack')->push($request);
+        self::$container->get('request_stack')->push($request);
 
         $this->setUser($user);
 
-        $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
+        $jobStartRequestFactory = self::$container->get(StartRequestFactory::class);
         $jobStartRequest = $jobStartRequestFactory->create($request);
 
         $this->assertEquals($jobStartRequest->getUser(), $user);

@@ -23,7 +23,7 @@ class TaskConfigurationTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
     }
 
     /**
@@ -37,8 +37,8 @@ class TaskConfigurationTest extends AbstractBaseTestCase
      */
     public function testPersist($taskTypeName, $options, $isEnabled, $expectedOptions, $expectedIsEnabled)
     {
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $taskConfigurationRepository = $this->entityManager->getRepository(TaskConfiguration::class);
 
         $jobConfiguration = $jobConfigurationFactory->create();

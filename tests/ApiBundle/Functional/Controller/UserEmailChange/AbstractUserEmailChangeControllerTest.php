@@ -33,9 +33,9 @@ abstract class AbstractUserEmailChangeControllerTest extends AbstractControllerT
     {
         parent::setUp();
 
-        $this->userEmailChangeController = $this->container->get(UserEmailChangeController::class);
+        $this->userEmailChangeController = self::$container->get(UserEmailChangeController::class);
 
-        $this->userFactory = new UserFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
         $this->user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'current-email@example.com',
         ]);
@@ -51,7 +51,7 @@ abstract class AbstractUserEmailChangeControllerTest extends AbstractControllerT
      */
     protected function createEmailChangeRequest(User $user, $newEmail)
     {
-        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
+        $userEmailChangeRequestService = self::$container->get(UserEmailChangeRequestService::class);
 
         return $userEmailChangeRequestService->create($user, $newEmail);
     }

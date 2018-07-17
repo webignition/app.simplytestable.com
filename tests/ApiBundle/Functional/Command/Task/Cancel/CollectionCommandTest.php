@@ -40,10 +40,10 @@ class CollectionCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(CollectionCommand::class);
+        $this->command = self::$container->get(CollectionCommand::class);
 
-        $this->workerFactory = new WorkerFactory($this->container);
-        $this->jobFactory = new JobFactory($this->container);
+        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     /**
@@ -63,7 +63,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedTaskStates
     ) {
         /* @var TestHttpClientService $httpClientService */
-        $httpClientService = $this->container->get(HttpClientService::class);
+        $httpClientService = self::$container->get(HttpClientService::class);
 
         foreach ($workerValuesCollection as $workerValues) {
             $this->workerFactory->create($workerValues);

@@ -53,7 +53,7 @@ class StateServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->stateService = $this->container->get(StateService::class);
+        $this->stateService = self::$container->get(StateService::class);
     }
 
     public function testFetchUnknownState()

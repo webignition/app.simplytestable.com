@@ -28,7 +28,7 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->users['no-plan'] = $userFactory->create([
@@ -48,21 +48,21 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
             UserFactory::KEY_EMAIL => 'basic-with-stripe-customer@example.com',
         ]);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
 
         $userAccountPlanFactory->create($this->users['premium'], 'agency', 'cus_aaaaaaaaaaaaa0');
         $userAccountPlanFactory->create($this->users['leader'], 'business', 'cus_aaaaaaaaaaaaa1');
         $userAccountPlanFactory->create($this->users['basic-with-stripe-customer'], 'personal', 'cus_aaaaaaaaaaaaa2');
         $userAccountPlanFactory->create($this->users['basic-with-stripe-customer'], 'basic', 'cus_aaaaaaaaaaaaa2');
 
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
         $teamInviteService->get($this->users['leader'], $this->users['invitee']);
         $teamInviteService->get($this->users['leader'], $this->users['premium']);
     }
 
     public function testGetActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_get', [
             'email_canonical' => 'public@simplytestable.com',
         ]);
@@ -97,9 +97,9 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
         $this->setUser($user);
 
         $response = $this->userController->getAction(
-            $this->container->get(UserAccountPlanService::class),
-            $this->container->get(AccountPlanService::class),
-            $this->container->get(UserSummaryFactory::class),
+            self::$container->get(UserAccountPlanService::class),
+            self::$container->get(AccountPlanService::class),
+            self::$container->get(UserSummaryFactory::class),
             $user
         );
 

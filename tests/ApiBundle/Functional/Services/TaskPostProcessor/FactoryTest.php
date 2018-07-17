@@ -21,12 +21,12 @@ class FactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->factory = $this->container->get(Factory::class);
+        $this->factory = self::$container->get(Factory::class);
     }
 
     public function testGetUrlDiscoveryTaskPostProcessor()
     {
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
         $this->assertInstanceOf(
             UrlDiscoveryTaskPostProcessor::class,

@@ -23,15 +23,15 @@ class UserStripeEventControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->userStripeEventController = $this->container->get(UserStripeEventController::class);
+        $this->userStripeEventController = self::$container->get(UserStripeEventController::class);
     }
 
     public function testListActionGetRequest()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_list_stripe_events', [
             'email_canonical' => $user->getEmail(),
             'type' => 'customer.subscription.created',
@@ -58,9 +58,9 @@ class UserStripeEventControllerTest extends AbstractControllerTest
      */
     public function testListActionSuccess($stripeEventFixtures, $userName, $type, $expectedResponseData)
     {
-        $stripeEventService = $this->container->get(StripeEventService::class);
+        $stripeEventService = self::$container->get(StripeEventService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 

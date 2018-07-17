@@ -13,7 +13,7 @@ class ActivateVerifyJobTest extends AbstractJobTest
     public function testRunInMaintenanceReadOnlyMode()
     {
         $job = new ActivateVerifyJob(['id' => 1]);
-        $this->initialiseJob($job, $this->container->get(ActivateVerifyCommand::class));
+        $this->initialiseJob($job, self::$container->get(ActivateVerifyCommand::class));
 
         $this->assertEquals(
             ActivateVerifyCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,

@@ -46,11 +46,11 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 
-        $this->jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $this->jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $this->jobConfiguration = $this->jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
             JobConfigurationFactory::KEY_LABEL => self::LABEL_ONE,
@@ -66,7 +66,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
 
     public function testUpdateActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_update', ['label' => 'foo']);
 
         $this->getCrawler([
@@ -83,7 +83,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
 
     public function testUpdateActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_update', [
             'label' => $this->jobConfiguration->getLabel()
         ]);
@@ -166,9 +166,9 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
     private function callUpdateAction($postData)
     {
         return $this->jobConfigurationController->updateAction(
-            $this->container->get(WebSiteService::class),
-            $this->container->get(TaskTypeService::class),
-            $this->container->get(JobTypeService::class),
+            self::$container->get(WebSiteService::class),
+            self::$container->get(TaskTypeService::class),
+            self::$container->get(JobTypeService::class),
             new Request([], $postData),
             $this->jobConfiguration->getLabel()
         );

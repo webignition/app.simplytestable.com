@@ -23,9 +23,9 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
 {
     public function testOnCustomerSubscriptionCreatedWebClientRequestFailure()
     {
-        $eventDispatcher = $this->container->get('event_dispatcher');
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $userService = $this->container->get(UserService::class);
+        $eventDispatcher = self::$container->get('event_dispatcher');
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $userService = self::$container->get(UserService::class);
 
         $this->httpClientService->appendFixtures([
             ConnectExceptionFactory::create('CURL/28 Operation timed out'),
@@ -36,7 +36,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEventFactory = new StripeEventFactory(self::$container);
 
         $stripeEvent = $stripeEventFactory->createEvents([
             'customer.subscription.created.active' => [
@@ -59,7 +59,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
      */
     public function testOnCustomerSubscriptionCreatedWebClientSubscriberUrlInvalid($webClientProperties)
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $user = $userService->getPublicUser();
 
         /* @var Mock|StripeService $stripeService */
@@ -145,21 +145,21 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $stripeApiHttpFixtures,
         $expectedWebClientRequestDataCollection
     ) {
-        $eventDispatcher = $this->container->get('event_dispatcher');
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $eventDispatcher = self::$container->get('event_dispatcher');
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
         $this->httpClientService->appendFixtures([new Response()]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEventFactory = new StripeEventFactory(self::$container);
         $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(

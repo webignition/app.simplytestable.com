@@ -24,15 +24,15 @@ class CanonicaliseTaskOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(CanonicaliseTaskOutputCommand::class);
+        $this->command = self::$container->get(CanonicaliseTaskOutputCommand::class);
     }
 
     public function testRunWithOnlyUnusedDuplicateHashes()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $job = $jobFactory->createResolveAndPrepare();
 
@@ -69,8 +69,8 @@ class CanonicaliseTaskOutputCommandTest extends AbstractBaseTestCase
         $args,
         $expectedTaskOutputIndicesInUse
     ) {
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

@@ -13,11 +13,11 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
 {
     public function testGetActionGetRequest()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_email_change_request_get', [
             'email_canonical' =>  $this->user->getEmail(),
         ]);
@@ -35,7 +35,7 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
 
     public function testGetActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $emailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');

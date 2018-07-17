@@ -9,7 +9,7 @@ class EventTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $event = new Event();
         $event->setIsLive(true);
@@ -24,7 +24,7 @@ class EventTest extends AbstractBaseTestCase
 
     public function testDataPropertyPersist()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $event = new Event();
         $event->setIsLive(true);

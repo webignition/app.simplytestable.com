@@ -21,7 +21,7 @@ class PostmarkClientTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->postmarkClient = $this->container->get(PostmarkClient::class);
+        $this->postmarkClient = self::$container->get(PostmarkClient::class);
     }
 
     public function testPostmarkClientHttpClient()
@@ -30,6 +30,6 @@ class PostmarkClientTest extends AbstractBaseTestCase
         $property = $reflection->getProperty('client');
         $property->setAccessible(true);
 
-        $this->assertEquals($this->container->get(Client::class), $property->getValue($this->postmarkClient));
+        $this->assertEquals(self::$container->get(Client::class), $property->getValue($this->postmarkClient));
     }
 }

@@ -45,9 +45,9 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase
      */
     protected function getJobConfiguration()
     {
-        $userService = $this->container->get(UserService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $userService = self::$container->get(UserService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $fullSiteJobType = $jobTypeService->getFullSiteType();
 

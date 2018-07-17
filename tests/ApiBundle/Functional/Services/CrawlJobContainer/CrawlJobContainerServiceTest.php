@@ -47,9 +47,9 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
 
     public function testGetAllActiveForUser()
     {
-        $stateService = $this->container->get(StateService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [
             Job::STATE_STARTING,

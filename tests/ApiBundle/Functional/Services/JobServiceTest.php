@@ -45,9 +45,9 @@ class JobServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobService = $this->container->get(JobService::class);
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $this->jobFactory = new JobFactory($this->container);
+        $this->jobService = self::$container->get(JobService::class);
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     /**
@@ -78,11 +78,11 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedJobTaskTypes,
         $expectedJobTaskTypeOptions
     ) {
-        $userFactory = new UserFactory($this->container);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $stateService = $this->container->get(StateService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $userFactory = new UserFactory(self::$container);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
@@ -318,7 +318,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testIsState($stateName, $expectedIsFinished, $expectedIsNew, $expectedIsPreparing)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $job = $this->jobFactory->create();
@@ -408,7 +408,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testCancelFinishedJob($stateName)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $job = $this->jobFactory->create();
         $job->setState($stateService->get($stateName));
@@ -447,8 +447,8 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testCancel($jobValues, $resolveAndPrepare)
     {
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         if ($resolveAndPrepare) {
             $job = $this->jobFactory->createResolveAndPrepare($jobValues);
@@ -516,14 +516,14 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedReason,
         $expectedConstraintName
     ) {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         $jobValues[JobFactory::KEY_USER] = $users[$user];
 
         $job = $this->jobFactory->create($jobValues);
 
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
         $userAccountPlan = $userAccountPlanService->getForUser($job->getUser());
 
         $constraint = empty($constraintName)
@@ -576,8 +576,8 @@ class JobServiceTest extends AbstractBaseTestCase
 
     public function testCancelIncompleteTasks()
     {
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $finishedTaskStates = [
             Task::STATE_CANCELLED,
@@ -653,7 +653,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testCompleteFinishedJob($stateName)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $job = $this->jobFactory->create();
 
@@ -701,7 +701,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
     public function testComplete()
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare();
         $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
@@ -741,10 +741,10 @@ class JobServiceTest extends AbstractBaseTestCase
             Job::STATE_QUEUED,
         ];
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         /* @var Job[] $jobs */
         $jobs = [];
@@ -796,7 +796,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testRejectInWrongState($stateName)
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $job = $this->jobFactory->create();
@@ -855,10 +855,10 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testReject($userName, $reason, $constraintName)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
 
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
         $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $job = $this->jobFactory->create([
@@ -918,7 +918,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedCountOfTasksWithErrors,
         $expectedCountOfTasksWithWarnings
     ) {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         if (isset($jobValues[JobFactory::KEY_USER])) {
@@ -928,7 +928,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
         $tasks = $job->getTasks()->toArray();
 
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {

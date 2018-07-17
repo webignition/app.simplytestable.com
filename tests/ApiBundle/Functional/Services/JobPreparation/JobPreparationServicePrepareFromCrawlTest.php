@@ -77,10 +77,10 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $taskController = $this->container->get(TaskController::class);
+        $taskController = self::$container->get(TaskController::class);
 
-        $this->container->get('request_stack')->push($taskCompleteRequest);
-        $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
+        self::$container->get('request_stack')->push($taskCompleteRequest);
+        self::$container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
         $this->callTaskControllerCompleteAction($taskController);
 
@@ -171,8 +171,8 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
 
     public function testPrepareFromCrawlWhereCrawlJobHasAmmendments()
     {
-        $jobService = $this->container->get(JobService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $jobService = self::$container->get(JobService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         $parentJob = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
@@ -221,15 +221,15 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
     {
         return $taskController->completeAction(
             MockFactory::createApplicationStateService(),
-            $this->container->get(ResqueQueueService::class),
-            $this->container->get(CompleteRequestFactory::class),
-            $this->container->get(TaskService::class),
-            $this->container->get(JobService::class),
-            $this->container->get(JobPreparationService::class),
-            $this->container->get(CrawlJobContainerService::class),
-            $this->container->get(TaskOutputJoinerFactory::class),
-            $this->container->get(TaskPostProcessorFactory::class),
-            $this->container->get(StateService::class),
+            self::$container->get(ResqueQueueService::class),
+            self::$container->get(CompleteRequestFactory::class),
+            self::$container->get(TaskService::class),
+            self::$container->get(JobService::class),
+            self::$container->get(JobPreparationService::class),
+            self::$container->get(CrawlJobContainerService::class),
+            self::$container->get(TaskOutputJoinerFactory::class),
+            self::$container->get(TaskPostProcessorFactory::class),
+            self::$container->get(StateService::class),
             MockFactory::createTaskTypeDomainsToIgnoreService()
         );
     }

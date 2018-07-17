@@ -14,7 +14,7 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
 {
     public function testCreateActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('team_create');
 
         $this->getCrawler([
@@ -40,7 +40,7 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
      */
     public function testCreateActionClientFailure($userEmail, $postData, $expectedResponseError)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -125,8 +125,8 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
 
     public function testCreateActionNoExistingTeam()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(Service::class);
+        $teamInviteService = self::$container->get(InviteService::class);
+        $teamService = self::$container->get(Service::class);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'new-user@example.com',

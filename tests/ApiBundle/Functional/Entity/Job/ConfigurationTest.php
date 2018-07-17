@@ -33,8 +33,8 @@ class ConfigurationTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
     }
 
     /**
@@ -52,10 +52,10 @@ class ConfigurationTest extends AbstractBaseTestCase
         $parameters,
         $taskConfigurationValuesCollection
     ) {
-        $jobTypeService = $this->container->get(JobTypeService::class);
-        $userService = $this->container->get(UserService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskConfigurationFactory = new JobTaskConfigurationFactory($this->container);
+        $jobTypeService = self::$container->get(JobTypeService::class);
+        $userService = self::$container->get(UserService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $taskConfigurationFactory = new JobTaskConfigurationFactory(self::$container);
 
         $configurationRepository = $this->entityManager->getRepository(Configuration::class);
 

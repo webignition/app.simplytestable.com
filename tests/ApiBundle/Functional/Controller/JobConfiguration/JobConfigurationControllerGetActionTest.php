@@ -24,19 +24,19 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
     }
 
     public function testGetActionGetRequest()
     {
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_get', [
             'label' => $jobConfiguration->getLabel(),
         ]);

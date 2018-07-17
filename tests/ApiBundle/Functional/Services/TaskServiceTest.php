@@ -39,9 +39,9 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskService = $this->container->get(TaskService::class);
+        $this->taskService = self::$container->get(TaskService::class);
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $this->job = $jobFactory->createResolveAndPrepare();
 
         $this->task = $this->job->getTasks()->get(0);
@@ -49,7 +49,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testCancelFinishedTask()
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
@@ -96,7 +96,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCancelSuccess($taskValues)
     {
         if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-            $workerFactory = new WorkerFactory($this->container);
+            $workerFactory = new WorkerFactory(self::$container);
             $worker = $workerFactory->create([
                 WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
             ]);
@@ -105,13 +105,13 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
-            $timePeriodFactory = new TimePeriodFactory($this->container);
+            $timePeriodFactory = new TimePeriodFactory(self::$container);
             $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
 
             $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
         }
 
-        $taskFactory = new TaskFactory($this->container);
+        $taskFactory = new TaskFactory(self::$container);
         $taskFactory->update($this->task, $taskValues);
 
         $this->taskService->cancel($this->task);
@@ -146,7 +146,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testSetAwaitingCancellationDisallowedStateName()
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $disallowedStateNames = [
             Task::STATE_AWAITING_CANCELLATION,
@@ -171,7 +171,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testIsFinished()
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
@@ -197,7 +197,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testIsCancellable()
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $cancellableStateNames = $this->taskService->getCancellableStateNames();
 
@@ -234,7 +234,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testPersist()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $taskRepository = $entityManager->getRepository(Task::class);
 
@@ -253,7 +253,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testPersistAndFlush()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $taskRepository = $entityManager->getRepository(Task::class);
 
@@ -278,7 +278,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create();
         $remoteId = 1;
 
@@ -294,7 +294,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testCompleteIncorrectState()
     {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $completedState = $stateService->get(Task::STATE_COMPLETED);
 
         $incorrectStateNames = $this->taskService->getFinishedStateNames();
@@ -310,8 +310,8 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testCompleteHasExistingOutput()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stateService = $this->container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
         $completedState = $stateService->get(Task::STATE_COMPLETED);
 
         $output = new Output();
@@ -337,7 +337,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         if (!empty($taskValues)) {
             if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-                $workerFactory = new WorkerFactory($this->container);
+                $workerFactory = new WorkerFactory(self::$container);
                 $worker = $workerFactory->create([
                     WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
                 ]);
@@ -346,17 +346,17 @@ class TaskServiceTest extends AbstractBaseTestCase
             }
 
             if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
-                $timePeriodFactory = new TimePeriodFactory($this->container);
+                $timePeriodFactory = new TimePeriodFactory(self::$container);
                 $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
 
                 $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
             }
 
-            $taskFactory = new TaskFactory($this->container);
+            $taskFactory = new TaskFactory(self::$container);
             $taskFactory->update($this->task, $taskValues);
         }
 
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $output = new Output();
@@ -435,10 +435,10 @@ class TaskServiceTest extends AbstractBaseTestCase
         $stateNames,
         $expectedEquivalentTaskIndices
     ) {
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $stateService = $this->container->get(StateService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
 
-        $taskFactory = new TaskFactory($this->container);
+        $taskFactory = new TaskFactory(self::$container);
 
         /* @var Task[] $tasks */
         $tasks = $this->job->getTasks()->toArray();

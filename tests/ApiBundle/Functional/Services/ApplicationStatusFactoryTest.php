@@ -20,7 +20,7 @@ class ApplicationStatusFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->applicationStatusFactory = $this->container->get(ApplicationStatusFactory::class);
+        $this->applicationStatusFactory = self::$container->get(ApplicationStatusFactory::class);
     }
 
     public function testCreate()

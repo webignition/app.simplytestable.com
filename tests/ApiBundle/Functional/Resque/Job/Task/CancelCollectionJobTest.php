@@ -13,7 +13,7 @@ class CancelCollectionJobTest extends AbstractJobTest
     public function testRunInMaintenanceReadOnlyMode()
     {
         $job = new CancelCollectionJob(['ids' => '1,2,3']);
-        $this->initialiseJob($job, $this->container->get(CollectionCommand::class));
+        $this->initialiseJob($job, self::$container->get(CollectionCommand::class));
 
         $this->assertEquals(
             CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,

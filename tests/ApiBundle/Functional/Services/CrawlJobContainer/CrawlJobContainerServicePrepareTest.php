@@ -20,7 +20,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
      */
     public function testPrepareInWrongState($stateName)
     {
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
         $state = StateFactory::create($stateName);
 
@@ -109,9 +109,9 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
 
     public function testPrepare()
     {
-        $stateService = $this->container->get(StateService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
         $user = $this->userFactory->create();
         $website = $websiteService->get('http://example.com/');
