@@ -112,7 +112,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
     {
         return $this->userController->resetPasswordAction(
             MockFactory::createApplicationStateService(),
-            self::$container->get('test.usermanipulator'),
+            self::$container->get(UserManipulator::class),
             $request,
             $user->getConfirmationToken()
         );
