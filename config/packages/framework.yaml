@@ -10,7 +10,7 @@ framework:
         handler_id: ~
 
     #esi: true
-    #fragments: true
+    fragments: true
     php_errors:
         log: true
 
