@@ -6,6 +6,11 @@ imports:
     - { resource: services/legacy_aliases.yml }
 
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
   simplytestable.session.handler:
     class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
 
@@ -76,3 +81,12 @@ services:
   Postmark\PostmarkClient:
     arguments:
       - '%postmark_api_key%'
+
+  SimplyTestable\ApiBundle\DataFixtures\ORM\LoadUserData:
+    arguments:
+      $adminUserEmail: '%admin_user_email%'
+      $adminUserPassword: '%admin_user_password%'
+
+  SimplyTestable\ApiBundle\DataFixtures\ORM\NormaliseUserAccountPlans:
+    arguments:
+      $defaultTrialPeriod: '%default_trial_period%'

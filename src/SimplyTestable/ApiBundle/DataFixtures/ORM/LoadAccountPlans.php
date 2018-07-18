@@ -2,15 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadAccountPlans extends Fixture
 {
     private $planDetails = array(
         array(
@@ -148,21 +146,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
     );
 
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     *
-     * @var \Doctrine\ORM\EntityRepository
+     * @var EntityRepository
      */
     private $planRepository = null;
 
@@ -239,7 +223,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
                 'name' => $name,
             ]);
 
-            if (!is_null($plan)) {
+            if (!empty($plan)) {
                 return $plan;
             }
         }
@@ -263,13 +247,5 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOrder()
-    {
-        return 6; // the order in which fixtures will be loaded
     }
 }

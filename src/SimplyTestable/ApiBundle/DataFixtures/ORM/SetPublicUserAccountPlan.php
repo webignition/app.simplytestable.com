@@ -2,28 +2,43 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterface
 {
     /**
-     * @var ContainerInterface
+     * @var UserService
      */
-    private $container;
+    private $userService;
 
     /**
-     * {@inheritDoc}
+     * @var UserAccountPlanService
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
+    private $userAccountPlanService;
+
+    /**
+     * @var AccountPlanService
+     */
+    private $accountPlanService;
+
+    /**
+     * @param UserService $userService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param AccountPlanService $accountPlanService
+     */
+    public function __construct(
+        UserService $userService,
+        UserAccountPlanService $userAccountPlanService,
+        AccountPlanService $accountPlanService
+    ) {
+        $this->userService = $userService;
+        $this->userAccountPlanService = $userAccountPlanService;
+        $this->accountPlanService = $accountPlanService;
     }
 
     /**
@@ -31,25 +46,23 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
      */
     public function load(ObjectManager $manager)
     {
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $publicUser = $this->userService->getPublicUser();
+        $publicUserAccountPlan = $this->userAccountPlanService->getForUser($publicUser);
 
-        $user = $userService->getPublicUser();
-
-        $userAccountPlan = $userAccountPlanService->getForUser($user);
-
-        if (empty($userAccountPlan)) {
-            $plan = $accountPlanService->get('public');
-            $userAccountPlanService->subscribe($user, $plan);
+        if (empty($publicUserAccountPlan)) {
+            $plan = $this->accountPlanService->get('public');
+            $this->userAccountPlanService->subscribe($publicUser, $plan);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function getOrder()
+    public function getDependencies()
     {
-        return 7; // the order in which fixtures will be loaded
+        return [
+            LoadUserData::class,
+            LoadAccountPlans::class,
+        ];
     }
 }

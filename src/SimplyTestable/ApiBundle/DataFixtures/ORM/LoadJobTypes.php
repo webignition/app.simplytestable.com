@@ -2,15 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadJobTypes extends Fixture
 {
     private $jobTypes = array(
         'Full site' => array(
@@ -23,19 +20,6 @@ class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface, C
             'description' => 'Crawl the site to find URLs for testing'
         )
     );
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritDoc}
@@ -59,13 +43,5 @@ class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface, C
             $manager->persist($jobType);
             $manager->flush();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOrder()
-    {
-        return 5; // the order in which fixtures will be loaded
     }
 }

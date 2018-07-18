@@ -2,28 +2,43 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
-class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class NormaliseUserAccountPlans extends Fixture implements DependentFixtureInterface
 {
     /**
-     * @var ContainerInterface
+     * @var UserService
      */
-    private $container;
+    private $userService;
 
     /**
-     * {@inheritDoc}
+     * @var UserAccountPlanService
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
+    private $userAccountPlanService;
+
+    /**
+     * @var int
+     */
+    private $defaultTrialPeriod;
+
+    /**
+     * @param UserService $userService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param int $defaultTrialPeriod
+     */
+    public function __construct(
+        UserService $userService,
+        UserAccountPlanService $userAccountPlanService,
+        $defaultTrialPeriod
+    ) {
+        $this->userService = $userService;
+        $this->userAccountPlanService = $userAccountPlanService;
+        $this->defaultTrialPeriod = (int)$defaultTrialPeriod;
     }
 
     /**
@@ -31,30 +46,21 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
      */
     public function load(ObjectManager $manager)
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $userService = $this->container->get(UserService::class);
         $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
 
         /* @var UserAccountPlan[] $userAccountPlans */
         $userAccountPlans = $userAccountPlanRepository->findAll();
 
         foreach ($userAccountPlans as $userAccountPlan) {
-            if ($userService->isSpecialUser($userAccountPlan->getUser())) {
+            if ($this->userService->isSpecialUser($userAccountPlan->getUser())) {
                 continue;
             }
 
             /* @var $userAccountPlan UserAccountPlan */
             $isModified = false;
 
-            if (is_null($userAccountPlan->getIsActive())) {
-                if ($userAccountPlanService->countForUser($userAccountPlan->getUser()) === 1) {
-                    $userAccountPlan->setIsActive(true);
-                    $isModified = true;
-                }
-            }
-
             if (is_null($userAccountPlan->getStartTrialPeriod())) {
-                $userAccountPlan->setStartTrialPeriod($this->container->getParameter('default_trial_period'));
+                $userAccountPlan->setStartTrialPeriod($this->defaultTrialPeriod);
                 $isModified = true;
             }
 
@@ -66,10 +72,14 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function getOrder()
+    public function getDependencies()
     {
-        return 8; // the order in which fixtures will be loaded
+        return [
+            LoadAccountPlans::class,
+            LoadUserData::class,
+            SetPublicUserAccountPlan::class,
+        ];
     }
 }

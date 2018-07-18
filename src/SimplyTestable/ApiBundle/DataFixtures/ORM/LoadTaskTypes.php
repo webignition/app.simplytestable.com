@@ -2,16 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadTaskTypes extends Fixture implements DependentFixtureInterface
 {
     private $taskTypes = array(
         'HTML validation' => array(
@@ -42,30 +39,19 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
     );
 
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
         $taskTypeClassRepository = $manager->getRepository(TaskTypeClass::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $taskTypeRepository = $manager->getRepository(TaskType::class);
 
         foreach ($this->taskTypes as $name => $properties) {
-            $taskType = $taskTypeService->get($name);
+            $taskType = $taskTypeRepository->findOneBy([
+                'name' => $name,
+            ]);
 
-            if (is_null($taskType)) {
+            if (empty($taskType)) {
                 $taskType = new TaskType();
             }
 
@@ -84,10 +70,12 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function getOrder()
+    public function getDependencies()
     {
-        return 4; // the order in which fixtures will be loaded
+        return [
+            LoadTaskTypeClasses::class,
+        ];
     }
 }

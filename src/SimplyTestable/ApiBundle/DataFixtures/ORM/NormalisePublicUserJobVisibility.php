@@ -2,31 +2,27 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class NormalisePublicUserJobVisibility extends AbstractFixture implements
-    OrderedFixtureInterface,
-    ContainerAwareInterface
+class NormalisePublicUserJobVisibility extends Fixture implements DependentFixtureInterface
 {
     /**
-     * @var ContainerInterface
+     * @var User
      */
-    private $container;
+    private $publicUser;
 
     /**
-     * {@inheritDoc}
+     * @param UserService $userService
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function __construct(UserService $userService)
     {
-        $this->container = $container;
+        $this->publicUser = $userService->getPublicUser();
     }
-
 
     /**
      * {@inheritDoc}
@@ -34,9 +30,8 @@ class NormalisePublicUserJobVisibility extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $jobRepository = $manager->getRepository(Job::class);
-        $userService = $this->container->get(UserService::class);
         $publicUserPrivateJobs = $jobRepository->findBy(array(
-            'user' => $userService->getPublicUser(),
+            'user' => $this->publicUser,
             'isPublic' => false
         ));
 
@@ -51,10 +46,12 @@ class NormalisePublicUserJobVisibility extends AbstractFixture implements
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function getOrder()
+    public function getDependencies()
     {
-        return 9; // the order in which fixtures will be loaded
+        return [
+            LoadUserData::class,
+        ];
     }
 }
