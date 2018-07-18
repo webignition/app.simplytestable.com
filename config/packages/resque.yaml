@@ -1,0 +1,2 @@
+resque:
+    prefix: '%env(RESQUE_PREFIX)%'

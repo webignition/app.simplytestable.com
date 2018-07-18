@@ -6,6 +6,3 @@ imports:
 sensio_framework_extra:
   router:
     annotations: false
-
-resque:
-    prefix: "%bcc_resque_prefix%"                # optional prefix to separate Resque data per site/app
