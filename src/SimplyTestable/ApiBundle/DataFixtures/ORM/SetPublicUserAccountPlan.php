@@ -5,14 +5,17 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 
 class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterface
 {
+    /**
+     * @var UserService
+     */
+    private $userService;
+
     /**
      * @var UserAccountPlanService
      */
@@ -24,16 +27,6 @@ class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterf
     private $accountPlanService;
 
     /**
-     * @var User
-     */
-    private $publicUser;
-
-    /**
-     * @var UserAccountPlan
-     */
-    private $publicUserAccountPlan;
-
-    /**
      * @param UserService $userService
      * @param UserAccountPlanService $userAccountPlanService
      * @param AccountPlanService $accountPlanService
@@ -43,11 +36,9 @@ class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterf
         UserAccountPlanService $userAccountPlanService,
         AccountPlanService $accountPlanService
     ) {
+        $this->userService = $userService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->accountPlanService = $accountPlanService;
-
-        $this->publicUser = $userService->getPublicUser();
-        $this->publicUserAccountPlan = $userAccountPlanService->getForUser($this->publicUser);
     }
 
     /**
@@ -55,9 +46,12 @@ class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterf
      */
     public function load(ObjectManager $manager)
     {
-        if (empty($this->publicUserAccountPlan)) {
+        $publicUser = $this->userService->getPublicUser();
+        $publicUserAccountPlan = $this->userAccountPlanService->getForUser($publicUser);
+
+        if (empty($publicUserAccountPlan)) {
             $plan = $this->accountPlanService->get('public');
-            $this->userAccountPlanService->subscribe($this->publicUser, $plan);
+            $this->userAccountPlanService->subscribe($publicUser, $plan);
         }
     }
 
