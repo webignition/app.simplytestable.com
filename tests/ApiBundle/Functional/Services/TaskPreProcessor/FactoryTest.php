@@ -22,12 +22,12 @@ class FactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->factory = $this->container->get(Factory::class);
+        $this->factory = self::$container->get(Factory::class);
     }
 
     public function testGetLinkIntegrityTaskPreProcessor()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $taskTypeRepository = $entityManager->getRepository(Type::class);
 
         /* @var Type $linkIntegrityTaskType */

@@ -12,7 +12,7 @@ class TeamControllerRemoveActionTest extends AbstractTeamControllerTest
 {
     public function testRemoveActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('team_remove', [
             'member_email' => 'member1@example.com',
         ]);
@@ -93,7 +93,7 @@ class TeamControllerRemoveActionTest extends AbstractTeamControllerTest
      */
     public function testRemoveActionSuccess($memberEmail)
     {
-        $teamService = $this->container->get(Service::class);
+        $teamService = self::$container->get(Service::class);
         $member = $this->userFactory->create([
             UserFactory::KEY_EMAIL => $memberEmail,
         ]);

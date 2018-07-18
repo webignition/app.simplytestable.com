@@ -31,7 +31,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobUserAccountPlanEnforcementService = $this->container->get(
+        $this->jobUserAccountPlanEnforcementService = self::$container->get(
             JobUserAccountPlanEnforcementService::class
         );
     }
@@ -52,14 +52,14 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $expectedIsFullSiteLimitReached,
         $expectedIsSingleUrlLimitReached
     ) {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
-        $websiteService = $this->container->get(WebSiteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $websiteService = self::$container->get(WebSiteService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
 
         foreach ($jobValuesCollection as $jobValues) {
             $jobValues[JobFactory::KEY_USER] = $user;
@@ -172,19 +172,19 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $removeLimit,
         $expectedIsJobUrlLimitReached
     ) {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         if ($removeLimit) {
-            $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+            $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
             $userAccountPlan = $userAccountPlanService->getForUser($user);
             $plan = $userAccountPlan->getPlan();
 
             $constraint = $plan->getConstraintNamed(JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME);
             $plan->removeConstraint($constraint);
 
-            $entityManager = $this->container->get('doctrine.orm.entity_manager');
+            $entityManager = self::$container->get('doctrine.orm.entity_manager');
             $entityManager->persist($plan);
             $entityManager->flush();
         }
@@ -239,11 +239,11 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
      */
     public function testGetCreditsUsedThisMonth($jobValues, $taskStateNames, $expectedCreditsUsed)
     {
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
 
-        $userService = $this->container->get(UserService::class);
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
         $job = $jobFactory->createResolveAndPrepare($jobValues);
@@ -336,13 +336,13 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
      */
     public function testIsUserCreditLimitReached($taskStateNames, $planValues, $expectedIsLimitReached)
     {
-        $planFactory = new PlanFactory($this->container);
-        $jobFactory = new JobFactory($this->container);
+        $planFactory = new PlanFactory(self::$container);
+        $jobFactory = new JobFactory(self::$container);
 
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
         $plan = $planFactory->create($planValues);
@@ -464,7 +464,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $timePeriod->setStartDateTime($startDateTime);
         $timePeriod->setEndDateTime($endDateTime);
 
-        $entityManger = $this->container->get('doctrine.orm.entity_manager');
+        $entityManger = self::$container->get('doctrine.orm.entity_manager');
         $entityManger->persist($timePeriod);
         $entityManger->flush();
 

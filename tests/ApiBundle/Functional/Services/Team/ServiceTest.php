@@ -28,8 +28,8 @@ class ServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->teamService = $this->container->get(Service::class);
-        $this->userFactory = new UserFactory($this->container);
+        $this->teamService = self::$container->get(Service::class);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     /**

@@ -13,15 +13,15 @@ class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
 {
     public function testHasInvitesActionGetRequest()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
-        $userService = $this->container->get(UserService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
+        $userService = self::$container->get(UserService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $teamInviteService->get($users['leader'], $users['private']);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_hasinvites', [
             'email_canonical' => $users['private']->getEmail(),
         ]);

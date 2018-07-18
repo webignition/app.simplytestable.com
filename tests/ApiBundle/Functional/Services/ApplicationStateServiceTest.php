@@ -20,7 +20,7 @@ class ApplicationStateServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->applicationStateService = $this->container->get(ApplicationStateService::class);
+        $this->applicationStateService = self::$container->get(ApplicationStateService::class);
     }
 
     /**

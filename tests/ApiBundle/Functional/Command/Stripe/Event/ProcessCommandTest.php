@@ -30,12 +30,12 @@ class ProcessCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(ProcessCommand::class);
+        $this->command = self::$container->get(ProcessCommand::class);
     }
 
     public function testRunForEventWithNoUser()
     {
-        $stripeEventService = $this->container->get(StripeEventService::class);
+        $stripeEventService = self::$container->get(StripeEventService::class);
 
         $stripeEvent = $stripeEventService->create(
             'stripe_id',
@@ -63,9 +63,9 @@ class ProcessCommandTest extends AbstractBaseTestCase
      */
     public function testRun($fixtureName, $expectedEventName)
     {
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         /* @var LoggerInterface $logger */
         $logger = \Mockery::mock(LoggerInterface::class);
@@ -76,7 +76,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer($stripeCustomer);
 
-        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEventFactory = new StripeEventFactory(self::$container);
         $stripeEvent = $stripeEventFactory->createEvents([
             $fixtureName => [
                 'data' => [

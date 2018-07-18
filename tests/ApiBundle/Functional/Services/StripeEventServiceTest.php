@@ -21,7 +21,7 @@ class StripeEventServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->stripeEventService = $this->container->get(StripeEventService::class);
+        $this->stripeEventService = self::$container->get(StripeEventService::class);
     }
 
     public function testCreateWithExistingEvent()
@@ -67,7 +67,7 @@ class StripeEventServiceTest extends AbstractBaseTestCase
         if (is_null($userName)) {
             $user = null;
         } else {
-            $userFactory = new UserFactory($this->container);
+            $userFactory = new UserFactory(self::$container);
             $users = $userFactory->createPublicAndPrivateUserSet();
             $user = $users[$userName];
         }
@@ -122,7 +122,7 @@ class StripeEventServiceTest extends AbstractBaseTestCase
      */
     public function testGetForUserAndType($stripeEventFixtures, $userName, $type, $expectedEventStripeIds)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 

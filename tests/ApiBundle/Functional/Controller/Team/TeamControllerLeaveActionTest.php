@@ -11,7 +11,7 @@ class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
 {
     public function testLeaveActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('team_leave');
 
         $this->getCrawler([
@@ -53,7 +53,7 @@ class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
      */
     public function testLeaveActionSuccess($userName)
     {
-        $teamService = $this->container->get(Service::class);
+        $teamService = self::$container->get(Service::class);
 
         $user = $this->users[$userName];
         $this->setUser($user);

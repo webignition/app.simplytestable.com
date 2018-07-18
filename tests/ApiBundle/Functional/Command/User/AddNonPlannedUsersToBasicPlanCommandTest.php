@@ -21,7 +21,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(AddNonPlannedUsersToBasicPlanCommand::class);
+        $this->command = self::$container->get(AddNonPlannedUsersToBasicPlanCommand::class);
     }
 
     /**
@@ -33,8 +33,8 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
      */
     public function testRun($userValuesCollection, $args, $expectedUserPlanNames)
     {
-        $userFactory = new UserFactory($this->container);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userFactory = new UserFactory(self::$container);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         /* @var User[] $users */
         $users = [];

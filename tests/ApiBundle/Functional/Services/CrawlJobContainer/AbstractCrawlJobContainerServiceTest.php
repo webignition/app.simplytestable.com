@@ -31,9 +31,9 @@ abstract class AbstractCrawlJobContainerServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $this->crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 }

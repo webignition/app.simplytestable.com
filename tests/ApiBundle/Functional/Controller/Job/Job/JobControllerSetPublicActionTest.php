@@ -21,7 +21,7 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_setpublic', [
+            'url' => self::$container->get('router')->generate('job_job_setpublic', [
                 'test_id' => $job->getId(),
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
@@ -58,7 +58,7 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
 
         $this->setUser($requesterUser);
         $response = $this->jobController->setPublicAction(
-            $this->container->get(UserService::class),
+            self::$container->get(UserService::class),
             $requesterUser,
             $job->getWebsite()->getCanonicalUrl(),
             $job->getId()

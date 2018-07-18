@@ -18,7 +18,7 @@ abstract class PersistTest extends ScheduledJobTest
 
         $this->scheduledJob = $this->getScheduledJob();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $entityManager->persist($this->scheduledJob->getCronJob());
         $entityManager->persist($this->scheduledJob->getJobConfiguration());

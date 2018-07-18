@@ -18,7 +18,7 @@ class AssignCollectionJobTest extends AbstractJobTest
     public function testRunInMaintenanceReadOnlyMode($args)
     {
         $job = new AssignCollectionJob($args);
-        $this->initialiseJob($job, $this->container->get(CollectionCommand::class));
+        $this->initialiseJob($job, self::$container->get(CollectionCommand::class));
 
         $this->assertEquals(
             CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,

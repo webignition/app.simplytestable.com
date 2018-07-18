@@ -27,7 +27,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationService = $this->container->get(ConfigurationService::class);
+        $this->jobConfigurationService = self::$container->get(ConfigurationService::class);
     }
 
     /**
@@ -37,9 +37,9 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
      */
     protected function createJobConfigurationValuesModel($jobConfigurationValues)
     {
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $configurationValuesModel = new ConfigurationValues();
 

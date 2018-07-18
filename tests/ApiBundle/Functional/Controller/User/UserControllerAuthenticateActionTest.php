@@ -14,7 +14,7 @@ class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
 {
     public function testAuthenticateActionGetRequest()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $user = $userService->getPublicUser();
 
         $this->createCrawler($user);
@@ -28,7 +28,7 @@ class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
     {
         $this->expectException(DisabledException::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         $this->createCrawler($user);
@@ -45,7 +45,7 @@ class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
      */
     private function createRequestUrl(User $user)
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
 
         return $router->generate('user_authenticate', [
             'email_canonical' => $user->getEmail(),

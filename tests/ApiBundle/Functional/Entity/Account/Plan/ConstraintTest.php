@@ -15,10 +15,10 @@ class ConstraintTest extends AbstractBaseTestCase
      */
     public function testPersist($name)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $constraintRepository = $entityManager->getRepository(Constraint::class);
 
-        $planFactory = new PlanFactory($this->container);
+        $planFactory = new PlanFactory(self::$container);
         $plan = $planFactory->create();
 
         $constraint = new Constraint();

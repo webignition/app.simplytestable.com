@@ -24,7 +24,7 @@ class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(SetTokenFromActivationRequestCommand::class);
+        $this->command = self::$container->get(SetTokenFromActivationRequestCommand::class);
     }
 
     /**
@@ -39,8 +39,8 @@ class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
         $workerActivationRequestValuesCollection,
         $expectedWorkerTokens
     ) {
-        $workerFactory = new WorkerFactory($this->container);
-        $workerActivationRequestFactory = new WorkerActivationRequestFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
+        $workerActivationRequestFactory = new WorkerActivationRequestFactory(self::$container);
 
         /* @var Worker[] $workers */
         $workers = [];

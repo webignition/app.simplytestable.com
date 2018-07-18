@@ -24,7 +24,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(RequeueQueuedForAssignmentCommand::class);
+        $this->command = self::$container->get(RequeueQueuedForAssignmentCommand::class);
     }
 
     /**
@@ -35,7 +35,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
      */
     public function testRunSuccess($jobValuesCollection, $expectedTaskStateNames)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         foreach ($jobValuesCollection as $jobValuesIndex => $jobValues) {
@@ -45,7 +45,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
             }
         }
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
         /* @var Task[] $tasks */

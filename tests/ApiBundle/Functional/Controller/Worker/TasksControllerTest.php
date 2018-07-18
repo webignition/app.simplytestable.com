@@ -32,13 +32,13 @@ class TasksControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->tasksController = $this->container->get(TasksController::class);
+        $this->tasksController = self::$container->get(TasksController::class);
     }
 
     public function testRequestActionGetRequest()
     {
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('worker_tasks_request')
+            'url' => self::$container->get('router')->generate('worker_tasks_request')
         ]);
 
         $response = $this->getClientResponse();
@@ -54,7 +54,7 @@ class TasksControllerTest extends AbstractControllerTest
      */
     public function testRequestActionInvalidWorkerHostname($workerHostnames, $workerHostname)
     {
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
 
         foreach ($workerHostnames as $hostname) {
             $workerFactory->create([
@@ -106,7 +106,7 @@ class TasksControllerTest extends AbstractControllerTest
      */
     public function testRequestActionWorkerInInvalidState($stateName)
     {
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create([
             WorkerFactory::KEY_STATE => $stateName,
         ]);
@@ -153,7 +153,7 @@ class TasksControllerTest extends AbstractControllerTest
 
     public function testRequestActionWorkerInInvalidToken()
     {
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create([
             WorkerFactory::KEY_TOKEN => 'foo',
         ]);
@@ -178,10 +178,10 @@ class TasksControllerTest extends AbstractControllerTest
 
     public function testRequestActionZeroLimit()
     {
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService = self::$container->get(ResqueQueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create();
 
         $request = new Request(
@@ -201,10 +201,10 @@ class TasksControllerTest extends AbstractControllerTest
 
     public function testRequestActionNoTasksToAssign()
     {
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService = self::$container->get(ResqueQueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create();
 
         $request = new Request(
@@ -224,13 +224,13 @@ class TasksControllerTest extends AbstractControllerTest
 
     public function testRequestActionTasksAlreadyRequested()
     {
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
 
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create();
 
         $job = $jobFactory->createResolveAndPrepare();
@@ -281,10 +281,10 @@ class TasksControllerTest extends AbstractControllerTest
      */
     public function testRequestActionTasksRequested($jobValuesCollection, $limit)
     {
-        $userFactory = new UserFactory($this->container);
-        $jobFactory = new JobFactory($this->container);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $userFactory = new UserFactory(self::$container);
+        $jobFactory = new JobFactory(self::$container);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
@@ -301,7 +301,7 @@ class TasksControllerTest extends AbstractControllerTest
             $tasks = array_merge($tasks, $job->getTasks()->toArray());
         }
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create();
 
         $request = new Request(
@@ -373,10 +373,10 @@ class TasksControllerTest extends AbstractControllerTest
     {
         return $this->tasksController->requestAction(
             MockFactory::createApplicationStateService(),
-            $this->container->get('doctrine.orm.entity_manager'),
-            $this->container->get(ResqueQueueService::class),
-            $this->container->get(StateService::class),
-            $this->container->get(TaskQueueService::class),
+            self::$container->get('doctrine.orm.entity_manager'),
+            self::$container->get(ResqueQueueService::class),
+            self::$container->get(StateService::class),
+            self::$container->get(TaskQueueService::class),
             $request
         );
     }

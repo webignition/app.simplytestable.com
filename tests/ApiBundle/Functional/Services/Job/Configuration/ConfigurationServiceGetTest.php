@@ -21,7 +21,7 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }
 

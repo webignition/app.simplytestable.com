@@ -31,8 +31,8 @@ class HttpClientServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->httpClientService = $this->container->get(HttpClientService::class);
-        $this->httpClient = $this->container->get(HttpClient::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
+        $this->httpClient = self::$container->get(HttpClient::class);
     }
 
     public function testGetHttpClient()

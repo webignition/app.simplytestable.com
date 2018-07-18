@@ -27,18 +27,18 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $expectedStateNamesToExclude,
         $expectedTypeNamesToExclude
     ) {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
 
         $request = new Request($requestQuery);
 
-        $this->container->get('request_stack')->push($request);
+        self::$container->get('request_stack')->push($request);
 
         $this->setUser($user);
 
-        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
+        $jobListRequestFactory = self::$container->get(ListRequestFactory::class);
         $jobListRequest = $jobListRequestFactory->create();
 
         $this->assertEquals($expectedUrlFilter, $jobListRequest->getUrlFilter());
@@ -152,15 +152,15 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $expectedJobIndicesToExclude,
         $expectedJobIndicesToInclude
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
@@ -173,11 +173,11 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
 
         $request = new Request($requestQuery);
 
-        $this->container->get('request_stack')->push($request);
+        self::$container->get('request_stack')->push($request);
 
         $this->setUser($user);
 
-        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
+        $jobListRequestFactory = self::$container->get(ListRequestFactory::class);
         $jobListRequest = $jobListRequestFactory->create();
 
         /* @var CrawlJobContainer[] $crawlJobContainers */

@@ -23,7 +23,7 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
     }
 
@@ -47,8 +47,8 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
         $isRecurring,
         $expectedHas
     ) {
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
 
         /* @var ScheduledJob[] $scheduledJobs */
         $scheduledJobs = [];
@@ -182,9 +182,9 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
         $userNames,
         $expectedScheduledJobIndices
     ) {
-        $scheduledJobFactory = new ScheduledJobFactory($this->container);
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $userFactory = new UserFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory(self::$container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         /* @var ScheduledJob[] $scheduledJobs */

@@ -28,7 +28,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->urlDiscoveryTaskPostProcessor = $this->container->get(UrlDiscoveryTaskPostProcessor::class);
+        $this->urlDiscoveryTaskPostProcessor = self::$container->get(UrlDiscoveryTaskPostProcessor::class);
     }
 
     /**
@@ -85,13 +85,13 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
      */
     public function testProcessFailure($taskStateName, $taskOutputValues)
     {
-        $stateService = $this->container->get(StateService::class);
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $stateService = self::$container->get(StateService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);
@@ -104,7 +104,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $task->setState($stateService->get($taskStateName));
 
         if (!empty($taskOutputValues)) {
-            $taskOutputFactory = new TaskOutputFactory($this->container);
+            $taskOutputFactory = new TaskOutputFactory(self::$container);
             $taskOutputFactory->create($task, $taskOutputValues);
         }
 
@@ -146,18 +146,18 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $expectedAmmendmentReason,
         $expectedTaskStateNames
     ) {
-        $stateService = $this->container->get(StateService::class);
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $userFactory = new UserFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $user = $userFactory->createAndActivateUser();
         $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);
@@ -290,18 +290,18 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $taskValuesCollection,
         $expectedTaskValuesCollection
     ) {
-        $stateService = $this->container->get(StateService::class);
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $userFactory = new UserFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $user = $userFactory->createAndActivateUser();
         $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);

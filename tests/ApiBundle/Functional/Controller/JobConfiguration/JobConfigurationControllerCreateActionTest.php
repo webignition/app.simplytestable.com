@@ -21,10 +21,10 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 {
     public function testCreateActionPostRequest()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_create');
 
         $this->getCrawler([
@@ -49,7 +49,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateActionFailureLabelNotUnique()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -74,7 +74,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateActionFailureHasExistingJobConfiguration()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -102,10 +102,10 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateAction()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -141,10 +141,10 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
     private function callCreateAction(Request $request, User $user)
     {
         return $this->jobConfigurationController->createAction(
-            $this->container->get(UserService::class),
-            $this->container->get(WebSiteService::class),
-            $this->container->get(TaskTypeService::class),
-            $this->container->get(JobTypeService::class),
+            self::$container->get(UserService::class),
+            self::$container->get(WebSiteService::class),
+            self::$container->get(TaskTypeService::class),
+            self::$container->get(JobTypeService::class),
             $user,
             $request
         );

@@ -35,17 +35,17 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
 
         $this->setUser($this->user);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
 
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
         $this->scheduledJob = $scheduledJobService->create(
             $jobConfiguration,
             '* * * * *',
@@ -55,7 +55,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
 
     public function testUpdateActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('scheduledjob_update', [
             'id' => 0,
         ]);
@@ -73,7 +73,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
 
     public function testUpdateActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('scheduledjob_update', [
             'id' => $this->scheduledJob->getId(),
         ]);
@@ -104,21 +104,21 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
         $expectedResponseErrorHeader
     ) {
         if (!empty($jobConfigurationValuesCollection)) {
-            $userFactory = new UserFactory($this->container);
+            $userFactory = new UserFactory(self::$container);
 
             foreach ($jobConfigurationValuesCollection as $jobConfigurationValues) {
                 $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $userFactory->create([
                     UserFactory::KEY_EMAIL => $jobConfigurationValues[JobConfigurationFactory::KEY_USER]
                 ]);
 
-                $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+                $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
                 $jobConfigurationFactory->create($jobConfigurationValues);
             }
         }
 
         if (!empty($scheduledJobValuesCollection)) {
-            $scheduledJobService = $this->container->get(ScheduledJobService::class);
-            $jobConfigurationService = $this->container->get(ConfigurationService::class);
+            $scheduledJobService = self::$container->get(ScheduledJobService::class);
+            $jobConfigurationService = self::$container->get(ConfigurationService::class);
 
             foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
                 $jobConfiguration = $jobConfigurationService->get($scheduledJobValues['job-configuration']);
@@ -243,14 +243,14 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
         $expectedScheduledJobValues
     ) {
         if (!empty($jobConfigurationValuesCollection)) {
-            $userFactory = new UserFactory($this->container);
+            $userFactory = new UserFactory(self::$container);
 
             foreach ($jobConfigurationValuesCollection as $jobConfigurationValues) {
                 $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $userFactory->create([
                     UserFactory::KEY_EMAIL => $jobConfigurationValues[JobConfigurationFactory::KEY_USER]
                 ]);
 
-                $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+                $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
                 $jobConfigurationFactory->create($jobConfigurationValues);
             }
         }
@@ -341,8 +341,8 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
     private function callUpdateAction($postData)
     {
         return $this->scheduledJobController->updateAction(
-            $this->container->get(ConfigurationService::class),
-            $this->container->get(CronModifierValidationService::class),
+            self::$container->get(ConfigurationService::class),
+            self::$container->get(CronModifierValidationService::class),
             new Request([], $postData),
             $this->scheduledJob->getId()
         );

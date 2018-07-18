@@ -32,12 +32,12 @@ class UserCreationControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->userCreationController = $this->container->get(UserCreationController::class);
+        $this->userCreationController = self::$container->get(UserCreationController::class);
     }
 
     public function testCreateActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('usercreation_create');
 
         $this->getCrawler([
@@ -56,7 +56,7 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testCreateActionUserAlreadyActivated()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
 
         $request = new Request([], [
@@ -77,9 +77,9 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testCreateActionExistingUserPasswordIsChanged()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         $initialPassword = $user->getPassword();
@@ -119,13 +119,13 @@ class UserCreationControllerTest extends AbstractControllerTest
         $expectedPlanName,
         $expectedPostActivationProperties
     ) {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $userService = self::$container->get(UserService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
 
         if ($createUser) {
-            $userFactory = new UserFactory($this->container);
+            $userFactory = new UserFactory(self::$container);
             $userFactory->create();
         }
 
@@ -250,13 +250,13 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testActivateActionPostRequest()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('usercreation_activate', [
             'token' => $user->getConfirmationToken(),
         ]);
@@ -281,7 +281,7 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testActivateActionSuccessNoPostActivationProperties()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         $response = $this->userCreationController->activateAction($user->getConfirmationToken());
@@ -292,14 +292,14 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testActivateActionSuccessHasPostActivationProperties()
     {
-        $userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
+        $userPostActivationPropertiesService = self::$container->get(UserPostActivationPropertiesService::class);
 
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $accountPlanService = self::$container->get(AccountPlanService::class);
 
         $agencyAccountPlan = $accountPlanService->get('agency');
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         $postActivationProperties = $userPostActivationPropertiesService->create($user, $agencyAccountPlan, 'TMS');

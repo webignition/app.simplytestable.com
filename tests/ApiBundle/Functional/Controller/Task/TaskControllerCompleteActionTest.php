@@ -34,7 +34,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     /**
@@ -53,10 +53,10 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
         $expectedJobTaskStates,
         $expectedJobTaskOutputValues
     ) {
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $this->setJobTypeConstraintLimits();
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         /* @var Job[] $jobs */
         $jobs = [];
@@ -77,7 +77,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
         }
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->get('request_stack')->push($request);
+        self::$container->get('request_stack')->push($request);
 
         $response = $this->callCompleteAction();
 
@@ -559,10 +559,10 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
 
     private function setJobTypeConstraintLimits()
     {
-        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobUserAccountPlanEnforcementService = self::$container->get(JobUserAccountPlanEnforcementService::class);
+        $userService = self::$container->get(UserService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
         $userAccountPlan = $userAccountPlanService->getForUser($user);

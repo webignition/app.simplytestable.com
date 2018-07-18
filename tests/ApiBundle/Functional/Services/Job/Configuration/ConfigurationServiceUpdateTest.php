@@ -22,7 +22,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
         $expectedExceptionMessage,
         $expectedExceptionCode
     ) {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
@@ -98,7 +98,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
      */
     public function testUpdateMatchesCurrentJobConfiguration($jobConfigurationValues, $updatedJobConfigurationValues)
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
@@ -181,7 +181,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
         $updatedJobConfigurationValues,
         $expectedSerializedUpdatedJobConfiguration
     ) {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);

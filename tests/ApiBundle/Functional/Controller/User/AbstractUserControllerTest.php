@@ -21,7 +21,7 @@ abstract class AbstractUserControllerTest extends AbstractControllerTest
         parent::setUp();
 
         $this->userController = new UserController(
-            $this->container->get(UserService::class)
+            self::$container->get(UserService::class)
         );
     }
 

@@ -14,7 +14,7 @@ class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeC
     {
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_email_change_request_cancel', [
             'email_canonical' =>  $this->user->getEmail(),
         ]);
@@ -43,7 +43,7 @@ class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeC
 
     public function testCancelActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $emailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');

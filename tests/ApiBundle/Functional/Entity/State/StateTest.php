@@ -9,7 +9,7 @@ class StateTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $state = new State();
         $state->setName('foo');

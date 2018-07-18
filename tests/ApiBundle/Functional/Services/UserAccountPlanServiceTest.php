@@ -31,8 +31,8 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $this->userFactory = new UserFactory($this->container);
+        $this->userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     public function testSubscribeUserBelongsToTeam()
@@ -62,7 +62,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $expectedStripeCustomer,
         $expectedStartTrialPeriod
     ) {
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $accountPlanService = self::$container->get(AccountPlanService::class);
         $accountPlan = $accountPlanService->get($planName);
 
         StripeApiFixtureFactory::set($httpFixtures);
@@ -117,7 +117,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testSubscribeActionNewPlanIsCurrentPlan($planName)
     {
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $accountPlanService = self::$container->get(AccountPlanService::class);
         $accountPlan = $accountPlanService->get($planName);
 
         $user = $this->userFactory->create([
@@ -153,8 +153,8 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName, $expectedStartTrialPeriod)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $accountPlanService = self::$container->get(AccountPlanService::class);
 
         $nonPremiumAccountPlan = new Plan();
         $nonPremiumAccountPlan->setName('non-premium');
@@ -248,10 +248,10 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testGetForUser($userAccountPlansToCreate, $userName, $expectedUserAccountPlanIndex)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         foreach ($userAccountPlansToCreate as $userAccountPlanToCreate) {
@@ -363,7 +363,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     {
         $user = $this->userFactory->create();
 
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
 
         $agencyUserAccountPlan = $userAccountPlanFactory->create($user, 'agency');
         $businessUserAccountPlan = $userAccountPlanFactory->create($user, 'business');
@@ -383,9 +383,9 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testDeactivateAllForUser()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
@@ -439,7 +439,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testFindAllByPlan()
     {
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $accountPlanService = self::$container->get(AccountPlanService::class);
 
         $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',

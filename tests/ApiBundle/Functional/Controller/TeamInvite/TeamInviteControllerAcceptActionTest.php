@@ -41,13 +41,13 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
         $this->invite = $teamInviteService->get($this->users['leader'], $this->inviteeUser);
     }
 
     public function testAcceptActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_accept');
 
         $this->getCrawler([
@@ -121,9 +121,9 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
     public function testAcceptActionUserHasPremiumPlan()
     {
-        $teamMemberService = $this->container->get(MemberService::class);
+        $teamMemberService = self::$container->get(MemberService::class);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
 
         $this->setUser($this->inviteeUser);
 
@@ -141,11 +141,11 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
     public function testAcceptActionSuccess()
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $teamMemberService = $this->container->get(MemberService::class);
-        $teamService = $this->container->get(Service::class);
-        $teamInviteService = $this->container->get(InviteService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
+        $teamMemberService = self::$container->get(MemberService::class);
+        $teamService = self::$container->get(Service::class);
+        $teamInviteService = self::$container->get(InviteService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
@@ -159,7 +159,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
         $this->assertCount(2, $teamInviteService->getForUser($this->inviteeUser));
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->inviteeUser,
             JobConfigurationFactory::KEY_LABEL => 'job-configuration-label',

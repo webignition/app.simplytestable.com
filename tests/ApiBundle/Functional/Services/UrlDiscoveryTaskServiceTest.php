@@ -23,7 +23,7 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->urlDiscoveryTaskService = $this->container->get(UrlDiscoveryTaskService::class);
+        $this->urlDiscoveryTaskService = self::$container->get(UrlDiscoveryTaskService::class);
     }
 
     /**

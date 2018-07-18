@@ -13,13 +13,13 @@ class PersistTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $crawlJobType = $jobTypeService->getCrawlType();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
 
         $parentJob = $jobFactory->create();
 

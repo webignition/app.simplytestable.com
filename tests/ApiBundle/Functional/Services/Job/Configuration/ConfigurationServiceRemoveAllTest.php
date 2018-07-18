@@ -18,7 +18,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
      */
     public function testRemoveAllUserIsInTeam($userName)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $user = $users[$userName];
@@ -48,8 +48,8 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
 
     public function testRemoveAllInUseByScheduledJob()
     {
-        $userService = $this->container->get(UserService::class);
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $userService = self::$container->get(UserService::class);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
 
         $this->setUser($userService->getPublicUser());
 
@@ -78,7 +78,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
 
     public function testRemoveAllSuccess()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $jobConfigurationCollection = $this->createJobConfigurationCollection([

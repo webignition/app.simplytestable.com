@@ -24,12 +24,12 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(EnqueuePrepareAllCommand::class);
+        $this->command = self::$container->get(EnqueuePrepareAllCommand::class);
     }
 
     public function testRun()
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('job-prepare')->clear();
 
         $jobValuesCollection = [
@@ -41,7 +41,7 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
             ],
         ];
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
 
         /* @var Job[] $jobs */
         $jobs = [];

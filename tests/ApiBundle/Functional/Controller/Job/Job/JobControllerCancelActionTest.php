@@ -28,7 +28,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_cancel', [
+            'url' => self::$container->get('router')->generate('job_job_cancel', [
                 'test_id' => $job->getId(),
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
@@ -42,7 +42,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
     public function testCancelActionSuccess()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $user = $userService->getPublicUser();
 
         $this->setUser($user);
@@ -66,9 +66,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
     public function testCancelCrawlJob()
     {
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $resqueQueueService->getResque()->getQueue('tasks-notify')->clear();
 
@@ -93,13 +93,13 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $entityManager->persist($parentJob);
         $entityManager->flush();
 
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
         $crawlJobContainer = $crawlJobContainerService->getForJob($parentJob);
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
-        $cssValidationDomainsToIgnore = $this->container->getParameter('css_validation_domains_to_ignore');
-        $jsStaticAnalysisDomainsToIgnore = $this->container->getParameter('js_static_analysis_domains_to_ignore');
+        $cssValidationDomainsToIgnore = self::$container->getParameter('css_validation_domains_to_ignore');
+        $jsStaticAnalysisDomainsToIgnore = self::$container->getParameter('js_static_analysis_domains_to_ignore');
 
         $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService([
             'CSS validation' => $cssValidationDomainsToIgnore,
@@ -149,8 +149,8 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
     public function testCancelParentOfCrawlJob()
     {
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
         $jobCancelledState = $stateService->get(Job::STATE_CANCELLED);
@@ -172,14 +172,14 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $entityManager->persist($parentJob);
         $entityManager->flush();
 
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
         $crawlJobContainer = $crawlJobContainerService->getForJob($parentJob);
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
         $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService([
-            'CSS validation' => $this->container->getParameter('css_validation_domains_to_ignore'),
-            'JS static analysis' => $this->container->getParameter('js_static_analysis_domains_to_ignore'),
+            'CSS validation' => self::$container->getParameter('css_validation_domains_to_ignore'),
+            'JS static analysis' => self::$container->getParameter('js_static_analysis_domains_to_ignore'),
         ]);
 
         $response = $this->callCancelAction(
@@ -209,11 +209,11 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         return $this->jobController->cancelAction(
             MockFactory::createApplicationStateService(),
-            $this->container->get(JobService::class),
-            $this->container->get(CrawlJobContainerService::class),
-            $this->container->get(JobPreparationService::class),
-            $this->container->get(ResqueQueueService::class),
-            $this->container->get(StateService::class),
+            self::$container->get(JobService::class),
+            self::$container->get(CrawlJobContainerService::class),
+            self::$container->get(JobPreparationService::class),
+            self::$container->get(ResqueQueueService::class),
+            self::$container->get(StateService::class),
             $taskTypeDomainsToIgnoreService,
             $siteRootUrl,
             $testId

@@ -32,8 +32,8 @@ class StripeWebHookMailNotificationSenderTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->postmarkClient = $this->container->get(PostmarkClient::class);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->postmarkClient = self::$container->get(PostmarkClient::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     public function testSendSuccess()
@@ -128,7 +128,7 @@ class StripeWebHookMailNotificationSenderTest extends AbstractBaseTestCase
         return new StripeWebHookMailNotificationSender(
             $postmarkClient,
             $logger,
-            $this->container->getParameter('stripe_webhook_developer_notification')
+            self::$container->getParameter('stripe_webhook_developer_notification')
         );
     }
 

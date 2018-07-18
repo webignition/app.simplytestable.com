@@ -18,10 +18,10 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
 
     public function testResetPasswordActionPostRequest()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_reset_password', [
             'token' => $user->getConfirmationToken(),
         ]);
@@ -42,7 +42,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
 
     public function testResetPasswordActionBadRequest()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         $this->expectException(BadRequestHttpException::class);
@@ -60,7 +60,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
      */
     public function testResetPasswordAction($activateUser, $expectedIsEnabledBefore, $expectedIsEnabledAfter)
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         if ($activateUser) {
             $user = $userFactory->createAndActivateUser();
@@ -112,7 +112,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
     {
         return $this->userController->resetPasswordAction(
             MockFactory::createApplicationStateService(),
-            $this->container->get('test.usermanipulator'),
+            self::$container->get(UserManipulator::class),
             $request,
             $user->getConfirmationToken()
         );

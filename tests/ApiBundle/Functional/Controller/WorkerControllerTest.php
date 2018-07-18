@@ -27,7 +27,7 @@ class WorkerControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->workerController = $this->container->get(WorkerController::class);
+        $this->workerController = self::$container->get(WorkerController::class);
     }
 
     public function testRequest()
@@ -35,13 +35,13 @@ class WorkerControllerTest extends AbstractControllerTest
         $hostname = 'worker-hostname';
         $token = 'worker-token';
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,
         ]);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('worker_activate');
 
         $this->getCrawler([
@@ -65,8 +65,8 @@ class WorkerControllerTest extends AbstractControllerTest
      */
     public function testActivateActionSuccessWorkerInWrongState($stateName)
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = self::$container->get(QueueService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 
         $resqueQueueService->getResque()->getQueue('worker-activate-verify')->clear();
@@ -74,7 +74,7 @@ class WorkerControllerTest extends AbstractControllerTest
         $hostname = 'foo.worker.simplytestable.com';
         $token = 'token';
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,
@@ -118,9 +118,9 @@ class WorkerControllerTest extends AbstractControllerTest
      */
     public function testActivateActionSuccess($existingActivationRequestStateName)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $stateService = $this->container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = self::$container->get(QueueService::class);
+        $stateService = self::$container->get(StateService::class);
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 
         $resqueQueueService->getResque()->getQueue('worker-activate-verify')->clear();
@@ -130,7 +130,7 @@ class WorkerControllerTest extends AbstractControllerTest
         $hostname = 'foo.worker.simplytestable.com';
         $token = 'token';
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         $worker = $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,

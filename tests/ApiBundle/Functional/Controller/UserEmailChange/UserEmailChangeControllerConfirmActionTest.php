@@ -17,7 +17,7 @@ class UserEmailChangeControllerConfirmActionTest extends AbstractUserEmailChange
         $newEmail = 'new-email@example.com';
         $emailChangeRequest = $this->createEmailChangeRequest($this->user, $newEmail);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_email_change_request_confirm', [
             'email_canonical' =>  $this->user->getEmail(),
             'token' => $emailChangeRequest->getToken(),

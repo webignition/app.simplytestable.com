@@ -28,8 +28,8 @@ class RejectionReasonTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
     }
 
     public function testUtf8Reason()
@@ -72,10 +72,10 @@ class RejectionReasonTest extends AbstractBaseTestCase
 
     public function testPersistWithConstraint()
     {
-        $planFactory = new PlanFactory($this->container);
+        $planFactory = new PlanFactory(self::$container);
         $plan = $planFactory->create([]);
 
-        $constraintFactory = new ConstraintFactory($this->container);
+        $constraintFactory = new ConstraintFactory(self::$container);
         $constraint = $constraintFactory->create($plan, [
             ConstraintFactory::KEY_NAME => 'constraint-name',
             ConstraintFactory::KEY_LIMIT => 1,

@@ -38,13 +38,13 @@ abstract class AbstractJobControllerTest extends AbstractControllerTest
         parent::setUp();
 
         $this->jobController = new JobController(
-            $this->container->get('router'),
-            $this->container->get(RetrievalService::class),
-            $this->container->get('doctrine.orm.entity_manager')
+            self::$container->get('router'),
+            self::$container->get(RetrievalService::class),
+            self::$container->get('doctrine.orm.entity_manager')
         );
 
-        $this->userFactory = new UserFactory($this->container);
-        $this->jobFactory = new JobFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     /**
@@ -56,7 +56,7 @@ abstract class AbstractJobControllerTest extends AbstractControllerTest
     protected function callSetPublicAction(User $user, Job $job)
     {
         return $this->jobController->setPublicAction(
-            $this->container->get(UserService::class),
+            self::$container->get(UserService::class),
             $user,
             $job->getWebsite()->getCanonicalUrl(),
             $job->getId()

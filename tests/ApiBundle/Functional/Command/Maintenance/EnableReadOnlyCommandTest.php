@@ -13,7 +13,7 @@ class EnableReadOnlyCommandTest extends AbstractApplicationStateChangeTest
     {
         $this->assertInstanceOf(
             EnableReadOnlyCommand::class,
-            $this->container->get(EnableReadOnlyCommand::class)
+            self::$container->get(EnableReadOnlyCommand::class)
         );
     }
 

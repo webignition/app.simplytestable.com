@@ -48,19 +48,19 @@ abstract class AbstractJobPreparationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobPreparationService = $this->container->get(JobPreparationService::class);
-        $this->crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $this->jobPreparationService = self::$container->get(JobPreparationService::class);
+        $this->crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
         $cssValidationTaskType = $taskTypeService->getCssValidationTaskType();
 
         $this->jobPreparationService->setPredefinedDomainsToIgnore($cssValidationTaskType, [
             'predefined',
         ]);
 
-        $this->jobFactory = new JobFactory($this->container);
-        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = new UserFactory(self::$container);
 
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 }

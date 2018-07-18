@@ -35,7 +35,7 @@ class UrlResolverTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     /**
@@ -56,7 +56,7 @@ class UrlResolverTest extends AbstractBaseTestCase
             $curlException,
         ]);
 
-        $resolver = $this->container->get(Resolver::class);
+        $resolver = self::$container->get(Resolver::class);
 
         try {
             $resolver->resolve('http://example.com/');
@@ -92,7 +92,7 @@ class UrlResolverTest extends AbstractBaseTestCase
     {
         $this->httpClientService->appendFixtures($httpFixtures);
 
-        $resolver = $this->container->get(Resolver::class);
+        $resolver = self::$container->get(Resolver::class);
         $resolvedUrl = $resolver->resolve('http://example.com/');
 
         $this->assertEquals($expectedResolvedUrl, $resolvedUrl);

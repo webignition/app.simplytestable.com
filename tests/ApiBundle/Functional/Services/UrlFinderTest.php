@@ -39,11 +39,11 @@ class UrlFinderTest extends AbstractBaseTestCase
         $sitemapRetrieverTimeout = null
     ) {
         /* @var TestHttpClientService $httpClientService */
-        $httpClientService = $this->container->get(HttpClientService::class);
-        $webResourceRetriever = $this->container->get(WebResourceRetriever::class);
-        $sitemapFactory = $this->container->get(SitemapFactory::class);
-        $websiteSitemapFinder = $this->container->get(WebsiteSitemapFinder::class);
-        $websiteRssFeedFinder = $this->container->get(WebsiteRssFeedFinder::class);
+        $httpClientService = self::$container->get(HttpClientService::class);
+        $webResourceRetriever = self::$container->get(WebResourceRetriever::class);
+        $sitemapFactory = self::$container->get(SitemapFactory::class);
+        $websiteSitemapFinder = self::$container->get(WebsiteSitemapFinder::class);
+        $websiteRssFeedFinder = self::$container->get(WebsiteRssFeedFinder::class);
 
         $httpClientService->appendFixtures($httpFixtures);
 

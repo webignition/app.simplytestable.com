@@ -42,12 +42,12 @@ class UserPostActivationPropertiesServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
+        $this->userPostActivationPropertiesService = self::$container->get(UserPostActivationPropertiesService::class);
 
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $this->user = $userService->getPublicUser();
 
-        $this->accountPlanService = $this->container->get(AccountPlanService::class);
+        $this->accountPlanService = self::$container->get(AccountPlanService::class);
     }
 
     public function testCreate()

@@ -36,9 +36,9 @@ class PrepareCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
 
-        $this->prepareCommand = $this->container->get(PrepareCommand::class);
+        $this->prepareCommand = self::$container->get(PrepareCommand::class);
     }
 
     public function testRunWithJobInWrongState()
@@ -73,13 +73,13 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $expectedTaskCount
     ) {
         /* @var TestHttpClientService $httpClientService */
-        $httpClientService = $this->container->get(HttpClientService::class);
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $httpClientService = self::$container->get(HttpClientService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('tasks-notify')->clear();
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $jobValues = array_merge($jobValues, [
             JobFactory::KEY_USER => $users[$user],

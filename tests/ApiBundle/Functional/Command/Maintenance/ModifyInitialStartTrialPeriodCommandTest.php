@@ -20,7 +20,7 @@ class ModifyInitialStartTrialPeriodCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(ModifyInitialStartTrialPeriodCommand::class);
+        $this->command = self::$container->get(ModifyInitialStartTrialPeriodCommand::class);
     }
 
     /**
@@ -86,10 +86,10 @@ class ModifyInitialStartTrialPeriodCommandTest extends AbstractBaseTestCase
         $args,
         $expectedStartTrialPeriods
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         foreach ($users as $userIndex => $user) {

@@ -22,14 +22,14 @@ class TaskTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
     }
 
     public function testPersistAndRetrieve()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $stateService = $this->container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $stateService = self::$container->get(StateService::class);
 
         $taskRepository = $entityManager->getRepository(Task::class);
 

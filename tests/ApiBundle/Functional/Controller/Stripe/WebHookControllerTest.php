@@ -40,8 +40,8 @@ class WebHookControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->webHookController = $this->container->get(WebHookController::class);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->webHookController = self::$container->get(WebHookController::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     public function testIndexActionPostRequest()
@@ -50,7 +50,7 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->createPostmarkSuccessResponse(),
         ]);
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $fixtureName = 'customer.subscription.created.active';
@@ -65,9 +65,9 @@ class WebHookControllerTest extends AbstractControllerTest
         $stripeId = 'foo';
         $stripeCustomer = 'stripe-customer';
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         /* @var UserAccountPlan $userAccountPlan */
@@ -85,7 +85,7 @@ class WebHookControllerTest extends AbstractControllerTest
 
         $requestContent = json_encode(StripeEventFixtureFactory::load($fixtureName, $fixtureModifications));
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('stripe_webhook_receiver');
 
         $this->getCrawler([
@@ -104,7 +104,7 @@ class WebHookControllerTest extends AbstractControllerTest
 
     public function testIndexActionStripeEventAlreadyExists()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $stripeId = 'foo';
         $stripeEvent = new StripeEvent();
@@ -165,15 +165,15 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->createPostmarkSuccessResponse(),
         ]);
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $stripeEventRepository = $entityManager->getRepository(Event::class);
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $resqueQueueService->getResque()->getQueue('stripe-event')->clear();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();
 
         /* @var UserAccountPlan $userAccountPlan */
@@ -393,10 +393,10 @@ class WebHookControllerTest extends AbstractControllerTest
     private function callIndexAction(Request $request)
     {
         return $this->webHookController->indexAction(
-            $this->container->get('doctrine.orm.entity_manager'),
-            $this->container->get(StripeEventService::class),
-            $this->container->get(ResqueQueueService::class),
-            $this->container->get(StripeWebHookMailNotificationSender::class),
+            self::$container->get('doctrine.orm.entity_manager'),
+            self::$container->get(StripeEventService::class),
+            self::$container->get(ResqueQueueService::class),
+            self::$container->get(StripeWebHookMailNotificationSender::class),
             $request
         );
     }

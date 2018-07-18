@@ -14,8 +14,8 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 {
     public function testGetByTokenActionGetRequest()
     {
-        $userService = $this->container->get(UserService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
+        $userService = self::$container->get(UserService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
@@ -23,7 +23,7 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 
         $invite = $teamInviteService->get($this->users['leader'], $invitee);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_getbytoken', [
             'token' => $invite->getToken(),
         ]);
@@ -48,8 +48,8 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 
     public function testGetByTokenActionSuccess()
     {
-        $userService = $this->container->get(UserService::class);
-        $teamInviteService = $this->container->get(InviteService::class);
+        $userService = self::$container->get(UserService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',

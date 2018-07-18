@@ -32,8 +32,8 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskNotificationService = $this->container->get(TaskNotificationService::class);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->taskNotificationService = self::$container->get(TaskNotificationService::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     /**
@@ -47,7 +47,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     {
         $this->httpClientService->appendFixtures($httpFixtures);
 
-        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory = new WorkerFactory(self::$container);
         foreach ($workerValuesCollection as $workerValues) {
             $workerFactory->create($workerValues);
         }

@@ -41,8 +41,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
     {
         parent::setUp();
 
-        $jobFactory = new JobFactory($this->container);
-        $userService = $this->container->get(UserService::class);
+        $jobFactory = new JobFactory(self::$container);
+        $userService = self::$container->get(UserService::class);
 
         $notFoundResponse = new Response(404);
 
@@ -68,7 +68,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
             ],
         ]);
 
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
         $this->crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $this->crawlJob = $this->crawlJobContainer->getCrawlJob();
@@ -76,9 +76,9 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
 
         $crawlJobContainerService->prepare($this->crawlJobContainer);
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $jobInProgressState = $stateService->get(Job::STATE_IN_PROGRESS);
 
         $this->crawlJob->setState($jobInProgressState);
@@ -114,8 +114,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                 array_merge($defaultRouteParams, $routeParams)
             );
 
-            $this->container->get('request_stack')->push($request);
-            $this->container->get(CompleteRequestFactory::class)->init($request);
+            self::$container->get('request_stack')->push($request);
+            self::$container->get(CompleteRequestFactory::class)->init($request);
 
             $this->callCompleteAction();
 

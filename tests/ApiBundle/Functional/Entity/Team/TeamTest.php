@@ -10,9 +10,9 @@ class TeamTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $team = new Team();
         $team->setLeader($userFactory->createAndActivateUser([

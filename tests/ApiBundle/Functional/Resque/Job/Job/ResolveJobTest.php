@@ -13,7 +13,7 @@ class ResolveJobTest extends AbstractJobTest
     public function testRunInMaintenanceReadOnlyMode()
     {
         $job = new ResolveJob(['id' => 1]);
-        $this->initialiseJob($job, $this->container->get(ResolveWebsiteCommand::class));
+        $this->initialiseJob($job, self::$container->get(ResolveWebsiteCommand::class));
 
         $this->assertEquals(
             ResolveWebsiteCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,

@@ -29,11 +29,11 @@ class JobConfigurationControllerListActionTest extends AbstractJobConfigurationC
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $this->jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
@@ -41,7 +41,7 @@ class JobConfigurationControllerListActionTest extends AbstractJobConfigurationC
 
     public function testListActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_list');
 
         $this->getCrawler([

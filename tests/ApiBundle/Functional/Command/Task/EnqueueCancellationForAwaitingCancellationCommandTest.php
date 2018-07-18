@@ -24,7 +24,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(EnqueueCancellationForAwaitingCancellationCommand::class);
+        $this->command = self::$container->get(EnqueueCancellationForAwaitingCancellationCommand::class);
     }
 
     /**
@@ -36,10 +36,10 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
      */
     public function testRun($jobValues, $expectedResqueQueueIsEmpty, $expectedTaskIndices)
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('task-cancel-collection')->clear();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->createResolveAndPrepare($jobValues);
 
         $expectedTaskIds = [];

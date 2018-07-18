@@ -19,14 +19,14 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             StripeApiFixtureFactory::load('customer-nocard-hassub'),
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => null,
         ]);
 
         $planName = 'personal';
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_plan_subscribe', [
             'email_canonical' => $user->getEmail(),
             'plan_name' => $planName,
@@ -51,7 +51,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             401,
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
@@ -75,7 +75,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             402,
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
@@ -104,7 +104,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
 
     public function testSubscribeActionUserIsTeamMember()
     {
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $user = $users['member1'];
@@ -132,13 +132,13 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
 
     public function testSubscribeActionSuccess()
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set([
             StripeApiFixtureFactory::load('customer-nocard-hassub'),
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
         ]);

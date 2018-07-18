@@ -12,7 +12,7 @@ class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerT
 {
     public function testRemoveActionGetRequest()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
@@ -20,7 +20,7 @@ class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerT
 
         $teamInviteService->get($this->users['leader'], $invitee);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_remove', [
             'invitee_email' => $invitee->getEmail(),
         ]);
@@ -95,7 +95,7 @@ class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerT
 
     public function testRemoveActionSuccess()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',

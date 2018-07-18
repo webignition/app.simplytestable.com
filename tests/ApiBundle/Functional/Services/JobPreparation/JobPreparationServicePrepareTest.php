@@ -48,8 +48,8 @@ class JobPreparationServiceTest extends AbstractJobPreparationServiceTest
     ) {
         $this->httpClientService->appendFixtures($httpFixtures);
 
-        $stateService = $this->container->get(StateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = self::$container->get(StateService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
         $jobValues['user'] = $users[$user];

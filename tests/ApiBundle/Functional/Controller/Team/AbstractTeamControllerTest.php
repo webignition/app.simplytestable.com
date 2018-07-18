@@ -31,9 +31,9 @@ abstract class AbstractTeamControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->teamController = $this->container->get(TeamController::class);
+        $this->teamController = self::$container->get(TeamController::class);
 
-        $this->userFactory = new UserFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
         $this->users = $this->userFactory->createPublicPrivateAndTeamUserSet();
     }
 }

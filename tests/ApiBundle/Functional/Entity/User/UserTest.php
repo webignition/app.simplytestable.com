@@ -10,8 +10,8 @@ class UserTest extends AbstractBaseTestCase
 {
     public function testUtf8Email()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userService = $this->container->get(UserService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
 
         $userRepository = $entityManager->getRepository(User::class);
 

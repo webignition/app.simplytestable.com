@@ -21,7 +21,7 @@ abstract class AbstractStripeEventListenerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     /**

@@ -11,11 +11,11 @@ class UserControllerGetTokenActionTest extends AbstractUserControllerTest
 {
     public function testGetTokenActionGetRequest()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
         $adminUser = $userService->getAdminUser();
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_get_token', [
             'email_canonical' => $publicUser->getEmail(),
         ]);

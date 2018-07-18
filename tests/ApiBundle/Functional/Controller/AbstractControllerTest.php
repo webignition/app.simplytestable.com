@@ -51,7 +51,7 @@ abstract class AbstractControllerTest extends AbstractBaseTestCase
         }
 
         if (!array_key_exists('user', $options)) {
-            $userService = $this->container->get(UserService::class);
+            $userService = self::$container->get(UserService::class);
 
             $options['user']  = $userService->getPublicUser();
         }
@@ -76,18 +76,18 @@ abstract class AbstractControllerTest extends AbstractBaseTestCase
      */
     private function setRequestUserInSession(User $user)
     {
-        $session = $this->container->get('session');
-        $loginManager = $this->container->get(LoginManager::class);
-        $firewallName = $this->container->getParameter('fos_user.firewall_name');
+        $session = self::$container->get('session');
+        $loginManager = self::$container->get(LoginManager::class);
+        $firewallName = self::$container->getParameter('fos_user.firewall_name');
 
         $loginManager->loginUser($firewallName, $user);
 
-        $this->container->get('session')->set(
+        self::$container->get('session')->set(
             '_security_' . $firewallName,
-            serialize($this->container->get('security.token_storage')->getToken())
+            serialize(self::$container->get('security.token_storage')->getToken())
         );
 
-        $this->container->get('session')->save();
+        self::$container->get('session')->save();
         $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
     }
 }

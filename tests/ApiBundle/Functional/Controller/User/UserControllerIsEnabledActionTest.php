@@ -12,14 +12,14 @@ class UserControllerIsEnabledActionTest extends AbstractUserControllerTest
 {
     public function testIsEnabledActionGetRequest()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => null,
         ]);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_is_enabled', [
             'email_canonical' => $user->getEmail(),
         ]);

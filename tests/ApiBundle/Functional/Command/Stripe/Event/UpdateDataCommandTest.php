@@ -25,7 +25,7 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(UpdateDataCommand::class);
+        $this->command = self::$container->get(UpdateDataCommand::class);
     }
 
     /**
@@ -37,13 +37,13 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
      */
     public function testRun($stripeApiResponses, $args, $expectedStripeEventData)
     {
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $stripeEventRepository = $entityManager->getRepository(Event::class);
 
         $user = $userService->getPublicUser();
 
-        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEventFactory = new StripeEventFactory(self::$container);
         $stripeEvent = $stripeEventFactory->createEvents([
             'customer.subscription.created.active' => [],
         ], $user);

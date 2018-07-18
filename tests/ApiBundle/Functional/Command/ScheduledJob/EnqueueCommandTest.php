@@ -22,12 +22,12 @@ class EnqueueCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(EnqueueCommand::class);
+        $this->command = self::$container->get(EnqueueCommand::class);
     }
 
     public function testRunEnqueuesScheduledJobExecute()
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('scheduledjob-execute')->clear();
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -43,7 +43,7 @@ class EnqueueCommandTest extends AbstractBaseTestCase
 
     public function testRunIsIdempotent()
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('scheduledjob-execute')->clear();
 
         $this->command->run(new ArrayInput([

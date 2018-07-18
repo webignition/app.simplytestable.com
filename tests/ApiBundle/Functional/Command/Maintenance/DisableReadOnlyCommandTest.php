@@ -13,7 +13,7 @@ class DisableReadOnlyCommandTest extends AbstractApplicationStateChangeTest
     {
         $this->assertInstanceOf(
             DisableReadOnlyCommand::class,
-            $this->container->get(DisableReadOnlyCommand::class)
+            self::$container->get(DisableReadOnlyCommand::class)
         );
     }
 

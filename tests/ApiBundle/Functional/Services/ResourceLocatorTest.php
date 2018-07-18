@@ -15,12 +15,12 @@ class ResourceLocatorTest extends AbstractBaseTestCase
      */
     public function testLocate($name, $expectedRelativeResourcePath)
     {
-        $resourceLocator = $this->container->get(ResourceLocator::class);
+        $resourceLocator = self::$container->get(ResourceLocator::class);
 
         $expectedAbsoluteResourcePath = preg_replace(
             '/app$/',
             '',
-            $this->container->get('kernel')->getRootDir()
+            self::$container->get('kernel')->getRootDir()
         ) . $expectedRelativeResourcePath;
 
         $this->assertEquals($expectedAbsoluteResourcePath, $resourceLocator->locate($name));

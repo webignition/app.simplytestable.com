@@ -32,13 +32,13 @@ class JobStartControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->jobStartController = $this->container->get(StartController::class);
+        $this->jobStartController = self::$container->get(StartController::class);
     }
 
     public function testStartActionGetRequest()
     {
-        $router = $this->container->get('router');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $router = self::$container->get('router');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $siteRootUrl = 'http://example.com/';
 
@@ -62,12 +62,12 @@ class JobStartControllerTest extends AbstractControllerTest
 
     public function testReTestActionGetRequest()
     {
-        $router = $this->container->get('router');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $router = self::$container->get('router');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $siteRootUrl = 'http://example.com/';
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
             JobFactory::KEY_STATE => Job::STATE_COMPLETED,
@@ -102,8 +102,8 @@ class JobStartControllerTest extends AbstractControllerTest
      */
     public function testStartActionInvalidWebsite($siteRootUrl, $expectedRejectedUrl)
     {
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
@@ -160,9 +160,9 @@ class JobStartControllerTest extends AbstractControllerTest
 
     public function testStartActionAccountPlanLimitReached()
     {
-        $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
@@ -180,7 +180,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
         ]);
@@ -204,8 +204,8 @@ class JobStartControllerTest extends AbstractControllerTest
 
     public function testStartActionSuccess()
     {
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
 
         $siteRootUrl = 'http://example.com/';
@@ -258,8 +258,8 @@ class JobStartControllerTest extends AbstractControllerTest
      */
     public function testRetestActionFoo($jobValues)
     {
-        $userService = $this->container->get(UserService::class);
-        $jobFactory = new JobFactory($this->container);
+        $userService = self::$container->get(UserService::class);
+        $jobFactory = new JobFactory(self::$container);
 
         $jobValues[JobFactory::KEY_STATE] = Job::STATE_COMPLETED;
 

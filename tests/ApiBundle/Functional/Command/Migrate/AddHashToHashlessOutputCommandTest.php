@@ -24,7 +24,7 @@ class AddHashToHashlessOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(AddHashToHashlessOutputCommand::class);
+        $this->command = self::$container->get(AddHashToHashlessOutputCommand::class);
     }
 
     /**
@@ -37,8 +37,8 @@ class AddHashToHashlessOutputCommandTest extends AbstractBaseTestCase
      */
     public function testRun($jobValuesCollection, $taskOutputValuesCollection, $args, $expectedHashedTaskOutputIndices)
     {
-        $jobFactory = new JobFactory($this->container);
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

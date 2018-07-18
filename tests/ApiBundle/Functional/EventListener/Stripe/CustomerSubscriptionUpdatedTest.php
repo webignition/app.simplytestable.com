@@ -25,21 +25,21 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
         $stripeApiHttpFixtures,
         $expectedWebClientRequestDataCollection
     ) {
-        $eventDispatcher = $this->container->get('event_dispatcher');
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $eventDispatcher = self::$container->get('event_dispatcher');
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
         $this->httpClientService->appendFixtures([new Response()]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEventFactory = new StripeEventFactory(self::$container);
         $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(

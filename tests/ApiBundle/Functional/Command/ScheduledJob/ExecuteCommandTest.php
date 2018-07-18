@@ -26,7 +26,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(ExecuteCommand::class);
+        $this->command = self::$container->get(ExecuteCommand::class);
     }
 
     public function testRunWithInvalidScheduledJob()
@@ -43,9 +43,9 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunForUnroutableWebsite()
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
 
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_WEBSITE_URL => 'http://foo',
@@ -65,10 +65,10 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunWithPlanConstraintLimitReached()
     {
-        $userService = $this->container->get(UserService::class);
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
         $userAccountPlan = $userAccountPlanService->getForUser($user);
@@ -83,7 +83,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
         $entityManager->persist($constraint);
         $entityManager->flush();
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
 
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $user,
@@ -103,9 +103,9 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunSuccess()
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
 
         $jobConfiguration = $jobConfigurationFactory->create();
 

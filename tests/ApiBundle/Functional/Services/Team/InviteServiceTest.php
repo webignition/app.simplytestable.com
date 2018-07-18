@@ -29,9 +29,9 @@ class InviteServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->inviteService = $this->container->get(InviteService::class);
+        $this->inviteService = self::$container->get(InviteService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }
 
@@ -98,9 +98,9 @@ class InviteServiceTest extends AbstractBaseTestCase
 
     public function testGetForTeam()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $leader = $this->users['leader'];
 
@@ -134,7 +134,7 @@ class InviteServiceTest extends AbstractBaseTestCase
 
     public function testGetForTeamAndUser()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
 
         $leader = $this->users['leader'];

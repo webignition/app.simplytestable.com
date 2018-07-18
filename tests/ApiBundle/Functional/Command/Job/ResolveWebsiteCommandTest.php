@@ -42,10 +42,10 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory($this->container);
+        $this->jobFactory = new JobFactory(self::$container);
 
-        $this->command = $this->container->get(ResolveWebsiteCommand::class);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->command = self::$container->get(ResolveWebsiteCommand::class);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     /**
@@ -133,7 +133,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
      */
     public function testRunForSingleUrlJob($jobValues, $expectedTaskParameters)
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
         $jobValues[JobFactory::KEY_TYPE] = JobTypeService::SINGLE_URL_NAME;
@@ -220,7 +220,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
     public function testRunForFullSiteJob()
     {
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('job-prepare')->clear();
 
         $job = $this->jobFactory->create();

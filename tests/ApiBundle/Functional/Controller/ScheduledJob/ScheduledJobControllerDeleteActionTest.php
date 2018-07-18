@@ -30,23 +30,23 @@ class ScheduledJobControllerDeleteActionTest extends AbstractScheduledJobControl
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
 
         $this->setUser($this->user);
 
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
 
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
         $this->scheduledJob = $scheduledJobService->create($jobConfiguration);
     }
 
     public function testDeleteActionGetRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('scheduledjob_delete', [
             'id' => 0,
         ]);
@@ -64,7 +64,7 @@ class ScheduledJobControllerDeleteActionTest extends AbstractScheduledJobControl
 
     public function testDeleteActionPostRequest()
     {
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('scheduledjob_delete', [
             'id' => $this->scheduledJob->getId(),
         ]);

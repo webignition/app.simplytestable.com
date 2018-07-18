@@ -30,7 +30,7 @@ abstract class AbstractTaskControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
-        $this->taskController = $this->container->get(TaskController::class);
+        $this->taskController = self::$container->get(TaskController::class);
     }
 
     /**
@@ -45,15 +45,15 @@ abstract class AbstractTaskControllerTest extends AbstractControllerTest
 
         return $this->taskController->completeAction(
             MockFactory::createApplicationStateService(),
-            $this->container->get(ResqueQueueService::class),
-            $this->container->get(CompleteRequestFactory::class),
-            $this->container->get(TaskService::class),
-            $this->container->get(JobService::class),
-            $this->container->get(JobPreparationService::class),
-            $this->container->get(CrawlJobContainerService::class),
-            $this->container->get(TaskOutputJoinerFactory::class),
-            $this->container->get(TaskPostProcessorFactory::class),
-            $this->container->get(StateService::class),
+            self::$container->get(ResqueQueueService::class),
+            self::$container->get(CompleteRequestFactory::class),
+            self::$container->get(TaskService::class),
+            self::$container->get(JobService::class),
+            self::$container->get(JobPreparationService::class),
+            self::$container->get(CrawlJobContainerService::class),
+            self::$container->get(TaskOutputJoinerFactory::class),
+            self::$container->get(TaskPostProcessorFactory::class),
+            self::$container->get(StateService::class),
             $taskTypeDomainsToIgnoreService
         );
     }

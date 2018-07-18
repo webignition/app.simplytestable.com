@@ -29,9 +29,9 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userSummaryFactory = $this->container->get(UserSummaryFactory::class);
+        $this->userSummaryFactory = self::$container->get(UserSummaryFactory::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->users['basic-not-in-team'] = $userFactory->createAndActivateUser([
@@ -49,7 +49,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
             UserFactory::KEY_PLAN_NAME => 'basic',
         ]);
 
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
         $teamInviteService->get($this->users['leader'], $this->users['has-team-invite']);
     }
 
@@ -69,8 +69,8 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
         $expectedHasStripeCustomer,
         $expectedSerializedUserSummary
     ) {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 

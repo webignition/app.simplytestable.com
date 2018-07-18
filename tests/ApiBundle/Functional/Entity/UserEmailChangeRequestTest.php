@@ -10,8 +10,8 @@ class UserEmailChangeRequestTest extends AbstractBaseTestCase
 {
     public function testUtf8NewEmail()
     {
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = self::$container->get(UserService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
         $newEmail = 'foo-ɸ@example.com';
         $userEmailChangeRequest = new UserEmailChangeRequest();

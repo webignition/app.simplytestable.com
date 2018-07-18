@@ -18,13 +18,13 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
             StripeApiFixtureFactory::load('customer-hascard-nosub'),
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => 'personal',
         ]);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('user_card_associate', [
             'email_canonical' => $user->getEmail(),
             'stripe_card_token' => 'tok_Bb4A2szGLfgwJe',
@@ -51,7 +51,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
             402
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',
@@ -84,7 +84,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
             StripeApiFixtureFactory::load('customer-hascard-nosub'),
         ]);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',

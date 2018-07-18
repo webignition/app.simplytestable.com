@@ -19,6 +19,6 @@ abstract class AbstractJobConfigurationControllerTest extends AbstractController
     {
         parent::setUp();
 
-        $this->jobConfigurationController = $this->container->get(JobConfigurationController::class);
+        $this->jobConfigurationController = self::$container->get(JobConfigurationController::class);
     }
 }

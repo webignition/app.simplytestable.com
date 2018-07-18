@@ -14,7 +14,7 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
 {
     public function testActivateAndAcceptActionPostRequest()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $inviteeUser = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
@@ -22,7 +22,7 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
 
         $invite = $teamInviteService->get($this->users['leader'], $inviteeUser);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_activateandaccept');
 
         $this->getCrawler([
@@ -49,8 +49,8 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
 
     public function testActivateAndAcceptActionSuccess()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
-        $teamMemberService = $this->container->get(MemberService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
+        $teamMemberService = self::$container->get(MemberService::class);
 
         $inviteeUser = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',

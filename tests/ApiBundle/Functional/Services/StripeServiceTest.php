@@ -25,7 +25,7 @@ class StripeServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->stripeService = new StripeService(
-            $this->container->getParameter('stripe_key')
+            self::$container->getParameter('stripe_key')
         );
     }
 
@@ -139,7 +139,7 @@ class StripeServiceTest extends AbstractBaseTestCase
 
     public function testSubscribe()
     {
-        $accountPlanService = $this->container->get(AccountPlanService::class);
+        $accountPlanService = self::$container->get(AccountPlanService::class);
         $plan = $accountPlanService->get('personal');
 
         StripeApiFixtureFactory::set([

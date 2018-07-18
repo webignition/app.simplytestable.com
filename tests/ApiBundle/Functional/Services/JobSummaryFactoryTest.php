@@ -50,10 +50,10 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
-        $this->jobFactory = new JobFactory($this->container);
+        $this->jobSummaryFactory = self::$container->get(JobSummaryFactory::class);
+        $this->jobFactory = new JobFactory(self::$container);
 
-        $this->userFactory = new UserFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
     }
 
     /**
@@ -141,7 +141,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForRejectedJob($reason, $constraintName, $expectedSerializedRejection)
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         $job = $this->jobFactory->create();
         $user = $job->getUser();
@@ -213,8 +213,8 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForJobWithAmmendment($reason, $constraintName, $expectedSerializedAmmendments)
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $jobService = $this->container->get(JobService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+        $jobService = self::$container->get(JobService::class);
 
         $user = $this->userFactory->create();
 
@@ -266,7 +266,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForCrawlJob($userValues, $expectedSerializedCrawl)
     {
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
         $user = $this->userFactory->create($userValues);
         $job = $this->jobFactory->createResolveAndPrepareStandardCrawlJob([

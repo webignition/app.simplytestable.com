@@ -99,7 +99,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
     {
         parent::setUp();
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->jobConfigurationCollection = $this->createJobConfigurationCollection(

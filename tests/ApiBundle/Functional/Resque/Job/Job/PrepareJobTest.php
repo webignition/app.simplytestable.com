@@ -13,7 +13,7 @@ class PrepareJobTest extends AbstractJobTest
     public function testRunInMaintenanceReadOnlyMode()
     {
         $job = new PrepareJob(['id' => 1]);
-        $this->initialiseJob($job, $this->container->get(PrepareCommand::class));
+        $this->initialiseJob($job, self::$container->get(PrepareCommand::class));
 
         $this->assertEquals(
             PrepareCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,

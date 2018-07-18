@@ -34,7 +34,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_tasks', [
+            'url' => self::$container->get('router')->generate('job_job_tasks', [
                 'test_id' => $job->getId(),
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
@@ -48,7 +48,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     public function testNoOutputForIncompleteTasksWithPartialOutput()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([
@@ -79,9 +79,9 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $taskController = $this->container->get(TaskController::class);
-        $this->container->get('request_stack')->push($taskCompleteRequest);
-        $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
+        $taskController = self::$container->get(TaskController::class);
+        self::$container->get('request_stack')->push($taskCompleteRequest);
+        self::$container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
         $this->callTaskControllerCompleteAction($taskController);
 
@@ -100,12 +100,12 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     public function testFailedNoRetryAvailableTaskOutputIsReturned()
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare();
 
-        $taskController = $this->container->get(TaskController::class);
+        $taskController = self::$container->get(TaskController::class);
 
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
@@ -121,8 +121,8 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $this->container->get('request_stack')->push($taskCompleteRequest);
-            $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
+            self::$container->get('request_stack')->push($taskCompleteRequest);
+            self::$container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
             $this->callTaskControllerCompleteAction($taskController);
         }
@@ -144,7 +144,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
      */
     public function testWithRequestTaskIds($requestTaskIdIndices, $expectedTaskDataCollection)
     {
-        $userService = $this->container->get(UserService::class);
+        $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare();
@@ -312,7 +312,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
     private function callTasksAction(Request $request, Job $job)
     {
         return $this->jobController->tasksAction(
-            $this->container->get(TaskService::class),
+            self::$container->get(TaskService::class),
             $request,
             $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
@@ -323,15 +323,15 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
     {
         return $taskController->completeAction(
             MockFactory::createApplicationStateService(),
-            $this->container->get(ResqueQueueService::class),
-            $this->container->get(CompleteRequestFactory::class),
-            $this->container->get(TaskService::class),
-            $this->container->get(JobService::class),
-            $this->container->get(JobPreparationService::class),
-            $this->container->get(CrawlJobContainerService::class),
-            $this->container->get(TaskOutputJoinerFactory::class),
-            $this->container->get(TaskPostProcessorFactory::class),
-            $this->container->get(StateService::class),
+            self::$container->get(ResqueQueueService::class),
+            self::$container->get(CompleteRequestFactory::class),
+            self::$container->get(TaskService::class),
+            self::$container->get(JobService::class),
+            self::$container->get(JobPreparationService::class),
+            self::$container->get(CrawlJobContainerService::class),
+            self::$container->get(TaskOutputJoinerFactory::class),
+            self::$container->get(TaskPostProcessorFactory::class),
+            self::$container->get(StateService::class),
             MockFactory::createTaskTypeDomainsToIgnoreService()
         );
     }

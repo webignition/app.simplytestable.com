@@ -33,8 +33,8 @@ class RunCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(RunCommand::class);
-        $this->command->setContainer($this->container);
+        $this->command = self::$container->get(RunCommand::class);
+        $this->command->setContainer(self::$container);
     }
 
     /**
@@ -53,9 +53,9 @@ class RunCommandTest extends AbstractBaseTestCase
         $expectedCronJobExitCode,
         $expectedCronJobOutput
     ) {
-        $userFactory = new UserFactory($this->container);
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userFactory = new UserFactory(self::$container);
+        $scheduledJobService = self::$container->get(ScheduledJobService::class);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $cronReportRepository = $entityManager->getRepository(CronReport::class);
 
         $user = $userFactory->createAndActivateUser();
@@ -146,10 +146,10 @@ class RunCommandTest extends AbstractBaseTestCase
      */
     private function createJobConfiguration($rawValues, User $user)
     {
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
+        $jobConfigurationService = self::$container->get(ConfigurationService::class);
+        $websiteService = self::$container->get(WebSiteService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $jobConfigurationValues = new JobConfigurationValues();
 

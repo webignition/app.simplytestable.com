@@ -50,12 +50,12 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->crawlJobUrlCollector = $this->container->get(CrawlJobUrlCollector::class);
+        $this->crawlJobUrlCollector = self::$container->get(CrawlJobUrlCollector::class);
 
-        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $taskTypeService = self::$container->get(TaskTypeService::class);
         $this->urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $stateService = $this->container->get(StateService::class);
+        $stateService = self::$container->get(StateService::class);
         $this->taskCompletedState = $stateService->get(Task::STATE_COMPLETED);
 
         $this->crawlJobContainer = $this->createCrawlJobContainer();
@@ -76,8 +76,8 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
         $taskOutputValuesCollection,
         $expectedDiscoveredUrls
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskOutputFactory = new TaskOutputFactory($this->container);
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $initialCrawlJobTask = $this->crawlJob->getTasks()->first();
 
@@ -224,12 +224,12 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
      */
     private function createCrawlJobContainer()
     {
-        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
-        $userFactory = new UserFactory($this->container);
+        $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
 
-        $jobFactory = new JobFactory($this->container);
+        $jobFactory = new JobFactory(self::$container);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);

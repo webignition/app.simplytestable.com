@@ -13,7 +13,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 {
     public function testDeclineActionPostRequest()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $invitee = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
@@ -21,7 +21,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
         $teamInviteService->get($this->users['leader'], $invitee);
 
-        $router = $this->container->get('router');
+        $router = self::$container->get('router');
         $requestUrl = $router->generate('teaminvite_decline');
 
         $this->getCrawler([
@@ -40,7 +40,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
     public function testDeclineActionInvalidTeam()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $user = $this->users['private'];
 
@@ -58,7 +58,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
     public function testDeclineActionValidTeamNoInvite()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $user = $this->users['private'];
 
@@ -76,7 +76,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
     public function testDeclineActionValidTeamValidInvite()
     {
-        $teamInviteService = $this->container->get(InviteService::class);
+        $teamInviteService = self::$container->get(InviteService::class);
 
         $user = $this->users['private'];
 

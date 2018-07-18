@@ -34,17 +34,17 @@ class UserAccountPlanTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $this->userFactory = new UserFactory($this->container);
+        $this->userFactory = new UserFactory(self::$container);
 
-        $planFactory = new PlanFactory($this->container);
+        $planFactory = new PlanFactory(self::$container);
         $this->plan = $planFactory->create();
     }
 
     public function testUtf8StripeCustomer()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $stripeCustomer = 'test-ɸ';
@@ -111,9 +111,9 @@ class UserAccountPlanTest extends AbstractBaseTestCase
 
     public function testDefaultStartTrialPeriod()
     {
-        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
-        $defaultStartTrialPeriod = $this->container->getParameter('default_trial_period');
+        $defaultStartTrialPeriod = self::$container->getParameter('default_trial_period');
 
         $user = $this->userFactory->create();
 

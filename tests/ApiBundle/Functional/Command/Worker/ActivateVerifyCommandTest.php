@@ -38,9 +38,9 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(ActivateVerifyCommand::class);
-        $this->workerFactory = new WorkerFactory($this->container);
-        $this->httpClientService = $this->container->get(HttpClientService::class);
+        $this->command = self::$container->get(ActivateVerifyCommand::class);
+        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
     /**
@@ -51,7 +51,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
      */
     public function testRunHttpError($httpFixtures, $expectedReturnCode)
     {
-        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
+        $workerActivationRequestService = self::$container->get(WorkerActivationRequestService::class);
 
         $this->httpClientService->appendFixtures($httpFixtures);
 
@@ -102,7 +102,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
 
     public function testRunSuccess()
     {
-        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
+        $workerActivationRequestService = self::$container->get(WorkerActivationRequestService::class);
 
         $this->httpClientService->appendFixtures([
             new Response(),
