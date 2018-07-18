@@ -18,9 +18,9 @@ class ApplicationStateService
      */
     private $state;
 
-    public function __construct(string $kernelRootDirectory, string $environment)
+    public function __construct(string $kernelProjectDirectory, string $environment)
     {
-        $this->stateResourcePath = $kernelRootDirectory . sprintf(self::RESOURCE_PATH, $environment);
+        $this->stateResourcePath = $kernelProjectDirectory . sprintf(self::RESOURCE_PATH, $environment);
     }
 
     /**

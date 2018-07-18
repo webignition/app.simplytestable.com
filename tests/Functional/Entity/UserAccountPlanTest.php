@@ -112,27 +112,19 @@ class UserAccountPlanTest extends AbstractBaseTestCase
     public function testDefaultStartTrialPeriod()
     {
         $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
-
-        $defaultStartTrialPeriod = self::$container->getParameter('default_trial_period');
-
+        $defaultTrialPeriod = getenv('DEFAULT_TRIAL_PERIOD');
         $user = $this->userFactory->create();
 
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
         $userAccountPlan->setPlan($this->plan);
 
-        $this->assertEquals(
-            $defaultStartTrialPeriod,
-            $userAccountPlan->getStartTrialPeriod()
-        );
+        $this->assertEquals($defaultTrialPeriod, $userAccountPlan->getStartTrialPeriod());
 
         $this->entityManager->persist($userAccountPlan);
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $this->assertEquals(
-            $defaultStartTrialPeriod,
-            $userAccountPlanService->getForUser($user)->getStartTrialPeriod()
-        );
+        $this->assertEquals($defaultTrialPeriod, $userAccountPlanService->getForUser($user)->getStartTrialPeriod());
     }
 }

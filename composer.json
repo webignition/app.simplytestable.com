@@ -19,6 +19,7 @@
         "resquebundle/resque": "^2",
         "sensio/framework-extra-bundle": "^5.0.0",
         "stripe/stripe-php": "5.8.0",
+        "symfony/browser-kit": "^4.1",
         "symfony/console": "^4.1",
         "symfony/dotenv": "^4.0",
         "symfony/flex": "^1.0",

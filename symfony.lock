@@ -257,6 +257,9 @@
     "stripe/stripe-php": {
         "version": "v5.8.0"
     },
+    "symfony/browser-kit": {
+        "version": "v4.1.1"
+    },
     "symfony/cache": {
         "version": "v4.1.1"
     },
@@ -279,6 +282,9 @@
         "version": "v4.1.1"
     },
     "symfony/doctrine-bridge": {
+        "version": "v4.1.1"
+    },
+    "symfony/dom-crawler": {
         "version": "v4.1.1"
     },
     "symfony/dotenv": {

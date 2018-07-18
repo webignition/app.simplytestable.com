@@ -214,5 +214,5 @@ services:
 
     App\Services\ApplicationStateService:
       arguments:
-        $kernelRootDirectory: '%kernel.root_dir%'
+        $kernelProjectDirectory: '%kernel.project_dir%'
         $environment: '%kernel.environment%'

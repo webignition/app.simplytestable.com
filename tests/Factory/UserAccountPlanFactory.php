@@ -39,7 +39,7 @@ class UserAccountPlanFactory
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
         $userAccountPlan->setPlan($plan);
-        $userAccountPlan->setStartTrialPeriod($this->container->getParameter('default_trial_period'));
+        $userAccountPlan->setStartTrialPeriod(getenv('DEFAULT_TRIAL_PERIOD'));
         $userAccountPlan->setIsActive(true);
 
         if ($planName !== 'basic' || !empty($stripeCustomerId)) {
