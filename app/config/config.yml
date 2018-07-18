@@ -7,30 +7,5 @@ sensio_framework_extra:
   router:
     annotations: false
 
-# Doctrine Configuration
-doctrine:
-    dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
-
-    orm:
-        auto_generate_proxy_classes: "%kernel.debug%"
-        auto_mapping: true
-
-fos_user:
-    db_driver: orm
-    firewall_name: main
-    user_class: AppBundle\Entity\User
-    service:
-        mailer: fos_user.mailer.noop
-    from_email:
-        address: user@example.com
-        sender_name: "null"
-
 resque:
     prefix: "%bcc_resque_prefix%"                # optional prefix to separate Resque data per site/app
