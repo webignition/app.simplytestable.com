@@ -52,7 +52,7 @@ services:
 
     # For silencing deprecation notices
     ResqueBundle\Resque\Command\:
-        resource: '../vendor/resquebundle/resque/Command'
+        resource: '../vendor/webignition/resque-bundle/Command'
         tags: [console.command]
 
     Cron\CronBundle\Command\:

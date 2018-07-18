@@ -32,6 +32,8 @@
         <env name="WEB_CLIENT_STRIPE_WEB_HOOK_URL" value="http://test.gears.simplytestable.com/stripe/event/"/>
         <env name="STRIPE_KEY" value="stripe_key_value"/>
         <env name="POSTMARK_API_KEY" value="postmark_api_key_value"/>
+
+        <server name="DOTENV_PATH" value="../../../.env" />
     </php>
 
     <testsuites>

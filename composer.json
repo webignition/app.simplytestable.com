@@ -1,6 +1,12 @@
 {
     "name": "webignition/app.simplytestable.com",
     "description": "Source for http://app.simplytestable.com",
+    "repositories": [
+      {
+        "type": "vcs",
+        "url": "https://github.com/webignition/resque"
+      }
+    ],
     "require": {
         "php": ">=7.2.0",
         "ext-ctype": "*",
@@ -16,7 +22,6 @@
         "egulias/email-validator": "^2",
         "friendsofsymfony/user-bundle": "2.1.2",
         "guzzlehttp/guzzle": "~6",
-        "resquebundle/resque": "^2",
         "sensio/framework-extra-bundle": "^5.0.0",
         "stripe/stripe-php": "5.8.0",
         "symfony/browser-kit": "^4.1",
@@ -38,6 +43,7 @@
         "webignition/http-history-container": ">=0.5,<1",
         "webignition/internet-media-type": ">=0.4.4,<2.0",
         "webignition/php-stripe-models": ">=0.2.6,<1.0",
+        "webignition/resque-bundle": "dev-master",
         "webignition/sitemap-model": "~3",
         "webignition/url": "~2",
         "webignition/url-resolver": "~2",
