@@ -25,4 +25,4 @@ parameters:
         stripe_event_controller: /stripe/event/
     stripe_key: "stripe_key_value"
     tasks_per_job_per_worker_count: 2
-    cron.command_builder.class: SimplyTestable\ApiBundle\Services\Cron\CommandBuilder\CommandBuilder
+    cron.command_builder.class: AppBundle\Services\Cron\CommandBuilder\CommandBuilder

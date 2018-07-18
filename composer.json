@@ -65,10 +65,10 @@
         "post-update-cmd": [
             "@symfony-scripts"
         ],
-        "test-unit": "./vendor/bin/phpunit --colors tests/ApiBundle/Unit/",
-        "test-functional": "./vendor/bin/phpunit --colors tests/ApiBundle/Functional/",
-        "test-unit-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/ApiBundle/Unit/",
-        "test-functional-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/ApiBundle/Functional/",
+        "test-unit": "./vendor/bin/phpunit --colors tests/AppBundle/Unit/",
+        "test-functional": "./vendor/bin/phpunit --colors tests/AppBundle/Functional/",
+        "test-unit-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/AppBundle/Unit/",
+        "test-functional-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/AppBundle/Functional/",
         "test": [
             "@composer test-unit",
             "@composer test-functional"

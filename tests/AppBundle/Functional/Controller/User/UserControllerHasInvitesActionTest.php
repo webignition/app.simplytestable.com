@@ -1,0 +1,39 @@
+<?php
+
+namespace Tests\AppBundle\Functional\Controller\User;
+
+use AppBundle\Services\Team\InviteService;
+use AppBundle\Services\UserService;
+use Tests\AppBundle\Factory\UserFactory;
+
+/**
+ * @group Controller/UserController
+ */
+class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
+{
+    public function testHasInvitesActionGetRequest()
+    {
+        $teamInviteService = self::$container->get(InviteService::class);
+        $userService = self::$container->get(UserService::class);
+
+        $userFactory = new UserFactory(self::$container);
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+
+        $teamInviteService->get($users['leader'], $users['private']);
+
+        $router = self::$container->get('router');
+        $requestUrl = $router->generate('user_hasinvites', [
+            'email_canonical' => $users['private']->getEmail(),
+        ]);
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'GET',
+            'user' => $userService->getAdminUser(),
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertTrue($response->isSuccessful());
+    }
+}

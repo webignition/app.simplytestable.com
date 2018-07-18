@@ -3,8 +3,8 @@ services:
     public: true
     alias: fos_user.security.login_manager
 
-  SimplyTestable\ApiBundle\Services\HttpClientService:
-    class:   Tests\ApiBundle\Services\TestHttpClientService
+  AppBundle\Services\HttpClientService:
+    class:   Tests\AppBundle\Services\TestHttpClientService
     arguments:
       - '%curl_options%'
 
