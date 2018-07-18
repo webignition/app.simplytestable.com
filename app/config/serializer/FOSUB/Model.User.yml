@@ -1,9 +1,0 @@
-FOS\UserBundle\Model\User:
-  exclusion_policy: none
-  properties:
-    id:
-      exclude: true
-    salt:
-      exclude: true       
-    password:
-      exclude: true

@@ -1,8 +1,0 @@
-imports:
-    - { resource: parameters.yml }
-    - { resource: security.yml }
-    - { resource: services.yml }
-
-sensio_framework_extra:
-  router:
-    annotations: false

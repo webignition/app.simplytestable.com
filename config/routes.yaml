@@ -1,3 +1,282 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+job_joblist_list:
+    path: /jobs/list/{limit}/{offset}/
+    defaults: { _controller: AppBundle\Controller\Job\JobListController::listAction, _format: json }
+
+job_joblist_count:
+    path: /jobs/list/count/
+    defaults: { _controller: AppBundle\Controller\Job\JobListController::countAction, _format: json }
+
+job_joblist_websites:
+    path: /jobs/list/websites/
+    defaults: { _controller: AppBundle\Controller\Job\JobListController::websitesAction, _format: json }
+
+job_start_start:
+    path: /job/{site_root_url}/start/
+    defaults: { _controller: AppBundle\Controller\Job\StartController::startAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_job_latest:
+  path: /job/{site_root_url}/latest/
+  defaults: { _controller: AppBundle\Controller\Job\JobController::latestAction, _format: json }
+  requirements:
+    site_root_url: ".+"
+
+job_job_tasks:
+  path: /job/{site_root_url}/{test_id}/tasks/
+  defaults: { _controller: AppBundle\Controller\Job\JobController::tasksAction, _format: json }
+  requirements:
+    site_root_url: ".+"
+
+job_job_taskids:
+  path: /job/{site_root_url}/{test_id}/tasks/ids/
+  defaults: { _controller: AppBundle\Controller\Job\JobController::taskIdsAction, _format: json }
+  requirements:
+    site_root_url: ".+"
+
+job_job_listurls:
+    path: /job/{site_root_url}/{test_id}/urls/
+    defaults: { _controller: AppBundle\Controller\Job\JobController::listUrlsAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_job_cancel:
+    path: /job/{site_root_url}/{test_id}/cancel/
+    defaults: { _controller: AppBundle\Controller\Job\JobController::cancelAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+
+job_job_setpublic:
+    path: /job/{site_root_url}/{test_id}/set-public/
+    defaults: { _controller: AppBundle\Controller\Job\JobController::setPublicAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_job_setprivate:
+    path: /job/{site_root_url}/{test_id}/set-private/
+    defaults: { _controller: AppBundle\Controller\Job\JobController::setPrivateAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+
+job_job_ispublic:
+    path: /job/{site_root_url}/{test_id}/is_public/
+    defaults: { _controller: AppBundle\Controller\Job\JobController::isPublicAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_start_retest:
+    path: /job/{site_root_url}/{test_id}/re-test/
+    defaults: { _controller: AppBundle\Controller\Job\StartController::retestAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_job_status:
+    path: /job/{site_root_url}/{test_id}/
+    defaults: { _controller: AppBundle\Controller\Job\JobController::statusAction, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+task_type_count:
+  path: /tasks/{task_type}/{state_name}/count/
+  defaults: { _controller: AppBundle\Controller\TaskController::taskTypeCountAction, _format: json }
+
+
+worker_activate:
+  path: /worker/activate/
+  defaults: { _controller: AppBundle\Controller\WorkerController::activateAction, _format: json }
+
+task_complete:
+  path: /task/{canonical_url}/{task_type}/{parameter_hash}/complete/
+  defaults: { _controller: AppBundle\Controller\TaskController::completeAction, _format: json }
+  requirements:
+      canonical_url: ".+"
+
+status:
+  path: /
+  defaults: { _controller: AppBundle\Controller\StatusController::indexAction, _format: json }
+
+usercreation_create:
+  path: /user/create/
+  defaults: { _controller: AppBundle\Controller\UserCreationController::createAction, _format: json }
+
+user_activate_failure:
+  path: /user/activate/
+  defaults: { _controller: AppBundle\Controller\UserCreationController::activateAction, _format: json }
+
+user_get:
+  path: /user/{email_canonical}/
+  defaults: { _controller: AppBundle\Controller\UserController::getAction, _format: json }
+
+user_authenticate:
+  path: /user/{email_canonical}/authenticate/
+  defaults: { _controller: AppBundle\Controller\UserController::authenticateAction, _format: json }
+
+user_card_associate:
+  path: /user/{email_canonical}/card/{stripe_card_token}/associate/
+  defaults: { _controller: AppBundle\Controller\UserAccountPlanSubscriptionController::associateCardAction, _format: json }
+
+user_plan_subscribe:
+  path: /user/{email_canonical}/{plan_name}/subscribe/
+  defaults: { _controller: AppBundle\Controller\UserAccountPlanSubscriptionController::subscribeAction, _format: json }
+
+user_list_stripe_events:
+  path: /user/{email_canonical}/stripe-events/{type}/
+  defaults: { _controller: AppBundle\Controller\UserStripeEventController::listAction, _format: json }
+
+usercreation_activate:
+  path: /user/activate/{token}/
+  defaults: { _controller: AppBundle\Controller\UserCreationController::activateAction, _format: json }
+
+user_get_token:
+  path: /user/{email_canonical}/token/
+  defaults: { _controller: AppBundle\Controller\UserController::getTokenAction, _format: json }
+
+user_reset_password:
+  path: /user/reset-password/{token}/
+  defaults: { _controller: AppBundle\Controller\UserController::resetPasswordAction, _format: json }
+
+user_exists:
+  path: /user/{email_canonical}/exists/
+  defaults: { _controller: AppBundle\Controller\UserController::existsAction, _format: json }
+
+user_hasinvites:
+  path: /user/{email_canonical}/has-invites/
+  defaults: { _controller: AppBundle\Controller\UserController::hasInvitesAction, _format: json }
+
+user_is_enabled:
+  path: /user/{email_canonical}/enabled/
+  defaults: { _controller: AppBundle\Controller\UserController::isEnabledAction, _format: json }
+
+user_email_change_request_create:
+  path: /user/{email_canonical}/email-change-request/{new_email}/create/
+  defaults: { _controller: AppBundle\Controller\UserEmailChangeController::createAction, _format: json }
+
+user_email_change_request_get:
+  path: /user/{email_canonical}/email-change-request/
+  defaults: { _controller: AppBundle\Controller\UserEmailChangeController::getAction, _format: json }
+
+user_email_change_request_cancel:
+  path: /user/{email_canonical}/email-change-request/cancel/
+  defaults: { _controller: AppBundle\Controller\UserEmailChangeController::cancelAction, _format: json }
+
+user_email_change_request_confirm:
+  path: /user/{email_canonical}/email-change-request/{token}/
+  defaults: { _controller: AppBundle\Controller\UserEmailChangeController::confirmAction, _format: json }
+
+disable_readonly:
+    path: /maintenance/disable-read-only/
+    defaults: { _controller: AppBundle\Controller\MaintenanceController::disableReadOnlyAction, _format: json }
+
+enable_readonly:
+    path: /maintenance/enable-read-only/
+    defaults: { _controller: AppBundle\Controller\MaintenanceController::enableReadOnlyAction, _format: json }
+
+leave_readonly:
+    path: /maintenance/leave-read-only/
+    defaults: { _controller: AppBundle\Controller\MaintenanceController::leaveReadOnlyAction, _format: json }
+
+enable_backup_readonly:
+    path: /maintenance/enable-backup-read-only/
+    defaults: { _controller: AppBundle\Controller\MaintenanceController::enableBackupReadOnlyAction, _format: json }
+
+stripe_webhook_receiver:
+    path: /stripe/webhook/receiver/
+    defaults: { _controller: AppBundle\Controller\Stripe\WebHookController::indexAction, _format: json }
+
+team_create:
+    path: /team/create/
+    defaults: { _controller: AppBundle\Controller\TeamController::createAction }
+
+team_get:
+    path: /team/
+    defaults: { _controller: AppBundle\Controller\TeamController::getAction }
+
+teaminvite_accept:
+    path: /team/invite/accept/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::acceptAction }
+
+teaminvite_activateandaccept:
+    path: /team/invite/activate/accept/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::activateAndAcceptAction }
+
+teaminvite_decline:
+    path: /team/invite/decline/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::declineAction }
+
+teaminvite_get:
+    path: /team/invite/{invitee_email}/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::getAction }
+
+teaminvite_getbytoken:
+    path: /team/invite/bytoken/{token}/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::getByTokenAction }
+
+team_remove:
+    path: /team/remove/{member_email}/
+    defaults: { _controller: AppBundle\Controller\TeamController::removeAction }
+
+team_leave:
+    path: /team/leave/
+    defaults: { _controller: AppBundle\Controller\TeamController::leaveAction }
+
+teaminvite_list:
+    path: /team/invites/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::listAction }
+
+teaminvite_remove:
+    path: /team/invite/{invitee_email}/remove/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::removeAction }
+
+teaminvite_userlist:
+    path: /team/user/invites/
+    defaults: { _controller: AppBundle\Controller\TeamInviteController::userListAction }
+
+worker_tasks_request:
+    path: /worker/tasks/request/
+    defaults: { _controller: AppBundle\Controller\Worker\TasksController::requestAction }
+
+jobconfiguration_create:
+    path: /jobconfiguration/create/
+    defaults: { _controller: AppBundle\Controller\JobConfigurationController::createAction }
+
+jobconfiguration_list:
+    path: /jobconfiguration/list/
+    defaults: { _controller: AppBundle\Controller\JobConfigurationController::listAction, _format: json }
+
+jobconfiguration_delete:
+    path: /jobconfiguration/{label}/delete/
+    defaults: { _controller: AppBundle\Controller\JobConfigurationController::deleteAction, _format: json }
+    methods:  [POST]
+
+jobconfiguration_update:
+    path: /jobconfiguration/{label}/update/
+    defaults: { _controller: AppBundle\Controller\JobConfigurationController::updateAction, _format: json }
+    methods:  [POST]
+
+jobconfiguration_get:
+    path: /jobconfiguration/{label}/
+    defaults: { _controller: AppBundle\Controller\JobConfigurationController::getAction, _format: json }
+
+scheduledjob_create:
+    path: /scheduledjob/create/
+    defaults: { _controller: AppBundle\Controller\ScheduledJobController::createAction }
+
+scheduledjob_list:
+    path: /scheduledjob/list/
+    defaults: { _controller: AppBundle\Controller\ScheduledJobController::listAction }
+
+scheduledjob_delete:
+    path: /scheduledjob/{id}/delete/
+    defaults: { _controller: AppBundle\Controller\ScheduledJobController::deleteAction, _format: json }
+    methods:  [POST]
+
+scheduledjob_get:
+    path: /scheduledjob/{id}/
+    defaults: { _controller: AppBundle\Controller\ScheduledJobController::getAction, _format: json }
+
+scheduledjob_update:
+    path: /scheduledjob/{id}/update/
+    defaults: { _controller: AppBundle\Controller\ScheduledJobController::updateAction, _format: json }
+    methods:  [POST]
