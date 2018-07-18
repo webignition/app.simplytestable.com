@@ -26,6 +26,7 @@
         "symfony/lts": "^4@dev",
         "symfony/monolog-bundle": "^3.1.0",
         "symfony/polyfill-apcu": "^1.0",
+        "symfony/security-bundle": "^4.1",
         "symfony/yaml": "^4.1",
         "twig/twig": "^2.0",
         "webignition/guzzle-curl-exception": "~1",
