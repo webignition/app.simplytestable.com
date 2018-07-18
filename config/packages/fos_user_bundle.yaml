@@ -1,0 +1,9 @@
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: AppBundle\Entity\User
+    service:
+        mailer: fos_user.mailer.noop
+    from_email:
+        address: user@example.com
+        sender_name: "null"
