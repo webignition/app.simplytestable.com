@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
@@ -145,8 +146,7 @@ class LoadAccountPlans extends Fixture
     );
 
     /**
-     *
-     * @var \Doctrine\ORM\EntityRepository
+     * @var EntityRepository
      */
     private $planRepository = null;
 
