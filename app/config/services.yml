@@ -9,23 +9,23 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
-    SimplyTestable\ApiBundle\Command\:
-        resource: '../../src/SimplyTestable/ApiBundle/Command'
+    AppBundle\Command\:
+        resource: '../../src/AppBundle/Command'
         public: true
         tags: ['console.command']
 
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    SimplyTestable\ApiBundle\:
-        resource: '../../src/SimplyTestable/ApiBundle/*'
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
         # you can exclude directories or files
         # but if a service is unused, it's removed anyway
-        exclude: '../../src/SimplyTestable/ApiBundle/{Command,Entity,Exception,Repository,Request}'
+        exclude: '../../src/AppBundle/{Command,Entity,Exception,Repository,Request}'
 
     # controllers are imported separately to make sure they're public
     # and have a tag that allows actions to type-hint services
-    SimplyTestable\ApiBundle\Controller\:
-        resource: '../../src/SimplyTestable/ApiBundle/Controller'
+    AppBundle\Controller\:
+        resource: '../../src/AppBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
 
@@ -51,71 +51,71 @@ services:
       alias: cron.manager
 
 
-    SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
+    AppBundle\Command\Job\PrepareCommand:
       arguments:
         $predefinedDomainsToIgnore:
           css-validation: '%css_validation_domains_to_ignore%'
           js-static-analysis: '%js_static_analysis_domains_to_ignore%'
 
-    SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand:
+    AppBundle\Command\Job\ResolveWebsiteCommand:
       arguments:
         $predefinedDomainsToIgnore:
           css-validation: '%css_validation_domains_to_ignore%'
           js-static-analysis: '%js_static_analysis_domains_to_ignore%'
 
-    SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand:
+    AppBundle\Command\Stripe\Event\UpdateDataCommand:
       arguments:
         $stripeKey: '%stripe_key%'
 
-    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener:
+    AppBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener:
       arguments:
         $webClientProperties: '%web_client%'
       tags:
         - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
 
-    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener:
+    AppBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener:
       arguments:
         $webClientProperties: '%web_client%'
       tags:
         - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
 
-    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener:
+    AppBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener:
       arguments:
         $webClientProperties: '%web_client%'
       tags:
         - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
 
-    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener:
+    AppBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener:
       arguments:
         $webClientProperties: '%web_client%'
       tags:
         - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
 
-    SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener:
+    AppBundle\EventListener\Stripe\InvoicePaymentSucceededListener:
       arguments:
         $webClientProperties: '%web_client%'
       tags:
         - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
 
-    SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener:
+    AppBundle\EventListener\Stripe\InvoicePaymentFailedListener:
       arguments:
         $webClientProperties: '%web_client%'
       tags:
         - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
 
-    SimplyTestable\ApiBundle\Services\HttpClientService:
+    AppBundle\Services\HttpClientService:
       arguments:
         - '%curl_options%'
 
     GuzzleHttp\Client:
-      factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
+      factory: 'AppBundle\Services\HttpClientService:getHttpClient'
 
-    SimplyTestable\ApiBundle\Services\WebResourceRetrieverFactory:
+    AppBundle\Services\WebResourceRetrieverFactory:
       arguments:
           - '@GuzzleHttp\Client'
 
     webignition\WebResource\Retriever:
-      factory: 'SimplyTestable\ApiBundle\Services\WebResourceRetrieverFactory:create'
+      factory: 'AppBundle\Services\WebResourceRetrieverFactory:create'
 
     simplytestable.session.handler:
       class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
@@ -126,48 +126,48 @@ services:
 
     webignition\WebResource\Sitemap\Factory:
 
-    SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
+    AppBundle\Services\TaskPreProcessor\Factory:
       arguments:
         $taskPreprocessors:
-          - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
+          - '@AppBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
 
-    SimplyTestable\ApiBundle\Services\UserAccountPlanService:
+    AppBundle\Services\UserAccountPlanService:
       arguments:
         $defaultTrialPeriod: '%default_trial_period%'
 
-    SimplyTestable\ApiBundle\Services\StripeService:
+    AppBundle\Services\StripeService:
       arguments:
         $apiKey: '%stripe_key%'
 
-    SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
+    AppBundle\Services\TaskOutputJoiner\Factory:
       arguments:
         $taskPreprocessors:
-          - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+          - '@AppBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
 
-    SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
+    AppBundle\Services\TaskPostProcessor\Factory:
       arguments:
         $taskPreprocessors:
-          - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
+          - '@AppBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
 
-    SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
+    AppBundle\Services\TaskTypeDomainsToIgnoreService:
       arguments:
         $domainsToIgnoreByTaskType:
           "css validation": '%css_validation_domains_to_ignore%'
           "js static analysis": '%js_static_analysis_domains_to_ignore%'
 
-    SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
+    AppBundle\Services\StripeWebHookMailNotificationSender:
       arguments:
         $parameters: '%stripe_webhook_developer_notification%'
 
     # Needs to be explicitly defined to be used in a resque context
     # Is otherwise autowired and autoconfigured correctly when injected from the main DIC
-    SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
+    AppBundle\Services\Job\WebsiteResolutionService:
       arguments:
-        $jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        $websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
+        $jobService: '@AppBundle\Services\JobService'
+        $httpClientService: '@AppBundle\Services\HttpClientService'
+        $websiteService: '@AppBundle\Services\WebSiteService'
         $urlResolver: '@webignition\Url\Resolver\Resolver'
-        $stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+        $stateService: '@AppBundle\Services\StateService'
         $entityManager: '@doctrine.orm.entity_manager'
 
     webignition\WebsiteSitemapFinder\WebsiteSitemapFinder:
@@ -182,16 +182,16 @@ services:
       arguments:
         - '%postmark_api_key%'
 
-    SimplyTestable\ApiBundle\DataFixtures\ORM\LoadUserData:
+    AppBundle\DataFixtures\ORM\LoadUserData:
       arguments:
         $adminUserEmail: '%admin_user_email%'
         $adminUserPassword: '%admin_user_password%'
 
-    SimplyTestable\ApiBundle\DataFixtures\ORM\NormaliseUserAccountPlans:
+    AppBundle\DataFixtures\ORM\NormaliseUserAccountPlans:
       arguments:
         $defaultTrialPeriod: '%default_trial_period%'
 
-    SimplyTestable\ApiBundle\Services\ApplicationStateService:
+    AppBundle\Services\ApplicationStateService:
       arguments:
         $kernelRootDirectory: '%kernel.root_dir%'
         $environment: '%kernel.environment%'
