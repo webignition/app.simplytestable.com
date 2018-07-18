@@ -19,7 +19,6 @@ class SimplyTestableApiExtension extends Extension
      * @var string[]
      */
     private $parameterFiles = [
-        'content_type_web_resource_map.yml',
         'curl_options.yml',
         'css_validation_domains_to_ignore.yml',
         'js_static_analysis_domains_to_ignore.yml',
