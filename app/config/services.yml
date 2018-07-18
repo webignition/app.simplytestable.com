@@ -190,3 +190,8 @@ services:
     SimplyTestable\ApiBundle\DataFixtures\ORM\NormaliseUserAccountPlans:
       arguments:
         $defaultTrialPeriod: '%default_trial_period%'
+
+    SimplyTestable\ApiBundle\Services\ApplicationStateService:
+      arguments:
+        $kernelRootDirectory: '%kernel.root_dir%'
+        $environment: '%kernel.environment%'
