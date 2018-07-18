@@ -3,11 +3,10 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Model\ApplicationStateInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class ApplicationStateService
 {
-    const RESOURCE_PATH = '@SimplyTestableApiBundle/Resources/config/state/%s';
+    const RESOURCE_PATH = '/config/state/%s';
 
     /**
      * @var string
@@ -19,29 +18,9 @@ class ApplicationStateService
      */
     private $state;
 
-    /**
-     * @var ResourceLocator
-     */
-    private $resourceLocator;
-
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
-     * @param ResourceLocator $resourceLocator
-     * @param KernelInterface $kernel
-     */
-    public function __construct(ResourceLocator $resourceLocator, KernelInterface $kernel)
+    public function __construct(string $kernelRootDirectory, string $environment)
     {
-        $this->resourceLocator = $resourceLocator;
-        $this->kernel = $kernel;
-
-        $this->stateResourcePath = $resourceLocator->locate(sprintf(
-            self::RESOURCE_PATH,
-            $kernel->getEnvironment()
-        ));
+        $this->stateResourcePath = $kernelRootDirectory . sprintf(self::RESOURCE_PATH, $environment);
     }
 
     /**
