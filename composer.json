@@ -63,14 +63,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/",
-            "AppBundle\\": "src/AppBundle"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/",
-            "Tests\\AppBundle\\": "tests/AppBundle"
+            "App\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -84,10 +82,10 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "test-unit": "./vendor/bin/phpunit --colors tests/AppBundle/Unit/",
-        "test-functional": "./vendor/bin/phpunit --colors tests/AppBundle/Functional/",
-        "test-unit-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/AppBundle/Unit/",
-        "test-functional-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/AppBundle/Functional/",
+        "test-unit": "./vendor/bin/phpunit --colors tests/Unit/",
+        "test-functional": "./vendor/bin/phpunit --colors tests/Functional/",
+        "test-unit-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/Unit/",
+        "test-functional-stop": "./vendor/bin/phpunit --colors --stop-on-error --stop-on-failure tests/Functional/",
         "test": [
             "@composer test-unit",
             "@composer test-functional"

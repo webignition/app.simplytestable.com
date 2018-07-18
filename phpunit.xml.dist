@@ -31,12 +31,12 @@
             <directory>tests</directory>
         </testsuite>
         <testsuite name="Controllers">
-            <directory>tests/AppBundle/Unit/Controller</directory>
-            <directory>tests/AppBundle/Functional/Controller</directory>
+            <directory>tests/App/Unit/Controller</directory>
+            <directory>tests/App/Functional/Controller</directory>
         </testsuite>
         <testsuite name="Services">
-            <directory>tests/AppBundle/Unit/Services</directory>
-            <directory>tests/AppBundle/Functional/Services</directory>
+            <directory>tests/App/Unit/Services</directory>
+            <directory>tests/App/Functional/Services</directory>
         </testsuite>
     </testsuites>
 

@@ -8,8 +8,8 @@ services:
     public: true
     alias: fos_user.security.login_manager
 
-  AppBundle\Services\HttpClientService:
-    class:   Tests\AppBundle\Services\TestHttpClientService
+  App\Services\HttpClientService:
+    class:   App\Tests\Services\TestHttpClientService
     arguments:
       - '%curl_options%'
 
