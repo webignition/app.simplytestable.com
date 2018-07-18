@@ -5,6 +5,22 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    curl_options:
+      CURLOPT_SSL_VERIFYPEER: false
+      CURLOPT_SSL_VERIFYHOST: false
+    css_validation_domains_to_ignore:
+      - cdnjs.cloudflare.com
+      - ajax.googleapis.com
+      - netdna.bootstrapcdn.com
+      - ajax.aspnetcdn.com
+      - static.nrelate.com
+    js_static_analysis_domains_to_ignore:
+      - cdnjs.cloudflare.com
+      - ajax.googleapis.com
+      - netdna.bootstrapcdn.com
+      - ajax.aspnetcdn.com
+      - static.nrelate.com
+      - connect.facebook.net
 
 services:
     # default configuration for services in *this* file

@@ -11,7 +11,6 @@ parameters:
     admin_user_password: password1
     default_trial_period: 30
     postmark_api_key: "postmark api key"
-    container.autowiring.strict_mode: true
     bcc_resque_prefix: app.simplytestable.com
     resque_pid: "simplytestable_apibundle"
     stripe_webhook_developer_notification:
