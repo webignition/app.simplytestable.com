@@ -11,20 +11,9 @@
         <server name="KERNEL_CLASS" value="App\Kernel" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
 
-        <!-- ###+ doctrine/doctrine-bundle ### -->
-        <!-- Format described at http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html#connecting-using-a-url -->
-        <!-- For an SQLite database, use: "sqlite:///%kernel.project_dir%/var/data.db" -->
-        <!-- Configure your db driver and server_version in config/packages/doctrine.yaml -->
-        <env name="DATABASE_URL" value="mysql://root:root@127.0.0.1:3306/test_app_simplytestable_com"/>
-        <!-- ###- doctrine/doctrine-bundle ### -->
-
-        <!-- ###+ symfony/framework-bundle ### -->
+        <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/myapp_test"/>
         <env name="APP_ENV" value="test"/>
         <env name="APP_SECRET" value="secret!"/>
-        <!-- env name="TRUSTED_PROXIES" value="127.0.0.1,127.0.0.2" -->
-        <!-- env name="TRUSTED_HOSTS" value="localhost,example.com" -->
-        <!-- ###- symfony/framework-bundle ### -->
-
         <env name="RESQUE_PREFIX" value="app.simplytestable.com"/>
         <env name="ADMIN_USER_EMAIL" value="admin@simplytestable.com"/>
         <env name="ADMIN_USER_PASSWORD" value="password1"/>
@@ -33,7 +22,7 @@
         <env name="STRIPE_KEY" value="stripe_key_value"/>
         <env name="POSTMARK_API_KEY" value="postmark_api_key_value"/>
 
-        <server name="DOTENV_PATH" value="../../../.env.test" />
+        <server name="DOTENV_PATH" value="../../../.env.travis" />
     </php>
 
     <testsuites>
