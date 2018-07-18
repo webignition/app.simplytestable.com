@@ -3,7 +3,6 @@ imports:
     - { resource: "@SimplyTestableApiBundle/Resources/config/parameters.yml" }
     - { resource: security.yml }
     - { resource: services.yml }
-    - { resource: "@SimplyTestableApiBundle/Resources/config/services.yml" }
 
 framework:
     #esi:             ~
