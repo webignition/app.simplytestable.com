@@ -2,34 +2,64 @@
 
 namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadUserData extends Fixture
 {
     const PUBLIC_USER_EMAIL = 'public@simplytestable.com';
     const PUBLIC_USER_USERNAME = 'public';
     const PUBLIC_USER_PASSWORD = 'public';
-
     const ADMIN_USER_USERNAME = 'admin';
 
     /**
-     * @var ContainerInterface
+     * @var EntityManagerInterface
      */
-    private $container;
+    private $entityManager;
 
     /**
-     * {@inheritDoc}
+     * @var UserService
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
+    private $userService;
+
+    /**
+     * @var UserManipulator
+     */
+    private $userManipulator;
+
+    /**
+     * @var string
+     */
+    private $adminUserEmail;
+
+    /**
+     * @var string
+     */
+    private $adminUserPassword;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param UserService $userService
+     * @param UserManipulator $userManipulator
+     * @param string $adminUserEmail
+     * @param string $adminUserPassword
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserService $userService,
+        UserManipulator $userManipulator,
+        string $adminUserEmail,
+        string $adminUserPassword
+    ) {
+        $this->entityManager = $entityManager;
+        $this->userService = $userService;
+        $this->userManipulator = $userManipulator;
+        $this->adminUserEmail = $adminUserEmail;
+        $this->adminUserPassword = $adminUserPassword;
     }
 
     /**
@@ -37,9 +67,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
      */
     public function load(ObjectManager $manager)
     {
-        $userService = $this->container->get(UserService::class);
-        $userManipulator = $this->container->get(UserManipulator::class);
-        $userRepository = $manager->getRepository(User::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
 
         $publicUser = $userRepository->findOneBy([
             'email' => self::PUBLIC_USER_EMAIL,
@@ -51,33 +79,23 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
             $user->setPlainPassword(self::PUBLIC_USER_PASSWORD);
             $user->setUsername(self::PUBLIC_USER_USERNAME);
 
-            $userService->updateUser($user);
-            $userManipulator->activate($user->getUsername());
+            $this->userService->updateUser($user);
+            $this->userManipulator->activate($user->getUsername());
         }
 
-        $adminUserEmail = $this->container->getParameter('admin_user_email');
-
         $adminUser = $userRepository->findOneBy([
-            'email' => $adminUserEmail,
+            'email' => $this->adminUserEmail,
         ]);
 
         if (empty($adminUser)) {
             $user = new User();
-            $user->setEmail($this->container->getParameter('admin_user_email'));
-            $user->setPlainPassword($this->container->getParameter('admin_user_password'));
+            $user->setEmail($this->adminUserEmail);
+            $user->setPlainPassword($this->adminUserPassword);
             $user->setUsername(self::ADMIN_USER_USERNAME);
             $user->addRole('role_admin');
 
-            $userService->updateUser($user);
-            $userManipulator->activate($user->getUsername());
+            $this->userService->updateUser($user);
+            $this->userManipulator->activate($user->getUsername());
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOrder()
-    {
-        return 1; // the order in which fixtures will be loaded
     }
 }
