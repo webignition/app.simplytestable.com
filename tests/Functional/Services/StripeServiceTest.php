@@ -24,9 +24,7 @@ class StripeServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->stripeService = new StripeService(
-            self::$container->getParameter('stripe_key')
-        );
+        $this->stripeService = self::$container->get(StripeService::class);
     }
 
     /**
