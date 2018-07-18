@@ -17,9 +17,8 @@ before_install:
   - composer self-update
   - phpenv config-add travis.php.ini
   - cp .travis.composer.config.json ~/.composer/config.json
-  - mv app/config/parameters.yml.travis app/config/parameters.yml
+  - mv app/config/parameters.yml.dist app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
-  - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
   - echo 'active' > src/SimplyTestable/ApiBundle/Resources/config/state/test
   - mysql -e 'CREATE DATABASE myapp_test;'
 
