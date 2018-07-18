@@ -13,16 +13,16 @@ parameters:
     postmark_api_key: "postmark api key"
     container.autowiring.strict_mode: true
     bcc_resque_prefix: app.simplytestable.com
-      resque_pid: "simplytestable_apibundle"
-      stripe_webhook_developer_notification:
-        recipient_email: recipient@example.com
-        sender_email: sender@example.com
-        sender_name: Simply Testable Robot
-        subject: Stripe Webhook Data {{ event-type }}
+    resque_pid: "simplytestable_apibundle"
+    stripe_webhook_developer_notification:
+      recipient_email: recipient@example.com
+      sender_email: sender@example.com
+      sender_name: Simply Testable Robot
+      subject: Stripe Webhook Data {{ event-type }}
     web_client:
-        urls:
-          base: https://gears.simplytestable.com
-          stripe_event_controller: /stripe/event/
+      urls:
+        base: https://gears.simplytestable.com
+        stripe_event_controller: /stripe/event/
     stripe_key: "stripe_key_value"
     tasks_per_job_per_worker_count: 2
     cron.command_builder.class: SimplyTestable\ApiBundle\Services\Cron\CommandBuilder\CommandBuilder
