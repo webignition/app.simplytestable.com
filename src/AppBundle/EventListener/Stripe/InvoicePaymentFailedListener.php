@@ -35,7 +35,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
      * @param StripeEventService $stripeEventService
      * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
-     * @param $webClientProperties
+     * @param string $webClientStripeWebHookUrl
      * @param StripeService $stripeService
      * @param UserAccountPlanService $userAccountPlanService
      * @param EventDispatcherInterface $dispatcher
@@ -44,7 +44,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
         StripeEventService $stripeEventService,
         HttpClient $httpClient,
         EntityManagerInterface $entityManager,
-        $webClientProperties,
+        $webClientStripeWebHookUrl,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService,
         EventDispatcherInterface $dispatcher
@@ -53,7 +53,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
             $stripeEventService,
             $httpClient,
             $entityManager,
-            $webClientProperties
+            $webClientStripeWebHookUrl
         );
 
         $this->stripeService = $stripeService;

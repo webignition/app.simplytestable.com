@@ -21,6 +21,12 @@ parameters:
       - ajax.aspnetcdn.com
       - static.nrelate.com
       - connect.facebook.net
+    stripe_webhook_developer_notification:
+      recipient_email: jon@simplytestable.com
+      sender_email: robot@simplytestable.com
+      sender_name: Simply Testable Robot
+      subject: Stripe Webhook Data {{ event-type }}
+    cron.command_builder.class: AppBundle\Services\Cron\CommandBuilder\CommandBuilder
 
 services:
     # default configuration for services in *this* file
@@ -31,17 +37,198 @@ services:
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,AppBundle}'
 
-    # controllers are imported separately to make sure services can be injected
-    # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+#    App\Command\:
+#        resource: '../src/Command'
+#        public: true
+#        tags: ['console.command']
+
+    AppBundle\:
+        resource: '../src/AppBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../src/AppBundle/{Command,Entity,Exception,Repository,Request}'
+
+    AppBundle\Controller\:
+        resource: '../src/AppBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    AppBundle\Command\:
+        resource: '../src/AppBundle/Command'
+        public: true
+        tags: ['console.command']
+
+    # For silencing deprecation notices
+    ResqueBundle\Resque\Command\:
+        resource: '../vendor/resquebundle/resque/Command'
+        tags: [console.command]
+
+    Cron\CronBundle\Command\:
+        resource: '../vendor/cron/cron-bundle/Command'
+        tags: [console.command]
+
+    FOS\UserBundle\Util\TokenGeneratorInterface:
+      alias: fos_user.util.token_generator
+
+    FOS\UserBundle\Util\CanonicalizerInterface:
+      alias: fos_user.util.canonicalizer.default
+
+    FOS\UserBundle\Util\UserManipulator:
+      alias: fos_user.util.user_manipulator
+
+    Cron\CronBundle\Cron\Manager:
+      alias: cron.manager
+    # /For silencing deprecation notices
+
+    AppBundle\Command\Job\PrepareCommand:
+      arguments:
+        $predefinedDomainsToIgnore:
+          css-validation: '%css_validation_domains_to_ignore%'
+          js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+
+    AppBundle\Command\Job\ResolveWebsiteCommand:
+      arguments:
+        $predefinedDomainsToIgnore:
+          css-validation: '%css_validation_domains_to_ignore%'
+          js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+
+    AppBundle\Command\Stripe\Event\UpdateDataCommand:
+      arguments:
+        $stripeKey: '%env(STRIPE_KEY)%'
+
+    AppBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener:
+      arguments:
+        $webClientStripeWebHookUrl: '%env(WEB_CLIENT_STRIPE_WEB_HOOK_URL)%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
+
+    AppBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener:
+      arguments:
+        $webClientStripeWebHookUrl: '%env(WEB_CLIENT_STRIPE_WEB_HOOK_URL)%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
+
+    AppBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener:
+      arguments:
+        $webClientStripeWebHookUrl: '%env(WEB_CLIENT_STRIPE_WEB_HOOK_URL)%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
+
+    AppBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener:
+      arguments:
+        $webClientStripeWebHookUrl: '%env(WEB_CLIENT_STRIPE_WEB_HOOK_URL)%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
+
+    AppBundle\EventListener\Stripe\InvoicePaymentSucceededListener:
+      arguments:
+        $webClientStripeWebHookUrl: '%env(WEB_CLIENT_STRIPE_WEB_HOOK_URL)%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
+
+    AppBundle\EventListener\Stripe\InvoicePaymentFailedListener:
+      arguments:
+        $webClientStripeWebHookUrl: '%env(WEB_CLIENT_STRIPE_WEB_HOOK_URL)%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
+
+    AppBundle\Services\HttpClientService:
+      arguments:
+        - '%curl_options%'
+
+    GuzzleHttp\Client:
+      factory: 'AppBundle\Services\HttpClientService:getHttpClient'
+
+    AppBundle\Services\WebResourceRetrieverFactory:
+      arguments:
+          - '@GuzzleHttp\Client'
+
+    webignition\WebResource\Retriever:
+      factory: 'AppBundle\Services\WebResourceRetrieverFactory:create'
+
+    simplytestable.session.handler:
+      class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
+
+    webignition\Url\Resolver\Resolver:
+      arguments:
+        - '@GuzzleHttp\Client'
+
+    webignition\WebResource\Sitemap\Factory:
+
+    AppBundle\Services\TaskPreProcessor\Factory:
+      arguments:
+        $taskPreprocessors:
+          - '@AppBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
+
+    AppBundle\Services\UserAccountPlanService:
+      arguments:
+        $defaultTrialPeriod: '%env(DEFAULT_TRIAL_PERIOD)%'
+
+    AppBundle\Services\StripeService:
+      arguments:
+        $apiKey: '%env(STRIPE_KEY)%'
+
+    AppBundle\Services\TaskOutputJoiner\Factory:
+      arguments:
+        $taskPreprocessors:
+          - '@AppBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+
+    AppBundle\Services\TaskPostProcessor\Factory:
+      arguments:
+        $taskPreprocessors:
+          - '@AppBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
+
+    AppBundle\Services\TaskTypeDomainsToIgnoreService:
+      arguments:
+        $domainsToIgnoreByTaskType:
+          "css validation": '%css_validation_domains_to_ignore%'
+          "js static analysis": '%js_static_analysis_domains_to_ignore%'
+
+    AppBundle\Services\StripeWebHookMailNotificationSender:
+      arguments:
+        $parameters: '%stripe_webhook_developer_notification%'
+
+    # Needs to be explicitly defined to be used in a resque context
+    # Is otherwise autowired and autoconfigured correctly when injected from the main DIC
+    AppBundle\Services\Job\WebsiteResolutionService:
+      arguments:
+        $jobService: '@AppBundle\Services\JobService'
+        $httpClientService: '@AppBundle\Services\HttpClientService'
+        $websiteService: '@AppBundle\Services\WebSiteService'
+        $urlResolver: '@webignition\Url\Resolver\Resolver'
+        $stateService: '@AppBundle\Services\StateService'
+        $entityManager: '@doctrine.orm.entity_manager'
+
+    webignition\WebsiteSitemapFinder\WebsiteSitemapFinder:
+      arguments:
+        - '@GuzzleHttp\Client'
+
+    webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder:
+      arguments:
+        - '@GuzzleHttp\Client'
+
+    Postmark\PostmarkClient:
+      arguments:
+        - '%env(POSTMARK_API_KEY)%'
+
+    AppBundle\DataFixtures\ORM\LoadUserData:
+      arguments:
+        $adminUserEmail: '%env(ADMIN_USER_EMAIL)%'
+        $adminUserPassword: '%env(ADMIN_USER_PASSWORD)%'
+
+    AppBundle\DataFixtures\ORM\NormaliseUserAccountPlans:
+      arguments:
+        $defaultTrialPeriod: '%env(DEFAULT_TRIAL_PERIOD)%'
+
+    AppBundle\Services\ApplicationStateService:
+      arguments:
+        $kernelRootDirectory: '%kernel.root_dir%'
+        $environment: '%kernel.environment%'

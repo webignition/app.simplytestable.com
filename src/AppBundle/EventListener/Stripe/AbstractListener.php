@@ -16,11 +16,6 @@ abstract class AbstractListener
     protected $stripeEventService;
 
     /**
-     * @var array
-     */
-    private $webClientProperties;
-
-    /**
      * @var HttpClient
      */
     private $httpClient;
@@ -36,21 +31,26 @@ abstract class AbstractListener
     private $entityManager;
 
     /**
+     * @var string
+     */
+    private $webClientStripeWebHookUrl;
+
+    /**
      * @param StripeEventService $stripeEventService
      * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
-     * @param $webClientProperties
+     * @param string $webClientStripeWebHookUrl
      */
     public function __construct(
         StripeEventService $stripeEventService,
         HttpClient $httpClient,
         EntityManagerInterface $entityManager,
-        $webClientProperties
+        $webClientStripeWebHookUrl
     ) {
         $this->stripeEventService = $stripeEventService;
         $this->httpClient = $httpClient;
-        $this->webClientProperties = $webClientProperties;
         $this->entityManager = $entityManager;
+        $this->webClientStripeWebHookUrl = $webClientStripeWebHookUrl;
     }
 
     /**
@@ -84,14 +84,9 @@ abstract class AbstractListener
      */
     protected function issueWebClientEvent($data)
     {
-        $subscriberUrl = $this->getWebClientSubscriberUrl();
-        if (is_null($subscriberUrl)) {
-            return false;
-        }
-
         $request = new Request(
             'POST',
-            $subscriberUrl,
+            $this->webClientStripeWebHookUrl,
             ['content-type' => 'application/x-www-form-urlencoded'],
             http_build_query($data, '', '&')
         );
@@ -102,27 +97,5 @@ abstract class AbstractListener
         } catch (\Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getWebClientSubscriberUrl()
-    {
-        if (!isset($this->webClientProperties['urls'])) {
-            return null;
-        }
-
-        if (!isset($this->webClientProperties['urls']['base'])) {
-            return null;
-        }
-
-        if (!isset($this->webClientProperties['urls']['stripe_event_controller'])) {
-            return null;
-        }
-
-        $webClientUrls = $this->webClientProperties['urls'];
-
-        return $webClientUrls['base'] . $webClientUrls['stripe_event_controller'];
     }
 }

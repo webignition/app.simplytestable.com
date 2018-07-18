@@ -24,7 +24,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
      * @param StripeEventService $stripeEventService
      * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
-     * @param StripeService $webClientProperties
+     * @param string $webClientStripeWebHookUrl
      * @param StripeService $stripeService
      * @param UserAccountPlanService $userAccountPlanService
      * @param AccountPlanService $accountPlanService
@@ -33,7 +33,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
         StripeEventService $stripeEventService,
         HttpClient $httpClient,
         EntityManagerInterface $entityManager,
-        $webClientProperties,
+        $webClientStripeWebHookUrl,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService,
         AccountPlanService $accountPlanService
@@ -42,7 +42,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             $stripeEventService,
             $httpClient,
             $entityManager,
-            $webClientProperties,
+            $webClientStripeWebHookUrl,
             $stripeService,
             $userAccountPlanService
         );

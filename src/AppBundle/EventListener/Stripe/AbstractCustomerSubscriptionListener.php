@@ -27,7 +27,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
      * @param StripeEventService $stripeEventService
      * @param HttpClient $httpClient
      * @param EntityManagerInterface $entityManager
-     * @param $webClientProperties
+     * @param string $webClientStripeWebHookUrl
      * @param StripeService $stripeService
      * @param UserAccountPlanService $userAccountPlanService
      */
@@ -35,7 +35,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
         StripeEventService $stripeEventService,
         HttpClient $httpClient,
         EntityManagerInterface $entityManager,
-        $webClientProperties,
+        $webClientStripeWebHookUrl,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService
     ) {
@@ -43,7 +43,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
             $stripeEventService,
             $httpClient,
             $entityManager,
-            $webClientProperties
+            $webClientStripeWebHookUrl
         );
 
         $this->stripeService = $stripeService;
