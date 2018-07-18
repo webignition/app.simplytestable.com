@@ -23,7 +23,7 @@
         "friendsofsymfony/user-bundle": "2.1.2",
         "doctrine/migrations": "~1.8",
         "doctrine/doctrine-migrations-bundle": "^1",
-        "doctrine/doctrine-fixtures-bundle": "~2.3",
+        "doctrine/doctrine-fixtures-bundle": "^3.0",
         "webignition/internet-media-type":">=0.4.4,<2.0",
         "webignition/website-sitemap-finder":"~2",
         "webignition/url": "~2",
