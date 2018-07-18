@@ -1,0 +1,39 @@
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    providers:
+        fos_user_bundle:
+            id: fos_user.user_provider.username
+
+    firewalls:
+        main:
+            logout_on_user_change: true
+            pattern: ^/
+            anonymous: ~
+            form_login: false
+            provider: fos_user_bundle
+            http_basic:
+                realm: "Simply Testable Core Application"
+
+    access_control:
+        - { path: ^/job/, role: ROLE_USER }
+        - { path: ^/jobs/, role: ROLE_USER }
+        - { path: ^/tasks/, role: ROLE_USER }
+        - { path: ^/user/$, role: ROLE_USER }
+        - { path: ^/user/.+/token/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/exists/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/enabled/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/email-change-request/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/has-invites/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/$, role: ROLE_USER }
+        - { path: ^/maintenance/, role: ROLE_ADMIN }
+        - { path: ^/team/$, role: ROLE_USER }
+        - { path: ^/team/invite/bytoken/.+/$, role: ROLE_ADMIN }
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN

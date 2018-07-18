@@ -7,7 +7,18 @@ php:
   - 7.2
 
 env:
-  - SYMFONY_ENV=test
+  global:
+    - APP_ENV=test
+    - DATABASE_URL=mysql://root:@127.0.0.1:3306/myapp_test
+    - APP_SECRET=Secret!
+    - RESQUE_PREFIX=app.simplytestable.com
+    - ADMIN_USER_EMAIL=admin@simplytestable.com
+    - ADMIN_USER_PASSWORD=password1
+    - DEFAULT_TRIAL_PERIOD=30
+    - WEB_CLIENT_STRIPE_WEB_HOOK_URL=https://test.gears.simplytestable.com/stripe/event/
+    - STRIPE_KEY=stripe_key_value
+    - POSTMARK_API_KEY=postmark_api_key_value
+    - DOTENV_PATH=../../../.env.travis-ci
 
 cache:
   directories:
@@ -17,9 +28,9 @@ before_install:
   - composer self-update
   - phpenv config-add travis.php.ini
   - cp .travis.composer.config.json ~/.composer/config.json
-  - mv app/config/parameters.yml.dist app/config/parameters.yml
-  - mv --force app/config/config_travis.yml app/config/config_test.yml
-  - echo 'active' > app/config/state/test
+  - rm phpunit.xml.dist
+  - mv phpunit.travis-ci.xml phpunit.xml.dist
+  - echo 'active' > config/state/test
   - mysql -e 'CREATE DATABASE myapp_test;'
 
 install:
