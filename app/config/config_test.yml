@@ -1,7 +1,7 @@
 imports:
     - { resource: config_dev.yml }
-    - { resource: "@SimplyTestableApiBundle/Resources/config/parameters_test.yml" }    
-    - { resource: "@SimplyTestableApiBundle/Resources/config/services_test.yml" }  
+    - { resource: "@SimplyTestableApiBundle/Resources/config/parameters_test.yml" }
+    - { resource: services_test.yml }
 
 framework:
     test: ~
@@ -12,14 +12,14 @@ web_profiler:
     toolbar: false
     intercept_redirects: false
 
-parameters:    
+parameters:
     database_driver: pdo_mysql
     database_host: localhost
     database_port: null
     database_name: test_app_simplytestable_com
     database_user: root
-    database_password: root 
-    
+    database_password: root
+
 #doctrine:
 #  dbal:
 #    connections:

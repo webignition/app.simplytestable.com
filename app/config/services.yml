@@ -37,3 +37,156 @@ services:
     Cron\CronBundle\Command\:
         resource: '../../vendor/cron/cron-bundle/Command'
         tags: [console.command]
+
+    FOS\UserBundle\Util\TokenGeneratorInterface:
+      alias: fos_user.util.token_generator
+
+    FOS\UserBundle\Util\CanonicalizerInterface:
+      alias: fos_user.util.canonicalizer.default
+
+    FOS\UserBundle\Util\UserManipulator:
+      alias: fos_user.util.user_manipulator
+
+    Cron\CronBundle\Cron\Manager:
+      alias: cron.manager
+
+
+    SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
+      arguments:
+        $predefinedDomainsToIgnore:
+          css-validation: '%css_validation_domains_to_ignore%'
+          js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+
+    SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand:
+      arguments:
+        $predefinedDomainsToIgnore:
+          css-validation: '%css_validation_domains_to_ignore%'
+          js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+
+    SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand:
+      arguments:
+        $stripeKey: '%stripe_key%'
+
+    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener:
+      arguments:
+        $webClientProperties: '%web_client%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
+
+    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener:
+      arguments:
+        $webClientProperties: '%web_client%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
+
+    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener:
+      arguments:
+        $webClientProperties: '%web_client%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
+
+    SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener:
+      arguments:
+        $webClientProperties: '%web_client%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
+
+    SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener:
+      arguments:
+        $webClientProperties: '%web_client%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
+
+    SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener:
+      arguments:
+        $webClientProperties: '%web_client%'
+      tags:
+        - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
+
+    SimplyTestable\ApiBundle\Services\HttpClientService:
+      arguments:
+        - '%curl_options%'
+
+    GuzzleHttp\Client:
+      factory: 'SimplyTestable\ApiBundle\Services\HttpClientService:getHttpClient'
+
+    SimplyTestable\ApiBundle\Services\WebResourceRetrieverFactory:
+      arguments:
+          - '@GuzzleHttp\Client'
+
+    webignition\WebResource\Retriever:
+      factory: 'SimplyTestable\ApiBundle\Services\WebResourceRetrieverFactory:create'
+
+    simplytestable.session.handler:
+      class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
+
+    webignition\Url\Resolver\Resolver:
+      arguments:
+        - '@GuzzleHttp\Client'
+
+    webignition\WebResource\Sitemap\Factory:
+
+    SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
+      arguments:
+        $taskPreprocessors:
+          - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
+
+    SimplyTestable\ApiBundle\Services\UserAccountPlanService:
+      arguments:
+        $defaultTrialPeriod: '%default_trial_period%'
+
+    SimplyTestable\ApiBundle\Services\StripeService:
+      arguments:
+        $apiKey: '%stripe_key%'
+
+    SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
+      arguments:
+        $taskPreprocessors:
+          - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+
+    SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
+      arguments:
+        $taskPreprocessors:
+          - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
+
+    SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
+      arguments:
+        $domainsToIgnoreByTaskType:
+          "css validation": '%css_validation_domains_to_ignore%'
+          "js static analysis": '%js_static_analysis_domains_to_ignore%'
+
+    SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
+      arguments:
+        $parameters: '%stripe_webhook_developer_notification%'
+
+    # Needs to be explicitly defined to be used in a resque context
+    # Is otherwise autowired and autoconfigured correctly when injected from the main DIC
+    SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
+      arguments:
+        $jobService: '@SimplyTestable\ApiBundle\Services\JobService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
+        $urlResolver: '@webignition\Url\Resolver\Resolver'
+        $stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+        $entityManager: '@doctrine.orm.entity_manager'
+
+    webignition\WebsiteSitemapFinder\WebsiteSitemapFinder:
+      arguments:
+        - '@GuzzleHttp\Client'
+
+    webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder:
+      arguments:
+        - '@GuzzleHttp\Client'
+
+    Postmark\PostmarkClient:
+      arguments:
+        - '%postmark_api_key%'
+
+    SimplyTestable\ApiBundle\DataFixtures\ORM\LoadUserData:
+      arguments:
+        $adminUserEmail: '%admin_user_email%'
+        $adminUserPassword: '%admin_user_password%'
+
+    SimplyTestable\ApiBundle\DataFixtures\ORM\NormaliseUserAccountPlans:
+      arguments:
+        $defaultTrialPeriod: '%default_trial_period%'
