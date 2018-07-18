@@ -4,6 +4,24 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
 
+parameters:
+  curl_options:
+    CURLOPT_SSL_VERIFYPEER: false
+    CURLOPT_SSL_VERIFYHOST: false
+  css_validation_domains_to_ignore:
+    - cdnjs.cloudflare.com
+    - ajax.googleapis.com
+    - netdna.bootstrapcdn.com
+    - ajax.aspnetcdn.com
+    - static.nrelate.com
+  js_static_analysis_domains_to_ignore:
+    - cdnjs.cloudflare.com
+    - ajax.googleapis.com
+    - netdna.bootstrapcdn.com
+    - ajax.aspnetcdn.com
+    - static.nrelate.com
+    - connect.facebook.net
+
 framework:
     #esi:             ~
     #translator:      { fallback: "%locale%" }
