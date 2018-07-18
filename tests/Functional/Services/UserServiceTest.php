@@ -34,7 +34,7 @@ class UserServiceTest extends AbstractBaseTestCase
 
     public function testGetAdminUser()
     {
-        $adminUserEmail = self::$container->getParameter('admin_user_email');
+        $adminUserEmail = getenv('ADMIN_USER_EMAIL');
         $adminUser = $this->userService->getAdminUser();
 
         $this->assertInstanceOf(User::class, $adminUser);
