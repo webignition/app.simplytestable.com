@@ -93,7 +93,7 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
                 'request' => new Request([], [], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
                         CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
                     ],
                 ]),
@@ -123,7 +123,7 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
                 ], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
                         CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
                     ],
                 ]),
@@ -153,7 +153,7 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
                 ], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
                         CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'foo',
-                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
                     ],
                 ]),
@@ -183,7 +183,7 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
                 ], [
                     CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => [
                         CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                        CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'f4aa3479641e8bb1e2744857a3b687a5',
                     ],
                 ]),

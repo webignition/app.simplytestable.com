@@ -149,7 +149,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                             CompleteRequestFactory::PARAMETER_OUTPUT => json_encode([]),
                         ],
                         'routeParams' => [
-                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         ],
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
@@ -179,7 +179,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                             ]),
                         ],
                         'routeParams' => [
-                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         ],
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
@@ -203,7 +203,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                             ]),
                         ],
                         'routeParams' => [
-                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         ],
                         'expectedCrawlJobState' => Job::STATE_IN_PROGRESS,
                         'expectedParentJobState' => Job::STATE_FAILED_NO_SITEMAP,
@@ -228,7 +228,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                             ]),
                         ],
                         'routeParams' => [
-                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         ],
                         'expectedCrawlJobState' => Job::STATE_IN_PROGRESS,
                         'expectedParentJobState' => Job::STATE_FAILED_NO_SITEMAP,
@@ -247,7 +247,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                             CompleteRequestFactory::PARAMETER_OUTPUT => json_encode([]),
                         ],
                         'routeParams' => [
-                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/1',
+                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/1'),
                         ],
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,
@@ -282,7 +282,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
                             ]),
                         ],
                         'routeParams' => [
-                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/',
+                            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/'),
                         ],
                         'expectedCrawlJobState' => Job::STATE_COMPLETED,
                         'expectedParentJobState' => Job::STATE_QUEUED,

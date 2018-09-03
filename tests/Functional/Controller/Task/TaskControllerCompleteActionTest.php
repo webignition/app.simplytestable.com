@@ -178,7 +178,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/foo%20bar',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/foo%20bar'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedJobTaskStates' => [
@@ -220,7 +220,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/bar foo',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/bar foo'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedJobTaskStates' => [
@@ -273,7 +273,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedJobTaskStates' => [
@@ -346,7 +346,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedJobTaskStates' => [
@@ -423,7 +423,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => '0b9de246e13147873511c378ae0cb9ef',
                 ],
                 'expectedJobTaskStates' => [
@@ -504,7 +504,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $cssValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => '26ce2b357c9841bf2ae2f9c624c2df39',
                 ],
                 'expectedJobTaskStates' => [

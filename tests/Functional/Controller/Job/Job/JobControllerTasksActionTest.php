@@ -75,7 +75,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             'warningCount' => 0
         ], [
             CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $tasks[0]->getType(),
-            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => $tasks[0]->getUrl(),
+            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode($tasks[0]->getUrl()),
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
@@ -117,7 +117,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                 'warningCount' => 0
             ], [
                 CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $task->getType(),
-                CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => $task->getUrl(),
+                CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode($task->getUrl()),
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
