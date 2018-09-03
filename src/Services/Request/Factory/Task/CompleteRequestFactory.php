@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use webignition\InternetMediaType\InternetMediaType;
 use webignition\InternetMediaType\Parser\Parser as InternetMediaTypeParser;
+use webignition\Url\Url;
 
 class CompleteRequestFactory
 {
@@ -26,6 +27,8 @@ class CompleteRequestFactory
     const ROUTE_PARAM_CANONICAL_URL = 'canonical_url';
     const ROUTE_PARAM_TASK_TYPE = 'task_type';
     const ROUTE_PARAM_PARAMETER_HASH = 'parameter_hash';
+
+    const CANONICAL_URL_HASH_PATTERN = '/[a-f0-9]{32}/';
 
     /**
      * @var string[]
@@ -160,7 +163,7 @@ class CompleteRequestFactory
         }
 
         $tasks = $this->taskService->getEquivalentTasks(
-            trim($this->routeParams[self::ROUTE_PARAM_CANONICAL_URL]),
+            $this->getTaskUrlFromRouteParams(),
             $taskType,
             trim($this->routeParams[self::ROUTE_PARAM_PARAMETER_HASH]),
             $this->stateService->getCollection($this->taskService->getIncompleteStateNames())
@@ -169,5 +172,24 @@ class CompleteRequestFactory
         return (empty($tasks))
             ? null
             : $tasks;
+    }
+
+    private function getTaskUrlFromRouteParams(): string
+    {
+        $routeCanonicalUrl = trim($this->routeParams[self::ROUTE_PARAM_CANONICAL_URL]);
+
+        if (false === $this->isHttpOrHttpsUrl($routeCanonicalUrl)) {
+            $routeCanonicalUrl = base64_decode($routeCanonicalUrl);
+        }
+
+        return $routeCanonicalUrl;
+    }
+
+    private function isHttpOrHttpsUrl(string $url): bool
+    {
+        $urlObject = new Url($url);
+        $scheme = $urlObject->getScheme();
+
+        return 'http' === $scheme || 'https' === $scheme;
     }
 }
