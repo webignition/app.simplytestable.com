@@ -136,48 +136,6 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
-                    CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
-                ],
-                'expectedJobTaskStates' => [
-                    [
-                        'task-completed',
-                        'task-in-progress',
-                        'task-in-progress',
-                    ],
-                ],
-                'expectedJobTaskOutputValues' => [
-                    [
-                        [
-                            'errorCount' => 1,
-                            'warningCount' => 0,
-                            'output' => '[]',
-                        ],
-                        null,
-                        null,
-                    ],
-                ],
-            ],
-            'single user, single job, single matching task, hashed task url' => [
-                'jobCollectionData' => [
-                    [
-                        'siteRootUrl' => 'http://example.com',
-                        'type' => JobTypeService::FULL_SITE_NAME,
-                        'user' => 'user1@example.com',
-                        'testTypes' => [$htmlValidationTaskType->getName(),],
-                        'testTypeOptions' => [],
-                        'parameters' => [],
-                    ],
-                ],
-                'postData' => [
-                    CompleteRequestFactory::PARAMETER_END_DATE_TIME => $now->format('c'),
-                    CompleteRequestFactory::PARAMETER_CONTENT_TYPE => (string)$applicationJsonContentType,
-                    CompleteRequestFactory::PARAMETER_ERROR_COUNT => 1,
-                    CompleteRequestFactory::PARAMETER_WARNING_COUNT => 0,
-                    CompleteRequestFactory::PARAMETER_OUTPUT => '[]',
-                ],
-                'routeParams' => [
-                    CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $htmlValidationTaskType->getName(),
                     CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
