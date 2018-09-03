@@ -73,7 +73,7 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
             'warningCount' => 0
         ], [
             CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $urlDiscoveryTask->getType(),
-            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => $urlDiscoveryTask->getUrl(),
+            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode($urlDiscoveryTask->getUrl()),
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 

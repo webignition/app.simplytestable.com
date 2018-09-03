@@ -131,7 +131,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'link integrity',
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedTaskStates' => [
@@ -174,7 +174,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'link integrity',
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedTaskStates' => [
@@ -237,7 +237,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
                 ],
                 'routeParams' => [
                     CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'link integrity',
-                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => 'http://example.com/one',
+                    CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => base64_encode('http://example.com/one'),
                     CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => 'd41d8cd98f00b204e9800998ecf8427e',
                 ],
                 'expectedTaskStates' => [

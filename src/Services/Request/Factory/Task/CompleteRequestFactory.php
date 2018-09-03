@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use webignition\InternetMediaType\InternetMediaType;
 use webignition\InternetMediaType\Parser\Parser as InternetMediaTypeParser;
-use webignition\Url\Url;
 
 class CompleteRequestFactory
 {
@@ -163,7 +162,7 @@ class CompleteRequestFactory
         }
 
         $tasks = $this->taskService->getEquivalentTasks(
-            $this->getTaskUrlFromRouteParams(),
+            base64_decode($this->routeParams[self::ROUTE_PARAM_CANONICAL_URL]),
             $taskType,
             trim($this->routeParams[self::ROUTE_PARAM_PARAMETER_HASH]),
             $this->stateService->getCollection($this->taskService->getIncompleteStateNames())
@@ -172,24 +171,5 @@ class CompleteRequestFactory
         return (empty($tasks))
             ? null
             : $tasks;
-    }
-
-    private function getTaskUrlFromRouteParams(): string
-    {
-        $routeCanonicalUrl = trim($this->routeParams[self::ROUTE_PARAM_CANONICAL_URL]);
-
-        if (false === $this->isHttpOrHttpsUrl($routeCanonicalUrl)) {
-            $routeCanonicalUrl = base64_decode($routeCanonicalUrl);
-        }
-
-        return $routeCanonicalUrl;
-    }
-
-    private function isHttpOrHttpsUrl(string $url): bool
-    {
-        $urlObject = new Url($url);
-        $scheme = $urlObject->getScheme();
-
-        return 'http' === $scheme || 'https' === $scheme;
     }
 }
