@@ -80,10 +80,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $this->setUser($user);
 
         $parentJob = $this->jobFactory->create([
-            JobFactory::KEY_TEST_TYPES => ['CSS validation', 'JS static analysis'],
+            JobFactory::KEY_TEST_TYPES => ['CSS validation'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => [
                 'CSS validation' => ['ignore-common-cdns' => 1],
-                'JS static analysis' => ['ignore-common-cdns' => 1]
             ],
             JobFactory::KEY_USER => $user,
         ]);
@@ -99,11 +98,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
         $cssValidationDomainsToIgnore = self::$container->getParameter('css_validation_domains_to_ignore');
-        $jsStaticAnalysisDomainsToIgnore = self::$container->getParameter('js_static_analysis_domains_to_ignore');
 
         $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService([
             'CSS validation' => $cssValidationDomainsToIgnore,
-            'JS static analysis' => $jsStaticAnalysisDomainsToIgnore,
         ]);
 
         $response = $this->callCancelAction(
@@ -118,28 +115,17 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $this->assertEquals((string)$jobQueuedState, (string)$parentJob->getState());
 
         /* @var Task $cssValidationTask */
-        /* @var Task $jsStaticAnalysisTask */
         $cssValidationTask = null;
-        $jsStaticAnalysisTask = null;
 
         foreach ($parentJob->getTasks() as $currentTask) {
             if (empty($cssValidationTask) && $currentTask->getType()->getName() == 'CSS validation') {
                 $cssValidationTask = $currentTask;
-            }
-
-            if (empty($jsStaticAnalysisTask) && $currentTask->getType()->getName() == 'JS static analysis') {
-                $jsStaticAnalysisTask = $currentTask;
             }
         }
 
         $this->assertEquals(
             $cssValidationDomainsToIgnore,
             $cssValidationTask->getParameters()->get('domains-to-ignore')
-        );
-
-        $this->assertEquals(
-            $jsStaticAnalysisDomainsToIgnore,
-            $jsStaticAnalysisTask->getParameters()->get('domains-to-ignore')
         );
 
         $this->assertFalse($resqueQueueService->isEmpty(

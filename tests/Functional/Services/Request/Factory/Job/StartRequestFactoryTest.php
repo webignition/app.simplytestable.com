@@ -96,13 +96,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             [
                 'type' => [
-                    'name' => 'JS static analysis',
-                ],
-                'isEnabled' => false,
-                'options' => [],
-            ],
-            [
-                'type' => [
                     'name' => 'Link integrity',
                 ],
                 'isEnabled' => false,
@@ -130,13 +123,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     [
                         'type' => [
                             'name' => 'CSS validation',
-                        ],
-                        'isEnabled' => true,
-                        'options' => [],
-                    ],
-                    [
-                        'type' => [
-                            'name' => 'JS static analysis',
                         ],
                         'isEnabled' => true,
                         'options' => [],
@@ -172,13 +158,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     [
                         'type' => [
                             'name' => 'CSS validation',
-                        ],
-                        'isEnabled' => true,
-                        'options' => [],
-                    ],
-                    [
-                        'type' => [
-                            'name' => 'JS static analysis',
                         ],
                         'isEnabled' => true,
                         'options' => [],
@@ -260,13 +239,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     ],
                     [
                         'type' => [
-                            'name' => 'JS static analysis',
-                        ],
-                        'isEnabled' => false,
-                        'options' => [],
-                    ],
-                    [
-                        'type' => [
                             'name' => 'Link integrity',
                         ],
                         'isEnabled' => true,
@@ -321,13 +293,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                         'options' => [
                             'css-validation-foo' => 'css-validation-bar',
                         ],
-                    ],
-                    [
-                        'type' => [
-                            'name' => 'JS static analysis',
-                        ],
-                        'isEnabled' => false,
-                        'options' => [],
                     ],
                     [
                         'type' => [

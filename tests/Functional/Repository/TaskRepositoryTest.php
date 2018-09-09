@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Repository;
 
 use App\Entity\Job\Job;
 use App\Entity\Task\Output;

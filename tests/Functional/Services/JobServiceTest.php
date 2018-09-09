@@ -585,7 +585,7 @@ class JobServiceTest extends AbstractBaseTestCase
             Task::STATE_FAILED_NO_RETRY_AVAILABLE,
             Task::STATE_FAILED_RETRY_AVAILABLE,
             Task::STATE_FAILED_RETRY_LIMIT_REACHED,
-            Task::STATE_SKIPPED,
+//            Task::STATE_SKIPPED,
         ];
 
         $incompleteTaskStates = [
@@ -599,7 +599,6 @@ class JobServiceTest extends AbstractBaseTestCase
             JobFactory::KEY_TEST_TYPES => [
                 'html validation',
                 'css validation',
-                'js static analysis',
                 'link integrity',
             ],
         ]);
@@ -644,6 +643,156 @@ class JobServiceTest extends AbstractBaseTestCase
         foreach ($tasksToChange as $taskIndex => $task) {
             $this->assertEquals(Task::STATE_CANCELLED, $task->getState()->getName());
         }
+    }
+
+    /**
+     * @dataProvider cancelIncompleteTasksFooDataProvider
+     *
+     * @param array $jobValues
+     * @param array $expectedTaskStates
+     */
+    public function testCancelIncompleteTasksFoo(array $jobValues, array $expectedTaskStates)
+    {
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+
+        /* @var Task[] $tasks */
+        $tasks = $job->getTasks()->toArray();
+
+        $this->jobService->cancelIncompleteTasks($job);
+
+        $this->assertCount(count($expectedTaskStates), $tasks);
+
+        foreach ($tasks as $taskIndex => $task) {
+            $expectedTaskState = $expectedTaskStates[$taskIndex];
+            $this->assertEquals($expectedTaskState, $task->getState());
+        }
+    }
+
+    public function cancelIncompleteTasksFooDataProvider()
+    {
+        return [
+            'finished tasks only, all finished states' => [
+                'jobValues' => [
+                    JobFactory::KEY_TEST_TYPES => [
+                        TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskTypeService::CSS_VALIDATION_TYPE,
+                    ],
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                        ],
+                    ],
+                ],
+                'expectedTaskStates' => [
+                    Task::STATE_CANCELLED,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                    Task::STATE_SKIPPED,
+                ],
+            ],
+            'incomplete tasks only, all incomplete states' => [
+                'jobValues' => [
+                    JobFactory::KEY_TEST_TYPES => [
+                        TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskTypeService::CSS_VALIDATION_TYPE,
+                    ],
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                        ],
+                    ],
+                ],
+                'expectedTaskStates' => [
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                ],
+            ],
+            'incomplete and finished tasks' => [
+                'jobValues' => [
+                    JobFactory::KEY_TEST_TYPES => [
+                        TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskTypeService::CSS_VALIDATION_TYPE,
+                        TaskTypeService::LINK_INTEGRITY_TYPE,
+                    ],
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                        ],
+                    ],
+                ],
+                'expectedTaskStates' => [
+                    Task::STATE_CANCELLED,
+                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_AVAILABLE,
+                    Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                    Task::STATE_SKIPPED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                    Task::STATE_CANCELLED,
+                ],
+            ],
+        ];
     }
 
     /**
