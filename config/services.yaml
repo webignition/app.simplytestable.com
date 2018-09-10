@@ -14,6 +14,8 @@ parameters:
       - netdna.bootstrapcdn.com
       - ajax.aspnetcdn.com
       - static.nrelate.com
+      - maxcdn.bootstrapcdn.com
+      - use.fontawesome.com
     js_static_analysis_domains_to_ignore:
       - cdnjs.cloudflare.com
       - ajax.googleapis.com
