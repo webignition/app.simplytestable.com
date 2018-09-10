@@ -210,6 +210,8 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
                             'netdna.bootstrapcdn.com',
                             'ajax.aspnetcdn.com',
                             'static.nrelate.com',
+                            'maxcdn.bootstrapcdn.com',
+                            'use.fontawesome.com',
                         ],
                         'ignore-common-cdns' =>  true,
                     ],
