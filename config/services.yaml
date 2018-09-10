@@ -16,13 +16,6 @@ parameters:
       - static.nrelate.com
       - maxcdn.bootstrapcdn.com
       - use.fontawesome.com
-    js_static_analysis_domains_to_ignore:
-      - cdnjs.cloudflare.com
-      - ajax.googleapis.com
-      - netdna.bootstrapcdn.com
-      - ajax.aspnetcdn.com
-      - static.nrelate.com
-      - connect.facebook.net
     stripe_webhook_developer_notification:
       recipient_email: jon@simplytestable.com
       sender_email: robot@simplytestable.com
@@ -78,13 +71,11 @@ services:
       arguments:
         $predefinedDomainsToIgnore:
           css-validation: '%css_validation_domains_to_ignore%'
-          js-static-analysis: '%js_static_analysis_domains_to_ignore%'
 
     App\Command\Job\ResolveWebsiteCommand:
       arguments:
         $predefinedDomainsToIgnore:
           css-validation: '%css_validation_domains_to_ignore%'
-          js-static-analysis: '%js_static_analysis_domains_to_ignore%'
 
     App\Command\Stripe\Event\UpdateDataCommand:
       arguments:
@@ -176,7 +167,6 @@ services:
       arguments:
         $domainsToIgnoreByTaskType:
           "css validation": '%css_validation_domains_to_ignore%'
-          "js static analysis": '%js_static_analysis_domains_to_ignore%'
 
     App\Services\StripeWebHookMailNotificationSender:
       arguments:

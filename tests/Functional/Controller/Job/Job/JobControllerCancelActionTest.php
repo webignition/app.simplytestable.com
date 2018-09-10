@@ -165,7 +165,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService([
             'CSS validation' => self::$container->getParameter('css_validation_domains_to_ignore'),
-            'JS static analysis' => self::$container->getParameter('js_static_analysis_domains_to_ignore'),
         ]);
 
         $response = $this->callCancelAction(
