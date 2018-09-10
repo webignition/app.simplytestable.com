@@ -306,7 +306,6 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                     JobFactory::KEY_TEST_TYPES => [
                         TaskTypeService::HTML_VALIDATION_TYPE,
                         TaskTypeService::CSS_VALIDATION_TYPE,
-                        TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
                         TaskTypeService::LINK_INTEGRITY_TYPE,
                     ],
                 ],
@@ -320,9 +319,8 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                     Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                     Task::STATE_FAILED_RETRY_AVAILABLE,
                     Task::STATE_FAILED_RETRY_LIMIT_REACHED,
-                    Task::STATE_SKIPPED,
                 ],
-                'expectedCreditsUsed' => 10,
+                'expectedCreditsUsed' => 9,
             ],
         ];
     }

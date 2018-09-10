@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Command;
+namespace App\Tests\Services;
 
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
@@ -13,7 +13,6 @@ use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Tests\Services\TestHttpClientService;
 
 class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
 {
@@ -85,7 +84,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::HTML_VALIDATION_TYPE,
                 TaskTypeService::CSS_VALIDATION_TYPE,
-                TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
                 TaskTypeService::LINK_INTEGRITY_TYPE,
             ],
         ]);
@@ -371,13 +369,6 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                     new Response(200, ['content-type' => 'application/json'], json_encode([
                         [
                             'id' => 32,
-                            'type' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
-                            'url' => 'http://example.com/one',
-                        ],
-                    ])),
-                    new Response(200, ['content-type' => 'application/json'], json_encode([
-                        [
-                            'id' => 32,
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             'url' => 'http://example.com/bar%20foo',
                         ],
@@ -407,7 +398,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                                 ],
                                 [
                                     'url' => 'http://example.com/bar%20foo',
-                                    'type' => TaskTypeService::CSS_VALIDATION_TYPE,
+                                    'type' => TaskTypeService::LINK_INTEGRITY_TYPE,
                                 ],
                             ],
                         ],
@@ -435,7 +426,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
                             'tasksData' => [
                                 [
                                     'url' => 'http://example.com/bar%20foo',
-                                    'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                                    'type' => TaskTypeService::CSS_VALIDATION_TYPE  ,
                                 ],
                             ],
                         ],

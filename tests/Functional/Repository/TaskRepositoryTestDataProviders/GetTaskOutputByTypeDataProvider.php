@@ -26,15 +26,11 @@ trait GetTaskOutputByTypeDataProvider
                         JobFactory::KEY_TEST_TYPES => [
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
-                            TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
                             TaskTypeService::LINK_INTEGRITY_TYPE,
                         ],
                     ],
                 ],
                 'taskOutputValuesCollection' => [
-                    [],
-                    [],
-                    [],
                     [],
                     [],
                     [],
@@ -49,7 +45,7 @@ trait GetTaskOutputByTypeDataProvider
                     [],
                 ],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'expectedOutputIndices' => [0, 1, 2, 3, 7, 11],
+                'expectedOutputIndices' => [0, 1, 2, 3, 6, 9],
             ],
             'css validation' => [
                 'jobValuesCollection' => [
@@ -64,7 +60,6 @@ trait GetTaskOutputByTypeDataProvider
                         JobFactory::KEY_TEST_TYPES => [
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
-                            TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
                             TaskTypeService::LINK_INTEGRITY_TYPE,
                         ],
                     ],
@@ -82,12 +77,9 @@ trait GetTaskOutputByTypeDataProvider
                     [],
                     [],
                     [],
-                    [],
-                    [],
-                    [],
                 ],
                 'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
-                'expectedOutputIndices' => [4, 8, 12],
+                'expectedOutputIndices' => [4, 7, 10],
             ],
             'none' => [
                 'jobValuesCollection' => [
