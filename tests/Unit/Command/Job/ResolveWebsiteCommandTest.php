@@ -17,6 +17,7 @@ class ResolveWebsiteCommandTest extends \PHPUnit\Framework\TestCase
             MockFactory::createWebsiteResolutionService(),
             MockFactory::createJobPreparationService(),
             MockFactory::createEntityManager(),
+            MockFactory::createStateService(),
             []
         );
 
