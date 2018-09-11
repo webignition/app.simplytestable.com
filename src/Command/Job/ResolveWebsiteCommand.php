@@ -115,11 +115,21 @@ class ResolveWebsiteCommand extends Command
         }
 
         $jobs = $this->getJobs($input);
+        $jobCount = count($jobs);
         $shouldResetState = $input->getOption('reset-state');
 
         $results = [];
 
-        foreach ($jobs as $job) {
+        foreach ($jobs as $jobIndex => $job) {
+            $jobNumber = $jobIndex + 1;
+
+            $output->writeln(sprintf(
+                '<info>Resolving job %s of %s</info> <comment>%s</comment>',
+                $jobNumber,
+                $jobCount,
+                $job->getId()
+            ));
+
             $results[] = $this->resolveJob($job, $shouldResetState);
         }
 
