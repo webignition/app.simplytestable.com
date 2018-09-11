@@ -265,4 +265,55 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
             ],
         ];
     }
+
+    public function testRunForMultipleJobs()
+    {
+        $jobValuesCollection = [
+            [
+                JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com',
+            ],
+            [
+                JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com',
+            ],
+            [
+                JobFactory::KEY_SITE_ROOT_URL => 'http://three.example.com',
+            ],
+        ];
+
+        $resqueQueueService = self::$container->get(QueueService::class);
+        $resqueQueueService->getResque()->getQueue('job-prepare')->clear();
+
+        /* @var Job[] $jobs */
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobs[] = $this->jobFactory->create($jobValues);
+        }
+
+        $jobIds = [];
+
+        foreach ($jobs as $job) {
+            $jobIds[] = $job->getId();
+        }
+
+        $this->httpClientService->appendFixtures([
+            new Response(),
+            new Response(),
+            new Response(),
+        ]);
+
+        $returnCode = $this->command->run(new ArrayInput([
+            'id' => implode(',', $jobIds),
+        ]), new BufferedOutput());
+
+        $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
+
+        foreach ($jobs as $job) {
+            $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
+            $this->assertTrue($resqueQueueService->contains(
+                'job-prepare',
+                ['id' => $job->getId()]
+            ));
+        }
+    }
 }

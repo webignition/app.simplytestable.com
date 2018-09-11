@@ -100,7 +100,7 @@ class ResolveWebsiteCommand extends Command
         $this
             ->setName(self::NAME)
             ->setDescription('Resolve a job\'s canonical url to be sure where we are starting off')
-            ->addArgument('id', InputArgument::REQUIRED, 'id of job to process')
+            ->addArgument('id', InputArgument::REQUIRED, 'id(s) of job(s) to process')
             ->addOption('reset-state');
         ;
     }
@@ -114,12 +114,25 @@ class ResolveWebsiteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobRepository = $this->entityManager->getRepository(Job::class);
+        $jobs = $this->getJobs($input);
+        $shouldResetState = $input->getOption('reset-state');
 
-        /* @var Job $job */
-        $job = $jobRepository->find((int)$input->getArgument('id'));
+        $results = [];
 
-        if ($input->getOption('reset-state') && Job::STATE_STARTING != $job->getState()) {
+        foreach ($jobs as $job) {
+            $results[] = $this->resolveJob($job, $shouldResetState);
+        }
+
+        if (count($results) === 1) {
+            return $results[0];
+        }
+
+        return self::RETURN_CODE_OK;
+    }
+
+    private function resolveJob(Job $job, bool $shouldResetState): int
+    {
+        if ($shouldResetState && Job::STATE_STARTING != $job->getState()) {
             $job->setState($this->stateService->get(Job::STATE_STARTING));
         }
 
@@ -153,5 +166,32 @@ class ResolveWebsiteCommand extends Command
         }
 
         return self::RETURN_CODE_OK;
+    }
+
+    /**
+     * @param InputInterface $input
+     *
+     * @return Job[]
+     */
+    private function getJobs(InputInterface $input)
+    {
+        $jobRepository = $this->entityManager->getRepository(Job::class);
+        $identifier = $input->getArgument('id');
+
+        if (ctype_digit($identifier)) {
+            return [
+                $jobRepository->find((int)$input->getArgument('id')),
+            ];
+        }
+
+        if (preg_match('/([0-9]+,?)+/', $identifier)) {
+            $jobIds = explode(',', $identifier);
+
+            return $jobRepository->findBy([
+                'id' => $jobIds,
+            ]);
+        }
+
+        return [];
     }
 }
