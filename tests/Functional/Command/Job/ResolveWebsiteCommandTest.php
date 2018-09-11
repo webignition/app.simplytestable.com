@@ -11,7 +11,6 @@ use App\Services\JobTypeService;
 use App\Services\Resque\QueueService;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\HttpFixtureFactory;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -220,20 +219,26 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         ];
     }
 
-    public function testRunForFullSiteJob()
+    /**
+     * @dataProvider runForFullSiteJobDataProvider
+     *
+     * @param array $jobValues
+     * @param array $additionalArgs
+     */
+    public function testRunForFullSiteJob(array $jobValues, array $additionalArgs)
     {
         $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('job-prepare')->clear();
 
-        $job = $this->jobFactory->create();
+        $job = $this->jobFactory->create($jobValues);
 
         $this->httpClientService->appendFixtures([
             new Response(),
         ]);
 
-        $returnCode = $this->command->run(new ArrayInput([
-            'id' => $job->getId(),
-        ]), new BufferedOutput());
+        $commandArgs = array_merge($additionalArgs, ['id' => $job->getId()]);
+
+        $returnCode = $this->command->run(new ArrayInput($commandArgs), new BufferedOutput());
 
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
@@ -243,5 +248,21 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
             'job-prepare',
             ['id' => $job->getId()]
         ));
+    }
+
+    public function runForFullSiteJobDataProvider(): array
+    {
+        return [
+            'default' => [
+                'jobValues' => [],
+                'additionalArgs' => [],
+            ],
+            'job in wrong state, reset state' => [
+                'jobValues' => [
+                    JobFactory::KEY_STATE => Job::STATE_RESOLVING,
+                ],
+                'additionalArgs' => ['--reset-state' => true],
+            ],
+        ];
     }
 }

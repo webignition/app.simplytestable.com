@@ -1,6 +1,7 @@
 <?php
 namespace App\Command\Job;
 
+use App\Services\StateService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Exception\Services\Job\WebsiteResolutionException;
@@ -56,11 +57,17 @@ class ResolveWebsiteCommand extends Command
     private $entityManager;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param WebsiteResolutionService $websiteResolutionService
      * @param JobPreparationService $jobPreparationService
      * @param EntityManagerInterface $entityManager
+     * @param StateService $stateService
      * @param array $predefinedDomainsToIgnore
      * @param string|null $name
      */
@@ -70,6 +77,7 @@ class ResolveWebsiteCommand extends Command
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
         EntityManagerInterface $entityManager,
+        StateService $stateService,
         $predefinedDomainsToIgnore,
         $name = null
     ) {
@@ -81,6 +89,7 @@ class ResolveWebsiteCommand extends Command
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
         $this->entityManager = $entityManager;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -92,6 +101,7 @@ class ResolveWebsiteCommand extends Command
             ->setName(self::NAME)
             ->setDescription('Resolve a job\'s canonical url to be sure where we are starting off')
             ->addArgument('id', InputArgument::REQUIRED, 'id of job to process')
+            ->addOption('reset-state');
         ;
     }
 
@@ -108,6 +118,10 @@ class ResolveWebsiteCommand extends Command
 
         /* @var Job $job */
         $job = $jobRepository->find((int)$input->getArgument('id'));
+
+        if ($input->getOption('reset-state') && Job::STATE_STARTING != $job->getState()) {
+            $job->setState($this->stateService->get(Job::STATE_STARTING));
+        }
 
         try {
             $this->websiteResolutionService->resolve($job);
