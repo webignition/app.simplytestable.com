@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\Job;
 
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use App\Entity\Job\Job;
@@ -72,24 +73,15 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     /**
      * @dataProvider resolveRejectionDueToCurlExceptionDataProvider
      *
-     * @param int $curlCode
+     * @param array $httpFixtures
      * @param string $expectedRejectionReason
      */
-    public function testResolveRejectionDueToCurlException($curlCode, $expectedRejectionReason)
+    public function testResolveRejectionDueToCurlException(array $httpFixtures, $expectedRejectionReason)
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
-        $curlFixture = ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo');
-
-        $this->httpClientService->appendFixtures([
-            $curlFixture,
-            $curlFixture,
-            $curlFixture,
-            $curlFixture,
-            $curlFixture,
-            $curlFixture,
-        ]);
+        $this->httpClientService->appendFixtures($httpFixtures);
 
         $siteRootUrl = 'http://foo.example.com/';
 
@@ -114,14 +106,26 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
      */
     public function resolveRejectionDueToCurlExceptionDataProvider()
     {
+        $curl6ConnectException = ConnectExceptionFactory::create('CURL/6 DNS failure');
+        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+
         return [
             'curl 6' => [
-                'curlCode' => 6,
+                'httpFixtures' => array_fill(0, 6, $curl6ConnectException),
                 'expectedRejectionReason' => 'curl-6',
             ],
             'curl 28' => [
-                'curlCode' => 28,
+                'httpFixtures' => array_fill(0, 6, $curl28ConnectException),
                 'expectedRejectionReason' => 'curl-28',
+            ],
+            'curl 0' => [
+                'httpFixtures' => [
+                    new RequestException(
+                        'cURL error 0: The cURL request was retried 3 times and did not succeed.',
+                        \Mockery::mock(RequestInterface::class)
+                    )
+                ],
+                'expectedRejectionReason' => 'curl-0',
             ],
         ];
     }

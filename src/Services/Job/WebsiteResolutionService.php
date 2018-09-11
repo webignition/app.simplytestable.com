@@ -9,6 +9,7 @@ use App\Services\HttpClientService;
 use App\Services\JobService;
 use App\Services\StateService;
 use App\Services\WebSiteService;
+use GuzzleHttp\Exception\RequestException;
 use webignition\Url\Url;
 use webignition\Url\Resolver\Resolver as UrlResolver;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
@@ -128,6 +129,12 @@ class WebsiteResolutionService
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 
             $this->jobService->reject($job, 'curl-' . $curlException->getCurlCode());
+        } catch (RequestException $requestException) {
+            if (preg_match('/^cURL error 0/', $requestException->getMessage())) {
+                $this->jobService->reject($job, 'curl-0');
+            } else {
+                throw $requestException;
+            }
         }
 
         $this->entityManager->persist($job);
