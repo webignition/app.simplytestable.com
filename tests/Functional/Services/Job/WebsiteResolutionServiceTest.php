@@ -127,6 +127,15 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
                 ],
                 'expectedRejectionReason' => 'curl-0',
             ],
+            'curl 1' => [
+                'httpFixtures' => [
+                    new RequestException(
+                        'cURL error 1: Protocol thttp not supported or disabled in libcurl',
+                        \Mockery::mock(RequestInterface::class)
+                    )
+                ],
+                'expectedRejectionReason' => 'curl-1',
+            ],
         ];
     }
 

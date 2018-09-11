@@ -130,8 +130,13 @@ class WebsiteResolutionService
 
             $this->jobService->reject($job, 'curl-' . $curlException->getCurlCode());
         } catch (RequestException $requestException) {
-            if (preg_match('/^cURL error 0/', $requestException->getMessage())) {
-                $this->jobService->reject($job, 'curl-0');
+            $curlExceptionMatches = [];
+            $curlExceptionMessagePattern = '/^cURL error [0-9]+/';
+
+            if (preg_match($curlExceptionMessagePattern, $requestException->getMessage(), $curlExceptionMatches)) {
+                $curlCode = (int) preg_replace('/\D/', '', $curlExceptionMatches[0]);
+
+                $this->jobService->reject($job, 'curl-' . $curlCode);
             } else {
                 throw $requestException;
             }
