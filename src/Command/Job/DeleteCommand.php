@@ -2,6 +2,7 @@
 
 namespace App\Command\Job;
 
+use App\Entity\Job\Ammendment;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Task\Task;
 use Doctrine\ORM\EntityManagerInterface;
@@ -144,6 +145,24 @@ class DeleteCommand extends Command
             ));
 
             $this->entityManager->remove($taskTypeOption);
+
+            if (!$isDryRun) {
+                $this->entityManager->flush();
+            }
+        }
+
+        $output->writeln([
+            '',
+            'Removing <comment>ammendments</comment>',
+        ]);
+
+        $jobAmmendmentRepository = $this->entityManager->getRepository(Ammendment::class);
+        $jobAmmendments = $jobAmmendmentRepository->findBy([
+            'job' => $job,
+        ]);
+
+        foreach ($jobAmmendments as $ammendment) {
+            $this->entityManager->remove($ammendment);
 
             if (!$isDryRun) {
                 $this->entityManager->flush();
