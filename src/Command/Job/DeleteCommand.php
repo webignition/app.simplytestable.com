@@ -3,6 +3,7 @@
 namespace App\Command\Job;
 
 use App\Entity\Job\Ammendment;
+use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Task\Task;
 use Doctrine\ORM\EntityManagerInterface;
@@ -163,6 +164,24 @@ class DeleteCommand extends Command
 
         foreach ($jobAmmendments as $ammendment) {
             $this->entityManager->remove($ammendment);
+
+            if (!$isDryRun) {
+                $this->entityManager->flush();
+            }
+        }
+
+        $output->writeln([
+            '',
+            'Removing <comment>rejection reasons</comment>',
+        ]);
+
+        $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
+        $rejectionReasons = $jobRejectionReasonRepository->findBy([
+            'job' => $job,
+        ]);
+
+        foreach ($rejectionReasons as $rejectionReason) {
+            $this->entityManager->remove($rejectionReason);
 
             if (!$isDryRun) {
                 $this->entityManager->flush();
