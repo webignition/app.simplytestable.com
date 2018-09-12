@@ -2,6 +2,7 @@
 
 namespace App\Command\Job;
 
+use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
@@ -182,6 +183,24 @@ class DeleteCommand extends Command
 
         foreach ($rejectionReasons as $rejectionReason) {
             $this->entityManager->remove($rejectionReason);
+
+            if (!$isDryRun) {
+                $this->entityManager->flush();
+            }
+        }
+
+        $output->writeln([
+            '',
+            'Removing <comment>crawl job container</comment>',
+        ]);
+
+        $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);
+        $crawlJobContainer = $crawlJobContainerRepository->findOneBy([
+            'parentJob' => $job,
+        ]);
+
+        if (!empty($crawlJobContainer)) {
+            $this->entityManager->remove($crawlJobContainer);
 
             if (!$isDryRun) {
                 $this->entityManager->flush();
