@@ -1,7 +1,6 @@
 <?php
 namespace App\Repository;
 
-use App\Entity\Task\Type\Type as TaskType;
 use Doctrine\DBAL\Types\Type as DoctrineType;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\Job;
@@ -160,46 +159,5 @@ class JobRepository extends EntityRepository
         }
 
         return $result[0]['isPublic'] === true;
-    }
-
-    /**
-     * @param TaskType $jsTaskType
-     *
-     * @return int[]
-     */
-    public function getIdsForJobsWithJsJobTaskTypeAndNoTasks(TaskType $jsTaskType)
-    {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('DISTINCT Job.id');
-        $queryBuilder->where(':TaskType MEMBER OF Job.requestedTaskTypes');
-        $queryBuilder->andWhere('Job.tasks IS EMPTY');
-
-        $queryBuilder->setParameter('TaskType', $jsTaskType);
-
-        $results = $queryBuilder->getQuery()->getResult();
-
-        $ids = [];
-
-        foreach ($results as $result) {
-            $ids[] = $result['id'];
-        }
-
-        return $ids;
-    }
-
-    /**
-     * @param TaskType $taskType
-     *
-     * @return Job[]
-     */
-    public function getByTaskType(TaskType $taskType)
-    {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job');
-        $queryBuilder->join('Job.tasks', 'Task');
-        $queryBuilder->where('Task.type = :TaskType');
-        $queryBuilder->setParameter('TaskType', $taskType);
-
-        return $queryBuilder->getQuery()->getResult();
     }
 }
