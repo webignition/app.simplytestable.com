@@ -145,10 +145,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $this->setUser($user);
 
         $parentJob = $this->jobFactory->create([
-            JobFactory::KEY_TEST_TYPES => ['CSS validation', 'JS static analysis'],
+            JobFactory::KEY_TEST_TYPES => ['CSS validation'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => [
                 'CSS validation' => ['ignore-common-cdns' => 1],
-                'JS static analysis' => ['ignore-common-cdns' => 1]
             ],
             JobFactory::KEY_USER => $user,
         ]);
