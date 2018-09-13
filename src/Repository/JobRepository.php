@@ -186,4 +186,20 @@ class JobRepository extends EntityRepository
 
         return $ids;
     }
+
+    /**
+     * @param TaskType $taskType
+     *
+     * @return Job[]
+     */
+    public function getByTaskType(TaskType $taskType)
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job');
+        $queryBuilder->join('Job.tasks', 'Task');
+        $queryBuilder->where('Task.type = :TaskType');
+        $queryBuilder->setParameter('TaskType', $taskType);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }
