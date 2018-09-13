@@ -9,7 +9,6 @@ class TaskTypeService
 {
     const HTML_VALIDATION_TYPE = 'HTML validation';
     const CSS_VALIDATION_TYPE = 'CSS validation';
-    const JS_STATIC_ANALYSIS_TYPE = 'JS static analysis';
     const URL_DISCOVERY_TYPE = 'URL discovery';
     const LINK_INTEGRITY_TYPE = 'Link integrity';
 
