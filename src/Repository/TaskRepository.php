@@ -187,6 +187,7 @@ class TaskRepository extends EntityRepository
     /**
      * @param string $wherePredicates
      * @param ArrayCollection $parameters
+     * @param int|null $limit
      *
      * @return int[]
      */
@@ -374,41 +375,11 @@ class TaskRepository extends EntityRepository
             'Task.type = :TaskType AND (%s) AND (%s)',
             implode(' OR ', $urlConditions),
             $stateCondition
-
         ));
 
         $queryBuilder->setParameter('TaskType', $taskType);
 
         return $queryBuilder->getQuery()->getResult();
-    }
-
-    /**
-     * @param TaskType $type
-     *
-     * @return int[]
-     */
-    public function getTaskOutputByType(TaskType $type)
-    {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->join('Task.output', 'TaskOutput');
-        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');
-        $queryBuilder->where('Task.type = :Type');
-        $queryBuilder->setParameter('Type', $type);
-        $queryBuilder->orderBy('TaskOutputId', 'ASC');
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        $ids = [];
-
-        if (empty($result)) {
-            return $ids;
-        }
-
-        foreach ($result as $taskOutputIdResult) {
-            $ids[] = $taskOutputIdResult['TaskOutputId'];
-        }
-
-        return $ids;
     }
 
     /**

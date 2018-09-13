@@ -31,7 +31,6 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetWarningCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetCountByJobAndStatesDataProvider;
-    use TaskRepositoryTestDataProviders\GetTaskOutputByTypeDataProvider;
     use TaskRepositoryTestDataProviders\GetThroughputSinceDataProvider;
     use TaskRepositoryTestDataProviders\FindOutputByJobAndTypeDataProvider;
     use TaskRepositoryTestDataProviders\GetCountByUsersAndStateForPeriodDataProvider;
@@ -553,59 +552,6 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskCount = $this->taskRepository->getCountByJobAndStates($job, $states);
 
         $this->assertEquals($expectedTaskCount, $taskCount);
-    }
-
-    /**
-     * @dataProvider getTaskOutputByTypeDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param array $taskOutputValuesCollection
-     * @param string $taskTypeName
-     * @param int[] $expectedOutputIndices
-     */
-    public function testGetTaskOutputByType(
-        $jobValuesCollection,
-        $taskOutputValuesCollection,
-        $taskTypeName,
-        $expectedOutputIndices
-    ) {
-        $taskTypeService = self::$container->get(TaskTypeService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $taskOutputRepository = $entityManager->getRepository(Output::class);
-
-        $taskType = $taskTypeService->get($taskTypeName);
-
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
-
-        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
-
-        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
-        $tasks = $this->getTasksFromJobCollection($jobs);
-
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
-
-        foreach ($tasks as $taskIndex => $task) {
-            if (isset($taskOutputValuesCollection[$taskIndex])) {
-                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
-
-                $taskOutputFactory->create($task, $taskOutputValues);
-            }
-        }
-
-        /* @var Output[] $taskOutputs */
-        $taskOutputs = $taskOutputRepository->findAll();
-
-        $expectedOutputIds = [];
-
-        foreach ($taskOutputs as $taskOutputIndex => $taskOutput) {
-            if (in_array($taskOutputIndex, $expectedOutputIndices)) {
-                $expectedOutputIds[] = $taskOutput->getId();
-            }
-        }
-
-        $retrievedOutputIds = $this->taskRepository->getTaskOutputByType($taskType);
-
-        $this->assertEquals($expectedOutputIds, $retrievedOutputIds);
     }
 
     /**
