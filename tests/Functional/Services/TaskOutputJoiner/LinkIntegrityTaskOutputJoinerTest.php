@@ -63,10 +63,6 @@ class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
                 'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
                 'expectedHandles' => false,
             ],
-            TaskTypeService::JS_STATIC_ANALYSIS_TYPE => [
-                'taskTypeName' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
-                'expectedHandles' => false,
-            ],
             TaskTypeService::URL_DISCOVERY_TYPE => [
                 'taskTypeName' => TaskTypeService::URL_DISCOVERY_TYPE,
                 'expectedHandles' => false,

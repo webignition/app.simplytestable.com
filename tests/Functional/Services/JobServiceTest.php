@@ -251,13 +251,6 @@ class JobServiceTest extends AbstractBaseTestCase
                         ],
                     ],
                     [
-                        'type' => 'JS static analysis',
-                        'isEnabled' => true,
-                        'options' => [
-                            'js-foo' => 'js-bar',
-                        ],
-                    ],
-                    [
                         'type' => 'Link integrity',
                         'isEnabled' => true,
                         'options' => [
@@ -275,7 +268,6 @@ class JobServiceTest extends AbstractBaseTestCase
                 'expectedJobTaskTypes' => [
                     'HTML validation',
                     'CSS validation',
-                    'JS static analysis',
                     'Link integrity',
                 ],
                 'expectedJobTaskTypeOptions' => [
@@ -289,12 +281,6 @@ class JobServiceTest extends AbstractBaseTestCase
                         'taskType' => 'CSS validation',
                         'options' => [
                             'css-foo' => 'css-bar',
-                        ],
-                    ],
-                    [
-                        'taskType' => 'JS static analysis',
-                        'options' => [
-                            'js-foo' => 'js-bar',
                         ],
                     ],
                     [
