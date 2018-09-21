@@ -3,6 +3,7 @@
 namespace App\Command\Migrate;
 
 use App\Entity\Job\TaskTypeOptions;
+use App\Entity\Task\Type\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
@@ -63,26 +64,32 @@ class RemoveJSJobTaskTypeOptionsCommand extends Command
 
         $isDryRun = $input->getOption('dry-run');
 
-        $entityRepository = $this->entityManager->getRepository(TaskTypeOptions::class);
+        $jobTaskTypeOptionsRepository = $this->entityManager->getRepository(TaskTypeOptions::class);
+        $taskTypeRepository = $this->entityManager->getRepository(Type::class);
+        $jsTaskType = $taskTypeRepository->findOneBy([
+            'name' => 'JS static analysis',
+        ]);
 
         $output->write('<info>Finding JS JobTaskTypeOption entities ... </info>');
 
-        $entities = $entityRepository->findAll();
-        $entityCount = count($entities);
+        $jobTaskTypeOptionsCollection = $jobTaskTypeOptionsRepository->findBy([
+            'taskType' => $jsTaskType,
+        ]);
+        $jobTaskTypeOptionsCount = count($jobTaskTypeOptionsCollection);
 
-        $output->writeln('found <comment>' . $entityCount . '</comment>');
+        $output->writeln('found <comment>' . $jobTaskTypeOptionsCount . '</comment>');
 
-        foreach ($entities as $entityIndex => $entity) {
-            $entityNumber = $entityIndex + 1;
+        foreach ($jobTaskTypeOptionsCollection as $jobTaskTypeOptionsIndex => $jobTaskTypeOptions) {
+            $jobTaskTypeOptionsNumber = $jobTaskTypeOptionsIndex + 1;
 
             $output->writeln(sprintf(
                 '<info>Removing</info> #%s (%s of %s)',
-                $entity->getId(),
-                $entityNumber,
-                $entityCount
+                $jobTaskTypeOptions->getId(),
+                $jobTaskTypeOptionsNumber,
+                $jobTaskTypeOptionsCount
             ));
 
-            $this->entityManager->remove($entity);
+            $this->entityManager->remove($jobTaskTypeOptions);
 
             if (!$isDryRun) {
                 $this->entityManager->flush();
