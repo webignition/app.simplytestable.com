@@ -795,6 +795,56 @@ class UrlFinderTest extends AbstractBaseTestCase
                     ],
                 ],
             ],
+            'from single sitemap.xml, fixably-invalid http sitemap URL' => [
+                'job' => $this->createJob('http://example.com/', []),
+                'httpFixtures' => [
+                    HttpFixtureFactory::createRobotsTxtResponse([
+                        'http:/example.com/sitemap.xml',
+                    ]),
+                    new Response(
+                        200,
+                        ['content-type' => 'application/xml']
+                    ),
+                ],
+                'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
+            ],
+            'from single sitemap.xml, fixably-invalid https sitemap URL' => [
+                'job' => $this->createJob('http://example.com/', []),
+                'httpFixtures' => [
+                    HttpFixtureFactory::createRobotsTxtResponse([
+                        'https:/example.com/sitemap.xml',
+                    ]),
+                    new Response(
+                        200,
+                        ['content-type' => 'application/xml']
+                    ),
+                ],
+                'expectedUrlSet' => [],
+                'expectedRequestPropertiesCollection' => [
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_FINDER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                    [
+                        'user-agent' => UrlFinder::SITEMAP_RETRIEVER_USER_AGENT,
+                        'cookie' => '',
+                        'authorization' => '',
+                    ],
+                ],
+            ],
         ];
     }
 

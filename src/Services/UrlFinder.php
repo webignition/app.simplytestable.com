@@ -173,6 +173,7 @@ class UrlFinder
         $this->httpClientService->setRequestHeader('User-Agent', self::SITEMAP_FINDER_USER_AGENT);
 
         $sitemapUrls = $this->websiteSitemapFinder->findSitemapUrls((string)$job->getWebsite());
+        $sitemapUrls = $this->fixSitemapUrls($sitemapUrls);
 
         $this->httpClientService->setRequestHeader('User-Agent', self::SITEMAP_RETRIEVER_USER_AGENT);
 
@@ -201,6 +202,22 @@ class UrlFinder
         }
 
         return $urls;
+    }
+
+    /**
+     * @param string[] $sitemapUrls
+     *
+     * @return string[]
+     */
+    private function fixSitemapUrls(array $sitemapUrls): array
+    {
+        foreach ($sitemapUrls as $urlIndex => $sitemapUrl) {
+            if (preg_match('/^https?:\/\/\//', $sitemapUrl)) {
+                $sitemapUrls[$urlIndex] = preg_replace('/^https?:\/\/\//', 'http://', $sitemapUrl);
+            }
+        }
+
+        return $sitemapUrls;
     }
 
     /**
