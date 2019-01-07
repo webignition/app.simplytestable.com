@@ -1,7 +1,6 @@
 <?php
 namespace App\Repository;
 
-use App\Entity\Task\Output;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type as TaskType;
@@ -130,23 +129,6 @@ class TaskOutputRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
 
         return $this->getSingleFieldCollectionFromResult($result, 'id');
-    }
-
-    /**
-     * @TODO Remove in #367
-     *
-     * @param int $limit
-     *
-     * @return Output[]
-     */
-    public function findOutputContainingOldInvalidCharacterEncodingError(int $limit)
-    {
-        $queryBuilder = $this->createQueryBuilder('TaskOutput');
-        $queryBuilder->select('TaskOutput');
-        $queryBuilder->where('TaskOutput.output LIKE \'%contained one or more bytes%\'');
-        $queryBuilder->setMaxResults($limit);
-
-        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
