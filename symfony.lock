@@ -272,6 +272,9 @@
             "ref": "e3868d2f4a5104f19f844fe551099a00c6562527"
         }
     },
+    "symfony/css-selector": {
+        "version": "v4.2.2"
+    },
     "symfony/debug": {
         "version": "v4.1.1"
     },
@@ -479,6 +482,9 @@
     "webignition/sitemap-model": {
         "version": "3.0.3"
     },
+    "webignition/stream-factory-interface": {
+        "version": "0.2"
+    },
     "webignition/string-parser": {
         "version": "0.2.3"
     },
@@ -490,6 +496,9 @@
     },
     "webignition/web-json-model": {
         "version": "3.1.1"
+    },
+    "webignition/web-page-inspector": {
+        "version": "0.6"
     },
     "webignition/web-page-model": {
         "version": "3.1.1"
