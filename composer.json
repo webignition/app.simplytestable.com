@@ -44,7 +44,7 @@
         "webignition/internet-media-type": ">=2.0,<3",
         "webignition/php-stripe-models": ">=0.2.6,<1.0",
         "webignition/resque-bundle": "dev-master",
-        "webignition/sitemap-model": ">=4,<5",
+        "webignition/sitemap-model": ">=4.1,<5",
         "webignition/url": "~2",
         "webignition/url-resolver": ">=3.1,<4",
         "webignition/web-json-model": ">=5,<6",

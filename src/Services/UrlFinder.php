@@ -232,7 +232,9 @@ class UrlFinder
 
         try {
             $sitemapResource = $this->webResourceRetriever->retrieve($request);
-            $sitemap = $this->sitemapFactory->create(
+            $sitemapResource->getResponse()->getBody()->rewind();
+
+            $sitemap = $this->sitemapFactory->createFromResponse(
                 $sitemapResource->getResponse(),
                 $sitemapResource->getUri()
             );

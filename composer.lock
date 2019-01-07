@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "baebfc0b3db362c696b01af3761994f3",
+    "content-hash": "e7d682064bcfe1146ca1a3659d40d9fc",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -6010,16 +6010,16 @@
         },
         {
             "name": "webignition/sitemap-model",
-            "version": "4.0",
+            "version": "4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "27ab5f7a3db4db561ecd70b2e474c08be31c0636"
+                "reference": "507d035641b8bcf39f7eb8e45690e7a0dab88a1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/27ab5f7a3db4db561ecd70b2e474c08be31c0636",
-                "reference": "27ab5f7a3db4db561ecd70b2e474c08be31c0636",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/507d035641b8bcf39f7eb8e45690e7a0dab88a1a",
+                "reference": "507d035641b8bcf39f7eb8e45690e7a0dab88a1a",
                 "shasum": ""
             },
             "require": {
@@ -6056,7 +6056,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2018-10-09T16:05:40+00:00"
+            "time": "2019-01-07T18:33:51+00:00"
         },
         {
             "name": "webignition/stream-factory-interface",
