@@ -4,24 +4,14 @@ namespace App\Tests\Factory;
 
 class HtmlDocumentFactory
 {
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    public static function load($name)
+    public static function load(string $name): string
     {
         return file_get_contents(__DIR__ . '/../Fixtures/Data/HtmlDocuments/' . $name . '.html');
     }
 
-    /**
-     * @param string $location
-     *
-     * @return string
-     */
-    public static function createMetaRedirectDocument($location)
+    public static function createMetaRedirectDocument(string $location, string $fixtureName = 'meta-redirect'): string
     {
-        $content = str_replace('{{ url }}', $location, static::load('meta-redirect'));
+        $content = str_replace('{{ url }}', $location, static::load($fixtureName));
 
         if (empty($location)) {
             $content = str_replace(' url=', '', $content);

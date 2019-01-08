@@ -191,7 +191,7 @@ class UrlResolverTest extends AbstractBaseTestCase
                     new Response(
                         200,
                         ['content-type' => 'text/html'],
-                        HtmlDocumentFactory::createMetaRedirectDocument(null)
+                        HtmlDocumentFactory::createMetaRedirectDocument('')
                     ),
                     $successResponse,
                 ],
@@ -207,6 +207,20 @@ class UrlResolverTest extends AbstractBaseTestCase
                     $successResponse,
                 ],
                 'expectedResolvedUrl' => 'http://example.com/',
+            ],
+            'meta redirect unparseable content type' => [
+                'httpFixtures' => [
+                    new Response(
+                        200,
+                        ['content-type' => 'text/html'],
+                        HtmlDocumentFactory::createMetaRedirectDocument(
+                            'http://foo.example.com/',
+                            'meta-redirect-with-unparseable-meta-content-type'
+                        )
+                    ),
+                    $successResponse,
+                ],
+                'expectedResolvedUrl' => 'http://foo.example.com/',
             ],
         ];
     }
