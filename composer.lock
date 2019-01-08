@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f20b8cc8da4636be5234fabb2a7d78df",
+    "content-hash": "bf791247f8068c35f8c82df258021ab1",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -6201,23 +6201,23 @@
         },
         {
             "name": "webignition/url-resolver",
-            "version": "3.1",
+            "version": "3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url-resolver.git",
-                "reference": "1a45cbea68adb5df14a3e2e17e200b4de27db9aa"
+                "reference": "60e5690da429fe2166ec6f6678e9d35c2318f0b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/1a45cbea68adb5df14a3e2e17e200b4de27db9aa",
-                "reference": "1a45cbea68adb5df14a3e2e17e200b4de27db9aa",
+                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/60e5690da429fe2166ec6f6678e9d35c2318f0b7",
+                "reference": "60e5690da429fe2166ec6f6678e9d35c2318f0b7",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "~6",
                 "php": ">=7.2.0",
                 "webignition/absolute-url-deriver": ">=2,<3",
-                "webignition/web-page-model": ">=5,<6"
+                "webignition/web-page-model": ">=5.6,<6"
             },
             "require-dev": {
                 "phpunit/phpunit": "~7.0",
@@ -6245,7 +6245,7 @@
                 "resolver",
                 "url"
             ],
-            "time": "2019-01-07T16:12:25+00:00"
+            "time": "2019-01-08T11:08:37+00:00"
         },
         {
             "name": "webignition/web-json-model",
@@ -6300,16 +6300,16 @@
         },
         {
             "name": "webignition/web-page-inspector",
-            "version": "0.6",
+            "version": "1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-inspector.git",
-                "reference": "778ac9a60d1a0fb52bdd059acdc7bf0bf662ef69"
+                "reference": "238020662cefa5631f8c972abd1b6820d0767d1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-inspector/zipball/778ac9a60d1a0fb52bdd059acdc7bf0bf662ef69",
-                "reference": "778ac9a60d1a0fb52bdd059acdc7bf0bf662ef69",
+                "url": "https://api.github.com/repos/webignition/web-page-inspector/zipball/238020662cefa5631f8c972abd1b6820d0767d1f",
+                "reference": "238020662cefa5631f8c972abd1b6820d0767d1f",
                 "shasum": ""
             },
             "require": {
@@ -6347,20 +6347,20 @@
                 "inspector",
                 "webpage"
             ],
-            "time": "2018-10-12T17:35:30+00:00"
+            "time": "2019-01-08T10:30:29+00:00"
         },
         {
             "name": "webignition/web-page-model",
-            "version": "5.5",
+            "version": "5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "f358d765b80f77b3e42642b073d77782206fddab"
+                "reference": "4816d14667ab5fa2b8a5febc86866623e9c213b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/f358d765b80f77b3e42642b073d77782206fddab",
-                "reference": "f358d765b80f77b3e42642b073d77782206fddab",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/4816d14667ab5fa2b8a5febc86866623e9c213b4",
+                "reference": "4816d14667ab5fa2b8a5febc86866623e9c213b4",
                 "shasum": ""
             },
             "require": {
@@ -6369,7 +6369,7 @@
                 "webignition/character-set-list": "^0.2",
                 "webignition/internet-media-type": "^2",
                 "webignition/internet-media-type-interface": "^0.4",
-                "webignition/web-page-inspector": ">=0.3,<1",
+                "webignition/web-page-inspector": ">=1,<2",
                 "webignition/web-resource-interfaces": ">=3.3,<4",
                 "webignition/web-resource-model": ">=5.2,<6"
             },
@@ -6401,7 +6401,7 @@
                 "model",
                 "webpage"
             ],
-            "time": "2019-01-07T17:56:47+00:00"
+            "time": "2019-01-08T10:42:11+00:00"
         },
         {
             "name": "webignition/web-resource-interfaces",
