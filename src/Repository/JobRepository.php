@@ -160,4 +160,17 @@ class JobRepository extends EntityRepository
 
         return $result[0]['isPublic'] === true;
     }
+
+    public function exists(int $jobId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');
+
+        $queryBuilder->where('Job.id = :JobId');
+        $queryBuilder->setParameter('JobId', $jobId, DoctrineType::INTEGER);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return !empty($result);
+    }
 }
