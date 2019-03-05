@@ -7,6 +7,7 @@ use App\Entity\Job\Ammendment;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Task\Task;
+use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Services\ApplicationStateService;
@@ -31,20 +32,20 @@ class DeleteCommand extends Command
      * @var EntityManagerInterface
      */
     private $entityManager;
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
+
+    private $jobRepository;
+
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
+        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -70,10 +71,8 @@ class DeleteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
         /* @var Job $job */
-        $job = $jobRepository->find((int)$input->getArgument('id'));
+        $job = $this->jobRepository->find((int) $input->getArgument('id'));
 
         if (empty($job)) {
             return self::RETURN_CODE_OK;
