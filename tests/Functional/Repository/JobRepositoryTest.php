@@ -547,6 +547,16 @@ class JobRepositoryTest extends AbstractBaseTestCase
         ];
     }
 
+    public function testExists()
+    {
+        $job = $this->jobFactory->create();
+        $jobId = $job->getId();
+        $nonExistentJobId = $jobId + 1;
+
+        $this->assertTrue($this->jobRepository->exists($jobId));
+        $this->assertFalse($this->jobRepository->exists($nonExistentJobId));
+    }
+
     /**
      * @return Job[]
      */
@@ -637,7 +647,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      *
      * @return Job[]
      */
-    public function createJobs($jobValuesCollection, $users = [])
+    private function createJobs($jobValuesCollection, $users = [])
     {
         $jobs = [];
 
