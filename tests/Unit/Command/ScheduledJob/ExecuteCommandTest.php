@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Command\ScheduledJob\ExecuteCommand;
 
+use App\Repository\ScheduledJobRepository;
 use App\Resque\Job\ScheduledJob\ExecuteJob;
 use App\Tests\Factory\MockFactory;
 use App\Command\ScheduledJob\ExecuteCommand;
@@ -45,9 +46,9 @@ class ExecuteCommandTest extends \PHPUnit\Framework\TestCase
         $command = new ExecuteCommand(
             MockFactory::createApplicationStateService(true),
             $resqueQueueService,
-            MockFactory::createEntityManager(),
             MockFactory::createJobStartService(),
-            MockFactory::createJobService()
+            MockFactory::createJobService(),
+            \Mockery::mock(ScheduledJobRepository::class)
         );
 
         $returnCode = $command->run(new ArrayInput([
