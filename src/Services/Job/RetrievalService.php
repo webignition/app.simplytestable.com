@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Services\Job;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 use App\Repository\JobRepository;
@@ -10,35 +10,18 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class RetrievalService
 {
-    /**
-     * @var TeamService
-     */
     private $teamService;
-
-    /**
-     * @var JobRepository
-     */
     private $jobRepository;
-
-    /**
-     * @var TokenStorageInterface
-     */
     private $tokenStorage;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param TeamService $teamService
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(
-        EntityManagerInterface $entityManager,
         TeamService $teamService,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        JobRepository $jobRepository
     ) {
         $this->teamService = $teamService;
         $this->tokenStorage = $tokenStorage;
-
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->jobRepository = $jobRepository;
     }
 
     /**
