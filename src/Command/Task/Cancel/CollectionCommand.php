@@ -1,7 +1,7 @@
 <?php
 namespace App\Command\Task\Cancel;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TaskRepository;
 use Psr\Log\LoggerInterface;
 use App\Entity\Task\Task;
 use App\Services\ApplicationStateService;
@@ -19,45 +19,18 @@ class CollectionCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var TaskService
-     */
     private $taskService;
-
-    /**
-     * @var WorkerTaskCancellationService
-     */
     private $workerTaskCancellationService;
-
-    /**
-     * @var LoggerInterface
-     */
     private $logger;
+    private $taskRepository;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param TaskService $taskService
-     * @param WorkerTaskCancellationService $workerTaskCancellationService
-     * @param LoggerInterface $logger
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         TaskService $taskService,
         WorkerTaskCancellationService $workerTaskCancellationService,
         LoggerInterface $logger,
-        EntityManagerInterface $entityManager,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -66,7 +39,7 @@ class CollectionCommand extends Command
         $this->taskService = $taskService;
         $this->workerTaskCancellationService = $workerTaskCancellationService;
         $this->logger = $logger;
-        $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -97,12 +70,10 @@ class CollectionCommand extends Command
 
         $taskIds = array_filter(explode(',', $input->getArgument('ids')));
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
         $taskIdsByWorker = [];
         foreach ($taskIds as $taskId) {
             /* @var Task $task */
-            $task = $taskRepository->find($taskId);
+            $task = $this->taskRepository->find($taskId);
 
             $taskWorker = $task->getWorker();
 

@@ -41,17 +41,20 @@ class JobController
     private $jobRetrievalService;
     private $entityManager;
     private $jobRepository;
+    private $taskRepository;
 
     public function __construct(
         RouterInterface $router,
         RetrievalService $jobRetrievalService,
         EntityManagerInterface $entityManager,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->router = $router;
         $this->jobRetrievalService = $jobRetrievalService;
         $this->entityManager = $entityManager;
         $this->jobRepository = $jobRepository;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -259,9 +262,6 @@ class JobController
 
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
         $hasCrawlJob = $crawlJobContainerService->hasForJob($job);
 
         if ($hasCrawlJob) {
@@ -306,7 +306,7 @@ class JobController
         $jobService->cancel($job);
 
         $tasksToDeAssign = array();
-        $taskIds = $taskRepository->getIdsByJob($job);
+        $taskIds = $this->taskRepository->getIdsByJob($job);
         foreach ($taskIds as $taskId) {
             $tasksToDeAssign[] = array(
                 'id' => $taskId
@@ -316,7 +316,7 @@ class JobController
         $taskAwaitingCancellationState = $stateService->get(Task::STATE_AWAITING_CANCELLATION);
 
         /* @var Task[] $tasksAwaitingCancellation */
-        $tasksAwaitingCancellation = $taskRepository->findBy([
+        $tasksAwaitingCancellation = $this->taskRepository->findBy([
             'job' => $job,
             'state' => $taskAwaitingCancellationState,
         ]);
@@ -350,9 +350,6 @@ class JobController
     ) {
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
         $taskIds = $this->getRequestTaskIds($request);
 
         $taskFindByCriteria = [
@@ -363,7 +360,7 @@ class JobController
             $taskFindByCriteria['id'] = $taskIds;
         }
 
-        $tasks = $taskRepository->findBy($taskFindByCriteria);
+        $tasks = $this->taskRepository->findBy($taskFindByCriteria);
 
         foreach ($tasks as $task) {
             /* @var $task \App\Entity\Task\Task */
@@ -385,10 +382,7 @@ class JobController
     {
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
-        $taskIds = $taskRepository->getIdsByJob($job);
+        $taskIds = $this->taskRepository->getIdsByJob($job);
 
         return new JsonResponse($taskIds);
     }
@@ -403,9 +397,7 @@ class JobController
     {
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-        $urls = $taskRepository->findUrlsByJob($job);
+        $urls = $this->taskRepository->findUrlsByJob($job);
 
         return new JsonResponse($urls);
     }

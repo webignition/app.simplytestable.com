@@ -17,32 +17,20 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TasksController
 {
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param ResqueQueueService $resqueQueueService
-     * @param StateService $stateService
-     * @param TaskQueueService $taskQueueService
-     * @param Request $request
-     *
-     * @return Response
-     */
     public function requestAction(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         TaskQueueService $taskQueueService,
+        TaskRepository $taskRepository,
         Request $request
-    ) {
+    ): Response {
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $entityManager->getRepository(Task::class);
         $workerRepository = $entityManager->getRepository(Worker::class);
-
         $workerHostname = $request->request->get('worker_hostname');
 
         /* @var Worker $worker */

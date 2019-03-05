@@ -2,6 +2,7 @@
 
 namespace App\Command\Task\Assign;
 
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Entity\Job\Job;
@@ -26,51 +27,15 @@ class CollectionCommand extends Command
     const RETURN_CODE_FAILED_NO_WORKERS = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = -1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var TaskPreProcessorFactory
-     */
     private $taskPreprocessorFactory;
-
-    /**
-     * @var ResqueQueueService
-     */
     private $resqueQueueService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var WorkerTaskAssignmentService
-     */
     private $workerTaskAssignmentService;
-
-    /**
-     * @var LoggerInterface
-     */
     private $logger;
+    private $taskRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param TaskPreProcessorFactory $taskPreProcessorFactory
-     * @param ResqueQueueService $resqueQueueService
-     * @param StateService $stateService
-     * @param WorkerTaskAssignmentService $workerTaskAssignmentService
-     * @param LoggerInterface $logger
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
@@ -79,6 +44,7 @@ class CollectionCommand extends Command
         StateService $stateService,
         WorkerTaskAssignmentService $workerTaskAssignmentService,
         LoggerInterface $logger,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -90,6 +56,7 @@ class CollectionCommand extends Command
         $this->stateService = $stateService;
         $this->workerTaskAssignmentService = $workerTaskAssignmentService;
         $this->logger = $logger;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -120,11 +87,10 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
         $workerRepository = $this->entityManager->getRepository(Worker::class);
 
         /* @var Task[] $tasks */
-        $tasks = $taskRepository->findBy([
+        $tasks = $this->taskRepository->findBy([
             'id' => $taskIds,
         ]);
 

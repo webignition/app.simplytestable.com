@@ -2,7 +2,7 @@
 
 namespace App\Command\Task;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TaskRepository;
 use App\Entity\Task\Task;
 use App\Resque\Job\Task\CancelCollectionJob;
 use App\Services\ApplicationStateService;
@@ -17,46 +17,24 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var ResqueQueueService
-     */
     private $resqueQueueService;
+    private $taskRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param StateService $stateService
-     * @param ResqueQueueService $resqueQueueService
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManagerInterface $entityManager,
         StateService $stateService,
         ResqueQueueService $resqueQueueService,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
-        $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -80,9 +58,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
 
         $taskAwaitingCancellationState = $this->stateService->get(Task::STATE_AWAITING_CANCELLATION);
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
-        $taskIds = $taskRepository->getIdsByState(
+        $taskIds = $this->taskRepository->getIdsByState(
             $taskAwaitingCancellationState
         );
 

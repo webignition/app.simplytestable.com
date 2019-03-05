@@ -1,26 +1,15 @@
 <?php
+
 namespace App\Services;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Task\Task;
 use App\Repository\TaskRepository;
 
 class CrawlJobUrlCollector
 {
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var UserAccountPlanService
-     */
     private $userAccountPlanService;
-
-    /**
-     * @var TaskRepository
-     */
     private $taskRepository;
 
     /**
@@ -28,19 +17,14 @@ class CrawlJobUrlCollector
      */
     private $constrainToAccountPlan;
 
-    /**
-     * @param StateService $stateService
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        EntityManagerInterface $entityManager
+        TaskRepository $taskRepository
     ) {
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
     }
 
     /**

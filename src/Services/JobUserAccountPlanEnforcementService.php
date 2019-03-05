@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Task\Task;
 use App\Repository\JobRepository;
 use App\Repository\TaskRepository;
@@ -23,17 +22,12 @@ class JobUserAccountPlanEnforcementService
     private $stateService;
     private $jobTypeService;
     private $jobRepository;
+    private $taskRepository;
 
     /**
      * @var User
      */
     private $user;
-
-    /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
 
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
@@ -41,8 +35,8 @@ class JobUserAccountPlanEnforcementService
         TeamService $teamService,
         StateService $stateService,
         JobTypeService $jobTypeService,
-        EntityManagerInterface $entityManager,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -52,7 +46,7 @@ class JobUserAccountPlanEnforcementService
         $this->stateService = $stateService;
         $this->jobTypeService = $jobTypeService;
         $this->jobRepository = $jobRepository;
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
     }
 
     /**

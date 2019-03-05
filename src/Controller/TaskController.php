@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\State;
-use App\Entity\Task\Task;
 use App\Repository\CrawlJobContainerRepository;
 use App\Repository\TaskRepository;
 use App\Resque\Job\Worker\Tasks\NotifyJob;
@@ -32,26 +31,19 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TaskController
 {
-    /**
-     * @var EntityManagerInterface $entityManager
-     */
     private $entityManager;
-
-    /**
-     * @var TaskTypeService
-     */
     private $taskTypeService;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param TaskTypeService $taskTypeService
-     */
+    private $taskRepository;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        TaskTypeService $taskTypeService
+        TaskTypeService $taskTypeService,
+        TaskRepository $taskRepository
     ) {
         $this->entityManager = $entityManager;
         $this->taskTypeService = $taskTypeService;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -193,9 +185,7 @@ class TaskController
             throw new NotFoundHttpException();
         }
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-        $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
+        $count = $this->taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
         return new JsonResponse($count);
     }

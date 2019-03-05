@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Task;
 
 use App\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use App\Repository\TaskRepository;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -13,9 +14,9 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends \PHPUnit\Fra
     {
         $command = new EnqueueCancellationForAwaitingCancellationCommand(
             MockFactory::createApplicationStateService(true),
-            MockFactory::createEntityManager(),
             MockFactory::createStateService(),
-            MockFactory::createResqueQueueService()
+            MockFactory::createResqueQueueService(),
+            \Mockery::mock(TaskRepository::class)
         );
 
         $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());

@@ -4,8 +4,8 @@
 namespace App\Tests\Functional\Command\Job;
 
 use App\Entity\Job\TaskTypeOptions;
-use App\Entity\Task\Task;
 use App\Repository\JobRepository;
+use App\Repository\TaskRepository;
 use App\Services\TaskTypeService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Command\Job\DeleteCommand;
@@ -59,7 +59,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
         array $expectedJobValues,
         array $expectedRemainingJobValuesCollection
     ) {
-        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
         $jobTaskTypeOptionsRepository = $this->entityManager->getRepository(TaskTypeOptions::class);
 
         /* @var Job[] $jobs */

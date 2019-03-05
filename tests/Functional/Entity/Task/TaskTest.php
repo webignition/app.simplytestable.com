@@ -2,11 +2,13 @@
 
 namespace App\Tests\Functional\Entity\Task;
 
+use App\Repository\TaskRepository;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Task\Task;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TaskTest extends AbstractBaseTestCase
 {
@@ -27,11 +29,10 @@ class TaskTest extends AbstractBaseTestCase
 
     public function testPersistAndRetrieve()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $stateService = self::$container->get(StateService::class);
-
-        $taskRepository = $entityManager->getRepository(Task::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
 
         $taskUrl = 'http://example.com/ɸ';
         $parameterKey = 'key-ɸ';

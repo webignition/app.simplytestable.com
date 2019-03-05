@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,31 +17,6 @@ use webignition\Url\Url;
 
 class TaskService
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var StateService
-     */
-    private $stateService;
-
-    /**
-     * @var ResqueQueueService
-     */
-    private $resqueQueueService;
-
-    /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
-     * @var TaskOutputRepository
-     */
-    private $taskOutputRepository;
-
     /**
      * All the states a task could be in
      *
@@ -90,21 +66,27 @@ class TaskService
         Task::STATE_QUEUED_FOR_ASSIGNMENT,
     ];
 
+    private $entityManager;
+    private $stateService;
+    private $resqueQueueService;
+    private $taskRepository;
+
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param StateService $stateService
-     * @param ResqueQueueService $resqueQueueService
+     * @var TaskOutputRepository
      */
+    private $taskOutputRepository;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         StateService $stateService,
-        ResqueQueueService $resqueQueueService
+        ResqueQueueService $resqueQueueService,
+        TaskRepository $taskRepository
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
 
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
         $this->taskOutputRepository = $entityManager->getRepository(TaskOutput::class);
     }
 

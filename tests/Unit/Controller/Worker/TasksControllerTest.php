@@ -3,8 +3,8 @@
 namespace App\Tests\Unit\Controller\Worker;
 
 use App\Controller\Worker\TasksController;
+use App\Repository\TaskRepository;
 use App\Tests\Factory\MockFactory;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
@@ -38,6 +38,7 @@ class TasksControllerTest extends \PHPUnit\Framework\TestCase
             MockFactory::createResqueQueueService(),
             MockFactory::createStateService(),
             MockFactory::createTaskQueueService(),
+            \Mockery::mock(TaskRepository::class),
             new Request()
         );
     }
