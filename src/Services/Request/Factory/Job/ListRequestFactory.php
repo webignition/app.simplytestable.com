@@ -5,7 +5,6 @@ namespace App\Services\Request\Factory\Job;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\Type;
-use App\Repository\StateRepository;
 use App\Request\Job\ListRequest;
 use App\Services\CrawlJobContainerService;
 use App\Services\JobService;
@@ -59,7 +58,7 @@ class ListRequestFactory
     private $shouldExcludeFinished;
 
     /**
-     * @var StateRepository
+     * @var EntityRepository
      */
     private $stateRepository;
 
