@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Job;
 
 use App\Command\Job\ResolveWebsiteCommand;
+use App\Repository\JobRepository;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -16,8 +17,8 @@ class ResolveWebsiteCommandTest extends \PHPUnit\Framework\TestCase
             MockFactory::createResqueQueueService(),
             MockFactory::createWebsiteResolutionService(),
             MockFactory::createJobPreparationService(),
-            MockFactory::createEntityManager(),
             MockFactory::createStateService(),
+            \Mockery::mock(JobRepository::class),
             []
         );
 

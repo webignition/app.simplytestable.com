@@ -2,9 +2,7 @@
 
 namespace App\Tests\Unit\Services\Job;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Mockery\Mock;
-use App\Entity\Job\Job;
 use App\Repository\JobRepository;
 use App\Services\Job\RetrievalService;
 use App\Services\Team\Service as TeamService;
@@ -30,13 +28,6 @@ class RetrievalServiceTest extends \PHPUnit\Framework\TestCase
             ->shouldReceive('find')
             ->andReturnNull();
 
-        /* @var Mock|EntityManagerInterface $entityManager */
-        $entityManager = \Mockery::mock(EntityManagerInterface::class);
-        $entityManager
-            ->shouldReceive('getRepository')
-            ->with(Job::class)
-            ->andReturn($jobRepository);
-
         /* @var Mock|TokenInterface $token */
         $token = \Mockery::mock(TokenInterface::class);
         $token
@@ -49,7 +40,7 @@ class RetrievalServiceTest extends \PHPUnit\Framework\TestCase
             ->shouldReceive('getToken')
             ->andReturn($token);
 
-        $retrievalService = new RetrievalService($entityManager, $teamService, $tokenStorage);
+        $retrievalService = new RetrievalService($teamService, $tokenStorage, $jobRepository);
 
         $this->expectException(JobRetrievalServiceException::class);
         $this->expectExceptionMessage('Job [1] not found');

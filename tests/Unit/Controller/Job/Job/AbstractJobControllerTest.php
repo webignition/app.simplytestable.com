@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\Job\Job;
 
+use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery\Mock;
 use App\Controller\Job\JobController;
@@ -32,7 +33,8 @@ abstract class AbstractJobControllerTest extends \PHPUnit\Framework\TestCase
         return new JobController(
             $router,
             $jobRetrievalService,
-            $entityManager
+            $entityManager,
+            \Mockery::mock(JobRepository::class)
         );
     }
 
