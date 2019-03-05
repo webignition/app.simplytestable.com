@@ -284,12 +284,10 @@ class TasksControllerTest extends AbstractControllerTest
     {
         $userFactory = new UserFactory(self::$container);
         $jobFactory = new JobFactory(self::$container);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
 
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
-
-        $taskRepository = $entityManager->getRepository(Task::class);
 
         $users = $userFactory->createPublicAndPrivateUserSet();
         $jobs = [];

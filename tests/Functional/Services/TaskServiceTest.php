@@ -6,6 +6,7 @@ use App\Entity\Job\Job;
 use App\Entity\Task\Output;
 use App\Entity\Task\Task;
 use App\Entity\TimePeriod;
+use App\Repository\TaskRepository;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
@@ -14,6 +15,7 @@ use App\Tests\Factory\TaskFactory;
 use App\Tests\Factory\TimePeriodFactory;
 use App\Tests\Factory\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TaskServiceTest extends AbstractBaseTestCase
 {
@@ -234,9 +236,8 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testPersist()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-
-        $taskRepository = $entityManager->getRepository(Task::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
 
         $originalTaskUrl = $this->task->getUrl();
 
@@ -253,9 +254,8 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testPersistAndFlush()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-
-        $taskRepository = $entityManager->getRepository(Task::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
 
         $this->task->setUrl('foo');
 
