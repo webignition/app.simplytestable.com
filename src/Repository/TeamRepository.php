@@ -1,11 +1,18 @@
 <?php
+
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Team\Team;
 use App\Entity\User;
 
-class TeamRepository extends EntityRepository {
+class TeamRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Team::class);
+    }
 
     /**
      * @param $name
