@@ -3,9 +3,9 @@
 namespace App\Tests\Functional\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Mockery\Mock;
 use App\Entity\Team\Invite;
-use App\Repository\TeamInviteRepository;
 use App\Services\Team\InviteTokenGenerator;
 use App\Tests\Functional\AbstractBaseTestCase;
 
@@ -16,8 +16,8 @@ class InviteTokenGeneratorTest extends AbstractBaseTestCase
         /* @var Invite|Mock */
         $invite = \Mockery::mock(Invite::class);
 
-        /* @var TeamInviteRepository|Mock $teamInviteRepository */
-        $teamInviteRepository = \Mockery::mock(TeamInviteRepository::class);
+        /* @var EntityRepository|Mock $teamInviteRepository */
+        $teamInviteRepository = \Mockery::mock(EntityRepository::class);
         $teamInviteRepository
             ->shouldReceive('findOneBy')
             ->andReturnValues([

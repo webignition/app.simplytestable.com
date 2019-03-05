@@ -2,12 +2,12 @@
 namespace App\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\TeamInviteRepository;
 use App\Services\Team\Service as TeamService;
 use App\Entity\Team\Team;
 use App\Entity\Team\Invite;
 use App\Entity\User;
 use App\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
+use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 
 class InviteService
@@ -18,7 +18,7 @@ class InviteService
     private $teamService;
 
     /**
-     * @var TeamInviteRepository
+     * @var EntityRepository
      */
     private $teamInviteRepository;
 
