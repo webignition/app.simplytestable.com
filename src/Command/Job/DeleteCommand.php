@@ -2,11 +2,11 @@
 
 namespace App\Command\Job;
 
-use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Task\Task;
+use App\Repository\CrawlJobContainerRepository;
 use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
@@ -23,22 +23,16 @@ class DeleteCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
     private $jobRepository;
+    private $crawlJobContainerRepository;
 
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
         JobRepository $jobRepository,
+        CrawlJobContainerRepository $crawlJobContainerRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -46,6 +40,7 @@ class DeleteCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->jobRepository = $jobRepository;
+        $this->crawlJobContainerRepository = $crawlJobContainerRepository;
     }
 
     /**
@@ -193,8 +188,7 @@ class DeleteCommand extends Command
             'Removing <comment>crawl job container</comment>',
         ]);
 
-        $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);
-        $crawlJobContainer = $crawlJobContainerRepository->findOneBy([
+        $crawlJobContainer = $this->crawlJobContainerRepository->findOneBy([
             'parentJob' => $job,
         ]);
 

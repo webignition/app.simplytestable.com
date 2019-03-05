@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Repository\CrawlJobContainerRepository;
@@ -33,17 +32,19 @@ class TaskController
 {
     private $entityManager;
     private $taskTypeService;
-
     private $taskRepository;
+    private $crawlJobContainerRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         TaskTypeService $taskTypeService,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        CrawlJobContainerRepository $crawlJobContainerRepository
     ) {
         $this->entityManager = $entityManager;
         $this->taskTypeService = $taskTypeService;
         $this->taskRepository = $taskRepository;
+        $this->crawlJobContainerRepository = $crawlJobContainerRepository;
     }
 
     /**
@@ -129,10 +130,7 @@ class TaskController
                 if (Job::STATE_COMPLETED === $task->getJob()->getState()->getName()) {
                     $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
-                    /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
-                    $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);
-
-                    if ($crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
+                    if ($this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                         $task,
                         $jobFailedNoSitemapState
                     )) {
