@@ -167,15 +167,20 @@ class JobRepository extends EntityRepository
         return $this->checkJobExistence($jobId);
     }
 
-    public function isOwner(UserInterface $user, int $jobId): bool
+    public function isOwnedByUser(UserInterface $user, int $jobId): bool
+    {
+        return $this->isOwnedByUsers([$user], $jobId);
+    }
+
+    public function isOwnedByUsers(array $users, int $jobId): bool
     {
         return $this->checkJobExistence(
             $jobId,
             [
-                'Job.user = :User'
+                'Job.user IN (:Users)'
             ],
             [
-                'User' => $user,
+                'Users' => $users,
             ]
         );
     }

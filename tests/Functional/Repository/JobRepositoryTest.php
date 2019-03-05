@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Services;
 
@@ -557,7 +558,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $this->assertFalse($this->jobRepository->exists($nonExistentJobId));
     }
 
-    public function testIsOwner()
+    public function testIsOwnedByUser()
     {
         $user1 = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'user1@example.com',
@@ -575,10 +576,89 @@ class JobRepositoryTest extends AbstractBaseTestCase
             JobFactory::KEY_USER => $user2,
         ]);
 
-        $this->assertTrue($this->jobRepository->isOwner($user1, $jobOwnedByUser1->getId()));
-        $this->assertFalse($this->jobRepository->isOwner($user2, $jobOwnedByUser1->getId()));
-        $this->assertTrue($this->jobRepository->isOwner($user2, $jobOwnedByUser2->getId()));
-        $this->assertFalse($this->jobRepository->isOwner($user1, $jobOwnedByUser2->getId()));
+        $this->assertTrue($this->jobRepository->isOwnedByUser($user1, $jobOwnedByUser1->getId()));
+        $this->assertFalse($this->jobRepository->isOwnedByUser($user2, $jobOwnedByUser1->getId()));
+        $this->assertTrue($this->jobRepository->isOwnedByUser($user2, $jobOwnedByUser2->getId()));
+        $this->assertFalse($this->jobRepository->isOwnedByUser($user1, $jobOwnedByUser2->getId()));
+    }
+
+    /**
+     * @dataProvider isOwnedByUsersDataProvider
+     */
+    public function testIsOwnedByUsers(
+        string $ownerName,
+        array $userNames,
+        bool $expectedIsOwnedByUsers
+    ) {
+        $allUsers = $this->userFactory->createPublicPrivateAndTeamUserSet();
+        $owner = $allUsers[$ownerName];
+        $users = [];
+
+        foreach ($userNames as $userName) {
+            $users[] = $allUsers[$userName];
+        }
+
+        $jobValues[JobFactory::KEY_USER] = $owner;
+
+        $job = $this->jobFactory->create($jobValues);
+        $jobId = $job->getId();
+
+        $this->assertEquals($expectedIsOwnedByUsers, $this->jobRepository->isOwnedByUsers($users, $jobId));
+    }
+
+    public function isOwnedByUsersDataProvider(): array
+    {
+        return [
+            'owner=public; users=public' => [
+                'ownerName' => 'public',
+                'userNames' => [
+                    'public',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=public; users=leader' => [
+                'ownerName' => 'public',
+                'userNames' => [
+                    'leader',
+                ],
+                'expectedIsOwnedByUsers' => false,
+            ],
+            'owner=public; users=public,leader' => [
+                'ownerName' => 'public',
+                'userNames' => [
+                    'public',
+                    'leader',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=leader; users=leader,member1,member2' => [
+                'ownerName' => 'leader',
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=member1; users=leader,member1,member2' => [
+                'ownerName' => 'member1',
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=member2; users=leader,member1,member2' => [
+                'ownerName' => 'member2',
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+        ];
     }
 
     /**
