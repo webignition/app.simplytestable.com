@@ -14,11 +14,8 @@ class TeamRepository extends ServiceEntityRepository
         parent::__construct($registry, Team::class);
     }
 
-    /**
-     * @param $name
-     * @return int
-     */
-    public function getTeamCountByName($name) {
+    public function getTeamCountByName(string $name): int
+    {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(Team.id) as total');
@@ -30,12 +27,8 @@ class TeamRepository extends ServiceEntityRepository
         return (int)($result[0]['total']);
     }
 
-
-    /**
-     * @param User $leader
-     * @return int
-     */
-    public function getTeamCountByLeader(User $leader) {
+    public function getTeamCountByLeader(User $leader): int
+    {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(Team.id) as total');
@@ -47,12 +40,8 @@ class TeamRepository extends ServiceEntityRepository
         return (int)($result[0]['total']);
     }
 
-
-    /**
-     * @param User $leader
-     * @return Team|null
-     */
-    public function getTeamByLeader(User $leader) {
+    public function getTeamByLeader(User $leader): ?Team
+    {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('Team');
@@ -63,5 +52,4 @@ class TeamRepository extends ServiceEntityRepository
 
         return ($result[0] instanceof Team) ? $result[0] : null;
     }
-
 }
