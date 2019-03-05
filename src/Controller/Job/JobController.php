@@ -190,24 +190,6 @@ class JobController
     }
 
     /**
-     * @param string $site_root_url
-     * @param int $test_id
-     *
-     * @return Response
-     */
-    public function isPublicAction(
-        $site_root_url,
-        $test_id
-    ) {
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
-        return new Response(
-            '',
-            $jobRepository->getIsPublicByJobId($test_id) ? 200 : 404
-        );
-    }
-
-    /**
      * @param UserService $userService
      * @param User|UserInterface $user
      * @param string $siteRootUrl

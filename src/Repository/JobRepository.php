@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Repository;
 
-use Doctrine\DBAL\Types\Type as DoctrineType;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\Job;
 use App\Entity\Job\Type as JobType;
@@ -137,27 +137,5 @@ class JobRepository extends EntityRepository
         }
 
         return $collection;
-    }
-
-    /**
-     * @param int $jobId
-     *
-     * @return bool
-     */
-    public function getIsPublicByJobId($jobId)
-    {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job.isPublic');
-
-        $queryBuilder->where('Job.id = :JobId');
-        $queryBuilder->setParameter('JobId', $jobId, DoctrineType::INTEGER);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        if (empty($result)) {
-            return false;
-        }
-
-        return $result[0]['isPublic'] === true;
     }
 }

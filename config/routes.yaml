@@ -59,13 +59,6 @@ job_job_setprivate:
     requirements:
         site_root_url: ".+"
 
-
-job_job_ispublic:
-    path: /job/{site_root_url}/{test_id}/is_public/
-    defaults: { _controller: App\Controller\Job\JobController::isPublicAction, _format: json }
-    requirements:
-        site_root_url: ".+"
-
 job_start_retest:
     path: /job/{site_root_url}/{test_id}/re-test/
     defaults: { _controller: App\Controller\Job\StartController::retestAction, _format: json }
