@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Repository\JobRepository;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Mockery\Mock;
 use App\Controller\Job\JobController;
@@ -393,7 +394,7 @@ class JobFactory
     public function getFromResponse(Response $response)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+        $jobRepository = $this->container->get(JobRepository::class);
 
         $locationHeader = $response->headers->get('location');
         $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));
