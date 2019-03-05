@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Tests\Functional\Services\Job\Retrieval;
+namespace App\Tests\Functional\Services\Job;
 
+use App\Repository\JobRepository;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Mock;
 use App\Entity\Job\Configuration as JobConfiguration;
@@ -334,6 +335,7 @@ class StartServiceTest extends AbstractBaseTestCase
             StateService::class,
             UserAccountPlanService::class,
             'doctrine.orm.entity_manager',
+            JobRepository::class
         ];
 
         $requiredServices = [];
@@ -356,7 +358,8 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices[QueueService::class],
             $requiredServices[StateService::class],
             $requiredServices[UserAccountPlanService::class],
-            $requiredServices['doctrine.orm.entity_manager']
+            $requiredServices['doctrine.orm.entity_manager'],
+            $requiredServices[JobRepository::class]
         );
     }
 }

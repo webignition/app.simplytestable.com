@@ -21,61 +21,16 @@ use App\Services\Resque\QueueService as ResqueQueueService;
 
 class StartService
 {
-    /**
-     * @var JobUserAccountPlanEnforcementService
-     */
     private $jobUserAccountPlanEnforcementService;
-
-    /**
-     * @var JobTypeService
-     */
     private $jobTypeService;
-
-    /**
-     * @var JobService
-     */
     private $jobService;
-
-    /**
-     * @var UserService
-     */
     private $userService;
-
-    /**
-     * @var ResqueQueueService
-     */
     private $resqueQueueService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var UserAccountPlanService
-     */
     private $userAccountPlanService;
-
-    /**
-     * @var JobRepository
-     */
     private $jobRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
 
-    /**
-     * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
-     * @param JobTypeService $jobTypeService
-     * @param JobService $jobService
-     * @param UserService $userService
-     * @param ResqueQueueService $resqueQueueService
-     * @param StateService $stateService
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         JobTypeService $jobTypeService,
@@ -84,7 +39,8 @@ class StartService
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->jobTypeService = $jobTypeService;
@@ -94,8 +50,7 @@ class StartService
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
-
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->jobRepository = $jobRepository;
     }
 
     /**
