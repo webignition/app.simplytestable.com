@@ -2,7 +2,7 @@
 
 namespace App\Command\Job;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\JobRepository;
 use Psr\Log\LoggerInterface;
 use App\Entity\Job\Job;
 use App\Exception\Services\JobPreparation\Exception as JobPreparationException;
@@ -27,58 +27,26 @@ class PrepareCommand extends Command
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var ResqueQueueService
-     */
     private $resqueQueueService;
-
-    /**
-     * @var JobPreparationService
-     */
     private $jobPreparationService;
-
-    /**
-     * @var CrawlJobContainerService
-     */
     private $crawlJobContainerService;
-
-    /**
-     * @var LoggerInterface
-     */
     private $logger;
+    private $jobRepository;
 
     /**
      * @var array
      */
     private $predefinedDomainsToIgnore;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param ResqueQueueService $resqueQueueService
-     * @param JobPreparationService $jobPreparationService
-     * @param CrawlJobContainerService $crawlJobContainerService
-     * @param LoggerInterface $logger
-     * @param EntityManagerInterface $entityManager,
-     * @param array $predefinedDomainsToIgnore
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         JobPreparationService $jobPreparationService,
         CrawlJobContainerService $crawlJobContainerService,
         LoggerInterface $logger,
-        EntityManagerInterface $entityManager,
-        $predefinedDomainsToIgnore,
+        JobRepository $jobRepository,
+        array $predefinedDomainsToIgnore,
         $name = null
     ) {
         parent::__construct($name);
@@ -89,7 +57,7 @@ class PrepareCommand extends Command
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->logger = $logger;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-        $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -120,10 +88,8 @@ class PrepareCommand extends Command
             $input->getArgument('id')
         ));
 
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
         /* @var Job $job */
-        $job = $jobRepository->find((int)$input->getArgument('id'));
+        $job = $this->jobRepository->find((int)$input->getArgument('id'));
 
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var TaskType $taskType */
