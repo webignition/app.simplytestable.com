@@ -164,29 +164,35 @@ class JobRepository extends EntityRepository
 
     public function exists(int $jobId): bool
     {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job.id');
-
-        $queryBuilder->where('Job.id = :JobId');
-        $queryBuilder->setParameter('JobId', $jobId, DoctrineType::INTEGER);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return !empty($result);
+        return $this->checkJobExistence($jobId);
     }
 
     public function isOwner(UserInterface $user, int $jobId): bool
     {
+        return $this->checkJobExistence(
+            $jobId,
+            [
+                'Job.user = :User'
+            ],
+            [
+                'User' => $user,
+            ]
+        );
+    }
+
+    private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool
+    {
+        $wherePredicates[] = 'Job.id = :JobId';
+        $parameters['JobId'] = $jobId;
+
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job.id');
 
-        $queryBuilder->andWhere('Job.id = :JobId');
-        $queryBuilder->andWhere('Job.user = :User');
+        foreach ($wherePredicates as $predicate) {
+            $queryBuilder->andWhere($predicate);
+        }
 
-        $queryBuilder->setParameters([
-            'JobId' => $jobId,
-            'User' => $user,
-        ]);
+        $queryBuilder->setParameters($parameters);
 
         $result = $queryBuilder->getQuery()->getResult();
 
