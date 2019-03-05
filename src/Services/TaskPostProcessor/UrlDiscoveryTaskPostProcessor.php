@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\TaskPostProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,55 +18,15 @@ use webignition\NormalisedUrl\NormalisedUrl;
 
 class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
 {
-    /**
-     * @var CrawlJobContainerService
-     */
     private $crawlJobContainerService;
-
-    /**
-     * @var CrawlJobUrlCollector
-     */
     private $crawlJobUrlCollector;
-
-    /**
-     * @var JobUserAccountPlanEnforcementService
-     */
     private $jobUserAccountPlanEnforcementService;
-
-    /**
-     * @var UserAccountPlanService
-     */
     private $userAccountPlanService;
-
-    /**
-     * @var JobService
-     */
     private $jobService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var TaskRepository
-     */
     private $taskRepository;
-
-    /**
-     * @var UrlDiscoveryTaskService
-     */
     private $urlDiscoveryTaskService;
 
-    /**
-     * @param CrawlJobContainerService $crawlJobContainerService
-     * @param CrawlJobUrlCollector $crawlJobUrlCollector
-     * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param JobService $jobService
-     * @param EntityManagerInterface $entityManager
-     * @param UrlDiscoveryTaskService $urlDiscoveryTaskService
-     */
     public function __construct(
         CrawlJobContainerService $crawlJobContainerService,
         CrawlJobUrlCollector $crawlJobUrlCollector,
@@ -73,7 +34,8 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
         UserAccountPlanService $userAccountPlanService,
         JobService $jobService,
         EntityManagerInterface $entityManager,
-        UrlDiscoveryTaskService $urlDiscoveryTaskService
+        UrlDiscoveryTaskService $urlDiscoveryTaskService,
+        TaskRepository $taskRepository
     ) {
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->crawlJobUrlCollector = $crawlJobUrlCollector;
@@ -82,8 +44,7 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
         $this->jobService = $jobService;
         $this->entityManager = $entityManager;
         $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
     }
 
     /**

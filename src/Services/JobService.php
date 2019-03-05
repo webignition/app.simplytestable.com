@@ -44,10 +44,6 @@ class JobService
     private $taskTypeService;
     private $entityManager;
     private $jobRepository;
-
-    /**
-     * @var TaskRepository
-     */
     private $taskRepository;
 
     public function __construct(
@@ -55,15 +51,15 @@ class JobService
         StateService $stateService,
         TaskService $taskService,
         TaskTypeService $taskTypeService,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
-
         $this->jobRepository = $jobRepository;
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
     }
 
     /**

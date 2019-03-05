@@ -16,66 +16,20 @@ use App\Services\Team\Service as TeamService;
 
 class JobSummaryFactory
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var TaskService
-     */
     private $taskService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var JobService
-     */
     private $jobService;
-
-    /**
-     * @var TeamService
-     */
     private $teamService;
-
-    /**
-     * @var CrawlJobContainerService
-     */
     private $crawlJobContainerService;
-
-    /**
-     * @var UserAccountPlanService
-     */
     private $userAccountPlanService;
-
-    /**
-     * @var TaskRepository
-     */
     private $taskRepository;
+    private $crawlJobUrlCollector;
 
     /**
      * @var EntityRepository
      */
     private $jobRejectionReasonRepository;
 
-    /**
-     * @var CrawlJobUrlCollector
-     */
-    private $crawlJobUrlCollector;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param TaskService $taskService
-     * @param StateService $stateService
-     * @param JobService $jobService
-     * @param TeamService $teamService
-     * @param CrawlJobContainerService $crawlJobContainerService
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param CrawlJobUrlCollector $crawlJobUrlCollector
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         TaskService $taskService,
@@ -84,9 +38,9 @@ class JobSummaryFactory
         TeamService $teamService,
         CrawlJobContainerService $crawlJobContainerService,
         UserAccountPlanService $userAccountPlanService,
-        CrawlJobUrlCollector $crawlJobUrlCollector
+        CrawlJobUrlCollector $crawlJobUrlCollector,
+        TaskRepository $taskRepository
     ) {
-        $this->entityManager = $entityManager;
         $this->taskService = $taskService;
         $this->stateService = $stateService;
         $this->jobService = $jobService;
@@ -95,7 +49,7 @@ class JobSummaryFactory
         $this->userAccountPlanService = $userAccountPlanService;
         $this->crawlJobUrlCollector = $crawlJobUrlCollector;
 
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
         $this->jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
     }
 

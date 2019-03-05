@@ -2,7 +2,6 @@
 
 namespace App\Services\Task;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\State;
 use App\Entity\Task\Task;
 use App\Repository\JobRepository;
@@ -15,6 +14,7 @@ class QueueService
 {
     private $taskService;
     private $jobRepository;
+    private $taskRepository;
 
     /**
      * @var State[]
@@ -31,22 +31,17 @@ class QueueService
      */
     private $limit = 1;
 
-    /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
     public function __construct(
         JobService $jobService,
         TaskService $taskService,
         StateService $stateService,
-        EntityManagerInterface $entityManager,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->taskService = $taskService;
 
         $this->jobRepository = $jobRepository;
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
 
         $this->incompleteJobStates = $stateService->getCollection($jobService->getIncompleteStateNames());
         $this->taskQueuedState = $stateService->get(Task::STATE_QUEUED);
