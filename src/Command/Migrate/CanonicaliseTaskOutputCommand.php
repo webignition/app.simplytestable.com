@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Task\Output;
 use App\Entity\Task\Task;
@@ -15,30 +16,21 @@ class CanonicaliseTaskOutputCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $taskRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -69,7 +61,6 @@ class CanonicaliseTaskOutputCommand extends Command
 
         $output->writeln('Finding duplicate output ...');
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
         $taskOutputRepository = $this->entityManager->getRepository(Output::class);
 
         $duplicateHashes = $taskOutputRepository->findDuplicateHashes($this->getLimit($input));
@@ -109,7 +100,7 @@ class CanonicaliseTaskOutputCommand extends Command
 
                     $taskOutput = $taskOutputRepository->find($taskOutputId);
 
-                    $tasksToUpdate = $taskRepository->findBy([
+                    $tasksToUpdate = $this->taskRepository->findBy([
                         'output' => $taskOutput,
                     ]);
 
