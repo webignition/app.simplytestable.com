@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Repository\JobRepository;
 use App\Repository\TaskRepository;
@@ -17,15 +17,12 @@ class JobUserAccountPlanEnforcementService
     const URLS_PER_JOB_CONSTRAINT_NAME = 'urls_per_job';
     const CREDITS_PER_MONTH_CONSTRAINT_NAME = 'credits_per_month';
 
-    /**
-     * @var UserAccountPlanService
-     */
     private $userAccountPlanService;
-
-    /**
-     * @var TaskService
-     */
     private $taskService;
+    private $teamService;
+    private $stateService;
+    private $jobTypeService;
+    private $jobRepository;
 
     /**
      * @var User
@@ -33,45 +30,19 @@ class JobUserAccountPlanEnforcementService
     private $user;
 
     /**
-     * @var TeamService
-     */
-    private $teamService;
-
-    /**
-     * @var StateService
-     */
-    private $stateService;
-
-    /**
-     * @var JobTypeService
-     */
-    private $jobTypeService;
-
-    /**
-     * @var JobRepository
-     */
-    private $jobRepository;
-
-    /**
      * @var TaskRepository
      */
     private $taskRepository;
 
-    /**
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param TaskService $taskService
-     * @param TeamService $teamService
-     * @param StateService $stateService
-     * @param JobTypeService $jobTypeService
-     * @param EntityManagerInterface $entityManager
-     */
+
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         TaskService $taskService,
         TeamService $teamService,
         StateService $stateService,
         JobTypeService $jobTypeService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -80,7 +51,7 @@ class JobUserAccountPlanEnforcementService
         $this->jobTypeService = $jobTypeService;
         $this->stateService = $stateService;
         $this->jobTypeService = $jobTypeService;
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->jobRepository = $jobRepository;
         $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
