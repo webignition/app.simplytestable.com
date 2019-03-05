@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Controller\JobConfiguration;
 
 use App\Entity\Job\Configuration;
 use App\Entity\ScheduledJob;
+use App\Repository\ScheduledJobRepository;
 use App\Services\ApplicationStateService;
 use App\Services\Job\ConfigurationService;
 use App\Tests\Factory\MockFactory;
@@ -26,7 +27,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
         $this->expectException(ServiceUnavailableHttpException::class);
 
         $jobConfigurationController->deleteAction(
-            MockFactory::createEntityManager(),
+            \Mockery::mock(ScheduledJobRepository::class),
             self::LABEL
         );
     }
@@ -45,7 +46,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
         $this->expectException(NotFoundHttpException::class);
 
         $jobConfigurationController->deleteAction(
-            MockFactory::createEntityManager(),
+            \Mockery::mock(ScheduledJobRepository::class),
             'foo'
         );
     }
@@ -72,15 +73,8 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
             ],
         ]);
 
-        $entityManager = MockFactory::createEntityManager([
-            'getRepository' => [
-                'with' => ScheduledJob::class,
-                'return' => $scheduledJobRepository,
-            ],
-        ]);
-
         $response = $jobConfigurationController->deleteAction(
-            $entityManager,
+            $scheduledJobRepository,
             self::LABEL
         );
 

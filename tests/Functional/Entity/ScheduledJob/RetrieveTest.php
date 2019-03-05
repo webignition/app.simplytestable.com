@@ -3,6 +3,8 @@
 namespace App\Tests\Functional\Entity\ScheduledJob;
 
 use App\Entity\ScheduledJob;
+use App\Repository\ScheduledJobRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class RetrieveTest extends ScheduledJobTest
 {
@@ -20,8 +22,8 @@ class RetrieveTest extends ScheduledJobTest
     {
         parent::setUp();
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $this->originalScheduledJob = $this->getScheduledJob();
 

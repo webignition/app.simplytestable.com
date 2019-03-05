@@ -3,9 +3,9 @@
 namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Entity\Job\Configuration;
-use App\Entity\ScheduledJob;
 use App\Entity\Team\Invite;
 use App\Entity\User;
+use App\Repository\ScheduledJobRepository;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\Team\InviteService;
 use App\Services\Team\MemberService;
@@ -13,6 +13,7 @@ use App\Services\Team\Service;
 use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Factory\UserAccountPlanFactory;
 use App\Tests\Factory\UserFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -145,10 +146,10 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $teamMemberService = self::$container->get(MemberService::class);
         $teamService = self::$container->get(Service::class);
         $teamInviteService = self::$container->get(InviteService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
 
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
+        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $leader2 = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'leader2@example.com',

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\ScheduledJob;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,57 +15,27 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class Service
 {
-    /**
-     * @var JobConfigurationService
-     */
     private $jobConfigurationService;
-
-    /**
-     * @var TeamService
-     */
     private $teamService;
-
-    /**
-     * @var CronManager
-     */
     private $cronManager;
-
-    /**
-     * @var TokenStorageInterface
-     */
     private $tokenStorage;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var ScheduledJobRepository
-     */
     private $scheduledJobRepository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param JobConfigurationService $jobConfigurationService
-     * @param TeamService $teamService
-     * @param CronManager $cronManager
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         JobConfigurationService $jobConfigurationService,
         TeamService $teamService,
         CronManager $cronManager,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        ScheduledJobRepository $scheduledJobRepository
     ) {
         $this->entityManager = $entityManager;
         $this->jobConfigurationService = $jobConfigurationService;
         $this->teamService = $teamService;
         $this->cronManager = $cronManager;
         $this->tokenStorage = $tokenStorage;
-
-        $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
+        $this->scheduledJobRepository = $scheduledJobRepository;
     }
 
     /**
