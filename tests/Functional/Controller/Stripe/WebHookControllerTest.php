@@ -11,6 +11,7 @@ use App\Services\HttpClientService;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\StripeEventService;
 use App\Services\StripeWebHookMailNotificationSender;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Tests\Factory\HttpFixtureFactory;
 use App\Tests\Factory\StripeEventFixtureFactory;
@@ -51,8 +52,7 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->createPostmarkSuccessResponse(),
         ]);
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
 
         $fixtureName = 'customer.subscription.created.active';
         $fixtureModifications = [
@@ -166,11 +166,11 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->createPostmarkSuccessResponse(),
         ]);
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $stripeEventRepository = $entityManager->getRepository(Event::class);
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
 
         $resqueQueueService->getResque()->getQueue('stripe-event')->clear();
 
@@ -394,7 +394,7 @@ class WebHookControllerTest extends AbstractControllerTest
     private function callIndexAction(Request $request)
     {
         return $this->webHookController->indexAction(
-            self::$container->get('doctrine.orm.entity_manager'),
+            self::$container->get(EntityManagerInterface::class),
             self::$container->get(StripeEventService::class),
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StripeWebHookMailNotificationSender::class),
