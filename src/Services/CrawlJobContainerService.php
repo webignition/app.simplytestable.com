@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,57 +11,27 @@ use App\Repository\CrawlJobContainerRepository;
 
 class CrawlJobContainerService
 {
-    /**
-     * @var JobService
-     */
     private $jobService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var CrawlJobContainerRepository
-     */
-    private $entityRepository;
-
-    /**
-     * @var JobTypeService
-     */
+    private $crawlJobContainerRepository;
     private $jobTypeService;
-
-    /**
-     * @var UrlDiscoveryTaskService
-     */
     private $urlDiscoveryTaskService;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param JobService $jobService
-     * @param StateService $stateService
-     * @param JobTypeService $jobTypeService
-     * @param UrlDiscoveryTaskService $urlDiscoveryTaskService
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         JobService $jobService,
         StateService $stateService,
         JobTypeService $jobTypeService,
-        UrlDiscoveryTaskService $urlDiscoveryTaskService
+        UrlDiscoveryTaskService $urlDiscoveryTaskService,
+        CrawlJobContainerRepository $crawlJobContainerRepository
     ) {
         $this->entityManager = $entityManager;
         $this->jobService = $jobService;
         $this->stateService = $stateService;
         $this->jobTypeService = $jobTypeService;
         $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
-
-        $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
+        $this->crawlJobContainerRepository = $crawlJobContainerRepository;
     }
 
     /**
@@ -70,7 +41,7 @@ class CrawlJobContainerService
      */
     public function hasForJob(Job $job)
     {
-        return $this->entityRepository->hasForJob($job);
+        return $this->crawlJobContainerRepository->hasForJob($job);
     }
 
     /**
@@ -84,7 +55,7 @@ class CrawlJobContainerService
             return $this->create($job);
         }
 
-        return $this->entityRepository->getForJob($job);
+        return $this->crawlJobContainerRepository->getForJob($job);
     }
 
     /**
@@ -167,7 +138,7 @@ class CrawlJobContainerService
      */
     public function getAllActiveForUser(User $user)
     {
-        return $this->entityRepository->getAllForUserByCrawlJobStates(
+        return $this->crawlJobContainerRepository->getAllForUserByCrawlJobStates(
             $user,
             $this->stateService->getCollection($this->jobService->getIncompleteStateNames())
         );

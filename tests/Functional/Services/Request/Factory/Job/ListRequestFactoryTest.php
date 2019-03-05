@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Services\Request\Factory\Job;
 
 use App\Entity\CrawlJobContainer;
+use App\Repository\CrawlJobContainerRepository;
 use App\Services\Request\Factory\Job\ListRequestFactory;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\UserFactory;
@@ -152,8 +153,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $expectedJobIndicesToExclude,
         $expectedJobIndicesToInclude
     ) {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
+        $crawlJobContainerRepository = self::$container->get(CrawlJobContainerRepository::class);
 
         $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create([

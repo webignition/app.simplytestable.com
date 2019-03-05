@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Job;
 
 use App\Command\Job\DeleteCommand;
+use App\Repository\CrawlJobContainerRepository;
 use App\Repository\JobRepository;
 use App\Resque\Job\Job\PrepareJob;
 use App\Tests\Factory\MockFactory;
@@ -27,7 +28,8 @@ class DeleteCommandTest extends \PHPUnit\Framework\TestCase
         $command = new DeleteCommand(
             MockFactory::createApplicationStateService(true),
             MockFactory::createEntityManager(),
-            \Mockery::mock(JobRepository::class)
+            \Mockery::mock(JobRepository::class),
+            \Mockery::mock(CrawlJobContainerRepository::class)
         );
 
         $returnCode = $command->run(new ArrayInput([

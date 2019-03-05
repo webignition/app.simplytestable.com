@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\Task;
 
+use App\Repository\CrawlJobContainerRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Controller\TaskController;
@@ -32,7 +33,8 @@ abstract class AbstractTaskControllerTest extends \PHPUnit\Framework\TestCase
         $taskController = new TaskController(
             $services[EntityManagerInterface::class],
             $services[TaskTypeService::class],
-            $services[TaskRepository::class]
+            $services[TaskRepository::class],
+            \Mockery::mock(CrawlJobContainerRepository::class)
         );
 
         return $taskController;
