@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use Doctrine\DBAL\Types\Type as DoctrineType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Job\Job;
@@ -143,5 +144,18 @@ class JobRepository extends ServiceEntityRepository
         }
 
         return $collection;
+    }
+
+    public function exists(int $jobId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');
+
+        $queryBuilder->where('Job.id = :JobId');
+        $queryBuilder->setParameter('JobId', $jobId, DoctrineType::INTEGER);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return !empty($result);
     }
 }
