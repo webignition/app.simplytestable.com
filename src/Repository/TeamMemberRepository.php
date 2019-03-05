@@ -15,12 +15,7 @@ class TeamMemberRepository extends ServiceEntityRepository
         parent::__construct($registry, Member::class);
     }
 
-    /**
-     * @param User $user
-     *
-     * @return int
-     */
-    public function getMemberCountByUser(User $user)
+    public function getMemberCountByUser(User $user): int
     {
         $queryBuilder = $this->createQueryBuilder('TeamMember');
         $queryBuilder->setMaxResults(1);
@@ -33,13 +28,7 @@ class TeamMemberRepository extends ServiceEntityRepository
         return (int)($result[0]['total']);
     }
 
-    /**
-     * @param Team $team
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function getTeamContainsUser(Team $team, User $user)
+    public function getTeamContainsUser(Team $team, User $user): bool
     {
         $queryBuilder = $this->createQueryBuilder('TeamMember');
         $queryBuilder->setMaxResults(1);
