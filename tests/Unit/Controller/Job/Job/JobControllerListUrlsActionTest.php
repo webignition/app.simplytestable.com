@@ -4,7 +4,6 @@ namespace App\Tests\Unit\Controller\Job\Job;
 
 use Mockery\Mock;
 use App\Entity\Job\Job;
-use App\Entity\Task\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use App\Tests\Factory\MockFactory;
@@ -60,14 +59,7 @@ class JobControllerListUrlsActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $entityManager = MockFactory::createEntityManager([
-            'getRepository' => [
-                'with' => Task::class,
-                'return' => $taskRepository,
-            ],
-        ]);
-
-        $jobController = $this->createJobController($jobRetrievalService, $entityManager);
+        $jobController = $this->createJobController($jobRetrievalService, $taskRepository);
 
         $response = $jobController->listUrlsAction('http://example.com/', self::JOB_ID);
 

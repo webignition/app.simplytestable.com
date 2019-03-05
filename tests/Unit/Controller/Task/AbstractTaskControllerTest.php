@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\Task;
 
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Controller\TaskController;
 use App\Services\TaskTypeService;
@@ -24,9 +25,14 @@ abstract class AbstractTaskControllerTest extends \PHPUnit\Framework\TestCase
             $services[TaskTypeService::class] = MockFactory::createTaskTypeService();
         }
 
+        if (!isset($services[TaskRepository::class])) {
+            $services[TaskRepository::class] = \Mockery::mock(TaskRepository::class);
+        }
+
         $taskController = new TaskController(
             $services[EntityManagerInterface::class],
-            $services[TaskTypeService::class]
+            $services[TaskTypeService::class],
+            $services[TaskRepository::class]
         );
 
         return $taskController;
