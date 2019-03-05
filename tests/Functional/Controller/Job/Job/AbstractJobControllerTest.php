@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Job\Job;
 use App\Controller\Job\JobController;
 use App\Entity\Job\Job;
 use App\Entity\User;
+use App\Repository\JobRepository;
 use App\Services\Job\RetrievalService;
 use App\Services\UserService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -40,7 +41,8 @@ abstract class AbstractJobControllerTest extends AbstractControllerTest
         $this->jobController = new JobController(
             self::$container->get('router'),
             self::$container->get(RetrievalService::class),
-            self::$container->get('doctrine.orm.entity_manager')
+            self::$container->get('doctrine.orm.entity_manager'),
+            self::$container->get(JobRepository::class)
         );
 
         $this->userFactory = new UserFactory(self::$container);
