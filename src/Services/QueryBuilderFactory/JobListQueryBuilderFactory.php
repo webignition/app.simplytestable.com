@@ -1,9 +1,8 @@
 <?php
+
 namespace App\Services\QueryBuilderFactory;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use App\Entity\Job\Job;
 use App\Entity\Job\Type as JobType;
 use App\Entity\User;
 use App\Entity\State;
@@ -13,24 +12,13 @@ use App\Services\Team\Service as TeamService;
 
 class JobListQueryBuilderFactory
 {
-    /**
-     * @var TeamService
-     */
     private $teamService;
-
-    /**
-     * @var JobRepository
-     */
     private $jobRepository;
 
-    /**
-     * @param TeamService $teamService
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(TeamService $teamService, EntityManagerInterface $entityManager)
+    public function __construct(TeamService $teamService, JobRepository $jobRepository)
     {
         $this->teamService = $teamService;
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->jobRepository = $jobRepository;
     }
 
     /**
