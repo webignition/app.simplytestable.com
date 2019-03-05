@@ -2,6 +2,7 @@
 
 namespace App\Controller\Job;
 
+use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
@@ -36,34 +37,21 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class JobController
 {
-    /**
-     * @var RouterInterface
-     */
     private $router;
-
-    /**
-     * @var RetrievalService
-     */
     private $jobRetrievalService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $jobRepository;
 
-    /**
-     * @param RouterInterface $router
-     * @param RetrievalService $jobRetrievalService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         RouterInterface $router,
         RetrievalService $jobRetrievalService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository
     ) {
         $this->router = $router;
         $this->jobRetrievalService = $jobRetrievalService;
         $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -82,8 +70,6 @@ class JobController
         UserInterface $user,
         $site_root_url
     ) {
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
         $website = $websiteService->get($site_root_url);
 
         /* @var Job $latestJob */
@@ -95,7 +81,7 @@ class JobController
         if ($userHasTeam || $userBelongsToTeam) {
             $team = $teamService->getForUser($user);
 
-            $latestJob = $jobRepository->findOneBy([
+            $latestJob = $this->jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $teamService->getPeople($team),
             ], [
@@ -111,7 +97,7 @@ class JobController
         }
 
         if (!$userService->isPublicUser($user)) {
-            $latestJob = $jobRepository->findOneBy([
+            $latestJob = $this->jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $user,
             ], [
@@ -126,7 +112,7 @@ class JobController
             }
         }
 
-        $latestJob = $jobRepository->findOneBy([
+        $latestJob = $this->jobRepository->findOneBy([
             'website' => $website,
             'user' => $userService->getPublicUser()
         ], [

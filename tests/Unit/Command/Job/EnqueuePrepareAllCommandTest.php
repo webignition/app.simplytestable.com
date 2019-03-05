@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Job;
 
 use App\Command\Job\EnqueuePrepareAllCommand;
+use App\Repository\JobRepository;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -15,7 +16,7 @@ class EnqueuePrepareAllCommandTest extends \PHPUnit\Framework\TestCase
             MockFactory::createResqueQueueService(),
             MockFactory::createStateService(),
             MockFactory::createApplicationStateService(true),
-            MockFactory::createEntityManager()
+            \Mockery::mock(JobRepository::class)
         );
 
         $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());

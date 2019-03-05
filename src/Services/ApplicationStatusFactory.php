@@ -27,9 +27,6 @@ class ApplicationStatusFactory
      */
     private $workerRepository;
 
-    /**
-     * @var JobRepository
-     */
     private $jobRepository;
 
     /**
@@ -37,28 +34,21 @@ class ApplicationStatusFactory
      */
     private $taskRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param StateService $stateService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StateService $stateService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository
     ) {
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
 
         $this->workerRepository = $entityManager->getRepository(Worker::class);
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->jobRepository = $jobRepository;
         $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
-    /**
-     * @return ApplicationStatus
-     */
-    public function create()
+    public function create(): ApplicationStatus
     {
         $jobInProgressState = $this->stateService->get(Job::STATE_IN_PROGRESS);
 
@@ -73,10 +63,7 @@ class ApplicationStatusFactory
         return $applicationStatus;
     }
 
-    /**
-     * @return string
-     */
-    private function getLatestGitHash()
+    private function getLatestGitHash(): string
     {
         return trim(shell_exec("git log | head -1 | awk {'print $2;'}"));
     }

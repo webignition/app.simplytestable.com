@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Job;
 
 use App\Command\Job\PrepareCommand;
+use App\Repository\JobRepository;
 use App\Resque\Job\Job\PrepareJob;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -29,7 +30,7 @@ class PrepareCommandTest extends \PHPUnit\Framework\TestCase
             MockFactory::createJobPreparationService(),
             MockFactory::createCrawlJobContainerService(),
             MockFactory::createLogger(),
-            MockFactory::createEntityManager(),
+            \Mockery::mock(JobRepository::class),
             []
         );
 

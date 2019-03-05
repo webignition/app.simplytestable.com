@@ -2,7 +2,7 @@
 
 namespace App\Command\Job;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\JobRepository;
 use App\Entity\Job\Job;
 use App\Resque\Job\Job\PrepareJob;
 use App\Services\ApplicationStateService;
@@ -17,38 +17,16 @@ class EnqueuePrepareAllCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ResqueQueueService
-     */
     private $resqueQueueService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
+    private $jobRepository;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @param ResqueQueueService $resqueQueueService
-     * @param StateService $stateService
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         ApplicationStateService $applicationStateService,
-        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -56,7 +34,7 @@ class EnqueuePrepareAllCommand extends Command
         $this->resqueQueueService = $resqueQueueService;
         $this->stateService = $stateService;
         $this->applicationStateService = $applicationStateService;
-        $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -81,8 +59,7 @@ class EnqueuePrepareAllCommand extends Command
 
         $jobStartingState = $this->stateService->get(Job::STATE_STARTING);
 
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-        $jobIds = $jobRepository->getIdsByState($jobStartingState);
+        $jobIds = $this->jobRepository->getIdsByState($jobStartingState);
         $output->writeln(count($jobIds).' new jobs to prepare');
 
         foreach ($jobIds as $jobId) {
