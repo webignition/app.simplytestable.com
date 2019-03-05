@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Worker;
 
 use App\Controller\Worker\TasksController;
 use App\Entity\Task\Task;
+use App\Repository\TaskRepository;
 use App\Resque\Job\Task\AssignCollectionJob;
 use App\Tests\Factory\MockFactory;
 use App\Services\Resque\QueueService as ResqueQueueService;
@@ -377,6 +378,7 @@ class TasksControllerTest extends AbstractControllerTest
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StateService::class),
             self::$container->get(TaskQueueService::class),
+            self::$container->get(TaskRepository::class),
             $request
         );
     }
