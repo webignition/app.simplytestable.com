@@ -8,6 +8,7 @@ use App\Entity\Job\Type as JobType;
 use App\Entity\State;
 use App\Entity\WebSite;
 use App\Entity\User;
+use FOS\UserBundle\Model\UserInterface;
 
 class JobRepository extends EntityRepository
 {
@@ -168,6 +169,24 @@ class JobRepository extends EntityRepository
 
         $queryBuilder->where('Job.id = :JobId');
         $queryBuilder->setParameter('JobId', $jobId, DoctrineType::INTEGER);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return !empty($result);
+    }
+
+    public function isOwner(UserInterface $user, int $jobId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');
+
+        $queryBuilder->andWhere('Job.id = :JobId');
+        $queryBuilder->andWhere('Job.user = :User');
+
+        $queryBuilder->setParameters([
+            'JobId' => $jobId,
+            'User' => $user,
+        ]);
 
         $result = $queryBuilder->getQuery()->getResult();
 

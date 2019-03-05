@@ -557,6 +557,30 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $this->assertFalse($this->jobRepository->exists($nonExistentJobId));
     }
 
+    public function testIsOwner()
+    {
+        $user1 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+
+        $user2 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
+
+        $jobOwnedByUser1 = $this->jobFactory->create([
+            JobFactory::KEY_USER => $user1,
+        ]);
+
+        $jobOwnedByUser2 = $this->jobFactory->create([
+            JobFactory::KEY_USER => $user2,
+        ]);
+
+        $this->assertTrue($this->jobRepository->isOwner($user1, $jobOwnedByUser1->getId()));
+        $this->assertFalse($this->jobRepository->isOwner($user2, $jobOwnedByUser1->getId()));
+        $this->assertTrue($this->jobRepository->isOwner($user2, $jobOwnedByUser2->getId()));
+        $this->assertFalse($this->jobRepository->isOwner($user1, $jobOwnedByUser2->getId()));
+    }
+
     /**
      * @return Job[]
      */
