@@ -1,15 +1,22 @@
 <?php
+
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\Task\Task;
 use App\Entity\User;
 
-class CrawlJobContainerRepository extends EntityRepository
+class CrawlJobContainerRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, CrawlJobContainer::class);
+    }
+
     /**
      * @param Task $task
      * @param State $state
