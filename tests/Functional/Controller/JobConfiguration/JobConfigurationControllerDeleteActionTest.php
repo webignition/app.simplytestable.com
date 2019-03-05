@@ -4,9 +4,11 @@ namespace App\Tests\Functional\Controller\JobConfiguration;
 
 use App\Entity\Job\Configuration;
 use App\Entity\User;
+use App\Repository\ScheduledJobRepository;
 use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Factory\UserFactory;
 use App\Entity\Job\Configuration as JobConfiguration;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @group Controller/JobConfiguration
@@ -79,11 +81,12 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
     public function testDeleteActionSuccess()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
+        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $response = $this->jobConfigurationController->deleteAction(
-            self::$container->get('doctrine.orm.entity_manager'),
+            $scheduledJobRepository,
             $this->jobConfiguration->getLabel()
         );
 
