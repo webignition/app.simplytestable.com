@@ -70,24 +70,20 @@ class TaskService
     private $stateService;
     private $resqueQueueService;
     private $taskRepository;
-
-    /**
-     * @var TaskOutputRepository
-     */
     private $taskOutputRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         StateService $stateService,
         ResqueQueueService $resqueQueueService,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        TaskOutputRepository $taskOutputRepository
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
-
         $this->taskRepository = $taskRepository;
-        $this->taskOutputRepository = $entityManager->getRepository(TaskOutput::class);
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**

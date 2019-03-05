@@ -5,9 +5,11 @@ namespace App\Tests\Functional\Command\Migrate;
 use App\Command\Migrate\RemoveUnusedOutputCommand;
 use App\Entity\Task\Output;
 use App\Entity\Task\Task;
+use App\Repository\TaskOutputRepository;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -44,8 +46,8 @@ class RemoveUnusedOutputCommandTest extends AbstractBaseTestCase
         $args,
         $expectedTaskOutputIndicesInUse
     ) {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $taskOutputRepository = $entityManager->getRepository(Output::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $taskOutputRepository = self::$container->get(TaskOutputRepository::class);
 
         $jobFactory = new JobFactory(self::$container);
         $taskOutputFactory = new TaskOutputFactory(self::$container);

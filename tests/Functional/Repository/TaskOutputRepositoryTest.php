@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Services;
 
-use App\Entity\Task\Output;
 use App\Entity\Task\Task;
 use App\Repository\TaskOutputRepository;
 use App\Services\TaskTypeService;
@@ -35,8 +34,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
+        $this->taskOutputRepository = self::$container->get(TaskOutputRepository::class);
         $this->jobFactory = new JobFactory(self::$container);
         $this->userFactory = new UserFactory(self::$container);
     }

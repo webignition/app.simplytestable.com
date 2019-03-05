@@ -1,12 +1,20 @@
 <?php
+
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use App\Entity\Task\Output;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type as TaskType;
 
-class TaskOutputRepository extends EntityRepository
+class TaskOutputRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Output::class);
+    }
+
     /**
      * @param TaskType $taskType
      * @param int|null $limit

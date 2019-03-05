@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Migrate;
 
 use App\Command\Migrate\CanonicaliseTaskOutputCommand;
+use App\Repository\TaskOutputRepository;
 use App\Repository\TaskRepository;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -15,7 +16,8 @@ class CanonicaliseTaskOutputCommandTest extends \PHPUnit\Framework\TestCase
         $command = new CanonicaliseTaskOutputCommand(
             MockFactory::createApplicationStateService(true),
             MockFactory::createEntityManager(),
-            \Mockery::mock(TaskRepository::class)
+            \Mockery::mock(TaskRepository::class),
+            \Mockery::mock(TaskOutputRepository::class)
         );
 
         $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());
