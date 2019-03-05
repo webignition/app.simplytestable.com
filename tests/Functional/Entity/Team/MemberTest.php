@@ -2,16 +2,19 @@
 
 namespace App\Tests\Functional\Entity\Team;
 
+use App\Repository\TeamMemberRepository;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Team\Team;
 use App\Entity\Team\Member;
+use Doctrine\ORM\EntityManagerInterface;
 
 class MemberTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $memberRepository = self::$container->get(TeamMemberRepository::class);
 
         $userFactory = new UserFactory(self::$container);
 
@@ -36,8 +39,6 @@ class MemberTest extends AbstractBaseTestCase
         $memberId = $member->getId();
 
         $entityManager->clear();
-
-        $memberRepository = $entityManager->getRepository(Member::class);
 
         $retrievedMember = $memberRepository->find($memberId);
 

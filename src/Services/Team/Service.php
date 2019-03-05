@@ -3,7 +3,6 @@
 namespace App\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Team\Member;
 use App\Repository\TeamMemberRepository;
 use App\Repository\TeamRepository;
 use App\Entity\Team\Team;
@@ -15,22 +14,19 @@ class Service
     private $memberService;
     private $entityManager;
     private $teamRepository;
-
-    /**
-     * @var TeamMemberRepository
-     */
     private $teamMemberRepository;
 
     public function __construct(
         MemberService $memberService,
         EntityManagerInterface $entityManager,
-        TeamRepository $teamRepository
+        TeamRepository $teamRepository,
+        TeamMemberRepository $teamMemberRepository
     ) {
         $this->entityManager = $entityManager;
         $this->memberService = $memberService;
 
         $this->teamRepository = $teamRepository;
-        $this->teamMemberRepository = $entityManager->getRepository(Member::class);
+        $this->teamMemberRepository = $teamMemberRepository;
     }
 
     /**

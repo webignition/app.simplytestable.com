@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,23 +11,13 @@ use App\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
 
 class MemberService
 {
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var TeamMemberRepository
-     */
     private $teamMemberRepository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, TeamMemberRepository $teamMemberRepository)
     {
         $this->entityManager = $entityManager;
-        $this->teamMemberRepository = $entityManager->getRepository(Member::class);
+        $this->teamMemberRepository = $teamMemberRepository;
     }
 
     /**

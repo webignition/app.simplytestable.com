@@ -1,18 +1,21 @@
 <?php
+
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use App\Entity\Team\Member;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Team\Team;
 use App\Entity\User;
 
-class TeamMemberRepository extends EntityRepository
+class TeamMemberRepository extends ServiceEntityRepository
 {
-    /**
-     * @param User $user
-     *
-     * @return int
-     */
-    public function getMemberCountByUser(User $user)
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Member::class);
+    }
+
+    public function getMemberCountByUser(User $user): int
     {
         $queryBuilder = $this->createQueryBuilder('TeamMember');
         $queryBuilder->setMaxResults(1);
@@ -25,13 +28,7 @@ class TeamMemberRepository extends EntityRepository
         return (int)($result[0]['total']);
     }
 
-    /**
-     * @param Team $team
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function getTeamContainsUser(Team $team, User $user)
+    public function getTeamContainsUser(Team $team, User $user): bool
     {
         $queryBuilder = $this->createQueryBuilder('TeamMember');
         $queryBuilder->setMaxResults(1);
