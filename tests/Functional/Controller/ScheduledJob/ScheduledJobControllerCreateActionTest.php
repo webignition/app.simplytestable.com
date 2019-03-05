@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\ScheduledJob;
 use App\Controller\JobConfigurationController;
 use App\Entity\ScheduledJob;
 use App\Entity\User;
+use App\Repository\ScheduledJobRepository;
 use App\Services\Job\ConfigurationService;
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
@@ -24,8 +25,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 {
     public function testCreateActionPostRequest()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
+        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $userFactory = new UserFactory(self::$container);
         $user = $userFactory->createAndActivateUser();
@@ -152,8 +152,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 
     public function testCreateActionSuccess()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
+        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $userFactory = new UserFactory(self::$container);
         $user = $userFactory->create();

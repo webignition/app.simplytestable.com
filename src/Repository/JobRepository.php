@@ -2,15 +2,21 @@
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Job\Job;
 use App\Entity\Job\Type as JobType;
 use App\Entity\State;
 use App\Entity\WebSite;
 use App\Entity\User;
 
-class JobRepository extends EntityRepository
+class JobRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Job::class);
+    }
+
     /**
      * @param State[] $jobStates
      * @param State[] $taskStates

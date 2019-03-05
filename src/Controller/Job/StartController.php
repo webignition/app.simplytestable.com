@@ -2,7 +2,7 @@
 
 namespace App\Controller\Job;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\JobRepository;
 use App\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use App\Entity\Job\Job;
 use App\Exception\Services\Job\Start\Exception as JobStartServiceException;
@@ -24,50 +24,14 @@ use Symfony\Component\Routing\RouterInterface;
 
 class StartController
 {
-    /**
-     * @var RouterInterface
-     */
     private $router;
-
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var StartService
-     */
     private $jobStartService;
-
-    /**
-     * @var StartRequestFactory
-     */
     private $jobStartRequestFactory;
-
-    /**
-     * @var JobConfigurationFactory
-     */
     private $jobConfigurationFactory;
-
-    /**
-     * @var JobService
-     */
     private $jobService;
+    private $jobRepository;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @param RouterInterface $router
-     * @param ApplicationStateService $applicationStateService
-     * @param StartService $jobStartService
-     * @param StartRequestFactory $jobStartRequestFactory
-     * @param JobConfigurationFactory $jobConfigurationFactory
-     * @param JobService $jobService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         RouterInterface $router,
         ApplicationStateService $applicationStateService,
@@ -75,7 +39,7 @@ class StartController
         StartRequestFactory $jobStartRequestFactory,
         JobConfigurationFactory $jobConfigurationFactory,
         JobService $jobService,
-        EntityManagerInterface $entityManager
+        JobRepository $jobRepository
     ) {
         $this->router = $router;
         $this->applicationStateService = $applicationStateService;
@@ -83,7 +47,7 @@ class StartController
         $this->jobStartRequestFactory = $jobStartRequestFactory;
         $this->jobConfigurationFactory = $jobConfigurationFactory;
         $this->jobService = $jobService;
-        $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -132,10 +96,8 @@ class StartController
         $site_root_url,
         $test_id
     ) {
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
         /* @var Job $job */
-        $job = $jobRepository->find($test_id);
+        $job = $this->jobRepository->find($test_id);
         if (is_null($job)) {
             throw new BadRequestHttpException();
         }

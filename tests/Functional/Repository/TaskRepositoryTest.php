@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\Job\Job;
-use App\Entity\Task\Output;
 use App\Entity\Task\Task;
 use App\Entity\User;
 use App\Repository\TaskRepository;
@@ -57,9 +56,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = self::$container->get(TaskRepository::class);
         $this->jobFactory = new JobFactory(self::$container);
         $this->userFactory = new UserFactory(self::$container);
     }

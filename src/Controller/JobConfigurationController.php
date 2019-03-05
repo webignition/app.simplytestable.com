@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ScheduledJobRepository;
 use App\Adapter\Job\TaskConfiguration\RequestAdapter;
-use App\Entity\ScheduledJob;
 use App\Entity\User;
 use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use App\Model\Job\Configuration\Values as JobConfigurationValues;
@@ -152,13 +151,7 @@ class JobConfigurationController
         }
     }
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param string $label
-     *
-     * @return Response
-     */
-    public function deleteAction(EntityManagerInterface $entityManager, $label)
+    public function deleteAction(ScheduledJobRepository $scheduledJobRepository, string $label):Response
     {
         if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -171,7 +164,6 @@ class JobConfigurationController
             throw new NotFoundHttpException();
         }
 
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
         $scheduledJob = $scheduledJobRepository->findOneBy([
             'jobConfiguration' => $jobConfiguration,
         ]);

@@ -3,10 +3,8 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\State;
-use App\Entity\Task\Task;
 use App\Repository\CrawlJobContainerRepository;
 use App\Repository\TaskRepository;
 use App\Resque\Job\Worker\Tasks\NotifyJob;
@@ -32,26 +30,21 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TaskController
 {
-    /**
-     * @var EntityManagerInterface $entityManager
-     */
     private $entityManager;
-
-    /**
-     * @var TaskTypeService
-     */
     private $taskTypeService;
+    private $taskRepository;
+    private $crawlJobContainerRepository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param TaskTypeService $taskTypeService
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
-        TaskTypeService $taskTypeService
+        TaskTypeService $taskTypeService,
+        TaskRepository $taskRepository,
+        CrawlJobContainerRepository $crawlJobContainerRepository
     ) {
         $this->entityManager = $entityManager;
         $this->taskTypeService = $taskTypeService;
+        $this->taskRepository = $taskRepository;
+        $this->crawlJobContainerRepository = $crawlJobContainerRepository;
     }
 
     /**
@@ -137,10 +130,7 @@ class TaskController
                 if (Job::STATE_COMPLETED === $task->getJob()->getState()->getName()) {
                     $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
-                    /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
-                    $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);
-
-                    if ($crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
+                    if ($this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                         $task,
                         $jobFailedNoSitemapState
                     )) {
@@ -193,9 +183,7 @@ class TaskController
             throw new NotFoundHttpException();
         }
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-        $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
+        $count = $this->taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
         return new JsonResponse($count);
     }

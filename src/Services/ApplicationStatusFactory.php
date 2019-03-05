@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\Job;
-use App\Entity\Task\Task;
 use App\Entity\Worker;
 use App\Model\ApplicationStatus;
 use App\Repository\JobRepository;
@@ -12,53 +12,32 @@ use App\Repository\TaskRepository;
 
 class ApplicationStatusFactory
 {
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
+    private $jobRepository;
+    private $taskRepository;
 
     /**
      * @var EntityRepository
      */
     private $workerRepository;
 
-    /**
-     * @var JobRepository
-     */
-    private $jobRepository;
-
-    /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param StateService $stateService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StateService $stateService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
 
         $this->workerRepository = $entityManager->getRepository(Worker::class);
-        $this->jobRepository = $entityManager->getRepository(Job::class);
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->jobRepository = $jobRepository;
+        $this->taskRepository = $taskRepository;
     }
 
-    /**
-     * @return ApplicationStatus
-     */
-    public function create()
+    public function create(): ApplicationStatus
     {
         $jobInProgressState = $this->stateService->get(Job::STATE_IN_PROGRESS);
 
@@ -73,10 +52,7 @@ class ApplicationStatusFactory
         return $applicationStatus;
     }
 
-    /**
-     * @return string
-     */
-    private function getLatestGitHash()
+    private function getLatestGitHash(): string
     {
         return trim(shell_exec("git log | head -1 | awk {'print $2;'}"));
     }

@@ -2,14 +2,14 @@
 namespace App\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use App\Entity\Team\Invite;
-use App\Repository\TeamInviteRepository;
 
 class InviteTokenGenerator implements TokenGeneratorInterface
 {
     /**
-     * @var TeamInviteRepository
+     * @var EntityRepository
      */
     private $teamInviteRepository;
 

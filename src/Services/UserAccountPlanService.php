@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,53 +14,25 @@ use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
 class UserAccountPlanService
 {
-    /**
-     * @var UserService
-     */
     private $userService;
-
-    /**
-     * @var StripeService
-     */
     private $stripeService;
-
-    /**
-     * @var TeamService
-     */
     private $teamService;
+    private $userRepository;
+    private $entityManager;
+    private $userAccountPlanRepository;
 
     /**
      * @var int
      */
     private $defaultTrialPeriod = null;
 
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var UserAccountPlanRepository
-     */
-    private $userAccountPlanRepository;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param UserService $userService
-     * @param StripeService $stripeService
-     * @param TeamService $teamService
-     * @param $defaultTrialPeriod
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         UserService $userService,
         StripeService $stripeService,
         TeamService $teamService,
+        UserRepository $userRepository,
+        UserAccountPlanRepository $userAccountPlanRepository,
         $defaultTrialPeriod
     ) {
         $this->entityManager = $entityManager;
@@ -67,10 +40,8 @@ class UserAccountPlanService
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
-
-        $this->userRepository = $entityManager->getRepository(User::class);
-
-        $this->userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $this->userRepository = $userRepository;
+        $this->userAccountPlanRepository = $userAccountPlanRepository;
     }
 
     /**

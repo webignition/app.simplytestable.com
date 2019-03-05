@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\Job;
 
+use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery\Mock;
 use App\Controller\Job\StartController;
@@ -43,15 +44,8 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $entityManager = MockFactory::createEntityManager([
-            'getRepository' => [
-                'with' => Job::class,
-                'return' => $jobRepository,
-            ],
-        ]);
-
         $jobStartController = $this->createJobStartController([
-            EntityManagerInterface::class => $entityManager,
+            JobRepository::class => $jobRepository,
         ]);
 
         $this->expectException(BadRequestHttpException::class);
@@ -81,15 +75,8 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $entityManager = MockFactory::createEntityManager([
-            'getRepository' => [
-                'with' => Job::class,
-                'return' => $jobRepository,
-            ],
-        ]);
-
         $jobStartController = $this->createJobStartController([
-            EntityManagerInterface::class => $entityManager,
+            JobRepository::class => $jobRepository,
             JobService::class => $jobService,
         ]);
 
@@ -136,8 +123,8 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
             $services[JobService::class] = MockFactory::createJobService();
         }
 
-        if (!isset($services[EntityManagerInterface::class])) {
-            $services[EntityManagerInterface::class] = MockFactory::createEntityManager();
+        if (!isset($services[JobRepository::class])) {
+            $services[JobRepository::class] = \Mockery::mock(JobRepository::class);
         }
 
         $jobStartController = new StartController(
@@ -147,7 +134,7 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
             $services[StartRequestFactory::class],
             $services[JobConfigurationFactory::class],
             $services[JobService::class],
-            $services[EntityManagerInterface::class]
+            $services[JobRepository::class]
         );
 
         return $jobStartController;

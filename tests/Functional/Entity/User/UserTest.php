@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Entity\User;
 
-use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Services\UserService;
 use App\Tests\Functional\AbstractBaseTestCase;
 
@@ -12,8 +12,7 @@ class UserTest extends AbstractBaseTestCase
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userService = self::$container->get(UserService::class);
-
-        $userRepository = $entityManager->getRepository(User::class);
+        $userRepository = self::$container->get(UserRepository::class);
 
         $email = 'ɸ@example.com';
 

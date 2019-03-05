@@ -2,7 +2,7 @@
 
 namespace App\Command\ScheduledJob;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ScheduledJobRepository;
 use App\Entity\ScheduledJob;
 use App\Resque\Job\ScheduledJob\ExecuteJob;
 use App\Services\ApplicationStateService;
@@ -29,54 +29,27 @@ class ExecuteCommand extends Command
     const RETURN_CODE_UNROUTABLE = 4;
     const RETURN_CODE_PLAN_LIMIT_REACHED = 5;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var ResqueQueueService
-     */
     private $resqueQueueService;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var JobStartService
-     */
     private $jobStartService;
-
-    /**
-     * @var JobService
-     */
     private $jobService;
+    private $scheduledJobRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param ResqueQueueService $resqueQueueService
-     * @param EntityManagerInterface $entityManager
-     * @param JobStartService $jobStartService
-     * @param JobService $jobService
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
-        EntityManagerInterface $entityManager,
         JobStartService $jobStartService,
         JobService $jobService,
+        ScheduledJobRepository $scheduledJobRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
-        $this->entityManager = $entityManager;
         $this->jobStartService = $jobStartService;
         $this->jobService = $jobService;
+        $this->scheduledJobRepository = $scheduledJobRepository;
     }
 
     /**
@@ -108,10 +81,8 @@ class ExecuteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $scheduledJobRepository = $this->entityManager->getRepository(ScheduledJob::class);
-
         /* @var ScheduledJob $scheduledJob */
-        $scheduledJob = $scheduledJobRepository->find($id);
+        $scheduledJob = $this->scheduledJobRepository->find($id);
 
         if (empty($scheduledJob)) {
             $output->writeln('Scheduled job [' . $input->getArgument('id') . '] does not exist');

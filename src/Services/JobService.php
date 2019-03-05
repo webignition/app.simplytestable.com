@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,55 +39,27 @@ class JobService
         Job::STATE_FAILED_NO_SITEMAP,
     ];
 
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var TaskService
-     */
     private $taskService;
-
-    /**
-     * @var TaskTypeService
-     */
     private $taskTypeService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var JobRepository
-     */
     private $jobRepository;
-
-    /**
-     * @var TaskRepository
-     */
     private $taskRepository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param StateService $stateService
-     * @param TaskService $taskService
-     * @param TaskTypeService $taskTypeService
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         StateService $stateService,
         TaskService $taskService,
-        TaskTypeService $taskTypeService
+        TaskTypeService $taskTypeService,
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
-
-        $this->jobRepository = $entityManager->getRepository(Job::class);
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->jobRepository = $jobRepository;
+        $this->taskRepository = $taskRepository;
     }
 
     /**

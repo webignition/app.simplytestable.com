@@ -2,6 +2,7 @@
 
 namespace App\Command\Tasks;
 
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Task\Task;
 use App\Services\ApplicationStateService;
@@ -18,31 +19,16 @@ class RequeueQueuedForAssignmentCommand extends Command
     const NAME = 'simplytestable:tasks:requeue-queued-for-assignment';
     const DESCRIPTION = 'Change the state of all "queued-for-assignment" tasks to "queued"';
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $taskRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param StateService $stateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StateService $stateService,
         EntityManagerInterface $entityManager,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -50,6 +36,7 @@ class RequeueQueuedForAssignmentCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -73,10 +60,8 @@ class RequeueQueuedForAssignmentCommand extends Command
 
         $taskQueuedForAssignmentState = $this->stateService->get(Task::STATE_QUEUED_FOR_ASSIGNMENT);
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
         /* @var Task[] $tasks */
-        $tasks = $taskRepository->findBy([
+        $tasks = $this->taskRepository->findBy([
             'state' => $taskQueuedForAssignmentState,
         ]);
 

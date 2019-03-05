@@ -2,11 +2,12 @@
 
 namespace App\Command\Job;
 
-use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Task\Task;
+use App\Repository\CrawlJobContainerRepository;
+use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Services\ApplicationStateService;
@@ -22,29 +23,24 @@ class DeleteCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
+    private $jobRepository;
+    private $crawlJobContainerRepository;
+
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
+        JobRepository $jobRepository,
+        CrawlJobContainerRepository $crawlJobContainerRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
+        $this->crawlJobContainerRepository = $crawlJobContainerRepository;
     }
 
     /**
@@ -70,10 +66,8 @@ class DeleteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
         /* @var Job $job */
-        $job = $jobRepository->find((int)$input->getArgument('id'));
+        $job = $this->jobRepository->find((int) $input->getArgument('id'));
 
         if (empty($job)) {
             return self::RETURN_CODE_OK;
@@ -194,8 +188,7 @@ class DeleteCommand extends Command
             'Removing <comment>crawl job container</comment>',
         ]);
 
-        $crawlJobContainerRepository = $this->entityManager->getRepository(CrawlJobContainer::class);
-        $crawlJobContainer = $crawlJobContainerRepository->findOneBy([
+        $crawlJobContainer = $this->crawlJobContainerRepository->findOneBy([
             'parentJob' => $job,
         ]);
 

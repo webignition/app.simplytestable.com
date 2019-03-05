@@ -3,7 +3,6 @@
 namespace App\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Team\Member;
 use App\Repository\TeamMemberRepository;
 use App\Repository\TeamRepository;
 use App\Entity\Team\Team;
@@ -12,37 +11,22 @@ use App\Exception\Services\Team\Exception as TeamServiceException;
 
 class Service
 {
-    /**
-     * @var MemberService
-     */
     private $memberService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var TeamRepository
-     */
     private $teamRepository;
-
-    /**
-     * @var TeamMemberRepository
-     */
     private $teamMemberRepository;
 
-    /**
-     * @param MemberService $memberService
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(MemberService $memberService, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        MemberService $memberService,
+        EntityManagerInterface $entityManager,
+        TeamRepository $teamRepository,
+        TeamMemberRepository $teamMemberRepository
+    ) {
         $this->entityManager = $entityManager;
         $this->memberService = $memberService;
 
-        $this->teamRepository = $entityManager->getRepository(Team::class);
-        $this->teamMemberRepository = $entityManager->getRepository(Member::class);
+        $this->teamRepository = $teamRepository;
+        $this->teamMemberRepository = $teamMemberRepository;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Command\Task\Cancel;
 
 use App\Command\Task\Cancel\CollectionCommand;
+use App\Repository\TaskRepository;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -16,7 +17,7 @@ class CollectionCommandTest extends \PHPUnit\Framework\TestCase
             MockFactory::createTaskService(),
             MockFactory::createWorkerTaskCancellationService(),
             MockFactory::createLogger(),
-            MockFactory::createEntityManager()
+            \Mockery::mock(TaskRepository::class)
         );
 
         $returnCode = $command->run(new ArrayInput([

@@ -2,9 +2,9 @@
 
 namespace App\DataFixtures\ORM;
 
+use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use App\Services\UserService;
 use App\Entity\User;
@@ -16,20 +16,9 @@ class LoadUserData extends Fixture
     const PUBLIC_USER_PASSWORD = 'public';
     const ADMIN_USER_USERNAME = 'admin';
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var UserService
-     */
     private $userService;
-
-    /**
-     * @var UserManipulator
-     */
     private $userManipulator;
+    private $userRepository;
 
     /**
      * @var string
@@ -41,23 +30,16 @@ class LoadUserData extends Fixture
      */
     private $adminUserPassword;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param UserService $userService
-     * @param UserManipulator $userManipulator
-     * @param string $adminUserEmail
-     * @param string $adminUserPassword
-     */
     public function __construct(
-        EntityManagerInterface $entityManager,
         UserService $userService,
         UserManipulator $userManipulator,
+        UserRepository $userRepository,
         string $adminUserEmail,
         string $adminUserPassword
     ) {
-        $this->entityManager = $entityManager;
         $this->userService = $userService;
         $this->userManipulator = $userManipulator;
+        $this->userRepository = $userRepository;
         $this->adminUserEmail = $adminUserEmail;
         $this->adminUserPassword = $adminUserPassword;
     }
@@ -67,9 +49,7 @@ class LoadUserData extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-        $userRepository = $this->entityManager->getRepository(User::class);
-
-        $publicUser = $userRepository->findOneBy([
+        $publicUser = $this->userRepository->findOneBy([
             'email' => self::PUBLIC_USER_EMAIL,
         ]);
 
@@ -83,7 +63,7 @@ class LoadUserData extends Fixture
             $this->userManipulator->activate($user->getUsername());
         }
 
-        $adminUser = $userRepository->findOneBy([
+        $adminUser = $this->userRepository->findOneBy([
             'email' => $this->adminUserEmail,
         ]);
 

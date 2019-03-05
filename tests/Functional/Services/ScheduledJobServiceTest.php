@@ -45,10 +45,6 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
         /* @var EntityManagerInterface $entityManager */
         $entityManager = \Mockery::mock(EntityManagerInterface::class);
-        $entityManager
-            ->shouldReceive('getRepository')
-            ->with(ScheduledJob::class)
-            ->andReturn($scheduledJobRepository);
 
         /* @var JobConfigurationService $jobConfigurationService */
         $jobConfigurationService = \Mockery::mock(JobConfigurationService::class);
@@ -67,7 +63,8 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
             $jobConfigurationService,
             $teamService,
             $cronManager,
-            $tokenStorage
+            $tokenStorage,
+            $scheduledJobRepository
         );
 
         /* @var JobConfiguration $jobConfiguration */

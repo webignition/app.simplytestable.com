@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Repository\TaskOutputRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Task\Output;
 use App\Services\ApplicationStateService;
@@ -14,30 +15,21 @@ class AddHashToHashlessOutputCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $taskOutputRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -68,9 +60,7 @@ class AddHashToHashlessOutputCommand extends Command
 
         $output->writeln('Finding hashless output ...');
 
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-
-        $hashlessOutputIds = $taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
+        $hashlessOutputIds = $this->taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
         $hashlessOutputCount = count($hashlessOutputIds);
 
         if (empty($hashlessOutputIds)) {
@@ -85,7 +75,7 @@ class AddHashToHashlessOutputCommand extends Command
 
         foreach ($hashlessOutputIds as $hashlessOutputId) {
             /* @var Output $taskOutput */
-            $taskOutput = $taskOutputRepository->find($hashlessOutputId);
+            $taskOutput = $this->taskOutputRepository->find($hashlessOutputId);
 
             $processedTaskOutputCount++;
             $remainingTaskCount = $hashlessOutputCount - $processedTaskOutputCount;

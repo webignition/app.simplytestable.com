@@ -1,9 +1,11 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Command\Job;
 
 use App\Entity\Job\TaskTypeOptions;
-use App\Entity\Task\Task;
+use App\Repository\JobRepository;
+use App\Repository\TaskRepository;
 use App\Services\TaskTypeService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Command\Job\DeleteCommand;
@@ -31,6 +33,11 @@ class DeleteCommandTest extends AbstractBaseTestCase
     private $deleteCommand;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -40,15 +47,11 @@ class DeleteCommandTest extends AbstractBaseTestCase
         $this->jobFactory = new JobFactory(self::$container);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
         $this->deleteCommand = self::$container->get(DeleteCommand::class);
+        $this->jobRepository = self::$container->get(JobRepository::class);
     }
 
     /**
      * @dataProvider runDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param int $jobIndexToDelete
-     * @param array $expectedJobValues
-     * @param array $expectedRemainingJobValuesCollection
      */
     public function testRun(
         array $jobValuesCollection,
@@ -56,8 +59,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
         array $expectedJobValues,
         array $expectedRemainingJobValuesCollection
     ) {
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
         $jobTaskTypeOptionsRepository = $this->entityManager->getRepository(TaskTypeOptions::class);
 
         /* @var Job[] $jobs */
@@ -102,7 +104,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(DeleteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertNull($jobRepository->find($jobId));
+        $this->assertNull($this->jobRepository->find($jobId));
 
         if ($expectedJobExists) {
             $this->assertEmpty($taskRepository->findBy([
@@ -114,7 +116,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
             ]));
         }
 
-        $remainingJobs = $jobRepository->findAll();
+        $remainingJobs = $this->jobRepository->findAll();
 
         foreach ($remainingJobs as $jobIndex => $remainingJob) {
             $expectedRemainingJobValues = $expectedRemainingJobValuesCollection[$jobIndex];
@@ -126,10 +128,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function runDataProvider()
+    public function runDataProvider(): array
     {
         return [
             'job not found; no jobs' => [

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command\Reporting;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,36 +20,21 @@ class GetOutputIdsForErrorCommand extends Command
     const RETURN_CODE_INVALID_TASK_TYPE = 2;
     const RETURN_CODE_MISSING_FRAGMENTS = 3;
 
-    /**
-     * @var TaskTypeService
-     */
     private $taskTypeService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var TaskOutputRepository
-     */
     private $taskOutputRepository;
 
-    /**
-     * @param TaskTypeService $taskTypeService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         TaskTypeService $taskTypeService,
         EntityManagerInterface $entityManager,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->taskTypeService = $taskTypeService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**

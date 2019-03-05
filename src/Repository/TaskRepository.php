@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Parameter;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
@@ -11,8 +13,13 @@ use App\Entity\State;
 use App\Entity\User;
 use App\Entity\Task\Output as TaskOutput;
 
-class TaskRepository extends EntityRepository
+class TaskRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Task::class);
+    }
+
     const ISSUE_TYPE_ERROR = 'error';
     const ISSUE_TYPE_WARNING = 'warning';
 

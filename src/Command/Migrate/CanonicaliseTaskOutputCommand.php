@@ -2,8 +2,9 @@
 
 namespace App\Command\Migrate;
 
+use App\Repository\TaskOutputRepository;
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Task\Output;
 use App\Entity\Task\Task;
 use App\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
@@ -15,30 +16,24 @@ class CanonicaliseTaskOutputCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $taskRepository;
+    private $taskOutputRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
+        TaskRepository $taskRepository,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -69,10 +64,7 @@ class CanonicaliseTaskOutputCommand extends Command
 
         $output->writeln('Finding duplicate output ...');
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-
-        $duplicateHashes = $taskOutputRepository->findDuplicateHashes($this->getLimit($input));
+        $duplicateHashes = $this->taskOutputRepository->findDuplicateHashes($this->getLimit($input));
 
         if (empty($duplicateHashes)) {
             $output->writeln('No duplicate output found. Done.');
@@ -85,7 +77,7 @@ class CanonicaliseTaskOutputCommand extends Command
         $updatedHashCount = 0;
 
         foreach ($duplicateHashes as $duplicateHash) {
-            $outputIds = $taskOutputRepository->findIdsByHash($duplicateHash);
+            $outputIds = $this->taskOutputRepository->findIdsByHash($duplicateHash);
 
             $updatedHashCount++;
             $output->writeln(sprintf(
@@ -100,16 +92,16 @@ class CanonicaliseTaskOutputCommand extends Command
 
             if (count($outputIds) > 1) {
                 $sourceId = $outputIds[0];
-                $sourceOutput = $taskOutputRepository->find($sourceId);
+                $sourceOutput = $this->taskOutputRepository->find($sourceId);
                 $duplicatesToRemove = array_slice($outputIds, 1);
                 $updatedTaskCount = 0;
 
                 foreach ($duplicatesToRemove as $taskOutputId) {
                     $processedDuplicateHashCount++;
 
-                    $taskOutput = $taskOutputRepository->find($taskOutputId);
+                    $taskOutput = $this->taskOutputRepository->find($taskOutputId);
 
-                    $tasksToUpdate = $taskRepository->findBy([
+                    $tasksToUpdate = $this->taskRepository->findBy([
                         'output' => $taskOutput,
                     ]);
 

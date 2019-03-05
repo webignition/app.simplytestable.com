@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Worker;
 
 use App\Controller\Worker\TasksController;
 use App\Entity\Task\Task;
+use App\Repository\TaskRepository;
 use App\Resque\Job\Task\AssignCollectionJob;
 use App\Tests\Factory\MockFactory;
 use App\Services\Resque\QueueService as ResqueQueueService;
@@ -283,12 +284,10 @@ class TasksControllerTest extends AbstractControllerTest
     {
         $userFactory = new UserFactory(self::$container);
         $jobFactory = new JobFactory(self::$container);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
+        $taskRepository = self::$container->get(TaskRepository::class);
 
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
-
-        $taskRepository = $entityManager->getRepository(Task::class);
 
         $users = $userFactory->createPublicAndPrivateUserSet();
         $jobs = [];
@@ -377,6 +376,7 @@ class TasksControllerTest extends AbstractControllerTest
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StateService::class),
             self::$container->get(TaskQueueService::class),
+            self::$container->get(TaskRepository::class),
             $request
         );
     }

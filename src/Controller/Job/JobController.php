@@ -2,6 +2,7 @@
 
 namespace App\Controller\Job;
 
+use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
@@ -36,34 +37,24 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class JobController
 {
-    /**
-     * @var RouterInterface
-     */
     private $router;
-
-    /**
-     * @var RetrievalService
-     */
     private $jobRetrievalService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $jobRepository;
+    private $taskRepository;
 
-    /**
-     * @param RouterInterface $router
-     * @param RetrievalService $jobRetrievalService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         RouterInterface $router,
         RetrievalService $jobRetrievalService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->router = $router;
         $this->jobRetrievalService = $jobRetrievalService;
         $this->entityManager = $entityManager;
+        $this->jobRepository = $jobRepository;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -82,8 +73,6 @@ class JobController
         UserInterface $user,
         $site_root_url
     ) {
-        $jobRepository = $this->entityManager->getRepository(Job::class);
-
         $website = $websiteService->get($site_root_url);
 
         /* @var Job $latestJob */
@@ -95,7 +84,7 @@ class JobController
         if ($userHasTeam || $userBelongsToTeam) {
             $team = $teamService->getForUser($user);
 
-            $latestJob = $jobRepository->findOneBy([
+            $latestJob = $this->jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $teamService->getPeople($team),
             ], [
@@ -111,7 +100,7 @@ class JobController
         }
 
         if (!$userService->isPublicUser($user)) {
-            $latestJob = $jobRepository->findOneBy([
+            $latestJob = $this->jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $user,
             ], [
@@ -126,7 +115,7 @@ class JobController
             }
         }
 
-        $latestJob = $jobRepository->findOneBy([
+        $latestJob = $this->jobRepository->findOneBy([
             'website' => $website,
             'user' => $userService->getPublicUser()
         ], [
@@ -273,9 +262,6 @@ class JobController
 
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
         $hasCrawlJob = $crawlJobContainerService->hasForJob($job);
 
         if ($hasCrawlJob) {
@@ -320,7 +306,7 @@ class JobController
         $jobService->cancel($job);
 
         $tasksToDeAssign = array();
-        $taskIds = $taskRepository->getIdsByJob($job);
+        $taskIds = $this->taskRepository->getIdsByJob($job);
         foreach ($taskIds as $taskId) {
             $tasksToDeAssign[] = array(
                 'id' => $taskId
@@ -330,7 +316,7 @@ class JobController
         $taskAwaitingCancellationState = $stateService->get(Task::STATE_AWAITING_CANCELLATION);
 
         /* @var Task[] $tasksAwaitingCancellation */
-        $tasksAwaitingCancellation = $taskRepository->findBy([
+        $tasksAwaitingCancellation = $this->taskRepository->findBy([
             'job' => $job,
             'state' => $taskAwaitingCancellationState,
         ]);
@@ -364,9 +350,6 @@ class JobController
     ) {
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
         $taskIds = $this->getRequestTaskIds($request);
 
         $taskFindByCriteria = [
@@ -377,7 +360,7 @@ class JobController
             $taskFindByCriteria['id'] = $taskIds;
         }
 
-        $tasks = $taskRepository->findBy($taskFindByCriteria);
+        $tasks = $this->taskRepository->findBy($taskFindByCriteria);
 
         foreach ($tasks as $task) {
             /* @var $task \App\Entity\Task\Task */
@@ -399,10 +382,7 @@ class JobController
     {
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
-        $taskIds = $taskRepository->getIdsByJob($job);
+        $taskIds = $this->taskRepository->getIdsByJob($job);
 
         return new JsonResponse($taskIds);
     }
@@ -417,9 +397,7 @@ class JobController
     {
         $job = $this->retrieveJob($test_id);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-        $urls = $taskRepository->findUrlsByJob($job);
+        $urls = $this->taskRepository->findUrlsByJob($job);
 
         return new JsonResponse($urls);
     }

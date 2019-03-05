@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Controller\Job;
 
@@ -6,6 +7,7 @@ use App\Controller\Job\StartController;
 use App\Entity\Job\Job;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
+use App\Repository\JobRepository;
 use App\Services\JobTypeService;
 use App\Services\JobUserAccountPlanEnforcementService;
 use App\Services\UserAccountPlanService;
@@ -26,6 +28,11 @@ class JobStartControllerTest extends AbstractControllerTest
     private $jobStartController;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -33,13 +40,13 @@ class JobStartControllerTest extends AbstractControllerTest
         parent::setUp();
 
         $this->jobStartController = self::$container->get(StartController::class);
+        $this->jobRepository = self::$container->get(JobRepository::class);
     }
 
     public function testStartActionGetRequest()
     {
         $router = self::$container->get('router');
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+
         $siteRootUrl = 'http://example.com/';
 
         $requestUrl = $router->generate('job_start_start', [
@@ -54,7 +61,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $response = $this->getClientResponse();
 
         /* @var Job $job */
-        $job = $jobRepository->findAll()[0];
+        $job = $this->jobRepository->findAll()[0];
 
         $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
@@ -63,8 +70,6 @@ class JobStartControllerTest extends AbstractControllerTest
     public function testReTestActionGetRequest()
     {
         $router = self::$container->get('router');
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
         $siteRootUrl = 'http://example.com/';
 
         $jobFactory = new JobFactory(self::$container);
@@ -86,7 +91,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $response = $this->getClientResponse();
 
         /* @var Job $newJob */
-        $newJob = $jobRepository->findAll()[1];
+        $newJob = $this->jobRepository->findAll()[1];
 
         $this->assertNotEquals($job->getId(), $newJob->getId());
 
@@ -96,15 +101,11 @@ class JobStartControllerTest extends AbstractControllerTest
 
     /**
      * @dataProvider startActionInvalidWebsiteDataProvider
-     *
-     * @param string $siteRootUrl
-     * @param string $expectedRejectedUrl
      */
-    public function testStartActionInvalidWebsite($siteRootUrl, $expectedRejectedUrl)
+    public function testStartActionInvalidWebsite(string $siteRootUrl, string $expectedRejectedUrl)
     {
         $userService = self::$container->get(UserService::class);
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $request = new Request();
@@ -117,7 +118,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(RedirectResponse::class, $response);
 
         /* @var Job $job */
-        $job = $jobRepository->findAll()[0];
+        $job = $this->jobRepository->findAll()[0];
         $this->assertEquals(
             sprintf('http://localhost/job/%s/%s/', $expectedRejectedUrl, $job->getId()),
             $response->getTargetUrl()
@@ -133,10 +134,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->assertNull($jobRejectionReason->getConstraint());
     }
 
-    /**
-     * @return array
-     */
-    public function startActionInvalidWebsiteDataProvider()
+    public function startActionInvalidWebsiteDataProvider(): array
     {
         return [
             'unroutable host' => [
@@ -163,7 +161,6 @@ class JobStartControllerTest extends AbstractControllerTest
         $userService = self::$container->get(UserService::class);
         $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $user = $userService->getPublicUser();
@@ -189,7 +186,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $response = $this->jobStartController->startAction($request);
 
         /* @var Job $job */
-        $job = $jobRepository->findAll()[1];
+        $job = $this->jobRepository->findAll()[1];
 
         /* @var RejectionReason $jobRejectionReason */
         $jobRejectionReason = $jobRejectionReasonRepository->findOneBy([
@@ -205,8 +202,6 @@ class JobStartControllerTest extends AbstractControllerTest
     public function testStartActionSuccess()
     {
         $userService = self::$container->get(UserService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
 
         $siteRootUrl = 'http://example.com/';
 
@@ -218,16 +213,13 @@ class JobStartControllerTest extends AbstractControllerTest
         $response = $this->jobStartController->startAction($request);
 
         /* @var Job $job */
-        $job = $jobRepository->findAll()[0];
+        $job = $this->jobRepository->findAll()[0];
 
         $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
     }
 
-    /**
-     * @return array
-     */
-    public function retestActionForUnfinishedJobDataProvider()
+    public function retestActionForUnfinishedJobDataProvider(): array
     {
         return [
             Job::STATE_STARTING => [
@@ -253,10 +245,8 @@ class JobStartControllerTest extends AbstractControllerTest
 
     /**
      * @dataProvider retestActionDataProvider
-     *
-     * @param array $jobValues
      */
-    public function testRetestActionFoo($jobValues)
+    public function testRetestAction(array $jobValues)
     {
         $userService = self::$container->get(UserService::class);
         $jobFactory = new JobFactory(self::$container);
@@ -295,10 +285,7 @@ class JobStartControllerTest extends AbstractControllerTest
         }
     }
 
-    /**
-     * @return array
-     */
-    public function retestActionDataProvider()
+    public function retestActionDataProvider(): array
     {
         return [
             'set one' => [

@@ -1,8 +1,8 @@
 <?php
 namespace App\Command\Job;
 
+use App\Repository\JobRepository;
 use App\Services\StateService;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Exception\Services\Job\WebsiteResolutionException;
 use App\Resque\Job\Job\PrepareJob;
@@ -52,33 +52,21 @@ class ResolveWebsiteCommand extends Command
     private $predefinedDomainsToIgnore;
 
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
      * @var StateService
      */
     private $stateService;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param ResqueQueueService $resqueQueueService
-     * @param WebsiteResolutionService $websiteResolutionService
-     * @param JobPreparationService $jobPreparationService
-     * @param EntityManagerInterface $entityManager
-     * @param StateService $stateService
-     * @param array $predefinedDomainsToIgnore
-     * @param string|null $name
-     */
+    private $jobRepository;
+
+
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
-        EntityManagerInterface $entityManager,
         StateService $stateService,
-        $predefinedDomainsToIgnore,
+        JobRepository $jobRepository,
+        array $predefinedDomainsToIgnore,
         $name = null
     ) {
         parent::__construct($name);
@@ -88,8 +76,8 @@ class ResolveWebsiteCommand extends Command
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-        $this->entityManager = $entityManager;
         $this->stateService = $stateService;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -185,19 +173,18 @@ class ResolveWebsiteCommand extends Command
      */
     private function getJobs(InputInterface $input)
     {
-        $jobRepository = $this->entityManager->getRepository(Job::class);
         $identifier = $input->getArgument('id');
 
         if (ctype_digit($identifier)) {
             return [
-                $jobRepository->find((int)$input->getArgument('id')),
+                $this->jobRepository->find((int)$input->getArgument('id')),
             ];
         }
 
         if (preg_match('/([0-9]+,?)+/', $identifier)) {
             $jobIds = explode(',', $identifier);
 
-            return $jobRepository->findBy([
+            return $this->jobRepository->findBy([
                 'id' => $jobIds,
             ]);
         }

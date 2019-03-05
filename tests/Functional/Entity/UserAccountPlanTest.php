@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Entity;
 
+use App\Repository\UserAccountPlanRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Account\Plan\Plan;
 use App\Services\UserAccountPlanService;
@@ -44,8 +45,7 @@ class UserAccountPlanTest extends AbstractBaseTestCase
 
     public function testUtf8StripeCustomer()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
 
         $stripeCustomer = 'test-ɸ';
 

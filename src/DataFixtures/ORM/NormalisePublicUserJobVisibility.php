@@ -2,10 +2,10 @@
 
 namespace App\DataFixtures\ORM;
 
+use App\Repository\JobRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Job\Job;
 use App\Entity\User;
 use App\Services\UserService;
 
@@ -15,13 +15,12 @@ class NormalisePublicUserJobVisibility extends Fixture implements DependentFixtu
      * @var User
      */
     private $publicUser;
+    private $jobRepository;
 
-    /**
-     * @param UserService $userService
-     */
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, JobRepository $jobRepository)
     {
         $this->publicUser = $userService->getPublicUser();
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -29,8 +28,7 @@ class NormalisePublicUserJobVisibility extends Fixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $jobRepository = $manager->getRepository(Job::class);
-        $publicUserPrivateJobs = $jobRepository->findBy(array(
+        $publicUserPrivateJobs = $this->jobRepository->findBy(array(
             'user' => $this->publicUser,
             'isPublic' => false
         ));

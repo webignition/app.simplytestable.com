@@ -2,8 +2,8 @@
 
 namespace App\Command\Migrate;
 
+use App\Repository\TaskOutputRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Task\Output;
 use App\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,30 +16,21 @@ class RemoveUnusedOutputCommand extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
-    /**
-     * @var ApplicationStateService
-     */
     private $applicationStateService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $taskOutputRepository;
 
-    /**
-     * @param ApplicationStateService $applicationStateService
-     * @param EntityManagerInterface $entityManager
-     * @param string|null $name
-     */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -69,8 +60,7 @@ class RemoveUnusedOutputCommand extends Command
 
         $output->writeln('Finding unused output ...');
 
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-        $unusedTaskOutputIds = $taskOutputRepository->findUnusedIds($this->getLimit($input));
+        $unusedTaskOutputIds = $this->taskOutputRepository->findUnusedIds($this->getLimit($input));
 
         if (empty($unusedTaskOutputIds)) {
             $output->writeln('No unused task outputs found. Done.');
@@ -85,7 +75,7 @@ class RemoveUnusedOutputCommand extends Command
         $persistCount = 0;
 
         foreach ($unusedTaskOutputIds as $unusedTaskOutputId) {
-            $taskOutputToRemove = $taskOutputRepository->find($unusedTaskOutputId);
+            $taskOutputToRemove = $this->taskOutputRepository->find($unusedTaskOutputId);
 
             $processedTaskOutputCount++;
             $output->writeln(sprintf(

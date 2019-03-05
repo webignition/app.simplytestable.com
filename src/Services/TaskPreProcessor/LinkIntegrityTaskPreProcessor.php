@@ -26,56 +26,22 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 {
     const HTTP_USER_AGENT = 'ST Link integrity task pre-processor';
 
-    /**
-     * @var TaskService
-     */
     private $taskService;
-
-    /**
-     * @var WebResourceRetriever
-     */
     private $webResourceRetriever;
-
-    /**
-     * @var HttpClientService
-     */
     private $httpClientService;
-
-    /**
-     * @var StateService
-     */
     private $stateService;
-
-    /**
-     * @var LoggerInterface
-     */
     private $logger;
-
-    /**
-     * @var TaskRepository
-     */
     private $taskRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
 
-    /**
-     * @param TaskService $taskService
-     * @param WebResourceRetriever $webResourceService
-     * @param HttpClientService $httpClientService
-     * @param LoggerInterface $logger
-     * @param StateService $stateService
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         TaskService $taskService,
         WebResourceRetriever $webResourceService,
         HttpClientService $httpClientService,
         LoggerInterface $logger,
         StateService $stateService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TaskRepository $taskRepository
     ) {
         $this->taskService = $taskService;
         $this->webResourceRetriever = $webResourceService;
@@ -83,8 +49,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         $this->logger = $logger;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $taskRepository;
     }
 
     /**
