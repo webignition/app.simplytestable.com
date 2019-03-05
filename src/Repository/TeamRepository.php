@@ -1,17 +1,21 @@
 <?php
+
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Team\Team;
 use App\Entity\User;
 
-class TeamRepository extends EntityRepository {
+class TeamRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Team::class);
+    }
 
-    /**
-     * @param $name
-     * @return int
-     */
-    public function getTeamCountByName($name) {
+    public function getTeamCountByName(string $name): int
+    {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(Team.id) as total');
@@ -23,12 +27,8 @@ class TeamRepository extends EntityRepository {
         return (int)($result[0]['total']);
     }
 
-
-    /**
-     * @param User $leader
-     * @return int
-     */
-    public function getTeamCountByLeader(User $leader) {
+    public function getTeamCountByLeader(User $leader): int
+    {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(Team.id) as total');
@@ -40,12 +40,8 @@ class TeamRepository extends EntityRepository {
         return (int)($result[0]['total']);
     }
 
-
-    /**
-     * @param User $leader
-     * @return Team|null
-     */
-    public function getTeamByLeader(User $leader) {
+    public function getTeamByLeader(User $leader): ?Team
+    {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('Team');
@@ -56,5 +52,4 @@ class TeamRepository extends EntityRepository {
 
         return ($result[0] instanceof Team) ? $result[0] : null;
     }
-
 }

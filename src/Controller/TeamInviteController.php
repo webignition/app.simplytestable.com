@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TeamRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use App\Entity\User;
@@ -25,68 +26,18 @@ class TeamInviteController
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
-    /**
-     * @var UserService $userService
-     */
     private $userService;
-
-    /**
-     * @var AccountPlanService
-     */
     private $accountPlanService;
-
-    /**
-     * @var UserAccountPlanService
-     */
     private $userAccountPlanService;
-
-    /**
-     * @var TeamService
-     */
     private $teamService;
-
-    /**
-     * @var TeamInviteService
-     */
     private $teamInviteService;
-
-    /**
-     * @var TeamMemberService
-     */
     private $teamMemberService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var ScheduledJobService
-     */
     private $scheduledJobService;
-
-    /**
-     * @var ConfigurationService
-     */
     private $jobConfigurationService;
-
-    /**
-     * @var UserManipulator
-     */
     private $userManipulator;
+    private $teamRepository;
 
-    /**
-     * @param UserService $userService
-     * @param AccountPlanService $accountPlanService
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param TeamService $teamService
-     * @param TeamInviteService $teamInviteService
-     * @param TeamMemberService $teamMemberService
-     * @param EntityManagerInterface $entityManager
-     * @param ScheduledJobService $scheduledJobService
-     * @param ConfigurationService $jobConfigurationService
-     * @param UserManipulator $userManipulator
-     */
     public function __construct(
         UserService $userService,
         AccountPlanService $accountPlanService,
@@ -97,7 +48,8 @@ class TeamInviteController
         EntityManagerInterface $entityManager,
         ScheduledJobService $scheduledJobService,
         ConfigurationService $jobConfigurationService,
-        UserManipulator $userManipulator
+        UserManipulator $userManipulator,
+        TeamRepository $teamRepository
     ) {
         $this->userService = $userService;
         $this->accountPlanService = $accountPlanService;
@@ -109,6 +61,7 @@ class TeamInviteController
         $this->scheduledJobService = $scheduledJobService;
         $this->jobConfigurationService = $jobConfigurationService;
         $this->userManipulator = $userManipulator;
+        $this->teamRepository = $teamRepository;
     }
 
     /**
@@ -176,13 +129,11 @@ class TeamInviteController
      */
     public function acceptAction(Request $request, UserInterface $user)
     {
-        $teamRepository = $this->entityManager->getRepository(Team::class);
-
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
 
         /* @var $team Team */
-        $team = $teamRepository->findOneBy([
+        $team = $this->teamRepository->findOneBy([
             'name' => $requestTeam,
         ]);
 
@@ -310,12 +261,10 @@ class TeamInviteController
      */
     public function declineAction(UserInterface $user, Request $request)
     {
-        $teamRepository = $this->entityManager->getRepository(Team::class);
-
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
 
-        $team = $teamRepository->findOneBy([
+        $team = $this->teamRepository->findOneBy([
             'name' => $requestTeam,
         ]);
 

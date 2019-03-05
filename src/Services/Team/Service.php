@@ -12,19 +12,8 @@ use App\Exception\Services\Team\Exception as TeamServiceException;
 
 class Service
 {
-    /**
-     * @var MemberService
-     */
     private $memberService;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
-
-    /**
-     * @var TeamRepository
-     */
     private $teamRepository;
 
     /**
@@ -32,16 +21,15 @@ class Service
      */
     private $teamMemberRepository;
 
-    /**
-     * @param MemberService $memberService
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(MemberService $memberService, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        MemberService $memberService,
+        EntityManagerInterface $entityManager,
+        TeamRepository $teamRepository
+    ) {
         $this->entityManager = $entityManager;
         $this->memberService = $memberService;
 
-        $this->teamRepository = $entityManager->getRepository(Team::class);
+        $this->teamRepository = $teamRepository;
         $this->teamMemberRepository = $entityManager->getRepository(Member::class);
     }
 
