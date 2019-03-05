@@ -6,6 +6,7 @@ use App\Controller\Stripe\WebHookController;
 use App\Entity\Stripe\Event as StripeEvent;
 use App\Entity\Stripe\Event;
 use App\Entity\UserAccountPlan;
+use App\Repository\UserAccountPlanRepository;
 use App\Services\HttpClientService;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\StripeEventService;
@@ -397,6 +398,7 @@ class WebHookControllerTest extends AbstractControllerTest
             self::$container->get(StripeEventService::class),
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StripeWebHookMailNotificationSender::class),
+            self::$container->get(UserAccountPlanRepository::class),
             $request
         );
     }

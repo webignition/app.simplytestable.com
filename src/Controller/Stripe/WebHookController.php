@@ -2,9 +2,9 @@
 
 namespace App\Controller\Stripe;
 
+use App\Repository\UserAccountPlanRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Stripe\Event;
-use App\Entity\UserAccountPlan;
 use App\Resque\Job\Stripe\ProcessEventJob;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\StripeEventService;
@@ -15,29 +15,20 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WebHookController
 {
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param StripeEventService $stripeEventService
-     * @param ResqueQueueService $resqueQueueService
-     * @param StripeWebHookMailNotificationSender $stripeWebHookMailNotification
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
     public function indexAction(
         EntityManagerInterface $entityManager,
         StripeEventService $stripeEventService,
         ResqueQueueService $resqueQueueService,
         StripeWebHookMailNotificationSender $stripeWebHookMailNotification,
+        UserAccountPlanRepository $userAccountPlanRepository,
         Request $request
-    ) {
+    ): JsonResponse {
         $eventContent = $this->getEventContent($request);
 
         if (empty($eventContent)) {
             throw new BadRequestHttpException();
         }
 
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
         $stripeEventRepository = $entityManager->getRepository(Event::class);
 
         $requestData = json_decode($eventContent);
