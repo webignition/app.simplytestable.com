@@ -10,7 +10,6 @@ use App\Entity\User;
  *     name="TeamInvite",
  *     uniqueConstraints={@ORM\UniqueConstraint(name="teamInvite_idx", columns={"team_id", "user_id"})}
  * )
- * @ORM\Entity(repositoryClass="App\Repository\TeamInviteRepository")
  */
 class Invite implements \JsonSerializable
 {
