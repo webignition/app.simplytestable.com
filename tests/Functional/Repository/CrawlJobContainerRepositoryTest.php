@@ -38,8 +38,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $this->crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
+        $this->crawlJobContainerRepository = self::$container->get(CrawlJobContainerRepository::class);
 
         $this->jobFactory = new JobFactory(self::$container);
         $this->userFactory = new UserFactory(self::$container);
