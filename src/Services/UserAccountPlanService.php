@@ -19,10 +19,6 @@ class UserAccountPlanService
     private $teamService;
     private $userRepository;
     private $entityManager;
-
-    /**
-     * @var UserAccountPlanRepository
-     */
     private $userAccountPlanRepository;
 
     /**
@@ -36,6 +32,7 @@ class UserAccountPlanService
         StripeService $stripeService,
         TeamService $teamService,
         UserRepository $userRepository,
+        UserAccountPlanRepository $userAccountPlanRepository,
         $defaultTrialPeriod
     ) {
         $this->entityManager = $entityManager;
@@ -43,10 +40,8 @@ class UserAccountPlanService
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
-
         $this->userRepository = $userRepository;
-
-        $this->userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $this->userAccountPlanRepository = $userAccountPlanRepository;
     }
 
     /**
