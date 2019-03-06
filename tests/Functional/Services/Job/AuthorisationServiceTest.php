@@ -53,7 +53,9 @@ class AuthorisationServiceTest extends AbstractBaseTestCase
         $job = $this->jobFactory->create($jobValues);
         $jobId = $job->getId();
 
-        $this->assertEquals($expectedIsAuthorised, $this->authorisationService->isAuthorised($user, $jobId));
+        $this->setUser($user);
+
+        $this->assertEquals($expectedIsAuthorised, $this->authorisationService->isAuthorised($jobId));
     }
 
     public function isAuthorisedDataProvider(): array
@@ -119,11 +121,16 @@ class AuthorisationServiceTest extends AbstractBaseTestCase
         $publicUserPublicJobId = $publicUserPublicJob->getId();
         $privateUserPublicJobId = $privateUserPublicJob->getId();
 
-        $this->assertTrue($this->authorisationService->isAuthorised($users['public'], $publicUserPublicJobId));
-        $this->assertTrue($this->authorisationService->isAuthorised($users['public'], $privateUserPublicJobId));
-        $this->assertTrue($this->authorisationService->isAuthorised($users['private'], $publicUserPublicJobId));
-        $this->assertTrue($this->authorisationService->isAuthorised($users['private'], $privateUserPublicJobId));
-        $this->assertTrue($this->authorisationService->isAuthorised($users['leader'], $publicUserPublicJobId));
-        $this->assertTrue($this->authorisationService->isAuthorised($users['leader'], $privateUserPublicJobId));
+        $this->setUser($users['public']);
+        $this->assertTrue($this->authorisationService->isAuthorised($publicUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($privateUserPublicJobId));
+
+        $this->setUser($users['private']);
+        $this->assertTrue($this->authorisationService->isAuthorised($publicUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($privateUserPublicJobId));
+
+        $this->setUser($users['leader']);
+        $this->assertTrue($this->authorisationService->isAuthorised($publicUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($privateUserPublicJobId));
     }
 }
