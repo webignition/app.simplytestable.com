@@ -12,7 +12,7 @@ use App\Services\TaskService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\TaskFactory;
 use App\Tests\Factory\TimePeriodFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -98,7 +98,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCancelSuccess($taskValues)
     {
         if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-            $workerFactory = new WorkerFactory(self::$container);
+            $workerFactory = self::$container->get(WorkerFactory::class);
             $worker = $workerFactory->create([
                 WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
             ]);
@@ -278,7 +278,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create();
         $remoteId = 1;
 
@@ -337,7 +337,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         if (!empty($taskValues)) {
             if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-                $workerFactory = new WorkerFactory(self::$container);
+                $workerFactory = self::$container->get(WorkerFactory::class);
                 $worker = $workerFactory->create([
                     WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
                 ]);

@@ -10,7 +10,7 @@ use App\Command\Task\Cancel\CollectionCommand;
 use App\Entity\Task\Task;
 use App\Services\HttpClientService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -41,8 +41,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = self::$container->get(CollectionCommand::class);
-
-        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->workerFactory = self::$container->get(WorkerFactory::class);
         $this->jobFactory = self::$container->get(JobFactory::class);
     }
 

@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Command\Worker;
 use App\Command\Worker\SetTokenFromActivationRequestCommand;
 use App\Entity\Worker;
 use App\Tests\Factory\WorkerActivationRequestFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -39,7 +39,7 @@ class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
         $workerActivationRequestValuesCollection,
         $expectedWorkerTokens
     ) {
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $workerActivationRequestFactory = new WorkerActivationRequestFactory(self::$container);
 
         /* @var Worker[] $workers */
