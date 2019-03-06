@@ -3,8 +3,8 @@
 namespace App\Tests\Functional\Entity\Job;
 
 use App\Tests\Services\ConstraintFactory;
+use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\PlanFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Job\RejectionReason;
@@ -28,7 +28,7 @@ class RejectionReasonTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
         $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
     }
 

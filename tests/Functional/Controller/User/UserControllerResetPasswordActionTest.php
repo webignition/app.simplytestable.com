@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Tests\Factory\MockFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserController
@@ -18,7 +18,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
 
     public function testResetPasswordActionPostRequest()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
 
         $router = self::$container->get('router');
@@ -42,7 +42,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
 
     public function testResetPasswordActionBadRequest()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $this->expectException(BadRequestHttpException::class);
@@ -60,7 +60,7 @@ class UserControllerResetPasswordActionTest extends AbstractUserControllerTest
      */
     public function testResetPasswordAction($activateUser, $expectedIsEnabledBefore, $expectedIsEnabledAfter)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         if ($activateUser) {
             $user = $userFactory->createAndActivateUser();

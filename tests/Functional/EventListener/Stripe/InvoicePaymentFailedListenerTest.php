@@ -7,7 +7,7 @@ use App\Event\Stripe\DispatchableEvent;
 use App\Services\UserAccountPlanService;
 use App\Tests\Factory\StripeApiFixtureFactory;
 use App\Tests\Factory\StripeEventFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
 {
@@ -34,7 +34,7 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
 
         $this->httpClientService->appendFixtures($httpFixtures);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 

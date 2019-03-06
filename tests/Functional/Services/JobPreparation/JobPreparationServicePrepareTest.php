@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\JobPreparation;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\Job;
@@ -9,7 +10,6 @@ use App\Entity\Task\Task;
 use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Tests\Factory\HttpFixtureFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\SitemapFixtureFactory;
 
 /**

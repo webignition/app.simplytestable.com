@@ -2,9 +2,8 @@
 
 namespace App\Tests\Functional\Controller\Job\Job;
 
-use App\Services\Job\RetrievalService;
 use App\Services\UserService;
-use App\Tests\Factory\JobFactory;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**

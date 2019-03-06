@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller\Team;
 
 use App\Controller\TeamController;
 use App\Entity\User;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\Controller\AbstractControllerTest;
 
 abstract class AbstractTeamControllerTest extends AbstractControllerTest
@@ -33,7 +33,7 @@ abstract class AbstractTeamControllerTest extends AbstractControllerTest
 
         $this->teamController = self::$container->get(TeamController::class);
 
-        $this->userFactory = new UserFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
         $this->users = $this->userFactory->createPublicPrivateAndTeamUserSet();
     }
 }

@@ -7,13 +7,13 @@ use App\Entity\Task\Task;
 use App\Services\CrawlJobContainerService;
 use App\Services\JobPreparationService;
 use App\Services\JobService;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Factory\MockFactory;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\StateService;
 use App\Services\TaskTypeDomainsToIgnoreService;
 use App\Services\UserService;
-use App\Tests\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**

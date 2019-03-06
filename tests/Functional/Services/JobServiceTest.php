@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services;
 
+use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\Configuration;
@@ -16,9 +17,8 @@ use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Services\UserAccountPlanService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskOutputFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class JobServiceTest extends AbstractBaseTestCase
@@ -47,7 +47,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->jobService = self::$container->get(JobService::class);
         $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     /**
@@ -78,7 +78,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedJobTaskTypes,
         $expectedJobTaskTypeOptions
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $websiteService = self::$container->get(WebSiteService::class);
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $stateService = self::$container->get(StateService::class);
@@ -502,7 +502,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedReason,
         $expectedConstraintName
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         $jobValues[JobFactory::KEY_USER] = $users[$user];
@@ -876,7 +876,7 @@ class JobServiceTest extends AbstractBaseTestCase
             Job::STATE_QUEUED,
         ];
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $stateService = self::$container->get(StateService::class);
@@ -990,7 +990,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testReject($userName, $reason, $constraintName)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
 
         $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
@@ -1053,7 +1053,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedCountOfTasksWithErrors,
         $expectedCountOfTasksWithWarnings
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         if (isset($jobValues[JobFactory::KEY_USER])) {

@@ -8,8 +8,8 @@ use App\Services\Team\InviteService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserSummaryFactory;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserAccountPlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserAccountPlanFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserController
@@ -28,7 +28,7 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
     {
         parent::setUp();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->users['no-plan'] = $userFactory->create([
@@ -48,7 +48,7 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
             UserFactory::KEY_EMAIL => 'basic-with-stripe-customer@example.com',
         ]);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
 
         $userAccountPlanFactory->create($this->users['premium'], 'agency', 'cus_aaaaaaaaaaaaa0');
         $userAccountPlanFactory->create($this->users['leader'], 'business', 'cus_aaaaaaaaaaaaa1');

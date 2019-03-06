@@ -1,25 +1,23 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\User;
 use App\Entity\UserAccountPlan;
 use App\Services\AccountPlanService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserAccountPlanFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $entityManager;
+    private $accountPlanService;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        AccountPlanService $accountPlanService
+    ) {
+        $this->entityManager = $entityManager;
+        $this->accountPlanService = $accountPlanService;
     }
 
     /**
@@ -31,10 +29,7 @@ class UserAccountPlanFactory
      */
     public function create(User $user, $planName, $stripeCustomerId = null)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanService = $this->container->get(AccountPlanService::class);
-
-        $plan = $accountPlanService->get($planName);
+        $plan = $this->accountPlanService->get($planName);
 
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
@@ -50,8 +45,8 @@ class UserAccountPlanFactory
             $userAccountPlan->setStripeCustomer($stripeCustomerId);
         }
 
-        $entityManager->persist($userAccountPlan);
-        $entityManager->flush($userAccountPlan);
+        $this->entityManager->persist($userAccountPlan);
+        $this->entityManager->flush();
 
         return $userAccountPlan;
     }

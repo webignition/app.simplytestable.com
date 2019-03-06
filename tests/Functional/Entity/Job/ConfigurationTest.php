@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Entity\Job;
 
+use App\Tests\Services\JobFactory;
 use App\Tests\Services\JobTaskConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
@@ -11,7 +12,6 @@ use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class ConfigurationTest extends AbstractBaseTestCase
@@ -33,7 +33,7 @@ class ConfigurationTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
         $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
     }
 

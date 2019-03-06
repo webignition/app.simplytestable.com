@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\User;
 use App\Services\Team\Service;
 use App\Services\UserService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserFactory
 {
@@ -23,17 +23,21 @@ class UserFactory
         self::KEY_PLAN_NAME => self::DEFAULT_PLAN_NAME,
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $entityManager;
+    private $userService;
+    private $userAccountPlanFactory;
+    private $teamService;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserService $userService,
+        UserAccountPlanFactory $userAccountPlanFactory,
+        Service $teamService
+    ) {
+        $this->entityManager = $entityManager;
+        $this->userService = $userService;
+        $this->userAccountPlanFactory = $userAccountPlanFactory;
+        $this->teamService = $teamService;
     }
 
     /**
@@ -46,9 +50,8 @@ class UserFactory
         $user = $this->create($userValues);
         $user->setEnabled(true);
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return $user;
     }
@@ -60,27 +63,23 @@ class UserFactory
      */
     public function create($userValues = [])
     {
-        $userService = $this->container->get(UserService::class);
-
         foreach ($this->defaultUserValues as $key => $value) {
             if (!array_key_exists($key, $userValues)) {
                 $userValues[$key] = $value;
             }
         }
 
-        if ($userService->exists($userValues[self::KEY_EMAIL])) {
+        if ($this->userService->exists($userValues[self::KEY_EMAIL])) {
             /* @var User $user */
-            $user = $userService->findUserByEmail($userValues[self::KEY_EMAIL]);
+            $user = $this->userService->findUserByEmail($userValues[self::KEY_EMAIL]);
 
             return $user;
         }
 
-        $user = $userService->create($userValues[self::KEY_EMAIL], 'password');
+        $user = $this->userService->create($userValues[self::KEY_EMAIL], 'password');
 
         if (isset($userValues[self::KEY_PLAN_NAME])) {
-            $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
-
-            $userAccountPlanFactory->create($user, $userValues[self::KEY_PLAN_NAME]);
+            $this->userAccountPlanFactory->create($user, $userValues[self::KEY_PLAN_NAME]);
         }
 
         return $user;
@@ -91,8 +90,6 @@ class UserFactory
      */
     public function createPublicPrivateAndTeamUserSet()
     {
-        $teamService = $this->container->get(Service::class);
-
         $users = array_merge(
             $this->createPublicAndPrivateUserSet(),
             [
@@ -108,9 +105,9 @@ class UserFactory
             ]
         );
 
-        $team = $teamService->create('Foo', $users['leader']);
+        $team = $this->teamService->create('Foo', $users['leader']);
 
-        $teamMemberService = $teamService->getMemberService();
+        $teamMemberService = $this->teamService->getMemberService();
 
         $teamMemberService->add($team, $users['member1']);
         $teamMemberService->add($team, $users['member2']);
@@ -123,10 +120,8 @@ class UserFactory
      */
     public function createPublicAndPrivateUserSet()
     {
-        $userService = $this->container->get(UserService::class);
-
         $users = [
-            'public' => $userService->getPublicUser(),
+            'public' => $this->userService->getPublicUser(),
             'private' => $this->createAndActivateUser([
                 self::KEY_EMAIL => 'private@example.com',
             ]),

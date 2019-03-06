@@ -4,10 +4,10 @@ namespace App\Tests\Functional\Services\Job\Retrieval;
 
 use App\Services\Job\RetrievalService;
 use App\Services\Team\Service;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use App\Tests\Services\JobFactory;
 
 class RetrievalServiceTest extends AbstractBaseTestCase
 {
@@ -28,8 +28,8 @@ class RetrievalServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userFactory = new UserFactory(self::$container);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     /**

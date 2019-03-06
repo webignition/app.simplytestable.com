@@ -9,10 +9,10 @@ use App\Services\CrawlJobContainerService;
 use App\Services\StateService;
 use App\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskOutputFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 
 class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
 {
@@ -84,10 +84,10 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $stateService = self::$container->get(StateService::class);
         $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);
@@ -147,13 +147,13 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $user = $userFactory->createAndActivateUser();
         $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);
@@ -291,13 +291,13 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $user = $userFactory->createAndActivateUser();
         $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);

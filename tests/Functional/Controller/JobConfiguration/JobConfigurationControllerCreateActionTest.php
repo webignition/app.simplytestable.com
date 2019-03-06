@@ -9,7 +9,7 @@ use App\Services\TaskTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
 use Symfony\Component\HttpFoundation\Response;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Job\Configuration as JobConfiguration;
@@ -21,7 +21,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 {
     public function testCreateActionPostRequest()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
 
         $router = self::$container->get('router');
@@ -49,7 +49,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateActionFailureLabelNotUnique()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -74,7 +74,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateActionFailureHasExistingJobConfiguration()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -105,7 +105,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
         $this->setUser($user);
 

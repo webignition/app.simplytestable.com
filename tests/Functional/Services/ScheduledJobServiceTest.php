@@ -14,7 +14,7 @@ use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\Team\Service as TeamService;
 use App\Services\UserService;
 use App\Tests\Factory\ScheduledJobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Cron\CronBundle\Cron\Manager as CronManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -173,7 +173,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetFailureForNonTeamUser()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
@@ -194,7 +194,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetForTeamUsers()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
@@ -225,7 +225,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetFailureForTeamUsers()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
@@ -255,7 +255,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
      */
     public function testGetList($scheduledJobValuesCollection, $userName, $expectedScheduledJobIndices)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
@@ -535,7 +535,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
     {
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
         $scheduledJobFactory = new ScheduledJobFactory(self::$container);
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users['leader'];
 

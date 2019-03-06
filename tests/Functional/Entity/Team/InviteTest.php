@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Entity\Team;
 
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Team\Team;
 use App\Entity\Team\Invite;
@@ -17,7 +17,7 @@ class InviteTest extends AbstractBaseTestCase
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $teamInviteRepository = $entityManager->getRepository(Invite::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $team = new Team();
         $team->setLeader($userFactory->createAndActivateUser([

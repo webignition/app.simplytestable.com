@@ -7,10 +7,10 @@ use App\Entity\Job\TaskTypeOptions;
 use App\Repository\JobRepository;
 use App\Repository\TaskRepository;
 use App\Services\TaskTypeService;
+use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Command\Job\DeleteCommand;
 use App\Entity\Job\Job;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -44,7 +44,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
         $this->deleteCommand = self::$container->get(DeleteCommand::class);
         $this->jobRepository = self::$container->get(JobRepository::class);
@@ -116,6 +116,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
             ]));
         }
 
+        /* @var Job[] $remainingJobs */
         $remainingJobs = $this->jobRepository->findAll();
 
         foreach ($remainingJobs as $jobIndex => $remainingJob) {
@@ -123,7 +124,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
 
             $this->assertEquals(
                 $expectedRemainingJobValues[JobFactory::KEY_SITE_ROOT_URL],
-                (string)$remainingJob->getWebsite()
+                (string) $remainingJob->getWebsite()
             );
         }
     }

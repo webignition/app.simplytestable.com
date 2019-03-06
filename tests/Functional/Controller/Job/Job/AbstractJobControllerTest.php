@@ -9,10 +9,10 @@ use App\Repository\JobRepository;
 use App\Repository\TaskRepository;
 use App\Services\Job\RetrievalService;
 use App\Services\UserService;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\Controller\AbstractControllerTest;
 
 abstract class AbstractJobControllerTest extends AbstractControllerTest
@@ -47,8 +47,8 @@ abstract class AbstractJobControllerTest extends AbstractControllerTest
             self::$container->get(TaskRepository::class)
         );
 
-        $this->userFactory = new UserFactory(self::$container);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     /**

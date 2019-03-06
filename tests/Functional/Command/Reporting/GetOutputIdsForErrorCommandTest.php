@@ -4,9 +4,9 @@ namespace App\Tests\Functional\Command\Reporting;
 
 use App\Command\Reporting\GetOutputIdsForErrorCommand;
 use App\Entity\Task\Task;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -78,7 +78,7 @@ class GetOutputIdsForErrorCommandTest extends AbstractBaseTestCase
             ],
         ];
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $job = $jobFactory->createResolveAndPrepare();
@@ -112,7 +112,7 @@ class GetOutputIdsForErrorCommandTest extends AbstractBaseTestCase
         $args,
         $expectedTaskOutputIndices
     ) {
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $taskOutputFactory = new TaskOutputFactory(self::$container);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);

@@ -11,9 +11,9 @@ use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 
 class JobRepositoryTest extends AbstractBaseTestCase
 {
@@ -41,8 +41,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
         $this->jobRepository = self::$container->get(JobRepository::class);
 
-        $this->jobFactory = new JobFactory(self::$container);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 
     /**

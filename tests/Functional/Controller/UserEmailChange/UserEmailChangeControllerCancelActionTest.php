@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\UserEmailChange;
 
 use App\Entity\UserEmailChangeRequest;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserEmailChangeController

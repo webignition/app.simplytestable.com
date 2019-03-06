@@ -6,9 +6,9 @@ use App\Services\CrawlJobContainerService;
 use App\Services\HttpClientService;
 use App\Services\JobPreparationService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use App\Tests\Services\TestHttpClientService;
 
 /**
@@ -58,8 +58,8 @@ abstract class AbstractJobPreparationServiceTest extends AbstractBaseTestCase
             'predefined',
         ]);
 
-        $this->jobFactory = new JobFactory(self::$container);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->userFactory = self::$container->get(UserFactory::class);
 
         $this->httpClientService = self::$container->get(HttpClientService::class);
     }

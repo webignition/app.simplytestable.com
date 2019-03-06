@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Controller\UserAccountPlanSubscription;
 use App\Entity\UserAccountPlan;
 use App\Services\UserAccountPlanService;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
 /**
@@ -19,7 +19,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             StripeApiFixtureFactory::load('customer-nocard-hassub'),
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => null,
         ]);
@@ -51,7 +51,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             401,
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
@@ -75,7 +75,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             402,
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
@@ -104,7 +104,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
 
     public function testSubscribeActionUserIsTeamMember()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $user = $users['member1'];
@@ -138,7 +138,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
             StripeApiFixtureFactory::load('customer-nocard-hassub'),
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,
         ]);

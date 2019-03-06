@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Services\Job\Configuration;
 use App\Entity\User;
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
 {
@@ -21,7 +21,7 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
     {
         parent::setUp();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }
 

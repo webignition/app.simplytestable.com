@@ -8,8 +8,8 @@ use App\Repository\UserAccountPlanRepository;
 use App\Services\AccountPlanService;
 use App\Services\UserAccountPlanService;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserAccountPlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserAccountPlanFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
@@ -33,7 +33,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->userAccountPlanService = self::$container->get(UserAccountPlanService::class);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 
     public function testSubscribeUserBelongsToTeam()
@@ -252,7 +252,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         foreach ($userAccountPlansToCreate as $userAccountPlanToCreate) {
@@ -364,7 +364,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     {
         $user = $this->userFactory->create();
 
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
 
         $agencyUserAccountPlan = $userAccountPlanFactory->create($user, 'agency');
         $businessUserAccountPlan = $userAccountPlanFactory->create($user, 'business');
@@ -385,7 +385,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     public function testDeactivateAllForUser()
     {
         $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => null,

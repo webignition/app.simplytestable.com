@@ -3,9 +3,9 @@
 namespace App\Tests\Functional\Entity\Job;
 
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Job\TaskTypeOptions;
+use App\Tests\Services\JobFactory;
 
 class TaskTypeOptionsTest extends AbstractBaseTestCase
 {
@@ -15,7 +15,7 @@ class TaskTypeOptionsTest extends AbstractBaseTestCase
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $taskTypeOptionsRepository = $entityManager->getRepository(TaskTypeOptions::class);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         $job = $jobFactory->create();
 

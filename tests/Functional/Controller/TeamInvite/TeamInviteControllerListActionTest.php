@@ -3,8 +3,8 @@
 namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Services\Team\InviteService;
-use App\Tests\Factory\UserAccountPlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserAccountPlanFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/TeamInviteController
@@ -66,7 +66,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
         $this->assertCount(1, $responseData);
         $this->assertEquals('invitee@example.com', $responseData[0]['user']);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
         $userAccountPlanFactory->create($invitee, 'agency');
 
         $response = $this->teamInviteController->listAction($inviter);

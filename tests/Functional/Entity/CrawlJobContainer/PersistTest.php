@@ -4,10 +4,10 @@ namespace App\Tests\Functional\Entity\CrawlJobContainer;
 
 use App\Services\JobTypeService;
 use App\Services\StateService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
+use App\Tests\Services\JobFactory;
 
 class PersistTest extends AbstractBaseTestCase
 {
@@ -19,7 +19,7 @@ class PersistTest extends AbstractBaseTestCase
 
         $crawlJobType = $jobTypeService->getCrawlType();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         $parentJob = $jobFactory->create();
 

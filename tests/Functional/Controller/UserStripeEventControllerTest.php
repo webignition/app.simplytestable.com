@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Controller\UserStripeEventController;
 use App\Services\StripeEventService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserStripeEventController
@@ -28,7 +28,7 @@ class UserStripeEventControllerTest extends AbstractControllerTest
 
     public function testListActionGetRequest()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
 
         $router = self::$container->get('router');
@@ -60,7 +60,7 @@ class UserStripeEventControllerTest extends AbstractControllerTest
     {
         $stripeEventService = self::$container->get(StripeEventService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 

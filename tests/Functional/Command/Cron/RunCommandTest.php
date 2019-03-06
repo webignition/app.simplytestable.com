@@ -10,7 +10,7 @@ use App\Services\JobTypeService;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\TaskTypeService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Job\Configuration as JobConfiguration;
 use App\Model\Job\Configuration\Values as JobConfigurationValues;
@@ -53,7 +53,7 @@ class RunCommandTest extends AbstractBaseTestCase
         $expectedCronJobExitCode,
         $expectedCronJobOutput
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $scheduledJobService = self::$container->get(ScheduledJobService::class);
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $cronReportRepository = $entityManager->getRepository(CronReport::class);

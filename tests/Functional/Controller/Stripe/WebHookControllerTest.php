@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Tests\Factory\HttpFixtureFactory;
 use App\Tests\Factory\StripeEventFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use App\Tests\Functional\Controller\AbstractControllerTest;
 use App\Tests\Services\TestHttpClientService;
@@ -68,7 +68,7 @@ class WebHookControllerTest extends AbstractControllerTest
 
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         /* @var UserAccountPlan $userAccountPlan */
@@ -174,7 +174,7 @@ class WebHookControllerTest extends AbstractControllerTest
 
         $resqueQueueService->getResque()->getQueue('stripe-event')->clear();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         /* @var UserAccountPlan $userAccountPlan */

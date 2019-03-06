@@ -8,7 +8,7 @@ use App\Entity\State;
 use App\Entity\User;
 use App\Model\JobList\Configuration;
 use App\Services\QueryBuilderFactory\JobListQueryBuilderFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class JobListQueryBuilderFactoryTest extends AbstractBaseTestCase
@@ -32,7 +32,7 @@ class JobListQueryBuilderFactoryTest extends AbstractBaseTestCase
 
         $this->jobListQueryBuilderFactory = self::$container->get(JobListQueryBuilderFactory::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }
 
