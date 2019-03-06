@@ -38,9 +38,7 @@ class RetrievalService
             );
         }
 
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        if (!$this->authorisationService->isAuthorised($user, $jobId)) {
+        if (!$this->authorisationService->isAuthorised($jobId)) {
             throw new JobRetrievalServiceException(
                 'Not authorised',
                 JobRetrievalServiceException::CODE_NOT_AUTHORISED
