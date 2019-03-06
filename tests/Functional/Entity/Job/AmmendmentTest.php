@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Entity\Job;
 use App\Tests\Services\ConstraintFactory;
 use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Tests\Factory\PlanFactory;
+use App\Tests\Services\PlanFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Job\Ammendment;
 
@@ -69,7 +69,7 @@ class AmmendmentTest extends AbstractBaseTestCase
 
     public function testPersistWithConstraint()
     {
-        $planFactory = new PlanFactory(self::$container);
+        $planFactory = self::$container->get(PlanFactory::class);
         $plan = $planFactory->create([]);
 
         $constraintFactory = self::$container->get(ConstraintFactory::class);
