@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Entity\Account\Plan;
 
-use App\Tests\Factory\PlanFactory;
+use App\Tests\Services\PlanFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Account\Plan\Constraint;
 
@@ -18,7 +18,7 @@ class ConstraintTest extends AbstractBaseTestCase
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $constraintRepository = $entityManager->getRepository(Constraint::class);
 
-        $planFactory = new PlanFactory(self::$container);
+        $planFactory = self::$container->get(PlanFactory::class);
         $plan = $planFactory->create();
 
         $constraint = new Constraint();

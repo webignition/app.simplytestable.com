@@ -11,7 +11,7 @@ use App\Services\TaskTypeService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\PlanFactory;
+use App\Tests\Services\PlanFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\ConstraintFactory;
@@ -334,7 +334,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
      */
     public function testIsUserCreditLimitReached($taskStateNames, $planValues, $expectedIsLimitReached)
     {
-        $planFactory = new PlanFactory(self::$container);
+        $planFactory = self::$container->get(PlanFactory::class);
         $jobFactory = self::$container->get(JobFactory::class);
 
         $userService = self::$container->get(UserService::class);
