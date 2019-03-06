@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\Job;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
@@ -12,7 +13,6 @@ use App\Services\HttpClientService;
 use App\Services\Job\WebsiteResolutionService;
 use App\Services\JobTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\StateFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\TestHttpClientService;
@@ -54,7 +54,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->websiteResolutionService = self::$container->get(WebsiteResolutionService::class);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
         $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 

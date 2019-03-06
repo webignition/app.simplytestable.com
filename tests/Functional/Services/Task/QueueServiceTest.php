@@ -2,13 +2,13 @@
 
 namespace App\Tests\Functional\Services\Task;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Services\Task\QueueService;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\HttpFixtureFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\SitemapFixtureFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
@@ -32,7 +32,7 @@ class QueueServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->taskQueueService = self::$container->get(QueueService::class);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     public function testGetNextWithNoJobs()

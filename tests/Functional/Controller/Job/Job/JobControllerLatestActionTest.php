@@ -7,9 +7,9 @@ use App\Services\JobService;
 use App\Services\Team\Service as TeamService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -19,9 +19,9 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 {
     public function testRequest()
     {
-        $job = $this->jobFactory->create([
+        $job = $this->jobFactory->create(array(
             JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
-        ]);
+        ));
 
         $this->getCrawler([
             'url' => self::$container->get('router')->generate('job_job_latest', [

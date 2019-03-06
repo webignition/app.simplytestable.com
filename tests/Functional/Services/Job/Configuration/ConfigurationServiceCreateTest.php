@@ -7,7 +7,7 @@ use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServic
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Services\UserService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
 {
@@ -100,7 +100,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $this->expectExceptionMessage('Label "foo" is not unique');
         $this->expectExceptionCode(JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $creator = $users[$creatorUserName];
@@ -161,7 +161,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $this->expectExceptionMessage('Matching configuration already exists');
         $this->expectExceptionCode(JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $creator = $users[$creatorUserName];
@@ -224,7 +224,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $existingJobConfigurationValuesCollection,
         $jobConfigurationValues
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->createJobConfigurationCollection($existingJobConfigurationValuesCollection, $users);

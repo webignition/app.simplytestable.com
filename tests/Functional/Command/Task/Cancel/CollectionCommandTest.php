@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Command\Task\Cancel;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -9,7 +10,6 @@ use App\Command\Task\Cancel\CollectionCommand;
 use App\Entity\Task\Task;
 use App\Services\HttpClientService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -43,7 +43,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $this->command = self::$container->get(CollectionCommand::class);
 
         $this->workerFactory = new WorkerFactory(self::$container);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     /**

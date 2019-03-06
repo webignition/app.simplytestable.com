@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\TaskPreProcessor;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use App\Entity\Task\Task;
@@ -11,7 +12,6 @@ use App\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\HtmlDocumentFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskFactory;
 use App\Tests\Factory\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -53,7 +53,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
         $this->linkIntegrityTaskPreProcessor = self::$container->get(LinkIntegrityTaskPreProcessor::class);
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
         $this->taskFactory = new TaskFactory(self::$container);
         $this->taskOutputFactory = new TaskOutputFactory(self::$container);
         $this->httpClientService = self::$container->get(HttpClientService::class);

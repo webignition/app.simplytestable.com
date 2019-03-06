@@ -5,9 +5,9 @@ namespace App\Tests\Functional\Services\Request\Factory\Job;
 use App\Entity\CrawlJobContainer;
 use App\Repository\CrawlJobContainerRepository;
 use App\Services\Request\Factory\Job\ListRequestFactory;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 class ListRequestFactoryTest extends AbstractBaseTestCase
@@ -28,7 +28,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $expectedStateNamesToExclude,
         $expectedTypeNamesToExclude
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -155,12 +155,12 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
     ) {
         $crawlJobContainerRepository = self::$container->get(CrawlJobContainerRepository::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',

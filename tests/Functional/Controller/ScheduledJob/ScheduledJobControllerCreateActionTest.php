@@ -14,7 +14,7 @@ use App\Services\WebSiteService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Factory\MockFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use App\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 
@@ -27,7 +27,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
     {
         $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
         $this->setUser($user);
 
@@ -58,7 +58,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 
     public function testCreateActionUnknownJobConfiguration()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $this->setUser($user);
@@ -85,7 +85,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
      */
     public function testCreateActionMalformedRequest($requestData, $expectedResponseErrorHeader)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -128,7 +128,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
 
     public function testCreateActionFailureScheduleJobAlreadyExists()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
         $this->setUser($user);
 
@@ -154,7 +154,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractScheduledJobControl
     {
         $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
         $this->setUser($user);
 

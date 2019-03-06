@@ -10,11 +10,11 @@ use App\Repository\TaskRepository;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskFactory;
 use App\Tests\Factory\TimePeriodFactory;
 use App\Tests\Factory\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TaskServiceTest extends AbstractBaseTestCase
@@ -43,7 +43,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->taskService = self::$container->get(TaskService::class);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $this->job = $jobFactory->createResolveAndPrepare();
 
         $this->task = $this->job->getTasks()->get(0);

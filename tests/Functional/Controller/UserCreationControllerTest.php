@@ -10,7 +10,7 @@ use App\Services\UserAccountPlanService;
 use App\Services\UserPostActivationPropertiesService;
 use App\Services\UserService;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -56,7 +56,7 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testCreateActionUserAlreadyActivated()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
 
         $request = new Request([], [
@@ -79,7 +79,7 @@ class UserCreationControllerTest extends AbstractControllerTest
     {
         $userService = self::$container->get(UserService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $initialPassword = $user->getPassword();
@@ -125,7 +125,7 @@ class UserCreationControllerTest extends AbstractControllerTest
         $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
 
         if ($createUser) {
-            $userFactory = new UserFactory(self::$container);
+            $userFactory = self::$container->get(UserFactory::class);
             $userFactory->create();
         }
 
@@ -253,7 +253,7 @@ class UserCreationControllerTest extends AbstractControllerTest
         $userService = self::$container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $router = self::$container->get('router');
@@ -281,7 +281,7 @@ class UserCreationControllerTest extends AbstractControllerTest
 
     public function testActivateActionSuccessNoPostActivationProperties()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $response = $this->userCreationController->activateAction($user->getConfirmationToken());
@@ -299,7 +299,7 @@ class UserCreationControllerTest extends AbstractControllerTest
 
         $agencyAccountPlan = $accountPlanService->get('agency');
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $postActivationProperties = $userPostActivationPropertiesService->create($user, $agencyAccountPlan, 'TMS');

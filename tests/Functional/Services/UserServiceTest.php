@@ -4,7 +4,7 @@ namespace App\Tests\Command;
 
 use App\Entity\User;
 use App\Services\UserService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class UserServiceTest extends AbstractBaseTestCase
@@ -49,7 +49,7 @@ class UserServiceTest extends AbstractBaseTestCase
      */
     public function testIsPublicUser($userEmail, $expectedIsPublicUser)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -82,7 +82,7 @@ class UserServiceTest extends AbstractBaseTestCase
      */
     public function testIsSpecialUser($userEmail, $expectedIsSpecialUser)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
@@ -155,7 +155,7 @@ class UserServiceTest extends AbstractBaseTestCase
 
     public function testGetConfirmationToken()
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $user = $userFactory->create();
         $this->assertNotEmpty($user->getConfirmationToken());

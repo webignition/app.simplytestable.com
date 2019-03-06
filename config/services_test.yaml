@@ -33,3 +33,15 @@ services:
 
   App\Tests\Services\JobConfigurationFactory:
     public: true
+
+  App\Tests\Services\JobFactory:
+    public: true
+
+  App\Tests\Services\UserAccountPlanFactory:
+    public: true
+
+  App\Tests\Services\UserFactory:
+    public: true
+
+  App\Tests\Services\JobLoader:
+    public: true

@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Services\Team\InviteService;
 use App\Services\Team\MemberService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

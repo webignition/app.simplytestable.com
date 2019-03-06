@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\JobConfiguration;
 
 use App\Entity\User;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Entity\Job\Configuration as JobConfiguration;
 use App\Tests\Services\JobConfigurationFactory;
 
@@ -31,7 +31,7 @@ class JobConfigurationControllerListActionTest extends AbstractJobConfigurationC
 
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 

@@ -2,18 +2,11 @@
 
 namespace App\Tests\Functional\Services;
 
-use App\Entity\Account\Plan\Plan;
 use App\Entity\User;
-use App\Entity\UserAccountPlan;
 use App\Entity\UserEmailChangeRequest;
-use App\Services\UserAccountPlanService;
 use App\Services\UserEmailChangeRequestService;
 use App\Services\UserService;
-use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserAccountPlanFactory;
-use App\Tests\Factory\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
 class UserEmailChangeRequestServiceTest extends AbstractBaseTestCase
 {

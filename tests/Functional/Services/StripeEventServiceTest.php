@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Services;
 
 use App\Entity\Stripe\Event as StripeEvent;
 use App\Services\StripeEventService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class StripeEventServiceTest extends AbstractBaseTestCase
@@ -67,7 +67,7 @@ class StripeEventServiceTest extends AbstractBaseTestCase
         if (is_null($userName)) {
             $user = null;
         } else {
-            $userFactory = new UserFactory(self::$container);
+            $userFactory = self::$container->get(UserFactory::class);
             $users = $userFactory->createPublicAndPrivateUserSet();
             $user = $users[$userName];
         }
@@ -122,7 +122,7 @@ class StripeEventServiceTest extends AbstractBaseTestCase
      */
     public function testGetForUserAndType($stripeEventFixtures, $userName, $type, $expectedEventStripeIds)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 

@@ -3,8 +3,8 @@
 namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\JobFactory;
 
 trait FindOutputByJobAndTypeDataProvider
 {

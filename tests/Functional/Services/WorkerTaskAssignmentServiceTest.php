@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Tests\Services;
+namespace App\Tests\Functional\Services;
 
+use App\Tests\Services\JobFactory;
+use App\Tests\Services\TestHttpClientService;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,7 +12,6 @@ use App\Services\HttpClientService;
 use App\Services\TaskTypeService;
 use App\Services\WorkerTaskAssignmentService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
@@ -79,7 +80,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         /* @var TestHttpClientService $httpClientService */
         $httpClientService = self::$container->get(HttpClientService::class);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::HTML_VALIDATION_TYPE,

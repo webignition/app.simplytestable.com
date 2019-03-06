@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller\User;
 
 use App\Entity\User;
 use App\Services\UserService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 
 /**
@@ -28,7 +28,7 @@ class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
     {
         $this->expectException(DisabledException::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create();
 
         $this->createCrawler($user);

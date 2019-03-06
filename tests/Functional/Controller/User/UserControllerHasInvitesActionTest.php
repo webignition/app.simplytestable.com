@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller\User;
 
 use App\Services\Team\InviteService;
 use App\Services\UserService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserController
@@ -16,7 +16,7 @@ class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
         $teamInviteService = self::$container->get(InviteService::class);
         $userService = self::$container->get(UserService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $teamInviteService->get($users['leader'], $users['private']);

@@ -6,7 +6,7 @@ use GuzzleHttp\Psr7\Response;
 use App\Event\Stripe\DispatchableEvent;
 use App\Services\UserAccountPlanService;
 use App\Tests\Factory\StripeEventFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTest
 {
@@ -27,7 +27,7 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
 
         $this->httpClientService->appendFixtures([new Response()]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 

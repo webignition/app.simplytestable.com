@@ -3,9 +3,9 @@
 namespace App\Tests\Functional\Services\CrawlJobContainer;
 
 use App\Services\CrawlJobContainerService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 
 abstract class AbstractCrawlJobContainerServiceTest extends AbstractBaseTestCase
 {
@@ -32,8 +32,7 @@ abstract class AbstractCrawlJobContainerServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
-
-        $this->jobFactory = new JobFactory(self::$container);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 }

@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 use App\Entity\Task\Task;
 use App\Entity\Job\Job;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
+use App\Tests\Services\JobFactory;
 
 trait GetIdsByJobAndStatesDataProvider
 {

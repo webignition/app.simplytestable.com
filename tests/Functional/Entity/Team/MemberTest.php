@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Entity\Team;
 
 use App\Repository\TeamMemberRepository;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\Team\Team;
 use App\Entity\Team\Member;
@@ -16,7 +16,7 @@ class MemberTest extends AbstractBaseTestCase
         $entityManager = self::$container->get(EntityManagerInterface::class);
         $memberRepository = self::$container->get(TeamMemberRepository::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $team = new Team();
         $team->setLeader($userFactory->createAndActivateUser([

@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Controller\ScheduledJob;
 use App\Entity\Job\Configuration as JobConfiguration;
 use App\Entity\User;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Services\JobConfigurationFactory;
 
 /**
@@ -37,7 +37,7 @@ class ScheduledJobControllerListActionTest extends AbstractScheduledJobControlle
 
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->user = $userFactory->createAndActivateUser();
 
         $this->setUser($this->user);

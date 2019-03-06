@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Task;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
@@ -11,7 +12,6 @@ use App\Services\JobTypeService;
 use App\Services\Request\Factory\Task\CompleteRequestFactory;
 use App\Services\StateService;
 use App\Services\UserService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 /**
@@ -41,7 +41,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
     {
         parent::setUp();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $userService = self::$container->get(UserService::class);
 
         $notFoundResponse = new Response(404);

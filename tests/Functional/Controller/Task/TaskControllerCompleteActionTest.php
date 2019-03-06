@@ -11,10 +11,10 @@ use App\Services\Request\Factory\Task\CompleteRequestFactory;
 use App\Services\StateService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use App\Tests\Factory\TaskTypeFactory;
+use App\Tests\Services\JobFactory;
 use webignition\InternetMediaType\InternetMediaType;
 
 /**
@@ -34,7 +34,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     /**
@@ -56,7 +56,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
         $stateService = self::$container->get(StateService::class);
 
         $this->setJobTypeConstraintLimits();
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         /* @var Job[] $jobs */
         $jobs = [];

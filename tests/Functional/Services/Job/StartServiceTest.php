@@ -19,7 +19,7 @@ use App\Services\StateService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use App\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as
@@ -113,7 +113,7 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobUserAccountPlanEnforcementService = self::$container->get(JobUserAccountPlanEnforcementService::class);
         $jobTypeService = self::$container->get(JobTypeService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $user,
             UserFactory::KEY_PLAN_NAME => $plan,
@@ -239,7 +239,7 @@ class StartServiceTest extends AbstractBaseTestCase
 
         $resqueQueueService->getResque()->getQueue('job-resolve')->clear();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);

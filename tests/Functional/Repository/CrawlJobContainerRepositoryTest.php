@@ -10,9 +10,9 @@ use App\Repository\CrawlJobContainerRepository;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 
 class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 {
@@ -40,8 +40,8 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 
         $this->crawlJobContainerRepository = self::$container->get(CrawlJobContainerRepository::class);
 
-        $this->jobFactory = new JobFactory(self::$container);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 
     public function testDoesCrawlTaskParentStateMatchState()
@@ -51,7 +51,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $stateService = self::$container->get(StateService::class);
         $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $website = $websiteService->get('http://example.com/');
         $user = $userFactory->create();

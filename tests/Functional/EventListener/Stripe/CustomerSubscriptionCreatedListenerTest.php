@@ -16,7 +16,7 @@ use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\StripeApiFixtureFactory;
 use App\Tests\Factory\StripeEventFactory;
 use App\Tests\Factory\StripeEventFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Entity\Stripe\Event as StripeEvent;
 
 class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
@@ -73,7 +73,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
 
         $this->httpClientService->appendFixtures([new Response()]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 

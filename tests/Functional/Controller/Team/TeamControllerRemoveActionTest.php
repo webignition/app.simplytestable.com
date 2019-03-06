@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\Team;
 
 use App\Services\Team\Service;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/TeamController

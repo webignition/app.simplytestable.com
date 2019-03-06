@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Controller\JobConfiguration;
 use App\Entity\Job\Configuration;
 use App\Entity\User;
 use App\Repository\ScheduledJobRepository;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Entity\Job\Configuration as JobConfiguration;
 use App\Tests\Services\JobConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,7 +34,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
         $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 

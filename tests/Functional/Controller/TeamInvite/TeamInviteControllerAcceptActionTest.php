@@ -10,8 +10,8 @@ use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\Team\InviteService;
 use App\Services\Team\MemberService;
 use App\Services\Team\Service;
-use App\Tests\Factory\UserAccountPlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserAccountPlanFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Services\JobConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,8 +123,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
     public function testAcceptActionUserHasPremiumPlan()
     {
         $teamMemberService = self::$container->get(MemberService::class);
-
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
 
         $this->setUser($this->inviteeUser);
 

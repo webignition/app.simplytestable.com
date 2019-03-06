@@ -7,8 +7,8 @@ use App\Entity\Job\Job;
 use App\Entity\User;
 use App\Services\StateService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
+use App\Tests\Services\JobFactory;
 
 class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
 {

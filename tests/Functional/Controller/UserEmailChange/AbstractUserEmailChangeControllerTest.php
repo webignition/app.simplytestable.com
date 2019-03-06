@@ -6,7 +6,7 @@ use App\Controller\UserEmailChangeController;
 use App\Entity\User;
 use App\Entity\UserEmailChangeRequest;
 use App\Services\UserEmailChangeRequestService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\Controller\AbstractControllerTest;
 
 abstract class AbstractUserEmailChangeControllerTest extends AbstractControllerTest
@@ -35,7 +35,7 @@ abstract class AbstractUserEmailChangeControllerTest extends AbstractControllerT
 
         $this->userEmailChangeController = self::$container->get(UserEmailChangeController::class);
 
-        $this->userFactory = new UserFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
         $this->user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'current-email@example.com',
         ]);

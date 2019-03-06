@@ -7,7 +7,7 @@ use App\Entity\Task\Type\Type;
 use App\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner;
 use App\Services\TaskTypeService;
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Tests\Factory\JobFactory;
+use App\Tests\Services\JobFactory;
 
 class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
 {
@@ -28,7 +28,7 @@ class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
         $this->linkIntegrityTaskOutputJoiner = self::$container->get(LinkIntegrityTaskOutputJoiner::class);
     }
 

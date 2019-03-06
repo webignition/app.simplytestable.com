@@ -2,9 +2,9 @@
 
 namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\SitemapFixtureFactory;
 
 trait FindUrlsByJobDataProvider

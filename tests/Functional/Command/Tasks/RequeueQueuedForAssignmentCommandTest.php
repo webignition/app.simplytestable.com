@@ -4,9 +4,9 @@ namespace App\Tests\Functional\Command\Tasks;
 
 use App\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use App\Entity\Task\Task;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -35,7 +35,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
      */
     public function testRunSuccess($jobValuesCollection, $expectedTaskStateNames)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
         foreach ($jobValuesCollection as $jobValuesIndex => $jobValues) {
@@ -45,7 +45,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
             }
         }
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
         /* @var Task[] $tasks */

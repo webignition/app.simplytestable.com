@@ -6,9 +6,9 @@ use App\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Services\JobTypeService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Tests\Factory\JobFactory;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -37,8 +37,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = self::$container->get(CompleteAllWithNoIncompleteTasksCommand::class);
-        $this->jobFactory = new JobFactory(self::$container);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\JobConfiguration;
 
 use App\Entity\User;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Services\JobConfigurationFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -24,7 +24,7 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
     {
         parent::setUp();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
     }

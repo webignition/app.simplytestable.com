@@ -3,11 +3,10 @@
 namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Entity\Team\Invite;
-use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Services\Team\InviteService;
-use App\Tests\Factory\UserAccountPlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserAccountPlanFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,7 +41,7 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
      */
     public function testGetActionClientFailure($inviterName, $inviteeEmail, $expectedResponseError)
     {
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
         $userAccountPlanFactory->create($this->users['private'], 'agency');
 
         $inviter = $this->users[$inviterName];
