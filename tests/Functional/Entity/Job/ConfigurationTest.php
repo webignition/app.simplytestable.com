@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Entity\Job;
 
+use App\Tests\Services\JobTaskConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use App\Entity\Job\Configuration;
@@ -11,7 +12,6 @@ use App\Services\TaskTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
 use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\JobTaskConfigurationFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class ConfigurationTest extends AbstractBaseTestCase
@@ -44,6 +44,7 @@ class ConfigurationTest extends AbstractBaseTestCase
      * @param string $label
      * @param string $websiteUrl
      * @param string $parameters
+     * @param array $taskConfigurationValuesCollection
      */
     public function testPersist(
         $jobTypeName,
@@ -55,7 +56,7 @@ class ConfigurationTest extends AbstractBaseTestCase
         $jobTypeService = self::$container->get(JobTypeService::class);
         $userService = self::$container->get(UserService::class);
         $websiteService = self::$container->get(WebSiteService::class);
-        $taskConfigurationFactory = new JobTaskConfigurationFactory(self::$container);
+        $taskConfigurationFactory = self::$container->get(JobTaskConfigurationFactory::class);
 
         $configurationRepository = $this->entityManager->getRepository(Configuration::class);
 

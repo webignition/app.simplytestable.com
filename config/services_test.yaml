@@ -27,3 +27,9 @@ services:
 
   App\Tests\Services\JobAmmendmentFactory:
     public: true
+
+  App\Tests\Services\JobTaskConfigurationFactory:
+    public: true
+
+  App\Tests\Services\JobConfigurationFactory:
+    public: true

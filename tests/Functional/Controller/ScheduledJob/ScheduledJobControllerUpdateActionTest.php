@@ -6,9 +6,9 @@ use App\Entity\ScheduledJob;
 use App\Entity\User;
 use App\Services\Job\ConfigurationService;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
+use App\Tests\Services\JobConfigurationFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use App\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
@@ -35,12 +35,13 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
     {
         parent::setUp();
 
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
+
         $userFactory = new UserFactory(self::$container);
         $this->user = $userFactory->createAndActivateUser();
 
         $this->setUser($this->user);
 
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
@@ -111,7 +112,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
                     UserFactory::KEY_EMAIL => $jobConfigurationValues[JobConfigurationFactory::KEY_USER]
                 ]);
 
-                $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+                $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
                 $jobConfigurationFactory->create($jobConfigurationValues);
             }
         }
@@ -250,7 +251,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
                     UserFactory::KEY_EMAIL => $jobConfigurationValues[JobConfigurationFactory::KEY_USER]
                 ]);
 
-                $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+                $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
                 $jobConfigurationFactory->create($jobConfigurationValues);
             }
         }

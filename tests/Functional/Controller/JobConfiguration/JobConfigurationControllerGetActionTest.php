@@ -3,8 +3,8 @@
 namespace App\Tests\Functional\Controller\JobConfiguration;
 
 use App\Entity\User;
-use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\Services\JobConfigurationFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -31,7 +31,7 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
 
     public function testGetActionGetRequest()
     {
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);

@@ -4,10 +4,10 @@ namespace App\Tests\Functional\Services;
 
 use App\Entity\ScheduledJob;
 use App\Repository\ScheduledJobRepository;
-use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Factory\ScheduledJobFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobConfigurationFactory;
 
 class ScheduledJobRepositoryTest extends AbstractBaseTestCase
 {
@@ -47,7 +47,7 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
         $expectedHas
     ) {
         $scheduledJobFactory = new ScheduledJobFactory(self::$container);
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
         /* @var ScheduledJob[] $scheduledJobs */
         $scheduledJobs = [];
@@ -182,7 +182,7 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
         $expectedScheduledJobIndices
     ) {
         $scheduledJobFactory = new ScheduledJobFactory(self::$container);
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
         $userFactory = new UserFactory(self::$container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 

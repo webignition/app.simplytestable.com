@@ -10,9 +10,9 @@ use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\Team\InviteService;
 use App\Services\Team\MemberService;
 use App\Services\Team\Service;
-use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Factory\UserAccountPlanFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\Services\JobConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -160,7 +160,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
         $this->assertCount(2, $teamInviteService->getForUser($this->inviteeUser));
 
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->inviteeUser,
             JobConfigurationFactory::KEY_LABEL => 'job-configuration-label',
