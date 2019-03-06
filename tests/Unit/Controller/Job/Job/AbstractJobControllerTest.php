@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Controller\Job\Job;
 
 use App\Repository\JobRepository;
 use App\Repository\TaskRepository;
+use App\Services\Job\AuthorisationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery\Mock;
 use App\Controller\Job\JobController;
@@ -12,27 +13,30 @@ use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractJobControllerTest extends \PHPUnit\Framework\TestCase
 {
-    protected function createJobController(
-        ?RetrievalService $jobRetrievalService = null,
-        ?TaskRepository $taskRepository = null
-    ): JobController {
-        /* @var Mock|RouterInterface $router */
-        $router = \Mockery::mock(RouterInterface::class);
+    protected function createJobController(array $constructorServices = []): JobController
+    {
+        $constructorServiceIds = [
+            RouterInterface::class,
+            RetrievalService::class,
+            EntityManagerInterface::class,
+            JobRepository::class,
+            TaskRepository::class,
+            AuthorisationService::class
+        ];
 
-        if (empty($jobRetrievalService)) {
-            $jobRetrievalService = \Mockery::mock(RetrievalService::class);
-        }
-
-        if (empty($taskRepository)) {
-            $taskRepository = \Mockery::mock(TaskRepository::class);
+        foreach ($constructorServiceIds as $serviceId) {
+            if (!array_key_exists($serviceId, $constructorServices)) {
+                $constructorServices[$serviceId] = \Mockery::mock($serviceId);
+            }
         }
 
         return new JobController(
-            $router,
-            $jobRetrievalService,
-            \Mockery::mock(EntityManagerInterface::class),
-            \Mockery::mock(JobRepository::class),
-            $taskRepository
+            $constructorServices[RouterInterface::class],
+            $constructorServices[RetrievalService::class],
+            $constructorServices[EntityManagerInterface::class],
+            $constructorServices[JobRepository::class],
+            $constructorServices[TaskRepository::class],
+            $constructorServices[AuthorisationService::class]
         );
     }
 

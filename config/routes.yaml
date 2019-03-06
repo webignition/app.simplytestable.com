@@ -1,3 +1,9 @@
+job_job_isauthorised:
+  path: /job/{test_id}/is-authorised/
+  defaults: { _controller: App\Controller\Job\JobController::isAuthorisedAction, _format: json }
+  requirements:
+    test_id: '\d+'
+
 job_joblist_list:
     path: /jobs/list/{limit}/{offset}/
     defaults: { _controller: App\Controller\Job\JobListController::listAction, _format: json }
@@ -70,12 +76,6 @@ job_job_status:
     defaults: { _controller: App\Controller\Job\JobController::statusAction, _format: json }
     requirements:
         site_root_url: ".+"
-
-job_job_isauthorised:
-  path: /job/{site_root_url}/{test_id}/
-  defaults: { _controller: App\Controller\Job\JobController::statusAction, _format: json }
-  requirements:
-    site_root_url: ".+"
 
 task_type_count:
   path: /tasks/{task_type}/{state_name}/count/
