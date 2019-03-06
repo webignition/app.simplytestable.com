@@ -3,6 +3,7 @@
 namespace App\Controller\Job;
 
 use App\Repository\JobRepository;
+use App\Services\Job\AuthorisationService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
@@ -42,19 +43,22 @@ class JobController
     private $entityManager;
     private $jobRepository;
     private $taskRepository;
+    private $jobAuthorisationService;
 
     public function __construct(
         RouterInterface $router,
         RetrievalService $jobRetrievalService,
         EntityManagerInterface $entityManager,
         JobRepository $jobRepository,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        AuthorisationService $jobAuthorisationService
     ) {
         $this->router = $router;
         $this->jobRetrievalService = $jobRetrievalService;
         $this->entityManager = $entityManager;
         $this->jobRepository = $jobRepository;
         $this->taskRepository = $taskRepository;
+        $this->jobAuthorisationService = $jobAuthorisationService;
     }
 
     /**
@@ -400,6 +404,11 @@ class JobController
         $urls = $this->taskRepository->findUrlsByJob($job);
 
         return new JsonResponse($urls);
+    }
+
+    public function isAuthorisedAction($test_id): JsonResponse
+    {
+        return new JsonResponse($this->jobAuthorisationService->isAuthorised((int) $test_id));
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\Job\Job;
 
+use App\Services\Job\RetrievalService;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use App\Tests\Factory\MockFactory;
 use App\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
@@ -32,7 +33,9 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $jobController = $this->createJobController($jobRetrievalService);
+        $jobController = $this->createJobController([
+            RetrievalService::class => $jobRetrievalService,
+        ]);
 
         $this->expectException(AccessDeniedHttpException::class);
 
