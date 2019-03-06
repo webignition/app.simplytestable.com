@@ -2,22 +2,14 @@
 
 namespace App\Tests\Functional\EventListener\Stripe;
 
-use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\Response;
-use Mockery\Mock;
 use App\Event\Stripe\DispatchableEvent;
-use App\EventListener\Stripe\CustomerSubscriptionCreatedListener;
-use App\Services\StripeEventService;
-use App\Services\StripeService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\StripeEventFactory;
-use App\Tests\Factory\StripeEventFixtureFactory;
+use App\Tests\Services\StripeEventFactory;
 use App\Tests\Services\UserFactory;
-use App\Entity\Stripe\Event as StripeEvent;
 
 class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
 {
@@ -36,7 +28,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
 
         $stripeEvent = $stripeEventFactory->createEvents([
             'customer.subscription.created.active' => [
@@ -80,7 +72,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
         $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(

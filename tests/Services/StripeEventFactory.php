@@ -1,25 +1,19 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Services\StripeEventService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\Entity\Stripe\Event as StripeEvent;
 use App\Entity\User;
+use App\Tests\Factory\StripeEventFixtureFactory;
 
 class StripeEventFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $stripeEventService;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(StripeEventService $stripeEventService)
     {
-        $this->container = $container;
+        $this->stripeEventService = $stripeEventService;
     }
 
     /**
@@ -30,14 +24,12 @@ class StripeEventFactory
      */
     public function createEvents($stripeEventFixtures, $user)
     {
-        $stripeEventService = $this->container->get(StripeEventService::class);
-
         $stripeEvents = [];
 
         foreach ($stripeEventFixtures as $fixtureName => $modifiers) {
             $stripeEventFixture = StripeEventFixtureFactory::load($fixtureName, $modifiers);
 
-            $stripeEvents[] = $stripeEventService->create(
+            $stripeEvents[] = $this->stripeEventService->create(
                 $stripeEventFixture['id'],
                 $stripeEventFixture['type'],
                 $stripeEventFixture['livemode'],

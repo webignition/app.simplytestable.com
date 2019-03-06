@@ -10,7 +10,7 @@ use App\Services\StripeEventService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Tests\Factory\MockFactory;
-use App\Tests\Factory\StripeEventFactory;
+use App\Tests\Services\StripeEventFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -76,7 +76,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer($stripeCustomer);
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
         $stripeEvent = $stripeEventFactory->createEvents([
             $fixtureName => [
                 'data' => [

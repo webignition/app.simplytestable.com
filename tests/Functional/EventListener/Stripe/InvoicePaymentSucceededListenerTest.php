@@ -5,7 +5,7 @@ namespace App\Tests\Functional\EventListener\Stripe;
 use GuzzleHttp\Psr7\Response;
 use App\Event\Stripe\DispatchableEvent;
 use App\Services\UserAccountPlanService;
-use App\Tests\Factory\StripeEventFactory;
+use App\Tests\Services\StripeEventFactory;
 use App\Tests\Services\UserFactory;
 
 class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTest
@@ -34,7 +34,7 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
         $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(
