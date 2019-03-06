@@ -35,6 +35,10 @@ class AuthorisationService
 
     public function isAuthorised(User $user, int $jobId): bool
     {
+        if ($this->jobRepository->isPublic($jobId)) {
+            return true;
+        }
+
         if ($user->equals($this->publicUser)) {
             return $this->jobRepository->isOwnedByUser($user, $jobId);
         }
