@@ -11,7 +11,6 @@ use App\Services\Request\Factory\Task\CompleteRequestFactory;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\InternetMediaTypeFactory;
 use App\Tests\Factory\StateFactory;
 use App\Tests\Factory\TaskTypeFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +78,7 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $completedState = StateFactory::create(Task::STATE_COMPLETED);
         $htmlValidationTaskType = TaskTypeFactory::create('html validation');
-        $applicationJsonContentType = InternetMediaTypeFactory::create('application', 'json');
+        $applicationJsonContentType = new InternetMediaType('application', 'json');
 
         $endDateTime = new \DateTime('2017-11-23T14:02:01+00:00');
 

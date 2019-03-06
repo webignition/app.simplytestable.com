@@ -13,9 +13,9 @@ use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\UserFactory;
-use App\Tests\Factory\InternetMediaTypeFactory;
 use App\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use App\Tests\Factory\TaskTypeFactory;
+use webignition\InternetMediaType\InternetMediaType;
 
 /**
  * @group Controller/TaskController
@@ -112,7 +112,7 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
     {
         $htmlValidationTaskType = TaskTypeFactory::create('html validation');
         $cssValidationTaskType = TaskTypeFactory::create('css validation');
-        $applicationJsonContentType = InternetMediaTypeFactory::create('application', 'json');
+        $applicationJsonContentType = new InternetMediaType('application', 'json');
         $now = new \DateTime();
 
         return [
