@@ -1,9 +1,10 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Services\Job\Retrieval;
 
+use App\Entity\User;
 use App\Services\Job\RetrievalService;
-use App\Services\Team\Service;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
@@ -22,6 +23,16 @@ class RetrievalServiceTest extends AbstractBaseTestCase
     private $jobFactory;
 
     /**
+     * @var RetrievalService
+     */
+    private $retrievalService;
+
+    /**
+     * @var User[]
+     */
+    private $users;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -30,48 +41,21 @@ class RetrievalServiceTest extends AbstractBaseTestCase
 
         $this->userFactory = self::$container->get(UserFactory::class);
         $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->retrievalService = self::$container->get(RetrievalService::class);
+
+        $this->users = $this->userFactory->createPublicPrivateAndTeamUserSet();
     }
 
     /**
      * @dataProvider retrieveFailureDataProvider
-     *
-     * @param string|null $userTeamStatus
-     * @param string|null $jobOwnerTeamStatus
      */
-    public function testRetrieveFailure($userTeamStatus, $jobOwnerTeamStatus)
+    public function testRetrieveFailure(string $ownerName, string $userName)
     {
-        $jobRetrievalService = self::$container->get(RetrievalService::class);
-        $teamService = self::$container->get(Service::class);
-
-        $user = $this->userFactory->create([
-            UserFactory::KEY_EMAIL => 'user@example.com',
-        ]);
-        $jobOwner = $this->userFactory->create([
-            UserFactory::KEY_EMAIL => 'jobowner@example.com',
-        ]);
-
-        if ($userTeamStatus == 'leader') {
-            $teamService->create('userTeamAsLeader', $user);
-        } elseif ($userTeamStatus == 'member') {
-            $userTeamLeader = $this->userFactory->create([
-                UserFactory::KEY_EMAIL => 'userteamleader@example.com',
-            ]);
-            $userTeam = $teamService->create('userTeamAsMember', $userTeamLeader);
-            $teamService->getMemberService()->add($userTeam, $user);
-        }
-
-        if ($jobOwnerTeamStatus == 'leader') {
-            $teamService->create('ownerTeam', $jobOwner);
-        } elseif ($jobOwnerTeamStatus == 'member') {
-            $jobOwnerTeamLeader = $this->userFactory->create([
-                UserFactory::KEY_EMAIL => 'jobownerteamleader@example.com',
-            ]);
-            $ownerTeam = $teamService->create('ownerTeamAsMember', $jobOwnerTeamLeader);
-            $teamService->getMemberService()->add($ownerTeam, $jobOwner);
-        }
+        $owner = $this->users[$ownerName];
+        $user = $this->users[$userName];
 
         $job = $this->jobFactory->create([
-            JobFactory::KEY_USER => $jobOwner,
+            JobFactory::KEY_USER => $owner,
         ]);
 
         $this->setUser($user);
@@ -80,112 +64,88 @@ class RetrievalServiceTest extends AbstractBaseTestCase
         $this->expectExceptionMessage('Not authorised');
         $this->expectExceptionCode(JobRetrievalServiceException::CODE_NOT_AUTHORISED);
 
-        $jobRetrievalService->retrieve($job->getId());
+        $this->retrievalService->retrieve($job->getId());
     }
 
-    /**
-     * @return array
-     */
-    public function retrieveFailureDataProvider()
+    public function retrieveFailureDataProvider(): array
     {
         return [
-            'user not in a team, owner not in a team' => [
-                'userTeamStatus' => null,
-                'jobOwnerTeamStatus' => null,
+            'owner=private, user=public' => [
+                'ownerName' => 'private',
+                'userName' => 'public',
             ],
-            'user not in a team, owner is team leader' => [
-                'userTeamStatus' => null,
-                'jobOwnerTeamStatus' => 'leader',
+            'owner=private, user=leader' => [
+                'ownerName' => 'private',
+                'userName' => 'leader',
             ],
-            'user not in a team, owner is team member' => [
-                'userTeamStatus' => null,
-                'jobOwnerTeamStatus' => 'member',
+            'owner=leader, user=private' => [
+                'ownerName' => 'leader',
+                'userName' => 'private',
             ],
-            'user is team leader, owner is different team leader' => [
-                'userTeamStatus' => 'leader',
-                'jobOwnerTeamStatus' => 'member',
-            ],
-            'user is team leader, owner is different team member' => [
-                'userTeamStatus' => 'leader',
-                'jobOwnerTeamStatus' => 'member',
-            ],
-            'user is team member, owner is different team leader' => [
-                'userTeamStatus' => 'member',
-                'jobOwnerTeamStatus' => 'leader',
-            ],
-            'user is team member, owner is different team member' => [
-                'userTeamStatus' => 'member',
-                'jobOwnerTeamStatus' => 'leader',
+            'owner=member1, user=private' => [
+                'ownerName' => 'member1',
+                'userName' => 'private',
             ],
         ];
     }
 
     /**
      * @dataProvider retrieveSuccessDataProvider
-     *
-     * @param string $owner
-     * @param string $requester
-     * @param bool $callSetPublic
      */
-    public function testRetrieveSuccess($owner, $requester, $callSetPublic)
+    public function testRetrieveSuccess(string $ownerName, string $userName, bool $jobIsPublic)
     {
-        $jobRetrievalService = self::$container->get(RetrievalService::class);
-
-        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
-        $owner = $users[$owner];
-        $requester = $users[$requester];
-
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $owner = $this->users[$ownerName];
+        $user = $this->users[$userName];
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $owner,
+            JobFactory::KEY_SET_PUBLIC => $jobIsPublic,
         ]);
 
-        if ($callSetPublic) {
-            $job->setIsPublic(true);
+        $this->setUser($user);
 
-            $entityManager->persist($job);
-            $entityManager->flush();
-        }
+        $retrievedJob = $this->retrievalService->retrieve($job->getId());
 
-        $this->setUser($requester);
-
-        $retrievedJob = $jobRetrievalService->retrieve($job->getId());
         $this->assertEquals($job, $retrievedJob);
     }
 
-    public function retrieveSuccessDataProvider()
+    public function retrieveSuccessDataProvider(): array
     {
         return [
-            'public owner, public requester' => [
-                'owner' => 'public',
-                'requester' => 'public',
-                'callSetPublic' => false,
+            'owner=public, user=public, jobIsPublic=true' => [
+                'ownerName' => 'public',
+                'userName' => 'public',
+                'jobIsPublic' => true,
             ],
-            'private owner, public requester, public job' => [
-                'owner' => 'public',
-                'requester' => 'public',
-                'callSetPublic' => true,
+            'owner=private, user=public, jobIsPublic=true' => [
+                'ownerName' => 'private',
+                'userName' => 'public',
+                'jobIsPublic' => true,
             ],
-            'private owner, private requester' => [
-                'owner' => 'private',
-                'requester' => 'private',
-                'callSetPublic' => false,
+            'owner=member1, user=private, jobIsPublic=true' => [
+                'ownerName' => 'member1',
+                'userName' => 'private',
+                'jobIsPublic' => true,
             ],
-            'leader owner, member1 requester' => [
-                'owner' => 'leader',
-                'requester' => 'member1',
-                'callSetPublic' => false,
+            'owner=private, user=private, jobIsPublic=false' => [
+                'ownerName' => 'private',
+                'userName' => 'private',
+                'jobIsPublic' => false,
             ],
-            'member1 owner, leader requester' => [
-                'owner' => 'member1',
-                'requester' => 'leader',
-                'callSetPublic' => false,
+            'owner=leader, user=member1, jobIsPublic=false' => [
+                'ownerName' => 'leader',
+                'userName' => 'member1',
+                'jobIsPublic' => false,
             ],
-            'member1 owner, member2 requester' => [
-                'owner' => 'member1',
-                'requester' => 'member2',
-                'callSetPublic' => false,
+            'owner=member1, user=leader, jobIsPublic=false' => [
+                'ownerName' => 'member1',
+                'userName' => 'leader',
+                'jobIsPublic' => false,
+            ],
+            'owner=member1, user=member2, jobIsPublic=false' => [
+                'ownerName' => 'member1',
+                'userName' => 'member2',
+                'jobIsPublic' => false,
             ],
         ];
     }
