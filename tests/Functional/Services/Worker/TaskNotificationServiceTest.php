@@ -87,7 +87,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     public function notifyDataProvider()
     {
         $serviceUnavailableResponse = new Response(503);
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         $expectedServiceUnavailableHttpTransaction = [
             'request' => [

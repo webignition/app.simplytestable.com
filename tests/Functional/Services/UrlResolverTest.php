@@ -45,7 +45,7 @@ class UrlResolverTest extends AbstractBaseTestCase
      */
     public function testResolveWithCurlException($curlCode)
     {
-        $curlException = ConnectExceptionFactory::create('CURL/'. $curlCode . ' foo');
+        $curlException = ConnectExceptionFactory::create($curlCode, 'foo');
 
         $this->httpClientService->appendFixtures([
             $curlException,

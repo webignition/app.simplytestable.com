@@ -154,7 +154,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'curl timeout getting web resource' => [
                 'httpFixtures' => [
-                    ConnectExceptionFactory::create('CURL/28 operation timed out'),
+                    ConnectExceptionFactory::create(28, 'operation timed out'),
                 ],
             ],
             'too many redirects getting web resource' => [

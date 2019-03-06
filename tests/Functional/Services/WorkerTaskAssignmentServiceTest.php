@@ -151,7 +151,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             WorkerTaskAssignmentService::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;
 
         $serviceUnavailableResponse = new Response(503);
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         return [
             'single task, single worker, success' => [
