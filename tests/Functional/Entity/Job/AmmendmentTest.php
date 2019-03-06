@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\Entity\Job;
 
+use App\Tests\Services\ConstraintFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Tests\Factory\ConstraintFactory;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\PlanFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -72,7 +72,8 @@ class AmmendmentTest extends AbstractBaseTestCase
         $planFactory = new PlanFactory(self::$container);
         $plan = $planFactory->create([]);
 
-        $constraintFactory = new ConstraintFactory(self::$container);
+        $constraintFactory = self::$container->get(ConstraintFactory::class);
+
         $constraint = $constraintFactory->create($plan, [
             ConstraintFactory::KEY_NAME => 'constraint-name',
             ConstraintFactory::KEY_LIMIT => 1,

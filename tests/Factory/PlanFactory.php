@@ -3,6 +3,8 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Account\Plan\Plan;
+use App\Tests\Services\ConstraintFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PlanFactory
@@ -34,7 +36,7 @@ class PlanFactory
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->constraintFactory = new ConstraintFactory($container);
+        $this->constraintFactory = new ConstraintFactory($container->get(EntityManagerInterface::class));
     }
 
     /**

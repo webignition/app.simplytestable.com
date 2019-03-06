@@ -21,3 +21,6 @@ services:
         - '%env(POSTMARK_API_KEY)%'
     calls:
       - [setClient, ['@GuzzleHttp\Client']]
+
+  App\Tests\Services\ConstraintFactory:
+    public: true
