@@ -2,6 +2,8 @@
 
 namespace App\Tests\Unit\Controller\Job\Job;
 
+use App\Repository\TaskRepository;
+use App\Services\Job\RetrievalService;
 use Mockery\Mock;
 use App\Entity\Job\Job;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +27,9 @@ class JobControllerListUrlsActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $jobController = $this->createJobController($jobRetrievalService);
+        $jobController = $this->createJobController([
+            RetrievalService::class => $jobRetrievalService,
+        ]);
 
         $this->expectException(AccessDeniedHttpException::class);
 
@@ -59,7 +63,10 @@ class JobControllerListUrlsActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $jobController = $this->createJobController($jobRetrievalService, $taskRepository);
+        $jobController = $this->createJobController([
+            RetrievalService::class => $jobRetrievalService,
+            TaskRepository::class => $taskRepository,
+        ]);
 
         $response = $jobController->listUrlsAction('http://example.com/', self::JOB_ID);
 

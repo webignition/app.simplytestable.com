@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\Job\Job;
 
+use App\Services\Job\RetrievalService;
 use Mockery\Mock;
 use App\Entity\Job\Job;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,7 +36,9 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $jobController = $this->createJobController($jobRetrievalService);
+        $jobController = $this->createJobController([
+            RetrievalService::class => $jobRetrievalService,
+        ]);
 
         $response = $jobController->statusAction(
             $jobSummaryFactory,
@@ -62,7 +65,9 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
         $jobSummaryFactory = MockFactory::createJobSummaryFactory();
 
-        $jobController = $this->createJobController($jobRetrievalService);
+        $jobController = $this->createJobController([
+            RetrievalService::class => $jobRetrievalService,
+        ]);
 
         $this->expectException(AccessDeniedHttpException::class);
 

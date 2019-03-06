@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Services;
 
@@ -10,6 +11,7 @@ use App\Services\JobService;
 use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Services\TaskService;
+use App\Services\UserService;
 use App\Services\WebSiteService;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -477,6 +479,171 @@ class JobRepositoryTest extends AbstractBaseTestCase
         ];
     }
 
+    public function testExists()
+    {
+        $job = $this->jobFactory->create();
+        $jobId = $job->getId();
+        $nonExistentJobId = $jobId + 1;
+
+        $this->assertTrue($this->jobRepository->exists($jobId));
+        $this->assertFalse($this->jobRepository->exists($nonExistentJobId));
+    }
+
+    public function testIsOwnedByUser()
+    {
+        $user1 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+
+        $user2 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
+
+        $jobOwnedByUser1 = $this->jobFactory->create([
+            JobFactory::KEY_USER => $user1,
+        ]);
+
+        $jobOwnedByUser2 = $this->jobFactory->create([
+            JobFactory::KEY_USER => $user2,
+        ]);
+
+        $this->assertTrue($this->jobRepository->isOwnedByUser($user1, $jobOwnedByUser1->getId()));
+        $this->assertFalse($this->jobRepository->isOwnedByUser($user2, $jobOwnedByUser1->getId()));
+        $this->assertTrue($this->jobRepository->isOwnedByUser($user2, $jobOwnedByUser2->getId()));
+        $this->assertFalse($this->jobRepository->isOwnedByUser($user1, $jobOwnedByUser2->getId()));
+    }
+
+    /**
+     * @dataProvider isOwnedByUsersDataProvider
+     */
+    public function testIsOwnedByUsers(
+        string $ownerName,
+        array $userNames,
+        bool $expectedIsOwnedByUsers
+    ) {
+        $allUsers = $this->userFactory->createPublicPrivateAndTeamUserSet();
+        $owner = $allUsers[$ownerName];
+        $users = [];
+
+        foreach ($userNames as $userName) {
+            $users[] = $allUsers[$userName];
+        }
+
+        $jobValues[JobFactory::KEY_USER] = $owner;
+
+        $job = $this->jobFactory->create($jobValues);
+        $jobId = $job->getId();
+
+        $this->assertEquals($expectedIsOwnedByUsers, $this->jobRepository->isOwnedByUsers($users, $jobId));
+    }
+
+    public function isOwnedByUsersDataProvider(): array
+    {
+        return [
+            'owner=public; users=public' => [
+                'ownerName' => 'public',
+                'userNames' => [
+                    'public',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=public; users=leader' => [
+                'ownerName' => 'public',
+                'userNames' => [
+                    'leader',
+                ],
+                'expectedIsOwnedByUsers' => false,
+            ],
+            'owner=public; users=public,leader' => [
+                'ownerName' => 'public',
+                'userNames' => [
+                    'public',
+                    'leader',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=leader; users=leader,member1,member2' => [
+                'ownerName' => 'leader',
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=member1; users=leader,member1,member2' => [
+                'ownerName' => 'member1',
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+            'owner=member2; users=leader,member1,member2' => [
+                'ownerName' => 'member2',
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedIsOwnedByUsers' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider isPublicDataProvider
+     */
+    public function testIsPublic(callable $jobCreator, bool $expectedIsPublic)
+    {
+        /* @var Job $job */
+        $job = $jobCreator();
+
+        $this->assertEquals($expectedIsPublic, $this->jobRepository->isPublic($job->getId()));
+    }
+
+    public function isPublicDataProvider(): array
+    {
+        return [
+            'public user, public job' => [
+                'jobCreator' => function () {
+                    $userService = self::$container->get(UserService::class);
+                    $jobFactory = self::$container->get(JobFactory::class);
+
+                    return $jobFactory->create([
+                        JobFactory::KEY_USER => $userService->getPublicUser(),
+                        JobFactory::KEY_SET_PUBLIC => true,
+                    ]);
+                },
+                'expectedIsPublic' => true,
+            ],
+            'private user, public job' => [
+                'jobCreator' => function () {
+                    $jobFactory = self::$container->get(JobFactory::class);
+                    $userFactory = self::$container->get(UserFactory::class);
+
+                    return $jobFactory->create([
+                        JobFactory::KEY_USER => $userFactory->createAndActivateUser(),
+                        JobFactory::KEY_SET_PUBLIC => true,
+                    ]);
+                },
+                'expectedIsPublic' => true,
+            ],
+            'private user, private job' => [
+                'jobCreator' => function () {
+                    $jobFactory = self::$container->get(JobFactory::class);
+                    $userFactory = self::$container->get(UserFactory::class);
+
+                    return $jobFactory->create([
+                        JobFactory::KEY_USER => $userFactory->createAndActivateUser(),
+                    ]);
+                },
+                'expectedIsPublic' => false,
+            ],
+        ];
+    }
+
     /**
      * @return Job[]
      */
@@ -567,7 +734,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      *
      * @return Job[]
      */
-    public function createJobs($jobValuesCollection, $users = [])
+    private function createJobs($jobValuesCollection, $users = [])
     {
         $jobs = [];
 

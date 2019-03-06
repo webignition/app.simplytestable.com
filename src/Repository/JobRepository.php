@@ -9,6 +9,7 @@ use App\Entity\Job\Type as JobType;
 use App\Entity\State;
 use App\Entity\WebSite;
 use App\Entity\User;
+use FOS\UserBundle\Model\UserInterface;
 
 class JobRepository extends ServiceEntityRepository
 {
@@ -143,5 +144,59 @@ class JobRepository extends ServiceEntityRepository
         }
 
         return $collection;
+    }
+
+    public function exists(int $jobId): bool
+    {
+        return $this->checkJobExistence($jobId);
+    }
+
+    public function isOwnedByUser(UserInterface $user, int $jobId): bool
+    {
+        return $this->isOwnedByUsers([$user], $jobId);
+    }
+
+    public function isOwnedByUsers(array $users, int $jobId): bool
+    {
+        return $this->checkJobExistence(
+            $jobId,
+            [
+                'Job.user IN (:Users)'
+            ],
+            [
+                'Users' => $users,
+            ]
+        );
+    }
+
+    public function isPublic(int $jobId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.isPublic');
+        $queryBuilder->where('Job.id = :JobId');
+        $queryBuilder->setParameter('JobId', $jobId);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return $result[0]['isPublic'];
+    }
+
+    private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool
+    {
+        $wherePredicates[] = 'Job.id = :JobId';
+        $parameters['JobId'] = $jobId;
+
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');
+
+        foreach ($wherePredicates as $predicate) {
+            $queryBuilder->andWhere($predicate);
+        }
+
+        $queryBuilder->setParameters($parameters);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return !empty($result);
     }
 }
