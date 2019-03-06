@@ -24,3 +24,6 @@ services:
 
   App\Tests\Services\ConstraintFactory:
     public: true
+
+  App\Tests\Services\JobAmmendmentFactory:
+    public: true
