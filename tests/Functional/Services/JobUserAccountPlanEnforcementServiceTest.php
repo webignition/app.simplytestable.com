@@ -11,11 +11,11 @@ use App\Services\TaskTypeService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\ConstraintFactory;
 use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\PlanFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\ConstraintFactory;
 
 class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
 {
