@@ -71,6 +71,12 @@ job_job_status:
     requirements:
         site_root_url: ".+"
 
+job_job_isauthorised:
+  path: /job/{site_root_url}/{test_id}/
+  defaults: { _controller: App\Controller\Job\JobController::statusAction, _format: json }
+  requirements:
+    site_root_url: ".+"
+
 task_type_count:
   path: /tasks/{task_type}/{state_name}/count/
   defaults: { _controller: App\Controller\TaskController::taskTypeCountAction, _format: json }
