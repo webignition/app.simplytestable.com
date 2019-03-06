@@ -17,7 +17,7 @@ use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Services\UserAccountPlanService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
@@ -1063,7 +1063,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
         $tasks = $job->getTasks()->toArray();
 
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskOutputValuesCollection[$taskIndex])) {
