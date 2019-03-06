@@ -11,10 +11,10 @@ use App\Services\CrawlJobContainerService;
 use App\Services\CrawlJobUrlCollector;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\TaskOutputFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\TaskOutputFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 
 class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
 {
@@ -77,7 +77,7 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
         $expectedDiscoveredUrls
     ) {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $initialCrawlJobTask = $this->crawlJob->getTasks()->first();
 
@@ -226,10 +226,10 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
     {
         $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
         ]);

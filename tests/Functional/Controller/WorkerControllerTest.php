@@ -7,7 +7,7 @@ use App\Entity\Worker;
 use App\Entity\WorkerActivationRequest;
 use App\Services\Resque\QueueService;
 use App\Services\StateService;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -35,7 +35,7 @@ class WorkerControllerTest extends AbstractControllerTest
         $hostname = 'worker-hostname';
         $token = 'worker-token';
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,
@@ -74,7 +74,7 @@ class WorkerControllerTest extends AbstractControllerTest
         $hostname = 'foo.worker.simplytestable.com';
         $token = 'token';
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,
@@ -130,7 +130,7 @@ class WorkerControllerTest extends AbstractControllerTest
         $hostname = 'foo.worker.simplytestable.com';
         $token = 'token';
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\Worker;
 use App\Services\StateService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class WorkerFactory
 {
@@ -12,17 +12,13 @@ class WorkerFactory
     const KEY_TOKEN = 'token';
     const KEY_STATE = 'state';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $entityManager;
+    private $stateService;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, StateService $stateService)
     {
-        $this->container = $container;
+        $this->entityManager = $entityManager;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -43,9 +39,7 @@ class WorkerFactory
             $workerValues[self::KEY_STATE] = 'worker-active';
         }
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $workerRepository = $entityManager->getRepository(Worker::class);
-        $stateService = $this->container->get(StateService::class);
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
 
         /* @var Worker $worker */
         $worker = $workerRepository->findOneBy([
@@ -58,10 +52,10 @@ class WorkerFactory
         }
 
         $worker->setToken($workerValues[self::KEY_TOKEN]);
-        $worker->setState($stateService->get($workerValues[self::KEY_STATE]));
+        $worker->setState($this->stateService->get($workerValues[self::KEY_STATE]));
 
-        $entityManager->persist($worker);
-        $entityManager->flush($worker);
+        $this->entityManager->persist($worker);
+        $this->entityManager->flush();
 
         return $worker;
     }

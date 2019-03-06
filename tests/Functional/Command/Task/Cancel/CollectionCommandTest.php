@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Command\Task\Cancel;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -9,8 +10,7 @@ use App\Command\Task\Cancel\CollectionCommand;
 use App\Entity\Task\Task;
 use App\Services\HttpClientService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -41,9 +41,8 @@ class CollectionCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = self::$container->get(CollectionCommand::class);
-
-        $this->workerFactory = new WorkerFactory(self::$container);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->workerFactory = self::$container->get(WorkerFactory::class);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     /**
@@ -125,7 +124,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
     {
         $successResponse = new Response();
         $notFoundResponse = new Response(404);
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         return [
             'tasks have no worker' => [

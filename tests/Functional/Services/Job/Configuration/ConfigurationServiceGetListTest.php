@@ -6,7 +6,7 @@ use App\Entity\Job\Configuration;
 use App\Entity\User;
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
 {
@@ -99,7 +99,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
     {
         parent::setUp();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->jobConfigurationCollection = $this->createJobConfigurationCollection(

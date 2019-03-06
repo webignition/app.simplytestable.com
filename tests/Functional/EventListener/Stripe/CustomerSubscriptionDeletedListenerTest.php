@@ -5,9 +5,8 @@ namespace App\Tests\Functional\EventListener\Stripe;
 use GuzzleHttp\Psr7\Response;
 use App\Event\Stripe\DispatchableEvent;
 use App\Services\UserAccountPlanService;
-use App\Tests\Factory\HttpFixtureFactory;
-use App\Tests\Factory\StripeEventFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\StripeEventFactory;
+use App\Tests\Services\UserFactory;
 
 class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListenerTest
 {
@@ -30,14 +29,14 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
 
         $this->httpClientService->appendFixtures([new Response()]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
         $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(

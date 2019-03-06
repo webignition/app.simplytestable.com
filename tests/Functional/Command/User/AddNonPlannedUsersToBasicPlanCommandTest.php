@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Command\User;
 use App\Command\User\AddNonPlannedUsersToBasicPlanCommand;
 use App\Entity\User;
 use App\Services\UserAccountPlanService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -33,7 +33,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
      */
     public function testRun($userValuesCollection, $args, $expectedUserPlanNames)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
 
         /* @var User[] $users */

@@ -8,7 +8,7 @@ use App\Entity\WorkerActivationRequest;
 use App\Services\HttpClientService;
 use App\Services\WorkerActivationRequestService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -39,7 +39,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = self::$container->get(ActivateVerifyCommand::class);
-        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->workerFactory = self::$container->get(WorkerFactory::class);
         $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
@@ -93,7 +93,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
             ],
             'curl failure' => [
                 'httpFixtures' => [
-                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+                    ConnectExceptionFactory::create(28, 'Operation timed out'),
                 ],
                 'expectedReturnCode' => false,
             ],

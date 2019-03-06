@@ -9,7 +9,7 @@ use App\Entity\Worker;
 use App\Services\HttpClientService;
 use App\Services\Worker\TaskNotificationService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\TestHttpClientService;
 
@@ -47,7 +47,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     {
         $this->httpClientService->appendFixtures($httpFixtures);
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         foreach ($workerValuesCollection as $workerValues) {
             $workerFactory->create($workerValues);
         }
@@ -87,7 +87,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     public function notifyDataProvider()
     {
         $serviceUnavailableResponse = new Response(503);
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         $expectedServiceUnavailableHttpTransaction = [
             'request' => [

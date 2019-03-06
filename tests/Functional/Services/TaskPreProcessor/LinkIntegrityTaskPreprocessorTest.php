@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\TaskPreProcessor;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use App\Entity\Task\Task;
@@ -11,9 +12,8 @@ use App\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\HtmlDocumentFactory;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\TaskFactory;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\TestHttpClientService;
 
@@ -53,9 +53,9 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
         $this->linkIntegrityTaskPreProcessor = self::$container->get(LinkIntegrityTaskPreProcessor::class);
 
-        $this->jobFactory = new JobFactory(self::$container);
-        $this->taskFactory = new TaskFactory(self::$container);
-        $this->taskOutputFactory = new TaskOutputFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
+        $this->taskFactory = self::$container->get(TaskFactory::class);
+        $this->taskOutputFactory = self::$container->get(TaskOutputFactory::class);
         $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 
@@ -154,7 +154,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             ],
             'curl timeout getting web resource' => [
                 'httpFixtures' => [
-                    ConnectExceptionFactory::create('CURL/28 operation timed out'),
+                    ConnectExceptionFactory::create(28, 'operation timed out'),
                 ],
             ],
             'too many redirects getting web resource' => [

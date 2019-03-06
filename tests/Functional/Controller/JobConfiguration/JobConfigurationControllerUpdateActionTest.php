@@ -6,9 +6,9 @@ use App\Entity\User;
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Services\WebSiteService;
+use App\Tests\Services\JobConfigurationFactory;
 use Symfony\Component\HttpFoundation\Response;
-use App\Tests\Factory\JobConfigurationFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Job\Configuration as JobConfiguration;
@@ -46,11 +46,11 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
     {
         parent::setUp();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 
-        $this->jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $this->jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
         $this->jobConfiguration = $this->jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $this->user,
             JobConfigurationFactory::KEY_LABEL => self::LABEL_ONE,

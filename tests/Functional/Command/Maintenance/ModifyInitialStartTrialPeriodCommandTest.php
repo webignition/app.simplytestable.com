@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Command\Maintenance;
 use App\Command\Maintenance\ModifyInitialStartTrialPeriodCommand;
 use App\Entity\UserAccountPlan;
 use App\Repository\UserAccountPlanRepository;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -90,7 +90,7 @@ class ModifyInitialStartTrialPeriodCommandTest extends AbstractBaseTestCase
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         foreach ($users as $userIndex => $user) {

@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Services\Team\InviteService;
-use App\Tests\Factory\UserAccountPlanFactory;
+use App\Tests\Services\UserAccountPlanFactory;
 
 /**
  * @group Controller/TeamInviteController
@@ -66,7 +66,7 @@ class TeamInviteControllerUserListActionTest extends AbstractTeamInviteControlle
         $user = $this->users['private'];
         $teamInviteService->get($this->users['leader'], $user);
 
-        $userAccountPlanFactory = new UserAccountPlanFactory(self::$container);
+        $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
         $userAccountPlanFactory->create($user, 'agency');
 
         $response = $this->teamInviteController->userListAction($user);

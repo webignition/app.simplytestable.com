@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\UserAccountPlanSubscription;
 
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserAccountPlanSubscriptionController
@@ -18,7 +18,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
             StripeApiFixtureFactory::load('customer-hascard-nosub'),
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => 'personal',
@@ -51,7 +51,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
             402
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',
@@ -84,7 +84,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
             StripeApiFixtureFactory::load('customer-hascard-nosub'),
         ]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $user = $userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',

@@ -7,7 +7,7 @@ use App\Services\Team\InviteService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserSummaryFactory;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class UserSummaryFactoryTest extends AbstractBaseTestCase
@@ -31,7 +31,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
 
         $this->userSummaryFactory = self::$container->get(UserSummaryFactory::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->users['basic-not-in-team'] = $userFactory->createAndActivateUser([

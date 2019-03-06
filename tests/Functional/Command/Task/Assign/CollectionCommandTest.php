@@ -2,14 +2,14 @@
 
 namespace App\Tests\Functional\Command\Task\Assign;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Command\Task\Assign\CollectionCommand;
 use App\Entity\Task\Task;
 use App\Services\HttpClientService;
 use App\Services\Resque\QueueService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\SitemapFixtureFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -40,9 +40,8 @@ class CollectionCommandTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->command = self::$container->get(CollectionCommand::class);
-
-        $this->workerFactory = new WorkerFactory(self::$container);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->workerFactory = self::$container->get(WorkerFactory::class);
+        $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
     public function testRunNoTaskIds()

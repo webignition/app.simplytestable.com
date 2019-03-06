@@ -10,8 +10,8 @@ use App\Services\JobUserAccountPlanEnforcementService;
 use App\Services\Request\Factory\Task\CompleteRequestFactory;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\TaskControllerCompleteActionRequestFactory;
+use App\Tests\Services\JobFactory;
 use webignition\InternetMediaType\InternetMediaType;
 
 /**
@@ -31,7 +31,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControll
     {
         parent::setUp();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $this->job = $jobFactory->createResolveAndPrepare([
             'siteRootUrl' => 'http://example.com/',
             'type' => JobTypeService::FULL_SITE_NAME,

@@ -6,8 +6,8 @@ use App\Entity\Job\Job;
 use App\Model\JobList\Configuration;
 use App\Services\JobListService;
 use App\Services\JobTypeService;
-use App\Tests\Fixtures\Loader\JobLoader;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\JobLoader;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class JobListServiceTest extends AbstractBaseTestCase
@@ -36,7 +36,7 @@ class JobListServiceTest extends AbstractBaseTestCase
 
         $this->jobListService = self::$container->get(JobListService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $this->defaultConfigurationValues = [
@@ -44,7 +44,7 @@ class JobListServiceTest extends AbstractBaseTestCase
         ];
 
 
-        $jobLoader = new JobLoader(self::$container);
+        $jobLoader = self::$container->get(JobLoader::class);
         $this->jobs = $jobLoader->load('jobs.yml', $users);
     }
 

@@ -10,11 +10,11 @@ use App\Repository\TaskRepository;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\TaskFactory;
-use App\Tests\Factory\TimePeriodFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\TaskFactory;
+use App\Tests\Services\TimePeriodFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TaskServiceTest extends AbstractBaseTestCase
@@ -43,7 +43,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->taskService = self::$container->get(TaskService::class);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $this->job = $jobFactory->createResolveAndPrepare();
 
         $this->task = $this->job->getTasks()->get(0);
@@ -98,7 +98,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCancelSuccess($taskValues)
     {
         if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-            $workerFactory = new WorkerFactory(self::$container);
+            $workerFactory = self::$container->get(WorkerFactory::class);
             $worker = $workerFactory->create([
                 WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
             ]);
@@ -107,13 +107,13 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
-            $timePeriodFactory = new TimePeriodFactory(self::$container);
+            $timePeriodFactory = self::$container->get(TimePeriodFactory::class);
             $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
 
             $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
         }
 
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
         $taskFactory->update($this->task, $taskValues);
 
         $this->taskService->cancel($this->task);
@@ -278,7 +278,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create();
         $remoteId = 1;
 
@@ -337,7 +337,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         if (!empty($taskValues)) {
             if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-                $workerFactory = new WorkerFactory(self::$container);
+                $workerFactory = self::$container->get(WorkerFactory::class);
                 $worker = $workerFactory->create([
                     WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
                 ]);
@@ -346,13 +346,13 @@ class TaskServiceTest extends AbstractBaseTestCase
             }
 
             if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
-                $timePeriodFactory = new TimePeriodFactory(self::$container);
+                $timePeriodFactory = self::$container->get(TimePeriodFactory::class);
                 $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
 
                 $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
             }
 
-            $taskFactory = new TaskFactory(self::$container);
+            $taskFactory = self::$container->get(TaskFactory::class);
             $taskFactory->update($this->task, $taskValues);
         }
 
@@ -437,8 +437,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     ) {
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $stateService = self::$container->get(StateService::class);
-
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
 
         /* @var Task[] $tasks */
         $tasks = $this->job->getTasks()->toArray();

@@ -2,22 +2,14 @@
 
 namespace App\Tests\Functional\EventListener\Stripe;
 
-use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\Response;
-use Mockery\Mock;
 use App\Event\Stripe\DispatchableEvent;
-use App\EventListener\Stripe\CustomerSubscriptionCreatedListener;
-use App\Services\StripeEventService;
-use App\Services\StripeService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\StripeApiFixtureFactory;
-use App\Tests\Factory\StripeEventFactory;
-use App\Tests\Factory\StripeEventFixtureFactory;
-use App\Tests\Factory\UserFactory;
-use App\Entity\Stripe\Event as StripeEvent;
+use App\Tests\Services\StripeEventFactory;
+use App\Tests\Services\UserFactory;
 
 class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
 {
@@ -28,7 +20,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = self::$container->get(UserService::class);
 
         $this->httpClientService->appendFixtures([
-            ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+            ConnectExceptionFactory::create(28, 'Operation timed out'),
         ]);
 
         $user = $userService->getPublicUser();
@@ -36,7 +28,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
 
         $stripeEvent = $stripeEventFactory->createEvents([
             'customer.subscription.created.active' => [
@@ -73,14 +65,14 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
 
         $this->httpClientService->appendFixtures([new Response()]);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
         $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(

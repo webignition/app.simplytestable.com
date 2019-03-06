@@ -5,8 +5,8 @@ namespace App\Tests\Functional\Entity;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Account\Plan\Plan;
 use App\Entity\User;
-use App\Tests\Factory\PlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\PlanFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\UserPostActivationProperties;
 
@@ -36,10 +36,10 @@ class UserPostActivationPropertiesTest extends AbstractBaseTestCase
 
         $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $this->user = $userFactory->create();
 
-        $planFactory = new PlanFactory(self::$container);
+        $planFactory = self::$container->get(PlanFactory::class);
         $this->plan = $planFactory->create();
     }
 

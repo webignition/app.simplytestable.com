@@ -9,9 +9,10 @@ use App\Resque\Job\Task\AssignCollectionJob;
 use App\Tests\Factory\MockFactory;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\StateService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
-use App\Tests\Factory\WorkerFactory;
+
+use App\Tests\Services\UserFactory;
+use App\Tests\Services\WorkerFactory;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\Request;
 use App\Services\Task\QueueService as TaskQueueService;
 use App\Tests\Functional\Controller\AbstractControllerTest;
@@ -55,7 +56,7 @@ class TasksControllerTest extends AbstractControllerTest
      */
     public function testRequestActionInvalidWorkerHostname($workerHostnames, $workerHostname)
     {
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
 
         foreach ($workerHostnames as $hostname) {
             $workerFactory->create([
@@ -107,7 +108,7 @@ class TasksControllerTest extends AbstractControllerTest
      */
     public function testRequestActionWorkerInInvalidState($stateName)
     {
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create([
             WorkerFactory::KEY_STATE => $stateName,
         ]);
@@ -154,7 +155,7 @@ class TasksControllerTest extends AbstractControllerTest
 
     public function testRequestActionWorkerInInvalidToken()
     {
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create([
             WorkerFactory::KEY_TOKEN => 'foo',
         ]);
@@ -182,7 +183,7 @@ class TasksControllerTest extends AbstractControllerTest
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create();
 
         $request = new Request(
@@ -205,7 +206,7 @@ class TasksControllerTest extends AbstractControllerTest
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create();
 
         $request = new Request(
@@ -225,13 +226,13 @@ class TasksControllerTest extends AbstractControllerTest
 
     public function testRequestActionTasksAlreadyRequested()
     {
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create();
 
         $job = $jobFactory->createResolveAndPrepare();
@@ -282,8 +283,8 @@ class TasksControllerTest extends AbstractControllerTest
      */
     public function testRequestActionTasksRequested($jobValuesCollection, $limit)
     {
-        $userFactory = new UserFactory(self::$container);
-        $jobFactory = new JobFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
+        $jobFactory = self::$container->get(JobFactory::class);
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
         $taskRepository = self::$container->get(TaskRepository::class);
 
@@ -300,7 +301,7 @@ class TasksControllerTest extends AbstractControllerTest
             $tasks = array_merge($tasks, $job->getTasks()->toArray());
         }
 
-        $workerFactory = new WorkerFactory(self::$container);
+        $workerFactory = self::$container->get(WorkerFactory::class);
         $worker = $workerFactory->create();
 
         $request = new Request(

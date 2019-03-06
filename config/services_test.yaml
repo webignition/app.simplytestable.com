@@ -21,3 +21,51 @@ services:
         - '%env(POSTMARK_API_KEY)%'
     calls:
       - [setClient, ['@GuzzleHttp\Client']]
+
+  App\Tests\Services\ConstraintFactory:
+    public: true
+
+  App\Tests\Services\JobAmmendmentFactory:
+    public: true
+
+  App\Tests\Services\JobTaskConfigurationFactory:
+    public: true
+
+  App\Tests\Services\JobConfigurationFactory:
+    public: true
+
+  App\Tests\Services\JobFactory:
+    public: true
+
+  App\Tests\Services\UserAccountPlanFactory:
+    public: true
+
+  App\Tests\Services\UserFactory:
+    public: true
+
+  App\Tests\Services\JobLoader:
+    public: true
+
+  App\Tests\Services\StripeEventFactory:
+    public: true
+
+  App\Tests\Services\PlanFactory:
+    public: true
+
+  App\Tests\Services\ScheduledJobFactory:
+    public: true
+
+  App\Tests\Services\TaskFactory:
+    public: true
+
+  App\Tests\Services\WorkerFactory:
+    public: true
+
+  App\Tests\Services\TimePeriodFactory:
+    public: true
+
+  App\Tests\Services\TaskOutputFactory:
+    public: true
+
+  App\Tests\Services\WorkerActivationRequestFactory:
+    public: true

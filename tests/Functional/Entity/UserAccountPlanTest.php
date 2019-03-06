@@ -6,8 +6,8 @@ use App\Repository\UserAccountPlanRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Account\Plan\Plan;
 use App\Services\UserAccountPlanService;
-use App\Tests\Factory\PlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\PlanFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\UserAccountPlan;
 
@@ -37,9 +37,9 @@ class UserAccountPlanTest extends AbstractBaseTestCase
 
         $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $this->userFactory = new UserFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
 
-        $planFactory = new PlanFactory(self::$container);
+        $planFactory = self::$container->get(PlanFactory::class);
         $this->plan = $planFactory->create();
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Command\Job;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Command\Job\PrepareCommand;
 use App\Entity\Job\Job;
@@ -9,9 +10,8 @@ use App\Services\CrawlJobContainerService;
 use App\Services\HttpClientService;
 use App\Services\Resque\QueueService;
 use App\Tests\Factory\HttpFixtureFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Factory\SitemapFixtureFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -36,7 +36,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
 
         $this->prepareCommand = self::$container->get(PrepareCommand::class);
     }
@@ -79,7 +79,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $resqueQueueService->getResque()->getQueue('tasks-notify')->clear();
         $resqueQueueService->getResque()->getQueue('task-assign-collection')->clear();
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $jobValues = array_merge($jobValues, [
             JobFactory::KEY_USER => $users[$user],

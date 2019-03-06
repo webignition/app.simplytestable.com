@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\Task\Output;
 use App\Entity\Task\Task;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TaskOutputFactory
 {
@@ -13,17 +13,11 @@ class TaskOutputFactory
     const KEY_WARNING_COUNT = 'warning-count';
     const KEY_HASH = 'hash';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $entityManager;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->container = $container;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -34,8 +28,6 @@ class TaskOutputFactory
      */
     public function create(Task $task, $taskOutputValues)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $output = new Output();
 
         if (isset($taskOutputValues[self::KEY_OUTPUT])) {
@@ -58,8 +50,8 @@ class TaskOutputFactory
 
         $task->setOutput($output);
 
-        $entityManager->persist($task);
-        $entityManager->flush($task);
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
 
         return $output;
     }

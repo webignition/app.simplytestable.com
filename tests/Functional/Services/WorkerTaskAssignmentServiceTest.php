@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Tests\Services;
+namespace App\Tests\Functional\Services;
 
+use App\Tests\Services\JobFactory;
+use App\Tests\Services\TestHttpClientService;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,8 +12,7 @@ use App\Services\HttpClientService;
 use App\Services\TaskTypeService;
 use App\Services\WorkerTaskAssignmentService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
@@ -34,8 +35,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->workerTaskAssignmentService = self::$container->get(WorkerTaskAssignmentService::class);
-
-        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->workerFactory = self::$container->get(WorkerFactory::class);
     }
 
     public function testAssignCollectionNoWorkers()
@@ -79,7 +79,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         /* @var TestHttpClientService $httpClientService */
         $httpClientService = self::$container->get(HttpClientService::class);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::HTML_VALIDATION_TYPE,
@@ -151,7 +151,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
             WorkerTaskAssignmentService::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;
 
         $serviceUnavailableResponse = new Response(503);
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         return [
             'single task, single worker, success' => [

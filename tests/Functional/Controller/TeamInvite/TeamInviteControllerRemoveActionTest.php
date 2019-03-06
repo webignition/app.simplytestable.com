@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Services\Team\InviteService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/TeamInviteController

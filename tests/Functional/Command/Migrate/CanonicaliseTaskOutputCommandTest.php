@@ -4,9 +4,9 @@ namespace App\Tests\Functional\Command\Migrate;
 
 use App\Command\Migrate\CanonicaliseTaskOutputCommand;
 use App\Entity\Task\Task;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -31,8 +31,8 @@ class CanonicaliseTaskOutputCommandTest extends AbstractBaseTestCase
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $jobFactory = new JobFactory(self::$container);
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $job = $jobFactory->createResolveAndPrepare();
 
@@ -69,8 +69,8 @@ class CanonicaliseTaskOutputCommandTest extends AbstractBaseTestCase
         $args,
         $expectedTaskOutputIndicesInUse
     ) {
-        $jobFactory = new JobFactory(self::$container);
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

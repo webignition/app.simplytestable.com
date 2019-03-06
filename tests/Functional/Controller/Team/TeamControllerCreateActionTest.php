@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller\Team;
 
 use App\Services\Team\InviteService;
 use App\Services\Team\Service;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -40,7 +40,7 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
      */
     public function testCreateActionClientFailure($userEmail, $postData, $expectedResponseError)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);

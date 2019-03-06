@@ -7,7 +7,7 @@ use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\TaskTypeService;
 use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use App\Services\UserService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
 {
@@ -18,7 +18,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
      */
     public function testRemoveAllUserIsInTeam($userName)
     {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
         $user = $users[$userName];

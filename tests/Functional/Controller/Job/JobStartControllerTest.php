@@ -12,8 +12,8 @@ use App\Services\JobTypeService;
 use App\Services\JobUserAccountPlanEnforcementService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use App\Tests\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\Request;
 use App\Tests\Functional\Controller\AbstractControllerTest;
 
@@ -72,7 +72,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $router = self::$container->get('router');
         $siteRootUrl = 'http://example.com/';
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
             JobFactory::KEY_STATE => Job::STATE_COMPLETED,
@@ -177,7 +177,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
         ]);
@@ -249,7 +249,7 @@ class JobStartControllerTest extends AbstractControllerTest
     public function testRetestAction(array $jobValues)
     {
         $userService = self::$container->get(UserService::class);
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         $jobValues[JobFactory::KEY_STATE] = Job::STATE_COMPLETED;
 

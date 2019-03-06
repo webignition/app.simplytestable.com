@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
-use App\Tests\Factory\JobFactory;
+use App\Tests\Services\JobFactory;
 
 trait GetThroughputSinceDataProvider
 {

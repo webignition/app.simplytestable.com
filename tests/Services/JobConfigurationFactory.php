@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\Job\Configuration;
 use App\Services\JobTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class JobConfigurationFactory
 {
@@ -21,30 +21,29 @@ class JobConfigurationFactory
     const KEY_PARAMETERS = 'parameters';
     const KEY_TASK_CONFIGURATIONS = 'task-configurations';
 
-    /**
-     * @var array
-     */
     private $defaultJobConfigurationValues = [
         self::KEY_LABEL => self::DEFAULT_LABEL,
         self::KEY_WEBSITE_URL => self::DEFAULT_WEBSITE_URL,
         self::KEY_TYPE => self::DEFAULT_TYPE,
-
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $websiteService;
+    private $jobTypeService;
+    private $entityManager;
+    private $jobTaskConfigurationFactory;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-
-        $userService = $container->get(UserService::class);
+    public function __construct(
+        UserService $userService,
+        WebSiteService $webSiteService,
+        JobTypeService $jobTypeService,
+        EntityManagerInterface $entityManager,
+        JobTaskConfigurationFactory $jobTaskConfigurationFactory
+    ) {
         $this->defaultJobConfigurationValues[self::KEY_USER] = $userService->getPublicUser();
+        $this->websiteService = $webSiteService;
+        $this->jobTypeService = $jobTypeService;
+        $this->entityManager = $entityManager;
+        $this->jobTaskConfigurationFactory = $jobTaskConfigurationFactory;
     }
 
     /**
@@ -60,11 +59,8 @@ class JobConfigurationFactory
             }
         }
 
-        $websiteService = $this->container->get(WebSiteService::class);
-        $jobTypeService = $this->container->get(JobTypeService::class);
-
-        $website = $websiteService->get($jobConfigurationValues[self::KEY_WEBSITE_URL]);
-        $jobType = $jobTypeService->get($jobConfigurationValues[self::KEY_TYPE]);
+        $website = $this->websiteService->get($jobConfigurationValues[self::KEY_WEBSITE_URL]);
+        $jobType = $this->jobTypeService->get($jobConfigurationValues[self::KEY_TYPE]);
 
         $jobConfiguration = new Configuration();
         $jobConfiguration->setLabel($jobConfigurationValues[self::KEY_LABEL]);
@@ -76,28 +72,25 @@ class JobConfigurationFactory
             $jobConfiguration->setParameters(json_encode($jobConfigurationValues[self::KEY_PARAMETERS]));
         }
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $entityManager->persist($jobConfiguration);
-        $entityManager->flush($jobConfiguration);
+        $this->entityManager->persist($jobConfiguration);
+        $this->entityManager->flush();
 
         if (isset($jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS])) {
-            $jobTaskConfigurationFactory = new JobTaskConfigurationFactory($this->container);
-
             $taskConfigurationValuesCollection = $jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS];
 
             foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
-                $taskConfiguration = $jobTaskConfigurationFactory->create($taskConfigurationValues);
+                $taskConfiguration = $this->jobTaskConfigurationFactory->create($taskConfigurationValues);
                 $taskConfiguration->setJobConfiguration($jobConfiguration);
 
-                $entityManager->persist($taskConfiguration);
-                $entityManager->flush($taskConfiguration);
+                $this->entityManager->persist($taskConfiguration);
+                $this->entityManager->flush();
 
                 $jobConfiguration->addTaskConfiguration($taskConfiguration);
             }
         }
 
-        $entityManager->persist($jobConfiguration);
-        $entityManager->flush($jobConfiguration);
+        $this->entityManager->persist($jobConfiguration);
+        $this->entityManager->flush();
 
         return $jobConfiguration;
     }

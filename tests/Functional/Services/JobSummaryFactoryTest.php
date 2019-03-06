@@ -6,9 +6,9 @@ use App\Services\CrawlJobContainerService;
 use App\Services\JobService;
 use App\Services\JobSummaryFactory;
 use App\Services\UserAccountPlanService;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 
 class JobSummaryFactoryTest extends AbstractBaseTestCase
 {
@@ -51,9 +51,9 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->jobSummaryFactory = self::$container->get(JobSummaryFactory::class);
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
 
-        $this->userFactory = new UserFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 
     /**

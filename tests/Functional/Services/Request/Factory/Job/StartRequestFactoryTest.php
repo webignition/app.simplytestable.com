@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Services\Request\Factory\Job;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Services\JobTypeService;
 use App\Services\Request\Factory\Job\StartRequestFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -31,7 +31,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
         $expectedTaskConfigurationCollection,
         $expectedJobParameters
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);

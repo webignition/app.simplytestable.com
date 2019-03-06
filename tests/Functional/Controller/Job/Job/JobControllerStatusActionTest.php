@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Job\Job;
 
-use App\Tests\Factory\JobFactory;
+use App\Tests\Services\JobFactory;
 
 /**
  * @group Controller/Job/JobController

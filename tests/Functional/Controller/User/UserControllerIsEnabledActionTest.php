@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\User;
 
 use App\Services\UserService;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 
 /**
  * @group Controller/UserController
@@ -14,7 +14,7 @@ class UserControllerIsEnabledActionTest extends AbstractUserControllerTest
     {
         $userService = self::$container->get(UserService::class);
 
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => null,
         ]);

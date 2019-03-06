@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Command\Job;
 
+use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Command\Job\ResolveWebsiteCommand;
 use App\Entity\Job\Job;
@@ -11,7 +12,6 @@ use App\Services\JobTypeService;
 use App\Services\Resque\QueueService;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -41,7 +41,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = new JobFactory(self::$container);
+        $this->jobFactory = self::$container->get(JobFactory::class);
 
         $this->command = self::$container->get(ResolveWebsiteCommand::class);
         $this->httpClientService = self::$container->get(HttpClientService::class);
@@ -105,7 +105,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     {
         $job = $this->jobFactory->create();
 
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         $this->httpClientService->appendFixtures([
             $curl28ConnectException,

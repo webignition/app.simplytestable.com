@@ -6,7 +6,7 @@ use App\Entity\Team\Team;
 use App\Services\Team\Service as TeamService;
 use App\Exception\Services\Team\Exception as TeamServiceException;
 use App\Services\Team\Service;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class ServiceTest extends AbstractBaseTestCase
@@ -29,7 +29,7 @@ class ServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->teamService = self::$container->get(Service::class);
-        $this->userFactory = new UserFactory(self::$container);
+        $this->userFactory = self::$container->get(UserFactory::class);
     }
 
     /**

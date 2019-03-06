@@ -6,7 +6,7 @@ use phpmock\mockery\PHPMockery;
 use App\Command\Stripe\Event\UpdateDataCommand;
 use App\Entity\Stripe\Event;
 use App\Services\UserService;
-use App\Tests\Factory\StripeEventFactory;
+use App\Tests\Services\StripeEventFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -43,7 +43,7 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
 
         $user = $userService->getPublicUser();
 
-        $stripeEventFactory = new StripeEventFactory(self::$container);
+        $stripeEventFactory = self::$container->get(StripeEventFactory::class);
         $stripeEvent = $stripeEventFactory->createEvents([
             'customer.subscription.created.active' => [],
         ], $user);

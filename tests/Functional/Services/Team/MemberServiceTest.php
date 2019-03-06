@@ -7,7 +7,7 @@ use App\Entity\Team\Team;
 use App\Entity\User;
 use App\Services\Team\MemberService;
 use App\Services\Team\Service;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
 
@@ -31,7 +31,7 @@ class MemberServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->memberService = self::$container->get(MemberService::class);
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
 
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
     }

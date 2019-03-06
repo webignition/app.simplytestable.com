@@ -5,8 +5,8 @@ namespace App\Tests\Functional\Command\Task;
 use App\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
 use App\Entity\Task\Task;
 use App\Services\Resque\QueueService;
-use App\Tests\Factory\JobFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -39,7 +39,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
         $resqueQueueService = self::$container->get(QueueService::class);
         $resqueQueueService->getResque()->getQueue('task-cancel-collection')->clear();
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->createResolveAndPrepare($jobValues);
 
         $expectedTaskIds = [];

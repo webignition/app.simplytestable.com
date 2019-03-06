@@ -11,11 +11,11 @@ use App\Services\TaskTypeService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
-use App\Tests\Factory\ConstraintFactory;
-use App\Tests\Factory\JobFactory;
-use App\Tests\Factory\PlanFactory;
-use App\Tests\Factory\UserFactory;
+use App\Tests\Services\PlanFactory;
+use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Tests\Services\ConstraintFactory;
+use App\Tests\Services\JobFactory;
 
 class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
 {
@@ -52,14 +52,14 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $expectedIsFullSiteLimitReached,
         $expectedIsSingleUrlLimitReached
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         $websiteService = self::$container->get(WebSiteService::class);
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         foreach ($jobValuesCollection as $jobValues) {
             $jobValues[JobFactory::KEY_USER] = $user;
@@ -172,7 +172,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $removeLimit,
         $expectedIsJobUrlLimitReached
     ) {
-        $userFactory = new UserFactory(self::$container);
+        $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
@@ -239,7 +239,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
      */
     public function testGetCreditsUsedThisMonth($jobValues, $taskStateNames, $expectedCreditsUsed)
     {
-        $jobFactory = new JobFactory(self::$container);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         $userService = self::$container->get(UserService::class);
         $stateService = self::$container->get(StateService::class);
@@ -334,8 +334,8 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
      */
     public function testIsUserCreditLimitReached($taskStateNames, $planValues, $expectedIsLimitReached)
     {
-        $planFactory = new PlanFactory(self::$container);
-        $jobFactory = new JobFactory(self::$container);
+        $planFactory = self::$container->get(PlanFactory::class);
+        $jobFactory = self::$container->get(JobFactory::class);
 
         $userService = self::$container->get(UserService::class);
         $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
