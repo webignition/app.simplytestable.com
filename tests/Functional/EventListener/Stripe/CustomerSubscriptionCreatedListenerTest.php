@@ -28,7 +28,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = self::$container->get(UserService::class);
 
         $this->httpClientService->appendFixtures([
-            ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+            ConnectExceptionFactory::create(28, 'Operation timed out'),
         ]);
 
         $user = $userService->getPublicUser();

@@ -106,8 +106,8 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
      */
     public function resolveRejectionDueToCurlExceptionDataProvider()
     {
-        $curl6ConnectException = ConnectExceptionFactory::create('CURL/6 DNS failure');
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl6ConnectException = ConnectExceptionFactory::create(6, 'DNS failure');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         return [
             'curl 6' => [

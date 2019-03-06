@@ -93,7 +93,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
             ],
             'curl failure' => [
                 'httpFixtures' => [
-                    ConnectExceptionFactory::create('CURL/28 Operation timed out'),
+                    ConnectExceptionFactory::create(28, 'Operation timed out'),
                 ],
                 'expectedReturnCode' => false,
             ],

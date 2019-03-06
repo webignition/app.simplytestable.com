@@ -105,7 +105,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     {
         $job = $this->jobFactory->create();
 
-        $curl28ConnectException = ConnectExceptionFactory::create('CURL/28 Operation timed out');
+        $curl28ConnectException = ConnectExceptionFactory::create(28, 'Operation timed out');
 
         $this->httpClientService->appendFixtures([
             $curl28ConnectException,
