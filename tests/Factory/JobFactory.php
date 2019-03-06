@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Repository\JobRepository;
+use App\Tests\Services\JobAmmendmentFactory;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Mockery\Mock;
 use App\Controller\Job\JobController;
@@ -264,7 +265,7 @@ class JobFactory
         }
 
         if (isset($jobValues[self::KEY_AMMENDMENTS])) {
-            $ammendmentFactory = new JobAmmendmentFactory($this->container);
+            $ammendmentFactory = $this->container->get(JobAmmendmentFactory::class);
 
             $ammendmentValuesCollection = $jobValues[self::KEY_AMMENDMENTS];
 
@@ -393,7 +394,6 @@ class JobFactory
      */
     public function getFromResponse(Response $response)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $this->container->get(JobRepository::class);
 
         $locationHeader = $response->headers->get('location');
