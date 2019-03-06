@@ -1,26 +1,20 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\TimePeriod;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TimePeriodFactory
 {
     const KEY_START_DATE_TIME = 'start-date-time';
     const KEY_END_DATE_TIME = 'end-date-time';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $entityManager;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->container = $container;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -30,8 +24,6 @@ class TimePeriodFactory
      */
     public function create($timePeriodValues)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $timePeriod = new TimePeriod();
 
         $timePeriod->setStartDateTime($timePeriodValues[self::KEY_START_DATE_TIME]);
@@ -40,8 +32,8 @@ class TimePeriodFactory
             $timePeriod->setEndDateTime($timePeriodValues[self::KEY_END_DATE_TIME]);
         }
 
-        $entityManager->persist($timePeriod);
-        $entityManager->flush($timePeriod);
+        $this->entityManager->persist($timePeriod);
+        $this->entityManager->flush();
 
         return $timePeriod;
     }

@@ -11,7 +11,7 @@ use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\TaskFactory;
-use App\Tests\Factory\TimePeriodFactory;
+use App\Tests\Services\TimePeriodFactory;
 use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -107,7 +107,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
-            $timePeriodFactory = new TimePeriodFactory(self::$container);
+            $timePeriodFactory = self::$container->get(TimePeriodFactory::class);
             $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
 
             $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
@@ -346,7 +346,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             }
 
             if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
-                $timePeriodFactory = new TimePeriodFactory(self::$container);
+                $timePeriodFactory = self::$container->get(TimePeriodFactory::class);
                 $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
 
                 $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
