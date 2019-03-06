@@ -4,9 +4,7 @@
 namespace App\Tests\Functional\Controller\Job\Job;
 
 use App\Tests\Services\JobFactory;
-use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * @group Controller/Job/JobController
