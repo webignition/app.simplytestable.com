@@ -12,7 +12,7 @@ use App\Services\HttpClientService;
 use App\Services\TaskTypeService;
 use App\Services\WorkerTaskAssignmentService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\WorkerFactory;
+use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
@@ -35,8 +35,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->workerTaskAssignmentService = self::$container->get(WorkerTaskAssignmentService::class);
-
-        $this->workerFactory = new WorkerFactory(self::$container);
+        $this->workerFactory = self::$container->get(WorkerFactory::class);
     }
 
     public function testAssignCollectionNoWorkers()
