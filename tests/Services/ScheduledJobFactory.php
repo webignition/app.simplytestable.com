@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\ScheduledJob;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ScheduledJobFactory
 {
@@ -13,17 +12,11 @@ class ScheduledJobFactory
     const KEY_CRON_MODIFIER = 'cron-modifier';
     const KEY_IS_RECURRING = 'is-recurring';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $scheduledJobService;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ScheduledJobService $scheduledJobService)
     {
-        $this->container = $container;
+        $this->scheduledJobService = $scheduledJobService;
     }
 
     /**
@@ -33,8 +26,6 @@ class ScheduledJobFactory
      */
     public function create($scheduledJobValues = [])
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-
         if (!array_key_exists(self::KEY_SCHEDULE, $scheduledJobValues)) {
             $scheduledJobValues[self::KEY_SCHEDULE] = '* * * * *';
         }
@@ -47,7 +38,7 @@ class ScheduledJobFactory
             $scheduledJobValues[self::KEY_IS_RECURRING] = true;
         }
 
-        $scheduledJob = $scheduledJobService->create(
+        $scheduledJob = $this->scheduledJobService->create(
             $scheduledJobValues[self::KEY_JOB_CONFIGURATION],
             $scheduledJobValues[self::KEY_SCHEDULE],
             $scheduledJobValues[self::KEY_CRON_MODIFIER],
