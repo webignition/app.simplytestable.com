@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
 use App\Entity\Task\Task;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\JobFactory;
 
 trait GetOutputCollectionByJobAndStateDataProvider

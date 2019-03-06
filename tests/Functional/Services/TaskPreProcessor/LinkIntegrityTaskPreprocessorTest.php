@@ -13,7 +13,7 @@ use App\Services\TaskTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\HtmlDocumentFactory;
 use App\Tests\Services\TaskFactory;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\TestHttpClientService;
 
@@ -55,7 +55,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
         $this->jobFactory = self::$container->get(JobFactory::class);
         $this->taskFactory = self::$container->get(TaskFactory::class);
-        $this->taskOutputFactory = new TaskOutputFactory(self::$container);
+        $this->taskOutputFactory = self::$container->get(TaskOutputFactory::class);
         $this->httpClientService = self::$container->get(HttpClientService::class);
     }
 

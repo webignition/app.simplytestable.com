@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Services;
 use App\Entity\Task\Task;
 use App\Repository\TaskOutputRepository;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -59,7 +59,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
     ) {
         $taskTypeService = self::$container->get(TaskTypeService::class);
 
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -190,7 +190,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
     ) {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -302,7 +302,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
     ) {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -448,7 +448,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $limit,
         $expectedHashes
     ) {
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
@@ -582,7 +582,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $hash,
         $expectedTaskOutputIndices
     ) {
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

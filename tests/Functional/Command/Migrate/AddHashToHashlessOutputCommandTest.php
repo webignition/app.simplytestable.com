@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Command\Migrate;
 
 use App\Command\Migrate\AddHashToHashlessOutputCommand;
 use App\Entity\Task\Task;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -38,7 +38,7 @@ class AddHashToHashlessOutputCommandTest extends AbstractBaseTestCase
     public function testRun($jobValuesCollection, $taskOutputValuesCollection, $args, $expectedHashedTaskOutputIndices)
     {
         $jobFactory = self::$container->get(JobFactory::class);
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Command\Reporting;
 use App\Command\Reporting\GetTopErrorsCommand;
 use App\Entity\Task\Task;
 use App\Tests\Factory\HtmlValidatorOutputFactory;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -75,7 +75,7 @@ class GetTopErrorsCommandTest extends AbstractBaseTestCase
         $expectedReportData
     ) {
         $jobFactory = self::$container->get(JobFactory::class);
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 

@@ -9,7 +9,7 @@ use App\Services\CrawlJobContainerService;
 use App\Services\StateService;
 use App\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -100,7 +100,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $task->setState($stateService->get($taskStateName));
 
         if (!empty($taskOutputValues)) {
-            $taskOutputFactory = new TaskOutputFactory(self::$container);
+            $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
             $taskOutputFactory->create($task, $taskOutputValues);
         }
 
@@ -148,7 +148,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $taskTypeService = self::$container->get(TaskTypeService::class);
 
         $userFactory = self::$container->get(UserFactory::class);
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $user = $userFactory->createAndActivateUser();
         $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
@@ -292,7 +292,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $taskTypeService = self::$container->get(TaskTypeService::class);
 
         $userFactory = self::$container->get(UserFactory::class);
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $user = $userFactory->createAndActivateUser();
         $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();

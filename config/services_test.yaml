@@ -64,5 +64,8 @@ services:
   App\Tests\Services\TimePeriodFactory:
     public: true
 
+  App\Tests\Services\TaskOutputFactory:
+    public: true
+
   App\Tests\Services\WorkerActivationRequestFactory:
     public: true

@@ -11,7 +11,7 @@ use App\Services\CrawlJobContainerService;
 use App\Services\CrawlJobUrlCollector;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\TaskOutputFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -77,7 +77,7 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
         $expectedDiscoveredUrls
     ) {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $taskOutputFactory = new TaskOutputFactory(self::$container);
+        $taskOutputFactory = self::$container->get(TaskOutputFactory::class);
 
         $initialCrawlJobTask = $this->crawlJob->getTasks()->first();
 
