@@ -46,6 +46,9 @@ services:
   App\Tests\Services\JobLoader:
     public: true
 
+  App\Tests\Services\StripeEventFactory:
+    public: true
+
   App\Tests\Services\PlanFactory:
     public: true
 
