@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Job;
 
 use App\Entity\Team\Member;
 use App\Entity\Team\Team;
@@ -9,8 +9,9 @@ use App\Repository\JobRepository;
 use App\Repository\TeamMemberRepository;
 use App\Repository\TeamRepository;
 use App\Services\Team\Service;
+use App\Services\UserService;
 
-class JobAuthorisationService
+class AuthorisationService
 {
     private $publicUser;
     private $jobRepository;

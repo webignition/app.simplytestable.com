@@ -70,5 +70,5 @@ services:
   App\Tests\Services\WorkerActivationRequestFactory:
     public: true
 
-  App\Services\JobAuthorisationService:
+  App\Services\Job\AuthorisationService:
     public: true

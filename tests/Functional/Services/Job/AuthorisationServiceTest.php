@@ -1,19 +1,19 @@
 <?php
 /** @noinspection PhpDocSignatureInspection */
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Services\Job;
 
-use App\Services\JobAuthorisationService;
+use App\Services\Job\AuthorisationService;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use App\Tests\Services\UserFactory;
 
-class JobAuthorisationServiceTest extends AbstractBaseTestCase
+class AuthorisationServiceTest extends AbstractBaseTestCase
 {
     /**
-     * @var JobAuthorisationService
+     * @var AuthorisationService
      */
-    private $jobAuthorisationService;
+    private $authorisationService;
 
     /**
      * @var JobFactory
@@ -32,7 +32,7 @@ class JobAuthorisationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobAuthorisationService = self::$container->get(JobAuthorisationService::class);
+        $this->authorisationService = self::$container->get(AuthorisationService::class);
         $this->jobFactory = self::$container->get(JobFactory::class);
         $this->userFactory = self::$container->get(UserFactory::class);
     }
@@ -53,7 +53,7 @@ class JobAuthorisationServiceTest extends AbstractBaseTestCase
         $job = $this->jobFactory->create($jobValues);
         $jobId = $job->getId();
 
-        $this->assertEquals($expectedIsAuthorised, $this->jobAuthorisationService->isAuthorised($user, $jobId));
+        $this->assertEquals($expectedIsAuthorised, $this->authorisationService->isAuthorised($user, $jobId));
     }
 
     public function isAuthorisedDataProvider(): array
