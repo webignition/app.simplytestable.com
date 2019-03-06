@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\Task\Task;
 use App\Entity\TimePeriod;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TaskFactory
 {
@@ -17,17 +17,11 @@ class TaskFactory
     const KEY_URL = 'url';
     const KEY_REMOTE_ID = 'remote-id';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $entityManager;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->container = $container;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -68,10 +62,8 @@ class TaskFactory
             $task->setUrl($taskValues[self::KEY_URL]);
         }
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $entityManager->persist($task);
-        $entityManager->flush();
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
     }
 
     /**
@@ -80,8 +72,6 @@ class TaskFactory
      */
     public function setEndDateTime(Task $task, \DateTime $endDateTime)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $timePeriod = $task->getTimePeriod();
 
         if (empty($timePeriod)) {
@@ -92,17 +82,17 @@ class TaskFactory
 
             $timePeriod->setStartDateTime($startDateTime);
 
-            $entityManager->persist($timePeriod);
-            $entityManager->flush($timePeriod);
+            $this->entityManager->persist($timePeriod);
+            $this->entityManager->flush();
 
             $task->setTimePeriod($timePeriod);
         }
 
         $timePeriod->setEndDateTime($endDateTime);
-        $entityManager->persist($timePeriod);
-        $entityManager->flush($timePeriod);
+        $this->entityManager->persist($timePeriod);
+        $this->entityManager->flush();
 
-        $entityManager->persist($task);
-        $entityManager->flush($task);
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
     }
 }
