@@ -10,6 +10,7 @@ use App\Repository\TeamMemberRepository;
 use App\Repository\TeamRepository;
 use App\Services\Team\Service;
 use App\Services\UserService;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AuthorisationService
 {
@@ -18,26 +19,32 @@ class AuthorisationService
     private $teamMemberRepository;
     private $teamRepository;
     private $teamService;
+    private $tokenStorage;
 
     public function __construct(
         UserService $userService,
         JobRepository $jobRepository,
         TeamMemberRepository $teamMemberRepository,
         TeamRepository $teamRepository,
-        Service $teamService
+        Service $teamService,
+        TokenStorageInterface $tokenStorage
     ) {
         $this->publicUser = $userService->getPublicUser();
         $this->jobRepository = $jobRepository;
         $this->teamMemberRepository = $teamMemberRepository;
         $this->teamRepository = $teamRepository;
         $this->teamService = $teamService;
+        $this->tokenStorage = $tokenStorage;
     }
 
-    public function isAuthorised(User $user, int $jobId): bool
+    public function isAuthorised(int $jobId): bool
     {
         if ($this->jobRepository->isPublic($jobId)) {
             return true;
         }
+
+        /* @var User $user */
+        $user = $this->tokenStorage->getToken()->getUser();
 
         if ($user->equals($this->publicUser)) {
             return $this->jobRepository->isOwnedByUser($user, $jobId);

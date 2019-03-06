@@ -7,16 +7,12 @@ use Mockery\Mock;
 use App\Repository\JobRepository;
 use App\Services\Job\RetrievalService;
 use App\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RetrievalServiceTest extends \PHPUnit\Framework\TestCase
 {
     public function testRetrieveFailure()
     {
         $jobId = 1;
-
-        /* @var TokenStorageInterface|Mock $tokenStorage */
-        $tokenStorage = \Mockery::mock(TokenStorageInterface::class);
 
         /* @var AuthorisationService $authorisationService */
         $authorisationService = \Mockery::mock(AuthorisationService::class);
@@ -28,7 +24,7 @@ class RetrievalServiceTest extends \PHPUnit\Framework\TestCase
             ->with($jobId)
             ->andReturn(false);
 
-        $retrievalService = new RetrievalService($tokenStorage, $jobRepository, $authorisationService);
+        $retrievalService = new RetrievalService($jobRepository, $authorisationService);
 
         $this->expectException(JobRetrievalServiceException::class);
         $this->expectExceptionMessage('Job [1] not found');
