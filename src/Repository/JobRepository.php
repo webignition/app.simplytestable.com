@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use Doctrine\DBAL\Types\Type as DoctrineType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Job\Job;
@@ -168,6 +167,18 @@ class JobRepository extends ServiceEntityRepository
                 'Users' => $users,
             ]
         );
+    }
+
+    public function isPublic(int $jobId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.isPublic');
+        $queryBuilder->where('Job.id = :JobId');
+        $queryBuilder->setParameter('JobId', $jobId);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return $result[0]['isPublic'];
     }
 
     private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool

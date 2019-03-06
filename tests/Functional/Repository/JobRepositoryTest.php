@@ -11,6 +11,7 @@ use App\Services\JobService;
 use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Services\TaskService;
+use App\Services\UserService;
 use App\Services\WebSiteService;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -587,6 +588,58 @@ class JobRepositoryTest extends AbstractBaseTestCase
                     'member2',
                 ],
                 'expectedIsOwnedByUsers' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider isPublicDataProvider
+     */
+    public function testIsPublic(callable $jobCreator, bool $expectedIsPublic)
+    {
+        /* @var Job $job */
+        $job = $jobCreator();
+
+        $this->assertEquals($expectedIsPublic, $this->jobRepository->isPublic($job->getId()));
+    }
+
+    public function isPublicDataProvider(): array
+    {
+        return [
+            'public user, public job' => [
+                'jobCreator' => function () {
+                    $userService = self::$container->get(UserService::class);
+                    $jobFactory = self::$container->get(JobFactory::class);
+
+                    return $jobFactory->create([
+                        JobFactory::KEY_USER => $userService->getPublicUser(),
+                        JobFactory::KEY_SET_PUBLIC => true,
+                    ]);
+                },
+                'expectedIsPublic' => true,
+            ],
+            'private user, public job' => [
+                'jobCreator' => function () {
+                    $jobFactory = self::$container->get(JobFactory::class);
+                    $userFactory = self::$container->get(UserFactory::class);
+
+                    return $jobFactory->create([
+                        JobFactory::KEY_USER => $userFactory->createAndActivateUser(),
+                        JobFactory::KEY_SET_PUBLIC => true,
+                    ]);
+                },
+                'expectedIsPublic' => true,
+            ],
+            'private user, private job' => [
+                'jobCreator' => function () {
+                    $jobFactory = self::$container->get(JobFactory::class);
+                    $userFactory = self::$container->get(UserFactory::class);
+
+                    return $jobFactory->create([
+                        JobFactory::KEY_USER => $userFactory->createAndActivateUser(),
+                    ]);
+                },
+                'expectedIsPublic' => false,
             ],
         ];
     }
