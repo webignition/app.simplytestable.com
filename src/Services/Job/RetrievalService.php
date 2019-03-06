@@ -5,20 +5,14 @@ namespace App\Services\Job;
 use App\Entity\Job\Job;
 use App\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 use App\Repository\JobRepository;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RetrievalService
 {
     private $jobRepository;
-    private $tokenStorage;
     private $authorisationService;
 
-    public function __construct(
-        TokenStorageInterface $tokenStorage,
-        JobRepository $jobRepository,
-        AuthorisationService $authorisationService
-    ) {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(JobRepository $jobRepository, AuthorisationService $authorisationService)
+    {
         $this->jobRepository = $jobRepository;
         $this->authorisationService = $authorisationService;
     }
