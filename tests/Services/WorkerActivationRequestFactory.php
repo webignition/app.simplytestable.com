@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\Worker;
 use App\Entity\WorkerActivationRequest;
 use App\Services\WorkerActivationRequestService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class WorkerActivationRequestFactory
 {
     const KEY_HOSTNAME = 'hostname';
     const KEY_TOKEN = 'token';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $workerActivationRequestService;
+    private $entityManager;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        WorkerActivationRequestService $workerActivationRequestService,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->workerActivationRequestService = $workerActivationRequestService;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -32,16 +30,14 @@ class WorkerActivationRequestFactory
      */
     public function create($workerActivationRequestValues)
     {
-        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $workerRepository = $entityManager->getRepository(Worker::class);
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
 
         /* @var Worker $worker */
         $worker = $workerRepository->findOneBy([
             'hostname' => $workerActivationRequestValues[self::KEY_HOSTNAME],
         ]);
 
-        $workerActivationRequest = $workerActivationRequestService->create(
+        $workerActivationRequest = $this->workerActivationRequestService->create(
             $worker,
             $workerActivationRequestValues[self::KEY_TOKEN]
         );
