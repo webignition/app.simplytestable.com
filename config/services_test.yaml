@@ -60,5 +60,9 @@ services:
 
   App\Tests\Services\WorkerFactory:
     public: true
+
   App\Tests\Services\TimePeriodFactory:
+    public: true
+
+  App\Tests\Services\WorkerActivationRequestFactory:
     public: true
