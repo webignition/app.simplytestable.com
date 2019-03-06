@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Repository\TaskRepository;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\TaskFactory;
+use App\Tests\Services\TaskFactory;
 use App\Tests\Factory\TaskOutputFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -571,7 +571,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskEndDateTimeCollection[$taskIndex])) {
@@ -609,7 +609,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $tasks = $this->getTasksFromJobCollection($jobs);
         $selectedTask = $tasks[$taskIndex];
 
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskEndDateTimeCollection[$taskIndex])) {
@@ -659,7 +659,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $tasks = $this->getTasksFromJobCollection($jobs);
 
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
 
         foreach ($tasks as $taskIndex => $task) {
             if (isset($taskEndDateTimeCollection[$taskIndex])) {

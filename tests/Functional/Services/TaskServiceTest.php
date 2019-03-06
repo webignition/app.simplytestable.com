@@ -10,7 +10,7 @@ use App\Repository\TaskRepository;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\TaskFactory;
+use App\Tests\Services\TaskFactory;
 use App\Tests\Factory\TimePeriodFactory;
 use App\Tests\Factory\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -113,7 +113,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
         }
 
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
         $taskFactory->update($this->task, $taskValues);
 
         $this->taskService->cancel($this->task);
@@ -352,7 +352,7 @@ class TaskServiceTest extends AbstractBaseTestCase
                 $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
             }
 
-            $taskFactory = new TaskFactory(self::$container);
+            $taskFactory = self::$container->get(TaskFactory::class);
             $taskFactory->update($this->task, $taskValues);
         }
 
@@ -437,8 +437,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     ) {
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $stateService = self::$container->get(StateService::class);
-
-        $taskFactory = new TaskFactory(self::$container);
+        $taskFactory = self::$container->get(TaskFactory::class);
 
         /* @var Task[] $tasks */
         $tasks = $this->job->getTasks()->toArray();
