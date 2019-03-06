@@ -101,4 +101,29 @@ class AuthorisationServiceTest extends AbstractBaseTestCase
             ],
         ];
     }
+
+    public function testIsAuthorisedPublicJob()
+    {
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
+
+        $publicUserPublicJob = $this->jobFactory->create([
+            JobFactory::KEY_USER => $users['public'],
+            JobFactory::KEY_SET_PUBLIC => true,
+        ]);
+
+        $privateUserPublicJob = $this->jobFactory->create([
+            JobFactory::KEY_USER => $users['private'],
+            JobFactory::KEY_SET_PUBLIC => true,
+        ]);
+
+        $publicUserPublicJobId = $publicUserPublicJob->getId();
+        $privateUserPublicJobId = $privateUserPublicJob->getId();
+
+        $this->assertTrue($this->authorisationService->isAuthorised($users['public'], $publicUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($users['public'], $privateUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($users['private'], $publicUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($users['private'], $privateUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($users['leader'], $publicUserPublicJobId));
+        $this->assertTrue($this->authorisationService->isAuthorised($users['leader'], $privateUserPublicJobId));
+    }
 }
