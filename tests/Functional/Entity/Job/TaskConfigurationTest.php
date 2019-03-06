@@ -2,10 +2,10 @@
 
 namespace App\Tests\Functional\Entity\Job;
 
+use App\Tests\Services\JobConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\TaskConfiguration;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 
 class TaskConfigurationTest extends AbstractBaseTestCase
@@ -38,7 +38,7 @@ class TaskConfigurationTest extends AbstractBaseTestCase
     public function testPersist($taskTypeName, $options, $isEnabled, $expectedOptions, $expectedIsEnabled)
     {
         $taskTypeService = self::$container->get(TaskTypeService::class);
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
         $taskConfigurationRepository = $this->entityManager->getRepository(TaskConfiguration::class);
 
         $jobConfiguration = $jobConfigurationFactory->create();

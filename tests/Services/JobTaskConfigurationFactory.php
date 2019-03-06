@@ -1,27 +1,20 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace App\Tests\Services;
 
 use App\Entity\Job\TaskConfiguration;
 use App\Services\TaskTypeService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class JobTaskConfigurationFactory
 {
     const KEY_TYPE = 'type';
     const KEY_OPTIONS = 'options';
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $taskTypeService;
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(TaskTypeService $taskTypeService)
     {
-        $this->container = $container;
+        $this->taskTypeService = $taskTypeService;
     }
 
     /**
@@ -33,8 +26,7 @@ class JobTaskConfigurationFactory
     {
         $jobTaskConfiguration = new TaskConfiguration();
 
-        $taskTypeService = $this->container->get(TaskTypeService::class);
-        $taskType = $taskTypeService->get($jobTaskConfigurationValues[self::KEY_TYPE]);
+        $taskType = $this->taskTypeService->get($jobTaskConfigurationValues[self::KEY_TYPE]);
 
         $jobTaskConfiguration->setType($taskType);
 

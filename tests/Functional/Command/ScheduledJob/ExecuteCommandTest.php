@@ -6,9 +6,10 @@ use App\Services\JobUserAccountPlanEnforcementService;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
-use App\Tests\Factory\JobConfigurationFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Command\ScheduledJob\ExecuteCommand;
+use App\Tests\Services\JobConfigurationFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -44,8 +45,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
     public function testRunForUnroutableWebsite()
     {
         $scheduledJobService = self::$container->get(ScheduledJobService::class);
-
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_WEBSITE_URL => 'http://foo',
@@ -68,7 +68,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
         $userService = self::$container->get(UserService::class);
         $scheduledJobService = self::$container->get(ScheduledJobService::class);
         $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
 
         $user = $userService->getPublicUser();
         $userAccountPlan = $userAccountPlanService->getForUser($user);
@@ -83,7 +83,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
         $entityManager->persist($constraint);
         $entityManager->flush();
 
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
         $jobConfiguration = $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $user,
@@ -105,7 +105,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
     {
         $scheduledJobService = self::$container->get(ScheduledJobService::class);
 
-        $jobConfigurationFactory = new JobConfigurationFactory(self::$container);
+        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
 
         $jobConfiguration = $jobConfigurationFactory->create();
 
