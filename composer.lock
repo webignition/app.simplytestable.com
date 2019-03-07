@@ -5664,16 +5664,16 @@
         },
         {
             "name": "webignition/internet-media-type",
-            "version": "2.0",
+            "version": "2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/internet-media-type.git",
-                "reference": "d9fa880260a9689477f132f9b2310233ecc9b30f"
+                "reference": "cd797dfc3a43099d3caf2feee7ff8c000bb121af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/d9fa880260a9689477f132f9b2310233ecc9b30f",
-                "reference": "d9fa880260a9689477f132f9b2310233ecc9b30f",
+                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/cd797dfc3a43099d3caf2feee7ff8c000bb121af",
+                "reference": "cd797dfc3a43099d3caf2feee7ff8c000bb121af",
                 "shasum": ""
             },
             "require": {
@@ -5711,7 +5711,7 @@
                 "media type",
                 "media-type"
             ],
-            "time": "2018-10-09T10:03:45+00:00"
+            "time": "2019-02-06T18:14:07+00:00"
         },
         {
             "name": "webignition/internet-media-type-interface",
@@ -6270,16 +6270,16 @@
         },
         {
             "name": "webignition/web-page-inspector",
-            "version": "1.0",
+            "version": "1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-inspector.git",
-                "reference": "238020662cefa5631f8c972abd1b6820d0767d1f"
+                "reference": "ec72520b9aaa6bb868b2c43a5e2e0ca81c6ef0e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-inspector/zipball/238020662cefa5631f8c972abd1b6820d0767d1f",
-                "reference": "238020662cefa5631f8c972abd1b6820d0767d1f",
+                "url": "https://api.github.com/repos/webignition/web-page-inspector/zipball/ec72520b9aaa6bb868b2c43a5e2e0ca81c6ef0e8",
+                "reference": "ec72520b9aaa6bb868b2c43a5e2e0ca81c6ef0e8",
                 "shasum": ""
             },
             "require": {
@@ -6292,6 +6292,7 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1",
+                "phpstan/phpstan-mockery": "^0.10.2",
                 "phpunit/phpunit": "^7",
                 "squizlabs/php_codesniffer": "^3"
             },
@@ -6317,7 +6318,7 @@
                 "inspector",
                 "webpage"
             ],
-            "time": "2019-01-08T10:30:29+00:00"
+            "time": "2019-02-14T12:52:30+00:00"
         },
         {
             "name": "webignition/web-page-model",
