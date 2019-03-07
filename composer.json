@@ -24,16 +24,16 @@
         "guzzlehttp/guzzle": "~6",
         "sensio/framework-extra-bundle": "^5.0.0",
         "stripe/stripe-php": "5.8.0",
-        "symfony/browser-kit": "^4.1",
-        "symfony/console": "^4.1",
-        "symfony/dotenv": "^4.0",
+        "symfony/browser-kit": "^4.2",
+        "symfony/console": "^4.2",
+        "symfony/dotenv": "^4.2",
         "symfony/flex": "^1.0",
-        "symfony/framework-bundle": "^4.1",
+        "symfony/framework-bundle": "^4.2",
         "symfony/monolog-bundle": "^3.1.0",
         "symfony/polyfill-apcu": "^1.0",
-        "symfony/security-bundle": "^4.1",
-        "symfony/translation": "4.1.*",
-        "symfony/yaml": "^4.1",
+        "symfony/security-bundle": "^4.2",
+        "symfony/translation": "^4.2",
+        "symfony/yaml": "^4.2",
         "twig/twig": "^2.0",
         "webignition/guzzle-curl-exception": "~1",
         "webignition/guzzle-http-authentication-middleware": "=0.2",
@@ -108,7 +108,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "4.2.*"
+            "require": "^4.2"
         }
     }
 }
