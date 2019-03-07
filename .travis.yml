@@ -1,4 +1,3 @@
-sudo: false
 services:
   - redis-server
 
@@ -25,11 +24,8 @@ cache:
     - $HOME/.composer/cache/files
 
 before_install:
-  - composer self-update
-  - phpenv config-add travis.php.ini
+  - "mkdir -p ~/.composer"
   - cp .travis.composer.config.json ~/.composer/config.json
-  - rm phpunit.xml.dist
-  - mv phpunit.travis-ci.xml phpunit.xml.dist
   - echo 'active' > config/state/test
   - mysql -e 'CREATE DATABASE myapp_test;'
 
