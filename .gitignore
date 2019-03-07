@@ -36,3 +36,7 @@ app/config/parameters.yml
 ###< symfony/framework-bundle ###
 
 .env*local
+###> squizlabs/php_codesniffer ###
+/.phpcs-cache
+/phpcs.xml
+###< squizlabs/php_codesniffer ###
