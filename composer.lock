@@ -6636,16 +6636,16 @@
         },
         {
             "name": "wildbit/postmark-php",
-            "version": "2.5.0",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wildbit/postmark-php.git",
-                "reference": "10fbcc61216ddee5f944c3082d16a8c858a998ea"
+                "reference": "70162fe99ac0a80e599f76ae84e4b6e655081e04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wildbit/postmark-php/zipball/10fbcc61216ddee5f944c3082d16a8c858a998ea",
-                "reference": "10fbcc61216ddee5f944c3082d16a8c858a998ea",
+                "url": "https://api.github.com/repos/wildbit/postmark-php/zipball/70162fe99ac0a80e599f76ae84e4b6e655081e04",
+                "reference": "70162fe99ac0a80e599f76ae84e4b6e655081e04",
                 "shasum": ""
             },
             "require": {
@@ -6666,7 +6666,7 @@
                 "MIT"
             ],
             "description": "The officially supported client for Postmark (http://postmarkapp.com)",
-            "time": "2017-12-13T14:35:57+00:00"
+            "time": "2018-07-24T22:40:23+00:00"
         },
         {
             "name": "xrstf/ip-utils",
