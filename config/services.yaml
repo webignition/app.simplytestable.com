@@ -50,6 +50,10 @@ services:
         resource: '../vendor/webignition/resque-bundle/Command'
         tags: [console.command]
 
+    Cron\CronBundle\Command\:
+        resource: '../vendor/cron/cron-bundle/Command'
+        tags: [console.command]
+
     FOS\UserBundle\Util\TokenGeneratorInterface:
       alias: fos_user.util.token_generator
 
