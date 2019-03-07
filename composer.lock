@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e66c6e7523ddb759c736fa428e23c1bc",
+    "content-hash": "cad01e4c2463e9b481ab6f13241af400",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
