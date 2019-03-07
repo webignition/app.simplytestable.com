@@ -178,7 +178,7 @@ class JobRepository extends ServiceEntityRepository
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        return $result[0]['isPublic'];
+        return !!$result[0]['isPublic'];
     }
 
     private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool
