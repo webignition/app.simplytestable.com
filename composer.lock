@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02f5a6bccda2447d1eb42cd583aa0a6a",
+    "content-hash": "626d8908165ed332d595056daadeb133",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -138,6 +138,100 @@
             "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
             "homepage": "https://github.com/colinmollenhour/credis",
             "time": "2018-05-07T14:45:04+00:00"
+        },
+        {
+            "name": "cron/cron",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Cron/Cron.git",
+                "reference": "8d8d612f0477d277ec4d95a849985516221282ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Cron/Cron/zipball/8d8d612f0477d277ec4d95a849985516221282ac",
+                "reference": "8d8d612f0477d277ec4d95a849985516221282ac",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "symfony/process": "^2.4|^3.0|^4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dries De Peuter",
+                    "email": "dries@nousefreak.be"
+                }
+            ],
+            "description": "Cronjobs",
+            "time": "2019-03-01T22:01:35+00:00"
+        },
+        {
+            "name": "cron/cron-bundle",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Cron/Symfony-Bundle.git",
+                "reference": "38b1c4c20deae84cab36c9e376b05ac1eed41e4b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Cron/Symfony-Bundle/zipball/38b1c4c20deae84cab36c9e376b05ac1eed41e4b",
+                "reference": "38b1c4c20deae84cab36c9e376b05ac1eed41e4b",
+                "shasum": ""
+            },
+            "require": {
+                "cron/cron": "^1.0.1",
+                "doctrine/doctrine-bundle": "~1.4",
+                "doctrine/orm": "~2.4,>=2.4.5",
+                "php": ">=5.5.9",
+                "symfony/framework-bundle": "^3.4|^4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0",
+                "symfony/symfony": "^2.4|^3.0|^4.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cron\\CronBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dries De Peuter",
+                    "email": "dries@nousefreak.be"
+                }
+            ],
+            "description": "Symfony cron",
+            "time": "2018-09-10T18:37:01+00:00"
         },
         {
             "name": "doctrine/annotations",
