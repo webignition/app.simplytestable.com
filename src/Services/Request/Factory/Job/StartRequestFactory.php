@@ -23,6 +23,7 @@ class StartRequestFactory
     const PARAMETER_TEST_TYPES = 'test-types';
     const PARAMETER_TEST_TYPE_OPTIONS = 'test-type-options';
     const PARAMETER_JOB_PARAMETERS = 'parameters';
+    const PARAMETER_URL = 'url';
 
     /**
      * @var Request
@@ -116,7 +117,13 @@ class StartRequestFactory
      */
     private function getWebsiteFromRequest()
     {
-        return $this->websiteService->get($this->requestAttributes->get(self::PARAMETER_SITE_ROOT_URL));
+        $requestWebsite = $this->requestAttributes->get(self::PARAMETER_SITE_ROOT_URL);
+
+        if (empty($requestWebsite)) {
+            $requestWebsite = $this->requestPayload->get(self::PARAMETER_URL);
+        }
+
+        return $this->websiteService->get($requestWebsite);
     }
 
     /**

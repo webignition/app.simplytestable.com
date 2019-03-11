@@ -16,6 +16,7 @@ use App\Tests\Services\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Tests\Functional\Controller\AbstractControllerTest;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group Controller/Job/StartController
@@ -41,6 +42,49 @@ class JobStartControllerTest extends AbstractControllerTest
 
         $this->jobStartController = self::$container->get(StartController::class);
         $this->jobRepository = self::$container->get(JobRepository::class);
+    }
+
+    public function testStartActionShortRouteGetRequest()
+    {
+        $router = self::$container->get('router');
+
+        $requestUrl = $router->generate('job_start_start_short');
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'GET',
+            'parameters' => [
+                'url' => 'http://example.com/',
+            ],
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
+    }
+
+    public function testStartActionShortRoutePostRequest()
+    {
+        $router = self::$container->get('router');
+
+        $siteRootUrl = 'http://example.com/';
+        $requestUrl = $router->generate('job_start_start_short');
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'POST',
+            'parameters' => [
+                'url' => $siteRootUrl,
+            ],
+        ]);
+
+        $response = $this->getClientResponse();
+
+        /* @var Job $job */
+        $job = $this->jobRepository->findAll()[0];
+
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
     }
 
     public function testStartActionGetRequest()
