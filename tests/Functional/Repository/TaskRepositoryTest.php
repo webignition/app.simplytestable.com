@@ -18,7 +18,6 @@ use App\Tests\Services\JobFactory;
 class TaskRepositoryTest extends AbstractBaseTestCase
 {
     use TaskRepositoryTestDataProviders\FindUrlCountByJobDataProvider;
-    use TaskRepositoryTestDataProviders\FindUrlsByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\FindUrlsByJobAndStateDataProvider;
     use TaskRepositoryTestDataProviders\GetCountByTaskTypeAndStateDataProvider;
@@ -84,32 +83,6 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals(
             $expectedUrlCount,
             $this->taskRepository->findUrlCountByJob($job)
-        );
-    }
-
-    /**
-     * @dataProvider findUrlsByJobDataProvider
-     *
-     * @param array $jobValues
-     * @param array $prepareHttpFixtures
-     * @param array $expectedUrls
-     */
-    public function testFindUrlsByJob(
-        $jobValues,
-        $prepareHttpFixtures,
-        $expectedUrls
-    ) {
-        $fixtures = [];
-
-        if (!empty($prepareHttpFixtures)) {
-            $fixtures['prepare'] = $prepareHttpFixtures;
-        }
-
-        $job = $this->jobFactory->createResolveAndPrepare($jobValues, $fixtures);
-
-        $this->assertEquals(
-            $expectedUrls,
-            $this->taskRepository->findUrlsByJob($job)
         );
     }
 

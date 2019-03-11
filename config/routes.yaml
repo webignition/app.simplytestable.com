@@ -45,12 +45,6 @@ job_job_taskids:
   requirements:
     test_id: '\d+'
 
-job_job_listurls:
-    path: /job/{site_root_url}/{test_id}/urls/
-    defaults: { _controller: App\Controller\Job\JobController::listUrlsAction, _format: json }
-    requirements:
-        site_root_url: ".+"
-
 job_job_cancel:
     path: /job/{site_root_url}/{test_id}/cancel/
     defaults: { _controller: App\Controller\Job\JobController::cancelAction, _format: json }
