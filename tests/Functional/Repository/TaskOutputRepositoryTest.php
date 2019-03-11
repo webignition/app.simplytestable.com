@@ -147,11 +147,11 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
             'with limit and offset' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
+                        JobFactory::KEY_URL => 'http://foo.example.com',
                         JobFactory::KEY_DOMAIN => 'foo.example.com',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
+                        JobFactory::KEY_URL => 'http://bar.example.com',
                         JobFactory::KEY_DOMAIN => 'bar.example.com',
                     ],
                 ],

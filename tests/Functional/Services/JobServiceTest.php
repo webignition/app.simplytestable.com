@@ -890,13 +890,13 @@ class JobServiceTest extends AbstractBaseTestCase
             if (in_array($stateName, $zeroTaskStates)) {
                 $job = $this->jobFactory->create([
                         JobFactory::KEY_USER => $user,
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://' . $domain,
+                        JobFactory::KEY_URL => 'http://' . $domain,
                 ]);
             } else {
                 $job = $this->jobFactory->createResolveAndPrepare(
                     [
                         JobFactory::KEY_USER => $user,
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://' . $domain,
+                        JobFactory::KEY_URL => 'http://' . $domain,
                     ],
                     [],
                     $domain

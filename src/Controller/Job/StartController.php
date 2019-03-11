@@ -118,10 +118,10 @@ class StartController
             $taskTypeOptionsArray[$taskTypeNameKey] = $taskTypeOptions->getOptions();
         }
 
+        $request->request->set('url', $site_root_url);
         $request->request->set('type', $job->getType()->getName());
         $request->request->set('test-types', $taskTypeNames);
         $request->request->set('test-type-options', $taskTypeOptionsArray);
-        $request->attributes->set('site_root_url', $site_root_url);
 
         return $this->startAction($request);
     }

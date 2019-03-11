@@ -10,6 +10,7 @@ use App\Entity\Job\TaskTypeOptions;
 use App\Repository\JobRepository;
 use App\Services\JobTypeService;
 use App\Services\JobUserAccountPlanEnforcementService;
+use App\Services\Request\Factory\Job\StartRequestFactory;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 use App\Tests\Services\JobFactory;
@@ -44,11 +45,11 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->jobRepository = self::$container->get(JobRepository::class);
     }
 
-    public function testStartActionShortRouteGetRequest()
+    public function testStartActionGetRequest()
     {
         $router = self::$container->get('router');
 
-        $requestUrl = $router->generate('job_start_start_short');
+        $requestUrl = $router->generate('job_start_start');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -63,12 +64,12 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
-    public function testStartActionShortRoutePostRequest()
+    public function testStartActionPostRequest()
     {
         $router = self::$container->get('router');
 
         $siteRootUrl = 'http://example.com/';
-        $requestUrl = $router->generate('job_start_start_short');
+        $requestUrl = $router->generate('job_start_start');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -87,30 +88,6 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
     }
 
-    public function testStartActionGetRequest()
-    {
-        $router = self::$container->get('router');
-
-        $siteRootUrl = 'http://example.com/';
-
-        $requestUrl = $router->generate('job_start_start', [
-            'site_root_url' => $siteRootUrl,
-        ]);
-
-        $this->getCrawler([
-            'url' => $requestUrl,
-            'method' => 'GET',
-        ]);
-
-        $response = $this->getClientResponse();
-
-        /* @var Job $job */
-        $job = $this->jobRepository->findAll()[0];
-
-        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
-        $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
-    }
-
     public function testReTestActionGetRequest()
     {
         $router = self::$container->get('router');
@@ -118,7 +95,7 @@ class JobStartControllerTest extends AbstractControllerTest
 
         $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
+            JobFactory::KEY_URL => $siteRootUrl,
             JobFactory::KEY_STATE => Job::STATE_COMPLETED,
         ]);
 
@@ -152,8 +129,9 @@ class JobStartControllerTest extends AbstractControllerTest
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
-        $request = new Request();
-        $request->attributes->set('site_root_url', $siteRootUrl);
+        $request = new Request([], [
+            StartRequestFactory::PARAMETER_URL => $siteRootUrl,
+        ]);
 
         $this->setUser($userService->getPublicUser());
 
@@ -218,12 +196,13 @@ class JobStartControllerTest extends AbstractControllerTest
 
         $siteRootUrl = 'http://example.com/';
 
-        $request = new Request();
-        $request->attributes->set('site_root_url', $siteRootUrl);
+        $request = new Request([], [
+            StartRequestFactory::PARAMETER_URL => $siteRootUrl,
+        ]);
 
         $jobFactory = self::$container->get(JobFactory::class);
         $job = $jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
+            JobFactory::KEY_URL => $siteRootUrl,
         ]);
         $jobFactory->cancel($job);
 
@@ -249,8 +228,9 @@ class JobStartControllerTest extends AbstractControllerTest
 
         $siteRootUrl = 'http://example.com/';
 
-        $request = new Request();
-        $request->attributes->set('site_root_url', $siteRootUrl);
+        $request = new Request([], [
+            StartRequestFactory::PARAMETER_URL => $siteRootUrl,
+        ]);
 
         $this->setUser($userService->getPublicUser());
 

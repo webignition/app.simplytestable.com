@@ -215,11 +215,11 @@ class CanonicaliseTaskOutputCommandTest extends AbstractBaseTestCase
             'limit: 2' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
+                        JobFactory::KEY_URL => 'http://foo.example.com',
                         JobFactory::KEY_DOMAIN => 'foo.example.com',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
+                        JobFactory::KEY_URL => 'http://bar.example.com',
                         JobFactory::KEY_DOMAIN => 'bar.example.com',
                     ],
                 ],

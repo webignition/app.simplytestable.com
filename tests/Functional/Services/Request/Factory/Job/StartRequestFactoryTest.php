@@ -15,18 +15,14 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
      * @dataProvider createDataProvider
      *
      * @param string $userEmail
-     * @param array $requestQuery
      * @param array $requestRequest
-     * @param array $requestAttributes
      * @param string $expectedSiteRootUrl
      * @param string $expectedTaskConfigurationCollection
      * @param string $expectedJobParameters
      */
     public function testCreate(
         $userEmail,
-        $requestQuery,
         $requestRequest,
-        $requestAttributes,
         $expectedSiteRootUrl,
         $expectedTaskConfigurationCollection,
         $expectedJobParameters
@@ -36,7 +32,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
 
-        $request = new Request($requestQuery, $requestRequest, $requestAttributes);
+        $request = new Request([], $requestRequest);
 
         self::$container->get('request_stack')->push($request);
 
@@ -106,10 +102,8 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
         return [
             'missing test types and test type options' => [
                 'userEmail' => 'public@simplytestable.com',
-                'requestQuery' => [],
-                'requestRequest' => [],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
+                'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
                 'expectedTaskConfigurationCollection' => [
@@ -139,12 +133,9 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'test types not array' => [
                 'userEmail' => 'public@simplytestable.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => 'foo',
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
                 'expectedTaskConfigurationCollection' => [
@@ -174,14 +165,11 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'test types present, test type options missing' => [
                 'userEmail' => 'public@simplytestable.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
                     ],
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
                 'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
@@ -189,16 +177,13 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'test type options not an array' => [
                 'userEmail' => 'public@simplytestable.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
                         'foo',
                     ],
                     StartRequestFactory::PARAMETER_TEST_TYPE_OPTIONS => 'foo',
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
                 'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
@@ -206,8 +191,8 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'test type options present, all invalid' => [
                 'userEmail' => 'user@example.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
                         'link integrity',
@@ -217,9 +202,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                             'foo' => 'foo',
                         ],
                     ],
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://example.com/',
                 'expectedTaskConfigurationCollection' => [
@@ -249,8 +231,8 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'test type options present, valid and invalid values' => [
                 'userEmail' => 'user@example.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://foo.example.com/',
                     StartRequestFactory::PARAMETER_JOB_TYPE => JobTypeService::SINGLE_URL_NAME,
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
@@ -270,9 +252,6 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                             'bar',
                         ],
                     ],
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
                 'expectedTaskConfigurationCollection' => [
@@ -308,15 +287,12 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'job parameters not an array' => [
                 'userEmail' => 'user@example.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://foo.example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
                     ],
                     StartRequestFactory::PARAMETER_JOB_PARAMETERS => 'foo',
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
                 'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
@@ -324,15 +300,12 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'job parameters present and empty' => [
                 'userEmail' => 'user@example.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://foo.example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
                     ],
                     StartRequestFactory::PARAMETER_JOB_PARAMETERS => [],
-                ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
                 ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
                 'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
@@ -340,8 +313,8 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
             ],
             'job parameters present' => [
                 'userEmail' => 'user@example.com',
-                'requestQuery' => [],
                 'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://foo.example.com/',
                     StartRequestFactory::PARAMETER_TEST_TYPES => [
                         'html validation',
                     ],
@@ -350,51 +323,12 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     'a%20b' => 'foobar',
                     ],
                 ],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
-                ],
                 'expectedSiteRootUrl' => 'http://foo.example.com/',
                 'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
                 'expectedJobParameters' => [
                     'job-parameter-foo' => 'job-parameter-bar',
                     'a b' => 'foobar',
                 ],
-            ],
-            'job parameters present, as GET request' => [
-                'userEmail' => 'user@example.com',
-                'requestQuery' => [
-                    StartRequestFactory::PARAMETER_TEST_TYPES => [
-                        'html validation',
-                    ],
-                    StartRequestFactory::PARAMETER_JOB_PARAMETERS => [
-                        'job-parameter-foo' => 'job-parameter-bar',
-                        'a%20b' => 'foobar',
-                    ],
-                ],
-                'requestRequest' => [],
-                'requestAttributes' => [
-                    StartRequestFactory::PARAMETER_SITE_ROOT_URL => 'http://foo.example.com/',
-                ],
-                'expectedSiteRootUrl' => 'http://foo.example.com/',
-                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
-                'expectedJobParameters' => [
-                    'job-parameter-foo' => 'job-parameter-bar',
-                    'a b' => 'foobar',
-                ],
-            ],
-            'url in post data' => [
-                'userEmail' => 'public@simplytestable.com',
-                'requestQuery' => [],
-                'requestRequest' => [
-                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
-                    StartRequestFactory::PARAMETER_TEST_TYPES => [
-                        'html validation',
-                    ],
-                ],
-                'requestAttributes' => [],
-                'expectedSiteRootUrl' => 'http://example.com/',
-                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
-                'expectedJobParameters' => [],
             ],
         ];
     }

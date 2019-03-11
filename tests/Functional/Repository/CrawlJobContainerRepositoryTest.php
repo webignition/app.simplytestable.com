@@ -108,14 +108,14 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     public function testGetForJobHasForJob()
     {
         $jobHasNoCrawlJob = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com/',
+            JobFactory::KEY_URL => 'http://foo.example.com/',
         ]);
         $this->assertFalse($this->crawlJobContainerRepository->hasForJob($jobHasNoCrawlJob));
 
         $user =  $this->userFactory->create();
 
         $jobHasCrawlJob = $this->jobFactory->createResolveAndPrepareStandardCrawlJob([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com/',
+            JobFactory::KEY_URL => 'http://bar.example.com/',
             JobFactory::KEY_USER => $user,
         ]);
 
