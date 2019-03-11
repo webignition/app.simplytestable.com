@@ -30,9 +30,6 @@ class JobControllerTaskIdsActionTest extends AbstractJobControllerTest
 
         $this->expectException(AccessDeniedHttpException::class);
 
-        $jobController->taskIdsAction(
-            self::CANONICAL_URL,
-            self::JOB_ID
-        );
+        $jobController->taskIdsAction(self::JOB_ID);
     }
 }

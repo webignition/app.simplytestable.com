@@ -371,15 +371,13 @@ class JobController
     }
 
     /**
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return Response
      */
-    public function taskIdsAction($site_root_url = '', $test_id)
+    public function taskIdsAction($test_id)
     {
         $job = $this->retrieveJob($test_id);
-
         $taskIds = $this->taskRepository->getIdsByJob($job);
 
         return new JsonResponse($taskIds);
