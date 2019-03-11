@@ -257,7 +257,7 @@ class JobController
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService,
-        $site_root_url,
+        $site_root_url = '',
         $test_id
     ) {
         if ($applicationStateService->isInReadOnlyMode()) {
