@@ -32,7 +32,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             MockFactory::createResqueQueueService(),
             MockFactory::createStateService(),
             MockFactory::createTaskTypeDomainsToIgnoreService(),
-            self::CANONICAL_URL,
             self::JOB_ID
         );
     }
@@ -61,7 +60,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             MockFactory::createResqueQueueService(),
             MockFactory::createStateService(),
             MockFactory::createTaskTypeDomainsToIgnoreService(),
-            self::CANONICAL_URL,
             self::JOB_ID
         );
     }
