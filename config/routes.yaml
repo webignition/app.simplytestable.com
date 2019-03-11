@@ -23,6 +23,14 @@ job_start_start:
     defaults:
         _format: json
 
+job_job_status_short:
+  path: /job/{test_id}/
+  controller: App\Controller\Job\JobController::statusAction
+  defaults:
+    _format: json
+  requirements:
+    test_id: '\d+'
+
 job_job_latest:
   path: /job/{site_root_url}/latest/
   defaults: { _controller: App\Controller\Job\JobController::latestAction, _format: json }
