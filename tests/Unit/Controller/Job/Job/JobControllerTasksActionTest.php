@@ -36,7 +36,6 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         $jobController->tasksAction(
             $taskService,
             new Request(),
-            self::CANONICAL_URL,
             self::JOB_ID
         );
     }

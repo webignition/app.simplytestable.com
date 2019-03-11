@@ -341,19 +341,13 @@ class JobController
     /**
      * @param TaskService $taskService
      * @param Request $request
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return JsonResponse
      */
-    public function tasksAction(
-        TaskService $taskService,
-        Request $request,
-        $site_root_url = '',
-        $test_id
-    ) {
+    public function tasksAction(TaskService $taskService, Request $request, $test_id)
+    {
         $job = $this->retrieveJob($test_id);
-
         $taskIds = $this->getRequestTaskIds($request);
 
         $taskFindByCriteria = [
@@ -414,9 +408,9 @@ class JobController
     /**
      * @param Request $request
      *
-     * @return \int[]|null
+     * @return int[]
      */
-    private function getRequestTaskIds(Request $request)
+    private function getRequestTaskIds(Request $request): array
     {
         $requestTaskIds = $request->request->get('taskIds');
 
@@ -438,7 +432,7 @@ class JobController
             }
         }
 
-        return (count($taskIds) > 0) ? $taskIds : null;
+        return $taskIds;
     }
 
     /**
