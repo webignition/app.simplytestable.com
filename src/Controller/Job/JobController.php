@@ -244,7 +244,6 @@ class JobController
      * @param ResqueQueueService $resqueQueueService
      * @param StateService $stateService
      * @param TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return Response
@@ -257,7 +256,6 @@ class JobController
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService,
-        $site_root_url = '',
         $test_id
     ) {
         if ($applicationStateService->isInReadOnlyMode()) {
@@ -283,7 +281,6 @@ class JobController
                     $resqueQueueService,
                     $stateService,
                     $taskTypeDomainsToIgnoreService,
-                    $site_root_url,
                     $crawlJobContainer->getCrawlJob()->getId()
                 );
             }

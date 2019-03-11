@@ -21,24 +21,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class JobControllerCancelActionTest extends AbstractJobControllerTest
 {
-    public function testRequestShortRoute()
-    {
-        $job = $this->jobFactory->create([
-            JobFactory::KEY_URL => 'http://example.com',
-        ]);
-
-        $this->getCrawler([
-            'url' => self::$container->get('router')->generate('job_job_cancel_short', [
-                'test_id' => $job->getId(),
-            ])
-        ]);
-
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
-
-        $this->assertEquals(200, $response->getStatusCode());
-    }
-
     public function testRequest()
     {
         $job = $this->jobFactory->create([
@@ -48,7 +30,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $this->getCrawler([
             'url' => self::$container->get('router')->generate('job_job_cancel', [
                 'test_id' => $job->getId(),
-                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
         ]);
 
@@ -77,7 +58,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $response = $this->callCancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+        $response = $this->callCancelAction($job->getId());
 
         $this->assertTrue($response->isSuccessful());
     }
@@ -122,7 +103,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         ]);
 
         $response = $this->callCancelAction(
-            $crawlJob->getWebsite()->getCanonicalUrl(),
             $crawlJob->getId(),
             $taskTypeDomainsToIgnoreService
         );
@@ -185,7 +165,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         ]);
 
         $response = $this->callCancelAction(
-            $parentJob->getWebsite()->getCanonicalUrl(),
             $parentJob->getId(),
             $taskTypeDomainsToIgnoreService
         );
@@ -197,13 +176,12 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     }
 
     /**
-     * @param string $siteRootUrl
      * @param int $testId
      * @param TaskTypeDomainsToIgnoreService|null $taskTypeDomainsToIgnoreService
      *
      * @return Response
      */
-    private function callCancelAction($siteRootUrl, $testId, $taskTypeDomainsToIgnoreService = null)
+    private function callCancelAction($testId, $taskTypeDomainsToIgnoreService = null)
     {
         if (empty($taskTypeDomainsToIgnoreService)) {
             $taskTypeDomainsToIgnoreService = MockFactory::createTaskTypeDomainsToIgnoreService();
@@ -217,7 +195,6 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StateService::class),
             $taskTypeDomainsToIgnoreService,
-            $siteRootUrl,
             $testId
         );
     }

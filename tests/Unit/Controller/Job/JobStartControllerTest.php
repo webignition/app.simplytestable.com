@@ -3,15 +3,13 @@
 namespace App\Tests\Unit\Controller\Job;
 
 use App\Repository\JobRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Mockery\Mock;
 use App\Controller\Job\StartController;
-use App\Entity\Job\Job;
 use App\Services\ApplicationStateService;
 use App\Services\Job\StartService;
 use App\Services\JobConfigurationFactory;
 use App\Services\JobService;
 use App\Services\Request\Factory\Job\StartRequestFactory;
+use Mockery\MockInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use App\Tests\Factory\MockFactory;
@@ -97,7 +95,7 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
     private function createJobStartController($services = [])
     {
         if (!isset($services['router'])) {
-            /* @var RouterInterface|Mock $router */
+            /* @var RouterInterface|MockInterface $router */
             $router = \Mockery::mock(RouterInterface::class);
 
             $services['router'] = $router;

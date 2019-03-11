@@ -399,7 +399,6 @@ class JobFactory
             $this->resqueQueueService,
             $this->stateService,
             $this->taskTypeDomainsToIgnoreService,
-            $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
         );
     }
