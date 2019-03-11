@@ -382,6 +382,20 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
                     'a b' => 'foobar',
                 ],
             ],
+            'url in post data' => [
+                'userEmail' => 'public@simplytestable.com',
+                'requestQuery' => [],
+                'requestRequest' => [
+                    StartRequestFactory::PARAMETER_URL => 'http://example.com/',
+                    StartRequestFactory::PARAMETER_TEST_TYPES => [
+                        'html validation',
+                    ],
+                ],
+                'requestAttributes' => [],
+                'expectedSiteRootUrl' => 'http://example.com/',
+                'expectedTaskConfigurationCollection' => $expectedHtmlValidationOnlyTaskConfigurationCollection,
+                'expectedJobParameters' => [],
+            ],
         ];
     }
 }
