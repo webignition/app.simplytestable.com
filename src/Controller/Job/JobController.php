@@ -227,7 +227,7 @@ class JobController
      */
     public function statusAction(
         JobSummaryFactory $jobSummaryFactory,
-        $site_root_url,
+        $site_root_url = '',
         $test_id
     ) {
         $job = $this->retrieveJob($test_id);
