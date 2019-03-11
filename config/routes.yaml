@@ -16,6 +16,16 @@ job_joblist_websites:
     path: /jobs/list/websites/
     defaults: { _controller: App\Controller\Job\JobListController::websitesAction, _format: json }
 
+job_start_start_short:
+    path: /job/start/
+    controller: App\Controller\Job\StartController::startAction
+    methods: POST
+    defaults:
+        _format: json
+#  defaults: { _controller: App\Controller\Job\StartController::startAction, _format: json }
+#  requirements:
+#    site_root_url: ".+"
+
 job_start_start:
     path: /job/{site_root_url}/start/
     defaults: { _controller: App\Controller\Job\StartController::startAction, _format: json }
