@@ -37,6 +37,14 @@ job_job_tasks:
   requirements:
     test_id: '\d+'
 
+job_job_taskids_short:
+  path: /job/{test_id}/tasks/ids/
+  controller: App\Controller\Job\JobController::taskIdsAction
+  defaults:
+    _format: json
+  requirements:
+    test_id: '\d+'
+
 job_job_taskids:
   path: /job/{site_root_url}/{test_id}/tasks/ids/
   defaults: { _controller: App\Controller\Job\JobController::taskIdsAction, _format: json }
