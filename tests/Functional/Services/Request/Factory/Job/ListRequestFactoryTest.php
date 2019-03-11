@@ -163,12 +163,12 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $jobFactory = self::$container->get(JobFactory::class);
         $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
-            JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
+            JobFactory::KEY_URL => 'http://foo.example.com',
         ]);
 
         $jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
-            JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
+            JobFactory::KEY_URL => 'http://bar.example.com',
         ]);
 
         $request = new Request($requestQuery);

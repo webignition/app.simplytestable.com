@@ -270,13 +270,13 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
     {
         $jobValuesCollection = [
             [
-                JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com',
+                JobFactory::KEY_URL => 'http://one.example.com',
             ],
             [
-                JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com',
+                JobFactory::KEY_URL => 'http://two.example.com',
             ],
             [
-                JobFactory::KEY_SITE_ROOT_URL => 'http://three.example.com',
+                JobFactory::KEY_URL => 'http://three.example.com',
             ],
         ];
 

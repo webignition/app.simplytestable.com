@@ -41,7 +41,7 @@ class JobFactory
     const DEFAULT_DOMAIN = 'example.com';
 
     const KEY_TYPE = 'type';
-    const KEY_SITE_ROOT_URL = 'siteRootUrl';
+    const KEY_URL = 'url';
     const KEY_TEST_TYPES = 'testTypes';
     const KEY_TEST_TYPE_OPTIONS = 'testTypeOptions';
     const KEY_PARAMETERS = 'parameters';
@@ -62,7 +62,7 @@ class JobFactory
      */
     private $defaultJobValues = [
         self::KEY_TYPE => self::DEFAULT_TYPE,
-        self::KEY_SITE_ROOT_URL => self::DEFAULT_SITE_ROOT_URL,
+        self::KEY_URL => self::DEFAULT_SITE_ROOT_URL,
         self::KEY_TEST_TYPES => ['html validation'],
         self::KEY_TEST_TYPE_OPTIONS => [],
         self::KEY_PARAMETERS => [],
@@ -260,12 +260,11 @@ class JobFactory
         $this->tokenStorage->setToken($token);
 
         $request = new Request([], [
+            'url' => $jobValues[self::KEY_URL],
             'type' => $jobValues[self::KEY_TYPE],
             'test-types' => $jobValues[self::KEY_TEST_TYPES],
             'test-type-options' => $jobValues[self::KEY_TEST_TYPE_OPTIONS],
             'parameters' => $jobValues[self::KEY_PARAMETERS],
-        ], [
-            'site_root_url' => $jobValues[self::KEY_SITE_ROOT_URL],
         ]);
 
         $jobStartRequestFactory = new StartRequestFactory(

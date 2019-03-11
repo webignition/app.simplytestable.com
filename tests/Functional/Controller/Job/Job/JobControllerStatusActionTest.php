@@ -14,7 +14,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
     public function testStatusActionGetRequest()
     {
         $job = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
+            JobFactory::KEY_URL => 'http://example.com',
         ]);
 
         $this->getCrawler([

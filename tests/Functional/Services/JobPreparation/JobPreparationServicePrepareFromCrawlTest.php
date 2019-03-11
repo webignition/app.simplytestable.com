@@ -55,7 +55,7 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
     public function testPrepareFromCrawl($jobValues, $discoveredUrls, $expectedTaskValuesCollection)
     {
         $parentJob = $this->jobFactory->createResolveAndPrepare(array_merge($jobValues, [
-            JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
+            JobFactory::KEY_URL => 'http://example.com',
             JobFactory::KEY_USER => $this->user,
         ]), [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -178,7 +178,7 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::HTML_VALIDATION_TYPE,
             ],
-            JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
+            JobFactory::KEY_URL => 'http://example.com',
             JobFactory::KEY_USER => $this->user,
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),

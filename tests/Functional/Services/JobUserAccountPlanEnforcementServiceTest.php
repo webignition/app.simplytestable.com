@@ -103,11 +103,11 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                 'userName' => 'private',
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
                     ],
                 ],
@@ -119,7 +119,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                 'userName' => 'public',
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                     ],
                 ],
@@ -131,7 +131,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                 'userName' => 'public',
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
                     ],
                 ],
@@ -143,11 +143,11 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                 'userName' => 'public',
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
                     ],
                 ],

@@ -24,7 +24,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     public function testRequest()
     {
         $job = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
+            JobFactory::KEY_URL => 'http://example.com',
         ]);
 
         $this->getCrawler([
@@ -50,7 +50,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $canonicalUrl = 'http://example.com/';
 
         $job = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            JobFactory::KEY_URL => $canonicalUrl,
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_TASKS => [
                 [

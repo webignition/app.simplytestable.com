@@ -86,7 +86,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         $siteRootUrl = 'http://foo.example.com/';
 
         $job = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => $siteRootUrl,
+            JobFactory::KEY_URL => $siteRootUrl,
         ]);
 
         $this->websiteResolutionService->resolve($job);
@@ -188,7 +188,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         return [
             'Full site; redirects' => [
                 'jobValues' => [
-                    JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                    JobFactory::KEY_URL => 'http://example.com/',
                     JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                 ],
                 'httpFixtures' => [
@@ -211,7 +211,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
             ],
             'single url with cookies and http auth' => [
                 'jobValues' => [
-                    JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                    JobFactory::KEY_URL => 'http://example.com/',
                     JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
                     JobFactory::KEY_PARAMETERS => [
                         'cookies' => [

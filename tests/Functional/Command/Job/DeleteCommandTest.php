@@ -123,7 +123,7 @@ class DeleteCommandTest extends AbstractBaseTestCase
             $expectedRemainingJobValues = $expectedRemainingJobValuesCollection[$jobIndex];
 
             $this->assertEquals(
-                $expectedRemainingJobValues[JobFactory::KEY_SITE_ROOT_URL],
+                $expectedRemainingJobValues[JobFactory::KEY_URL],
                 (string) $remainingJob->getWebsite()
             );
         }
@@ -141,50 +141,50 @@ class DeleteCommandTest extends AbstractBaseTestCase
             'job not found; job does not exist' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                     ],
                 ],
                 'jobIndexToDelete' => 1,
                 'expectedJobValues' => [],
                 'expectedRemainingJobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                     ],
                 ],
             ],
             'job exists, no task type options' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
+                        JobFactory::KEY_URL => 'http://one.example.com/',
                         JobFactory::KEY_DOMAIN => 'one.example.com',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
+                        JobFactory::KEY_URL => 'http://two.example.com/',
                         JobFactory::KEY_DOMAIN => 'two.example.com',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://three.example.com/',
+                        JobFactory::KEY_URL => 'http://three.example.com/',
                         JobFactory::KEY_DOMAIN => 'three.example.com',
                     ],
                 ],
                 'jobIndexToDelete' => 1,
                 'expectedJobValues' => [
-                    JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
+                    JobFactory::KEY_URL => 'http://two.example.com/',
                     JobFactory::KEY_TEST_TYPE_OPTIONS => [],
                 ],
                 'expectedRemainingJobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
+                        JobFactory::KEY_URL => 'http://one.example.com/',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://three.example.com/',
+                        JobFactory::KEY_URL => 'http://three.example.com/',
                     ],
                 ],
             ],
             'job exists, has task type options' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
+                        JobFactory::KEY_URL => 'http://one.example.com/',
                         JobFactory::KEY_DOMAIN => 'one.example.com',
                         JobFactory::KEY_TEST_TYPES => [
                             TaskTypeService::CSS_VALIDATION_TYPE,
@@ -199,17 +199,17 @@ class DeleteCommandTest extends AbstractBaseTestCase
                         ],
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
+                        JobFactory::KEY_URL => 'http://two.example.com/',
                         JobFactory::KEY_DOMAIN => 'two.example.com',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://three.example.com/',
+                        JobFactory::KEY_URL => 'http://three.example.com/',
                         JobFactory::KEY_DOMAIN => 'three.example.com',
                     ],
                 ],
                 'jobIndexToDelete' => 0,
                 'expectedJobValues' => [
-                    JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
+                    JobFactory::KEY_URL => 'http://one.example.com/',
                     JobFactory::KEY_TEST_TYPE_OPTIONS => [
                         TaskTypeService::CSS_VALIDATION_TYPE => [
                             'domains-to-ignore' => [
@@ -221,10 +221,10 @@ class DeleteCommandTest extends AbstractBaseTestCase
                 ],
                 'expectedRemainingJobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
+                        JobFactory::KEY_URL => 'http://two.example.com/',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://three.example.com/',
+                        JobFactory::KEY_URL => 'http://three.example.com/',
                     ],
                 ],
             ],

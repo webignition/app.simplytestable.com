@@ -53,7 +53,7 @@ class QueueServiceTest extends AbstractBaseTestCase
         $jobs = [];
 
         foreach ($jobValuesCollection as $jobValues) {
-            $domain = $this->getDomainFromUrl($jobValues[JobFactory::KEY_SITE_ROOT_URL]);
+            $domain = $this->getDomainFromUrl($jobValues[JobFactory::KEY_URL]);
 
             $jobs[] = $this->jobFactory->createResolveAndPrepare(
                 $jobValues,
@@ -108,19 +108,19 @@ class QueueServiceTest extends AbstractBaseTestCase
             'finished jobs only' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_URL => 'http://2.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://3.example.com/',
+                        JobFactory::KEY_URL => 'http://3.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_FAILED_NO_SITEMAP,
                     ],
                 ],
@@ -130,7 +130,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             'incomplete jobs, no queued tasks' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                         JobFactory::KEY_TEST_TYPES => [
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
@@ -173,7 +173,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             'single job with incomplete tasks; default limit' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                     ],
                 ],
                 'limit' => null,
@@ -184,7 +184,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             'single job with incomplete tasks; limit 2' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_URL => 'http://example.com/',
                     ],
                 ],
                 'limit' => 2,
@@ -196,10 +196,10 @@ class QueueServiceTest extends AbstractBaseTestCase
             'two jobs with incomplete tasks; default limit' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                     ],
                 ],
                 'limit' => null,
@@ -210,10 +210,10 @@ class QueueServiceTest extends AbstractBaseTestCase
             'two jobs with incomplete tasks; limit 2' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                     ],
                 ],
                 'limit' => 2,
@@ -225,10 +225,10 @@ class QueueServiceTest extends AbstractBaseTestCase
             'two jobs with incomplete tasks; limit 4' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                     ],
                 ],
                 'limit' => 4,
@@ -242,7 +242,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             'two jobs with incomplete tasks; not all tasks incomplete, limit 4' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_TASKS => [
                             [
                                 JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
@@ -253,7 +253,7 @@ class QueueServiceTest extends AbstractBaseTestCase
                         ],
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_TASKS => [
                             [
                                 JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,

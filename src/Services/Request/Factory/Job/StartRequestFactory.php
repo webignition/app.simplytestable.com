@@ -33,11 +33,6 @@ class StartRequestFactory
     /**
      * @var ParameterBag
      */
-    private $requestAttributes;
-
-    /**
-     * @var ParameterBag
-     */
     private $requestPayload;
 
     /**
@@ -93,15 +88,7 @@ class StartRequestFactory
     public function create(Request $request)
     {
         $this->request = $request;
-        $this->requestAttributes = $request->attributes;
-
-        if (0 === $request->request->count() && 0 === $request->query->count()) {
-            $this->requestPayload = new ParameterBag();
-        } elseif ($request->request->count()) {
-            $this->requestPayload = $request->request;
-        } elseif ($request->query->count()) {
-            $this->requestPayload = $request->query;
-        }
+        $this->requestPayload = $request->request;
 
         return new StartRequest(
             $this->tokenStorage->getToken()->getUser(),
@@ -117,13 +104,7 @@ class StartRequestFactory
      */
     private function getWebsiteFromRequest()
     {
-        $requestWebsite = $this->requestAttributes->get(self::PARAMETER_SITE_ROOT_URL);
-
-        if (empty($requestWebsite)) {
-            $requestWebsite = $this->requestPayload->get(self::PARAMETER_URL);
-        }
-
-        return $this->websiteService->get($requestWebsite);
+        return $this->websiteService->get($this->requestPayload->get(self::PARAMETER_URL));
     }
 
     /**

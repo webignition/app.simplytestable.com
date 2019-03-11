@@ -160,15 +160,15 @@ class JobRepositoryTest extends AbstractBaseTestCase
             'cancelled' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_URL => 'http://2.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
@@ -211,15 +211,15 @@ class JobRepositoryTest extends AbstractBaseTestCase
             'no matches' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_URL => 'http://2.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
@@ -229,15 +229,15 @@ class JobRepositoryTest extends AbstractBaseTestCase
             'one match' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_URL => 'http://2.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
@@ -247,15 +247,15 @@ class JobRepositoryTest extends AbstractBaseTestCase
             'two matches' => [
                 'jobValuesCollection' => [
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_REJECTED,
                     ],
                     [
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_URL => 'http://2.example.com/',
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                     ],
                 ],
@@ -669,7 +669,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
             $job = $this->jobFactory->createResolveAndPrepare(
                 [
-                    JobFactory::KEY_SITE_ROOT_URL => 'http://' . $domain . '/',
+                    JobFactory::KEY_URL => 'http://' . $domain . '/',
                     JobFactory::KEY_STATE => $jobStateName,
                 ],
                 [],

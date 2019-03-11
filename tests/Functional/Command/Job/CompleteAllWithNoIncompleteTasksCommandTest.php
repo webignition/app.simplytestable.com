@@ -280,7 +280,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
+                        JobFactory::KEY_URL => 'http://foo.example.com',
                         JobFactory::KEY_DOMAIN => 'foo.example.com',
                         JobFactory::KEY_TASKS => [
                             [
@@ -296,7 +296,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
+                        JobFactory::KEY_URL => 'http://bar.example.com',
                         JobFactory::KEY_DOMAIN => 'bar.example.com',
                         JobFactory::KEY_TASKS => [
                             [
