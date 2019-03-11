@@ -376,7 +376,7 @@ class JobController
      *
      * @return Response
      */
-    public function taskIdsAction($site_root_url, $test_id)
+    public function taskIdsAction($site_root_url = '', $test_id)
     {
         $job = $this->retrieveJob($test_id);
 
