@@ -27,24 +27,6 @@ use App\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
  */
 class JobControllerTasksActionTest extends AbstractJobControllerTest
 {
-    public function testRequestShortRoute()
-    {
-        $job = $this->jobFactory->create([
-            JobFactory::KEY_URL => 'http://example.com',
-        ]);
-
-        $this->getCrawler([
-            'url' => self::$container->get('router')->generate('job_job_tasks_short', [
-                'test_id' => $job->getId(),
-            ])
-        ]);
-
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
-
-        $this->assertEquals(200, $response->getStatusCode());
-    }
-
     public function testRequest()
     {
         $job = $this->jobFactory->create([
@@ -54,7 +36,6 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         $this->getCrawler([
             'url' => self::$container->get('router')->generate('job_job_tasks', [
                 'test_id' => $job->getId(),
-                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
         ]);
 
@@ -103,7 +84,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
         $this->callTaskControllerCompleteAction($taskController);
 
-        $tasksActionResponse = $this->callTasksAction(new Request(), $job);
+        $tasksActionResponse = $this->callTasksAction(new Request(), $job->getId());
 
         $tasksResponseData = json_decode($tasksActionResponse->getContent(), true);
 
@@ -145,7 +126,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $this->callTaskControllerCompleteAction($taskController);
         }
 
-        $tasksActionResponse = $this->callTasksAction(new Request(), $job);
+        $tasksActionResponse = $this->callTasksAction(new Request(), $job->getId());
 
         $tasksResponseObject = json_decode($tasksActionResponse->getContent());
 
@@ -174,7 +155,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
         $tasksActionResponse = $this->callTasksAction(
             new Request([], $requestData),
-            $job
+            $job->getId()
         );
 
         $tasksResponseData = json_decode($tasksActionResponse->getContent(), true);
@@ -321,19 +302,12 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         return (string)$taskIds[$requestTaskIndices];
     }
 
-    /**
-     * @param Request $request
-     * @param Job $job
-     *
-     * @return JsonResponse
-     */
-    private function callTasksAction(Request $request, Job $job)
+    private function callTasksAction(Request $request, int $jobId): JsonResponse
     {
         return $this->jobController->tasksAction(
             self::$container->get(TaskService::class),
             $request,
-            $job->getWebsite()->getCanonicalUrl(),
-            $job->getId()
+            $jobId
         );
     }
 
