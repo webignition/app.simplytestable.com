@@ -29,6 +29,14 @@ job_job_latest:
   requirements:
     site_root_url: ".+"
 
+job_job_tasks_short:
+  path: /job/{test_id}/tasks/
+  controller: App\Controller\Job\JobController::tasksAction
+  defaults:
+    _format: json
+  requirements:
+    test_id: '\d+'
+
 job_job_tasks:
   path: /job/{site_root_url}/{test_id}/tasks/
   defaults: { _controller: App\Controller\Job\JobController::tasksAction, _format: json }

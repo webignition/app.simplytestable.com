@@ -27,6 +27,24 @@ use App\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
  */
 class JobControllerTasksActionTest extends AbstractJobControllerTest
 {
+    public function testRequestShortRoute()
+    {
+        $job = $this->jobFactory->create([
+            JobFactory::KEY_URL => 'http://example.com',
+        ]);
+
+        $this->getCrawler([
+            'url' => self::$container->get('router')->generate('job_job_tasks_short', [
+                'test_id' => $job->getId(),
+            ])
+        ]);
+
+        /* @var RedirectResponse $response */
+        $response = $this->getClientResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testRequest()
     {
         $job = $this->jobFactory->create([

@@ -349,7 +349,7 @@ class JobController
     public function tasksAction(
         TaskService $taskService,
         Request $request,
-        $site_root_url,
+        $site_root_url = '',
         $test_id
     ) {
         $job = $this->retrieveJob($test_id);
