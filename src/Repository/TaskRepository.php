@@ -54,21 +54,6 @@ class TaskRepository extends ServiceEntityRepository
 
     /**
      * @param Job $job
-     *
-     * @return string[]
-     */
-    public function findUrlsByJob(Job $job)
-    {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('DISTINCT Task.url');
-        $queryBuilder->where('Task.job = :Job');
-        $queryBuilder->setParameter('Job', $job);
-
-        return $queryBuilder->getQuery()->getArrayResult();
-    }
-
-    /**
-     * @param Job $job
      * @param State $state
      *
      * @return string[]

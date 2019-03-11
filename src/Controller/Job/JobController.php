@@ -383,21 +383,6 @@ class JobController
         return new JsonResponse($taskIds);
     }
 
-    /**
-     * @param string $site_root_url
-     * @param int $test_id
-     *
-     * @return Response
-     */
-    public function listUrlsAction($site_root_url, $test_id)
-    {
-        $job = $this->retrieveJob($test_id);
-
-        $urls = $this->taskRepository->findUrlsByJob($job);
-
-        return new JsonResponse($urls);
-    }
-
     public function isAuthorisedAction($test_id): JsonResponse
     {
         return new JsonResponse($this->jobAuthorisationService->isAuthorised((int) $test_id));
