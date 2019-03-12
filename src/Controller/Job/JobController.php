@@ -144,13 +144,12 @@ class JobController
     public function setPublicAction(
         UserService $userService,
         UserInterface $user,
-        $site_root_url,
+        $site_root_url = '',
         $test_id
     ) {
         return $this->setIsPublic(
             $userService,
             $user,
-            $site_root_url,
             $test_id,
             true
         );
@@ -167,13 +166,12 @@ class JobController
     public function setPrivateAction(
         UserService $userService,
         UserInterface $user,
-        $site_root_url,
+        $site_root_url = '',
         $test_id
     ) {
         return $this->setIsPublic(
             $userService,
             $user,
-            $site_root_url,
             $test_id,
             false
         );
@@ -182,7 +180,6 @@ class JobController
     /**
      * @param UserService $userService
      * @param User|UserInterface $user
-     * @param string $siteRootUrl
      * @param int $testId
      * @param bool $isPublic
      *
@@ -191,7 +188,6 @@ class JobController
     private function setIsPublic(
         UserService $userService,
         User $user,
-        $siteRootUrl,
         $testId,
         $isPublic
     ) {
