@@ -61,7 +61,7 @@ job_job_cancel:
   requirements:
     test_id: '\d+'
 
-job_job_setpublic_short:
+job_job_setpublic:
   path: /job/{test_id}/set-public/
   controller: App\Controller\Job\JobController::setPublicAction
   defaults:
@@ -69,25 +69,13 @@ job_job_setpublic_short:
   requirements:
     test_id: '\d+'
 
-job_job_setpublic:
-    path: /job/{site_root_url}/{test_id}/set-public/
-    defaults: { _controller: App\Controller\Job\JobController::setPublicAction, _format: json }
-    requirements:
-        site_root_url: ".+"
-
-job_job_setprivate_short:
+job_job_setprivate:
   path: /job/{test_id}/set-private/
   controller: App\Controller\Job\JobController::setPrivateAction
   defaults:
     _format: json
   requirements:
     test_id: '\d+'
-
-job_job_setprivate:
-    path: /job/{site_root_url}/{test_id}/set-private/
-    defaults: { _controller: App\Controller\Job\JobController::setPrivateAction, _format: json }
-    requirements:
-        site_root_url: ".+"
 
 job_start_retest:
     path: /job/{site_root_url}/{test_id}/re-test/
