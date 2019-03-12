@@ -92,7 +92,7 @@ class StartController
      */
     public function retestAction(
         Request $request,
-        $site_root_url,
+        $site_root_url = '',
         $test_id
     ) {
         /* @var Job $job */
@@ -117,7 +117,7 @@ class StartController
             $taskTypeOptionsArray[$taskTypeNameKey] = $taskTypeOptions->getOptions();
         }
 
-        $request->request->set('url', $site_root_url);
+        $request->request->set('url', (string) $job->getWebsite());
         $request->request->set('type', $job->getType()->getName());
         $request->request->set('test-types', $taskTypeNames);
         $request->request->set('test-type-options', $taskTypeOptionsArray);
