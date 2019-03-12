@@ -77,6 +77,15 @@ job_job_setprivate:
   requirements:
     test_id: '\d+'
 
+job_start_retest_short:
+  path: /job/{test_id}/re-test/
+  controller: App\Controller\Job\StartController::retestAction
+  methods: POST
+  defaults:
+    _format: json
+  requirements:
+    test_id: '\d+'
+
 job_start_retest:
     path: /job/{site_root_url}/{test_id}/re-test/
     defaults: { _controller: App\Controller\Job\StartController::retestAction, _format: json }

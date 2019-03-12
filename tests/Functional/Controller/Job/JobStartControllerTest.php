@@ -88,6 +88,37 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
     }
 
+    public function testReTestActionShortRoute()
+    {
+        $router = self::$container->get('router');
+        $siteRootUrl = 'http://example.com/';
+
+        $jobFactory = self::$container->get(JobFactory::class);
+        $job = $jobFactory->create([
+            JobFactory::KEY_URL => $siteRootUrl,
+            JobFactory::KEY_STATE => Job::STATE_COMPLETED,
+        ]);
+
+        $requestUrl = $router->generate('job_start_retest_short', [
+            'test_id' => $job->getId(),
+        ]);
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'POST',
+        ]);
+
+        $response = $this->getClientResponse();
+
+        /* @var Job $newJob */
+        $newJob = $this->jobRepository->findAll()[1];
+
+        $this->assertNotEquals($job->getId(), $newJob->getId());
+
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $newJob->getId() . '/'));
+        $this->assertEquals(Job::STATE_STARTING, $newJob->getState()->getName());
+    }
+
     public function testReTestActionGetRequest()
     {
         $router = self::$container->get('router');
