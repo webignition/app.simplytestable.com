@@ -85,16 +85,12 @@ class StartController
 
     /**
      * @param Request $request
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return RedirectResponse|Response
      */
-    public function retestAction(
-        Request $request,
-        $site_root_url = '',
-        $test_id
-    ) {
+    public function retestAction(Request $request, $test_id)
+    {
         /* @var Job $job */
         $job = $this->jobRepository->find($test_id);
         if (is_null($job)) {
