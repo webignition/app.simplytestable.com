@@ -70,7 +70,6 @@ class StartController
             return $this->redirect(
                 'job_job_status',
                 [
-                    'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
                     'test_id' => $job->getId()
                 ]
             );
@@ -170,7 +169,6 @@ class StartController
         return $this->redirect(
             'job_job_status',
             [
-                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
                 'test_id' => $job->getId()
             ]
         );

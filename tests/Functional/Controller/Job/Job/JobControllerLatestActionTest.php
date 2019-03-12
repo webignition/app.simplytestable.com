@@ -34,7 +34,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 
         $this->assertTrue(
             $response->isRedirect(sprintf(
-                'http://localhost/job/http://example.com//%d/',
+                'http://localhost/job/%d/',
                 $job->getId()
             ))
         );

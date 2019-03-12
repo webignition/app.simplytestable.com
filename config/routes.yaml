@@ -23,7 +23,7 @@ job_start_start:
     defaults:
         _format: json
 
-job_job_status_short:
+job_job_status:
   path: /job/{test_id}/
   controller: App\Controller\Job\JobController::statusAction
   defaults:
@@ -76,12 +76,6 @@ job_job_setprivate:
 job_start_retest:
     path: /job/{site_root_url}/{test_id}/re-test/
     defaults: { _controller: App\Controller\Job\StartController::retestAction, _format: json }
-    requirements:
-        site_root_url: ".+"
-
-job_job_status:
-    path: /job/{site_root_url}/{test_id}/
-    defaults: { _controller: App\Controller\Job\JobController::statusAction, _format: json }
     requirements:
         site_root_url: ".+"
 

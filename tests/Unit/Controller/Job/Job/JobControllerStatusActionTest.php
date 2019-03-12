@@ -42,7 +42,6 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
         $response = $jobController->statusAction(
             $jobSummaryFactory,
-            self::CANONICAL_URL,
             self::JOB_ID
         );
 
@@ -51,7 +50,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
         $responseData = json_decode($response->getContent(), true);
 
-        $this->assertInternalType('array', $responseData);
+        $this->assertIsArray($responseData);
     }
 
     public function testStatusActionAccessDenied()
@@ -73,7 +72,6 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
         $jobController->statusAction(
             $jobSummaryFactory,
-            self::CANONICAL_URL,
             self::JOB_ID
         );
     }
