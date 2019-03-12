@@ -84,7 +84,7 @@ class JobStartControllerTest extends AbstractControllerTest
         /* @var Job $job */
         $job = $this->jobRepository->findAll()[0];
 
-        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $job->getId() . '/'));
         $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
     }
 
@@ -116,14 +116,14 @@ class JobStartControllerTest extends AbstractControllerTest
 
         $this->assertNotEquals($job->getId(), $newJob->getId());
 
-        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $newJob->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $newJob->getId() . '/'));
         $this->assertEquals(Job::STATE_STARTING, $newJob->getState()->getName());
     }
 
     /**
      * @dataProvider startActionInvalidWebsiteDataProvider
      */
-    public function testStartActionInvalidWebsite(string $siteRootUrl, string $expectedRejectedUrl)
+    public function testStartActionInvalidWebsite(string $siteRootUrl)
     {
         $userService = self::$container->get(UserService::class);
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
@@ -142,7 +142,7 @@ class JobStartControllerTest extends AbstractControllerTest
         /* @var Job $job */
         $job = $this->jobRepository->findAll()[0];
         $this->assertEquals(
-            sprintf('http://localhost/job/%s/%s/', $expectedRejectedUrl, $job->getId()),
+            sprintf('http://localhost/job/%s/', $job->getId()),
             $response->getTargetUrl()
         );
 
@@ -161,19 +161,15 @@ class JobStartControllerTest extends AbstractControllerTest
         return [
             'unroutable host' => [
                 'siteRootUrl' => 'http://foo/',
-                'expectedRejectedUrl' => 'http://foo/',
             ],
             'unix-like local path' => [
                 'siteRootUrl' => '/home/users/foo',
-                'expectedRejectedUrl' => '/home/users/foo',
             ],
             'windows-like local path' => [
                 'siteRootUrl' => 'c:\Users\foo\Desktop\file.html',
-                'expectedRejectedUrl' => 'c:%5CUsers%5Cfoo%5CDesktop%5Cfile.html',
             ],
             'not even close' => [
                 'siteRootUrl' => 'vertical-align:top',
-                'expectedRejectedUrl' => 'vertical-align:top',
             ],
         ];
     }
@@ -216,7 +212,7 @@ class JobStartControllerTest extends AbstractControllerTest
             'job' => $job,
         ]);
 
-        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $job->getId() . '/'));
         $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
         $this->assertEquals('plan-constraint-limit-reached', $jobRejectionReason->getReason());
         $this->assertEquals($constraint, $jobRejectionReason->getConstraint());
@@ -239,7 +235,7 @@ class JobStartControllerTest extends AbstractControllerTest
         /* @var Job $job */
         $job = $this->jobRepository->findAll()[0];
 
-        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $job->getId() . '/'));
         $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
     }
 

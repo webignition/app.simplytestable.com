@@ -97,7 +97,6 @@ class JobController
 
             if ($latestJob instanceof Job) {
                 return $this->createRedirectToJobStatus(
-                    $latestJob->getWebsite()->getCanonicalUrl(),
                     $latestJob->getId()
                 );
             }
@@ -113,7 +112,6 @@ class JobController
 
             if (!is_null($latestJob)) {
                 return $this->createRedirectToJobStatus(
-                    $latestJob->getWebsite()->getCanonicalUrl(),
                     $latestJob->getId()
                 );
             }
@@ -131,7 +129,6 @@ class JobController
         }
 
         return $this->createRedirectToJobStatus(
-            $latestJob->getWebsite()->getCanonicalUrl(),
             $latestJob->getId()
         );
     }
@@ -199,13 +196,13 @@ class JobController
         $isPublic
     ) {
         if ($userService->isPublicUser($user)) {
-            return $this->createRedirectToJobStatus($siteRootUrl, $testId);
+            return $this->createRedirectToJobStatus($testId);
         }
 
         $job = $this->retrieveJob($testId);
 
         if ($userService->isPublicUser($job->getUser())) {
-            return $this->createRedirectToJobStatus($siteRootUrl, $testId);
+            return $this->createRedirectToJobStatus($testId);
         }
 
         if ($job->getIsPublic() !== $isPublic) {
@@ -215,21 +212,17 @@ class JobController
             $this->entityManager->flush();
         }
 
-        return $this->createRedirectToJobStatus($siteRootUrl, $testId);
+        return $this->createRedirectToJobStatus($testId);
     }
 
     /**
      * @param JobSummaryFactory $jobSummaryFactory
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return JsonResponse|Response
      */
-    public function statusAction(
-        JobSummaryFactory $jobSummaryFactory,
-        $site_root_url = '',
-        $test_id
-    ) {
+    public function statusAction(JobSummaryFactory $jobSummaryFactory, $test_id)
+    {
         $job = $this->retrieveJob($test_id);
         $jobSummary = $jobSummaryFactory->create($job);
 
@@ -416,17 +409,15 @@ class JobController
     }
 
     /**
-     * @param string $siteRootUrl
      * @param int $testId
      *
      * @return RedirectResponse
      */
-    private function createRedirectToJobStatus($siteRootUrl, $testId)
+    private function createRedirectToJobStatus($testId)
     {
         $url = $this->router->generate(
             'job_job_status',
             [
-                'site_root_url' => $siteRootUrl,
                 'test_id' => $testId
             ],
             UrlGeneratorInterface::ABSOLUTE_URL
