@@ -14,24 +14,6 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
 {
     const CANONICAL_URL = 'http://example.com/';
 
-    public function testRequestShortRoute()
-    {
-        $job = $this->jobFactory->create([
-            JobFactory::KEY_URL => 'http://example.com',
-        ]);
-
-        $this->getCrawler([
-            'url' => self::$container->get('router')->generate('job_job_setpublic_short', [
-                'test_id' => $job->getId(),
-            ])
-        ]);
-
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
-
-        $this->assertEquals(302, $response->getStatusCode());
-    }
-
     public function testRequest()
     {
         $job = $this->jobFactory->create([
@@ -41,7 +23,6 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         $this->getCrawler([
             'url' => self::$container->get('router')->generate('job_job_setpublic', [
                 'test_id' => $job->getId(),
-                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
         ]);
 
@@ -78,7 +59,6 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         $response = $this->jobController->setPublicAction(
             self::$container->get(UserService::class),
             $requesterUser,
-            $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
         );
 

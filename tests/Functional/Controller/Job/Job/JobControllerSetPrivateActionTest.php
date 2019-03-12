@@ -13,24 +13,6 @@ class JobControllerSetPrivateActionTest extends AbstractJobControllerTest
 {
     const CANONICAL_URL = 'http://example.com/';
 
-    public function testRequestShortRoute()
-    {
-        $job = $this->jobFactory->create([
-            JobFactory::KEY_URL => 'http://example.com',
-        ]);
-
-        $this->getCrawler([
-            'url' => self::$container->get('router')->generate('job_job_setprivate_short', [
-                'test_id' => $job->getId(),
-            ])
-        ]);
-
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
-
-        $this->assertEquals(302, $response->getStatusCode());
-    }
-
     public function testRequest()
     {
         $job = $this->jobFactory->create([
@@ -40,7 +22,6 @@ class JobControllerSetPrivateActionTest extends AbstractJobControllerTest
         $this->getCrawler([
             'url' => self::$container->get('router')->generate('job_job_setprivate', [
                 'test_id' => $job->getId(),
-                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
         ]);
 
@@ -83,7 +64,6 @@ class JobControllerSetPrivateActionTest extends AbstractJobControllerTest
         $response = $this->jobController->setPrivateAction(
             self::$container->get(UserService::class),
             $requesterUser,
-            $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
         );
 

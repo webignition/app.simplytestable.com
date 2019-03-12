@@ -52,7 +52,6 @@ abstract class AbstractJobControllerTest extends AbstractControllerTest
         return $this->jobController->setPublicAction(
             self::$container->get(UserService::class),
             $user,
-            $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
         );
     }

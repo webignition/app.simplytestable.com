@@ -42,7 +42,6 @@ class JobControllerSetPrivateActionTest extends AbstractJobControllerTest
         $jobController->setPrivateAction(
             $userService,
             $user,
-            self::CANONICAL_URL,
             self::JOB_ID
         );
     }

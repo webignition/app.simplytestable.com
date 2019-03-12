@@ -136,17 +136,12 @@ class JobController
     /**
      * @param UserService $userService
      * @param UserInterface $user
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return RedirectResponse
      */
-    public function setPublicAction(
-        UserService $userService,
-        UserInterface $user,
-        $site_root_url = '',
-        $test_id
-    ) {
+    public function setPublicAction(UserService $userService, UserInterface $user, $test_id)
+    {
         return $this->setIsPublic(
             $userService,
             $user,
@@ -158,17 +153,12 @@ class JobController
     /**
      * @param UserService $userService
      * @param UserInterface $user
-     * @param string $site_root_url
      * @param int $test_id
      *
      * @return RedirectResponse
      */
-    public function setPrivateAction(
-        UserService $userService,
-        UserInterface $user,
-        $site_root_url = '',
-        $test_id
-    ) {
+    public function setPrivateAction(UserService $userService, UserInterface $user, $test_id)
+    {
         return $this->setIsPublic(
             $userService,
             $user,
