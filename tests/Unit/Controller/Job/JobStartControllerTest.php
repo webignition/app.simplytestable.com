@@ -48,11 +48,7 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(BadRequestHttpException::class);
 
-        $jobStartController->retestAction(
-            new Request(),
-            'foo',
-            1
-        );
+        $jobStartController->retestAction(new Request(), 1);
     }
 
     public function testRetestActionForUnfinishedJob()
@@ -80,11 +76,7 @@ class JobStartControllerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(BadRequestHttpException::class);
 
-        $jobStartController->retestAction(
-            new Request(),
-            'foo',
-            1
-        );
+        $jobStartController->retestAction(new Request(), 1);
     }
 
     /**
