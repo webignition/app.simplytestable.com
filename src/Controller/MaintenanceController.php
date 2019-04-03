@@ -52,7 +52,6 @@ class MaintenanceController
      * @param EnqueuePrepareAllCommand $enqueuePrepareAllCommand
      * @param RequeueQueuedForAssignmentCommand $requeueQueuedForAssignmentCommand
      * @param TaskNotificationCommand $taskNotificationCommand
-     * @param EnqueueCancellationForAwaitingCancellationCommand $enqueueCancellationForAwaitingCancellationCommand
      *
      * @return Response
      */
@@ -60,15 +59,13 @@ class MaintenanceController
         DisableReadOnlyCommand $disableReadOnlyCommand,
         EnqueuePrepareAllCommand $enqueuePrepareAllCommand,
         RequeueQueuedForAssignmentCommand $requeueQueuedForAssignmentCommand,
-        TaskNotificationCommand $taskNotificationCommand,
-        EnqueueCancellationForAwaitingCancellationCommand $enqueueCancellationForAwaitingCancellationCommand
+        TaskNotificationCommand $taskNotificationCommand
     ) {
         $commands = [
             $disableReadOnlyCommand,
             $enqueuePrepareAllCommand,
             $requeueQueuedForAssignmentCommand,
             $taskNotificationCommand,
-            $enqueueCancellationForAwaitingCancellationCommand,
         ];
 
         $responseLines = [];
