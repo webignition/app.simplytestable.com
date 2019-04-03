@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Command;
 
@@ -24,12 +25,6 @@ class UrlFinderTest extends AbstractBaseTestCase
 {
     /**
      * @dataProvider getUrlsDataProvider
-     *
-     * @param Job $job
-     * @param array $httpFixtures
-     * @param string[] $expectedUrlSet
-     * @param string[] $expectedRequestPropertiesCollection
-     * @param float|null $sitemapRetrieverTimeout
      */
     public function testGetUrls(
         Job $job,
@@ -78,10 +73,7 @@ class UrlFinderTest extends AbstractBaseTestCase
         $this->assertEquals($expectedRequestPropertiesCollection, $requestPropertiesCollection);
     }
 
-    /**
-     * @return array
-     */
-    public function getUrlsDataProvider()
+    public function getUrlsDataProvider(): array
     {
         $notFoundResponse = new Response(404);
 
@@ -824,7 +816,7 @@ class UrlFinderTest extends AbstractBaseTestCase
                 'job' => $this->createJob('http://example.com/', []),
                 'httpFixtures' => [
                     HttpFixtureFactory::createRobotsTxtResponse([
-                        'https:/example.com/sitemap.xml',
+                        'https:///example.com/sitemap.xml',
                     ]),
                     new Response(
                         200,

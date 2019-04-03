@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Command;
+namespace App\Tests\Services;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Response;
@@ -8,7 +8,7 @@ use App\Services\HttpClientService;
 use App\Tests\Factory\ConnectExceptionFactory;
 use App\Tests\Factory\HtmlDocumentFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Tests\Services\TestHttpClientService;
+use webignition\Uri\Uri;
 use webignition\Url\Resolver\Resolver;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
@@ -59,7 +59,7 @@ class UrlResolverTest extends AbstractBaseTestCase
         $resolver = self::$container->get(Resolver::class);
 
         try {
-            $resolver->resolve('http://example.com/');
+            $resolver->resolve(new Uri('http://example.com/'));
         } catch (ConnectException $connectException) {
             $curlException = GuzzleCurlExceptionFactory::fromConnectException($connectException);
 
@@ -93,7 +93,7 @@ class UrlResolverTest extends AbstractBaseTestCase
         $this->httpClientService->appendFixtures($httpFixtures);
 
         $resolver = self::$container->get(Resolver::class);
-        $resolvedUrl = $resolver->resolve('http://example.com/');
+        $resolvedUrl = $resolver->resolve(new Uri('http://example.com/'));
 
         $this->assertEquals($expectedResolvedUrl, $resolvedUrl);
     }

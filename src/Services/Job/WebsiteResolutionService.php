@@ -10,7 +10,7 @@ use App\Services\JobService;
 use App\Services\StateService;
 use App\Services\WebSiteService;
 use GuzzleHttp\Exception\RequestException;
-use webignition\Url\Url;
+use webignition\Uri\Uri;
 use webignition\Url\Resolver\Resolver as UrlResolver;
 use webignition\GuzzleHttp\Exception\CurlException\Factory as GuzzleCurlExceptionFactory;
 
@@ -113,15 +113,17 @@ class WebsiteResolutionService
         $this->httpClientService->setRequestHeader('User-Agent', self::URL_RESOLVER_USER_AGENT);
 
         try {
-            $jobUrl = $job->getWebsite()->getCanonicalUrl();
-            $resolvedUrl = $this->urlResolver->resolve($jobUrl);
+            $jobUri = new Uri($job->getWebsite()->getCanonicalUrl());
+            $resolvedJobUri = $this->urlResolver->resolve($jobUri);
 
             if ($job->getType()->getName() == 'Full site') {
-                $resolvedUrl = $this->trimToRootUrl($resolvedUrl);
+                $resolvedJobUri = $resolvedJobUri->withPath('/');
+                $resolvedJobUri = $resolvedJobUri->withQuery('');
+                $resolvedJobUri = $resolvedJobUri->withFragment('');
             }
 
-            if ($jobUrl != $resolvedUrl) {
-                $job->setWebsite($this->websiteService->get($resolvedUrl));
+            if ((string) $jobUri !== (string) $resolvedJobUri) {
+                $job->setWebsite($this->websiteService->get((string) $resolvedJobUri));
             }
 
             $job->setState($jobResolvedState);
@@ -144,17 +146,5 @@ class WebsiteResolutionService
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
-    }
-
-    /**
-     * @param string $url
-     *
-     * @return string
-     */
-    private function trimToRootUrl($url)
-    {
-        $urlObject = new Url($url);
-
-        return $urlObject->getScheme() . '://' . $urlObject->getHost() . '/';
     }
 }

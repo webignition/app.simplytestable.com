@@ -4,6 +4,7 @@ namespace App\Services\TaskPreProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Psr7\Request;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type;
@@ -14,13 +15,13 @@ use App\Services\TaskService;
 use App\Services\TaskTypeService;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use App\Entity\Task\Output;
+use webignition\HtmlDocumentLinkUrlFinder\LinkCollection;
 use webignition\InternetMediaType\InternetMediaType;
 use webignition\WebResource\Exception\HttpException;
 use webignition\WebResource\Exception\TransportException;
 use webignition\WebResource\Retriever as WebResourceRetriever;
 use webignition\WebResource\WebPage\WebPage;
 use webignition\WebResourceInterfaces\WebPageInterface;
-use webignition\HtmlDocumentLinkUrlFinder\Configuration as LinkUrlFinderConfiguration;
 
 class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 {
@@ -33,6 +34,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     private $logger;
     private $taskRepository;
     private $entityManager;
+    private $linkFinder;
 
     public function __construct(
         TaskService $taskService,
@@ -41,7 +43,8 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         LoggerInterface $logger,
         StateService $stateService,
         EntityManagerInterface $entityManager,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        HtmlDocumentLinkUrlFinder $linkFinder
     ) {
         $this->taskService = $taskService;
         $this->webResourceRetriever = $webResourceService;
@@ -50,6 +53,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
+        $this->linkFinder = $linkFinder;
     }
 
     /**
@@ -80,9 +84,9 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
             return false;
         }
 
-        $links = $this->findWebResourceLinks($task, $webResource);
+        $linkCollection = $this->linkFinder->getLinkCollection($webResource, $task->getUrl());
 
-        if (empty($links)) {
+        if (0 === count($linkCollection)) {
             $output = $this->createOutput(null);
             $this->completeTask($task, $output);
 
@@ -92,11 +96,11 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         $existingLinkIntegrityResults = $this->getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs);
 
         $linkIntegrityResults = $this->getLinkIntegrityResultsFromExistingResults(
-            $links,
+            $linkCollection,
             $existingLinkIntegrityResults
         );
 
-        $linkCount = count($links);
+        $linkCount = count($linkCollection);
         $linkIntegrityResultCount = count($linkIntegrityResults);
 
         if (!empty($linkIntegrityResults)) {
@@ -120,23 +124,6 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         }
 
         return false;
-    }
-
-    /**
-     * @param Task $task
-     * @param WebPageInterface $webPage
-     *
-     * @return array
-     */
-    private function findWebResourceLinks(Task $task, WebPageInterface $webPage)
-    {
-        $linkFinder = new HtmlDocumentLinkUrlFinder();
-        $linkFinder->setConfiguration(new LinkUrlFinderConfiguration([
-            LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE_URL => $task->getUrl(),
-            LinkUrlFinderConfiguration::CONFIG_KEY_SOURCE => $webPage,
-        ]));
-
-        return $linkFinder->getAll();
     }
 
     /**
@@ -193,21 +180,20 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         return $urls;
     }
 
-    /**
-     * @param array $links
-     * @param array $existingLinkIntegrityResults
-     *
-     * @return array
-     */
-    private function getLinkIntegrityResultsFromExistingResults($links, $existingLinkIntegrityResults)
-    {
+    private function getLinkIntegrityResultsFromExistingResults(
+        LinkCollection $linkCollection,
+        array $existingLinkIntegrityResults
+    ): array {
         $linkIntegrityResults = [];
 
-        foreach ($links as $link) {
-            $linkIntegrityResult = $this->getExistingLinkIntegrityResult($link['url'], $existingLinkIntegrityResults);
+        foreach ($linkCollection as $link) {
+            $linkIntegrityResult = $this->getExistingLinkIntegrityResult(
+                $link->getUri(),
+                $existingLinkIntegrityResults
+            );
 
             if (!is_null($linkIntegrityResult)) {
-                $linkIntegrityResult->context = $link['element'];
+                $linkIntegrityResult->context = $link->getElementAsString();
                 $linkIntegrityResults[] = $linkIntegrityResult;
             }
         }
@@ -216,15 +202,15 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     }
 
     /**
-     * @param string $url
+     * @param UriInterface $uri
      * @param \stdClass[] $existingLinkIntegrityResults
      *
      * @return \stdClass
      */
-    private function getExistingLinkIntegrityResult($url, $existingLinkIntegrityResults)
+    private function getExistingLinkIntegrityResult(UriInterface $uri, $existingLinkIntegrityResults)
     {
         foreach ($existingLinkIntegrityResults as $linkIntegrityResult) {
-            if ($linkIntegrityResult->url == $url) {
+            if ($linkIntegrityResult->url === (string) $uri) {
                 return $linkIntegrityResult;
             }
         }
