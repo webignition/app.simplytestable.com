@@ -72,7 +72,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => '',
                     'type' => 'HTML validation'
                 ],
             ],
@@ -95,7 +94,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => 'worker.example.com',
                     'type' => 'HTML validation'
                 ],
             ],
@@ -117,7 +115,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => '',
                     'type' => 'HTML validation'
                 ],
             ],
@@ -139,7 +136,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => '',
                     'type' => 'HTML validation',
                     'time_period' => [
                         'start_date_time' => '2017-10-24T19:14:00+00:00',
@@ -164,7 +160,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => '',
                     'type' => 'HTML validation',
                     'time_period' => [
                         'start_date_time' => '2017-10-24T19:14:00+00:00',
@@ -187,7 +182,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => '',
                     'type' => 'HTML validation',
                     'remote_id' => 2,
                 ],
@@ -212,7 +206,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'url' => 'http://foo.example.com',
                     'state' => 'foo-state',
-                    'worker' => '',
                     'type' => 'HTML validation',
                     'output' => [
                         'output' => '"output content"',
