@@ -54,7 +54,6 @@ use App\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 use App\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
 use App\Services\WorkerActivationRequestService;
 use App\Services\WorkerTaskAssignmentService;
-use App\Services\WorkerTaskCancellationService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MockFactory
@@ -1076,17 +1075,6 @@ class MockFactory
         $workerTaskAssignmentService = \Mockery::mock(WorkerTaskAssignmentService::class);
 
         return $workerTaskAssignmentService;
-    }
-
-    /**
-     * @return Mock|WorkerTaskCancellationService
-     */
-    public static function createWorkerTaskCancellationService()
-    {
-        /* @var Mock|WorkerTaskCancellationService $workerTaskCancellationService */
-        $workerTaskCancellationService = \Mockery::mock(WorkerTaskCancellationService::class);
-
-        return $workerTaskCancellationService;
     }
 
     /**
