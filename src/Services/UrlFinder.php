@@ -5,6 +5,8 @@ namespace App\Services;
 use GuzzleHttp\Psr7\Request;
 use App\Entity\Job\Job;
 use App\Entity\WebSite;
+use Psr\Http\Message\UriInterface;
+use webignition\Uri\Uri;
 use webignition\Url\Url;
 use webignition\WebResource\Retriever as WebResourceRetriever;
 use webignition\WebResource\Sitemap\Factory as SitemapFactory;
@@ -132,7 +134,7 @@ class UrlFinder
         }
 
         $this->httpClientService->setRequestHeader('User-Agent', self::FEED_FINDER_USER_AGENT);
-        $this->websiteRssFeedFinder->setRootUrl((string)$job->getWebsite());
+        $this->websiteRssFeedFinder->setRootUrl(new Uri((string)$job->getWebsite()));
 
         $urlsFromRssFeed = $this->getUrlsFromNewsFeeds($this->websiteRssFeedFinder->getRssFeedUrls());
         if (count($urlsFromRssFeed)) {
@@ -172,15 +174,14 @@ class UrlFinder
 
         $this->httpClientService->setRequestHeader('User-Agent', self::SITEMAP_FINDER_USER_AGENT);
 
-        $sitemapUrls = $this->websiteSitemapFinder->findSitemapUrls((string)$job->getWebsite());
-        $sitemapUrls = $this->fixSitemapUrls($sitemapUrls);
+        $sitemapUris = $this->websiteSitemapFinder->findSitemapUrls(new Uri($job->getWebsite()->getCanonicalUrl()));
 
         $this->httpClientService->setRequestHeader('User-Agent', self::SITEMAP_RETRIEVER_USER_AGENT);
 
         /* @var SitemapInterface[] $sitemaps */
         $sitemaps = [];
-        foreach ($sitemapUrls as $sitemapUrl) {
-            $sitemap = $this->retrieveSitemap($sitemapUrl);
+        foreach ($sitemapUris as $sitemapUri) {
+            $sitemap = $this->retrieveSitemap($sitemapUri);
 
             if (!empty($sitemap)) {
                 $sitemaps[] = $sitemap;
@@ -204,31 +205,10 @@ class UrlFinder
         return $urls;
     }
 
-    /**
-     * @param string[] $sitemapUrls
-     *
-     * @return string[]
-     */
-    private function fixSitemapUrls(array $sitemapUrls): array
-    {
-        foreach ($sitemapUrls as $urlIndex => $sitemapUrl) {
-            if (preg_match('/^https?:\/\/\//', $sitemapUrl)) {
-                $sitemapUrls[$urlIndex] = preg_replace('/^https?:\/\/\//', 'http://', $sitemapUrl);
-            }
-        }
-
-        return $sitemapUrls;
-    }
-
-    /**
-     * @param string $url
-     *
-     * @return SitemapInterface|null
-     */
-    private function retrieveSitemap($url)
+    private function retrieveSitemap(UriInterface $uri): ?SitemapInterface
     {
         $sitemap = null;
-        $request = new Request('GET', $url);
+        $request = new Request('GET', $uri);
 
         try {
             $sitemapResource = $this->webResourceRetriever->retrieve($request);
@@ -275,7 +255,7 @@ class UrlFinder
 
             $timeBeforeTransfer = microtime(true);
 
-            $childSitemap = $this->retrieveSitemap($childSitemapUrl);
+            $childSitemap = $this->retrieveSitemap(new Uri($childSitemapUrl));
 
             $transferTime = microtime(true) - $timeBeforeTransfer;
             $totalTransferTime += $transferTime;

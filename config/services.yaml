@@ -208,3 +208,5 @@ services:
       arguments:
         $kernelProjectDirectory: '%kernel.project_dir%'
         $environment: '%kernel.environment%'
+
+    webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder:

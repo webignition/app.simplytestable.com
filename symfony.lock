@@ -1,4 +1,7 @@
 {
+    "algo26-matthias/idna-convert": {
+        "version": "v2.1.0"
+    },
     "chrisboulton/php-resque": {
         "version": "dev-master"
     },
@@ -572,11 +575,17 @@
     "webignition/sitemap-model": {
         "version": "4.1"
     },
+    "webignition/stream-factory": {
+        "version": "0.1"
+    },
     "webignition/stream-factory-interface": {
         "version": "0.2"
     },
     "webignition/string-parser": {
         "version": "0.2.3"
+    },
+    "webignition/uri": {
+        "version": "0.4"
     },
     "webignition/url": {
         "version": "2.1"
