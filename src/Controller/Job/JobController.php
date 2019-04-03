@@ -285,32 +285,6 @@ class JobController
 
         $jobService->cancel($job);
 
-        $tasksToDeAssign = array();
-        $taskIds = $this->taskRepository->getIdsByJob($job);
-        foreach ($taskIds as $taskId) {
-            $tasksToDeAssign[] = array(
-                'id' => $taskId
-            );
-        }
-
-        $taskAwaitingCancellationState = $stateService->get(Task::STATE_AWAITING_CANCELLATION);
-
-        /* @var Task[] $tasksAwaitingCancellation */
-        $tasksAwaitingCancellation = $this->taskRepository->findBy([
-            'job' => $job,
-            'state' => $taskAwaitingCancellationState,
-        ]);
-
-        $taskIdsToCancel = array();
-
-        foreach ($tasksAwaitingCancellation as $task) {
-            $taskIdsToCancel[] = $task->getId();
-        }
-
-        if (count($taskIdsToCancel) > 0) {
-            $resqueQueueService->enqueue(new CancelCollectionJob(['ids' => implode(',', $taskIdsToCancel)]));
-        }
-
         return new Response();
     }
 
