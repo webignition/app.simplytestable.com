@@ -195,14 +195,6 @@ class Task implements \JsonSerializable
     }
 
     /**
-     * @return Worker
-     */
-    public function getWorker()
-    {
-        return $this->worker;
-    }
-
-    /**
      * @param Type\Type $type
      */
     public function setType(Type\Type $type)
@@ -309,17 +301,11 @@ class Task implements \JsonSerializable
     public function jsonSerialize()
     {
         $stateName = str_replace('task-', '', $this->getState()->getName());
-        $worker = $this->getWorker();
-
-        $workerHostname = empty($worker)
-            ? ''
-            : $worker->getHostname();
 
         $taskData = [
             'id' => $this->getId(),
             'url' => $this->getUrl(),
             'state' => $stateName,
-            'worker' => $workerHostname,
             'type' => $this->getType()->getName(),
         ];
 
