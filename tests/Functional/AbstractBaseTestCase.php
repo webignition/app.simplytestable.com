@@ -21,8 +21,6 @@ abstract class AbstractBaseTestCase extends WebTestCase
     protected function setUp()
     {
         $this->client = static::createClient();
-
-        self::$container->get('doctrine')->getConnection()->beginTransaction();
     }
 
     /**
@@ -39,23 +37,5 @@ abstract class AbstractBaseTestCase extends WebTestCase
             ->andReturn($user);
 
         $securityTokenStorage->setToken($token);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-//        self::$container->get('doctrine')->getConnection()->close();
-
-        $refl = new \ReflectionObject($this);
-        foreach ($refl->getProperties() as $prop) {
-            if (!$prop->isStatic() && 0 !== strpos($prop->getDeclaringClass()->getName(), 'PHPUnit_')) {
-                $prop->setAccessible(true);
-                $prop->setValue($this, null);
-            }
-        }
     }
 }

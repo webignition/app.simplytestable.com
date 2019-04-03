@@ -57,11 +57,12 @@
         "wildbit/postmark-php": "^2"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^4.1",
+        "dama/doctrine-test-bundle": "^5.0",
+        "mockery/mockery": "^1.0",
+        "php-mock/php-mock-mockery": "^1",
         "phpunit/phpunit": "~7.0",
         "squizlabs/php_codesniffer": "3.*",
-        "mockery/mockery": "^1.0",
-        "php-mock/php-mock-mockery": "^1"
+        "symfony/phpunit-bridge": "^4.1"
     },
     "config": {
         "preferred-install": {
