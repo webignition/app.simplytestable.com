@@ -109,12 +109,6 @@ class CollectionCommandTest extends AbstractBaseTestCase
         foreach ($job->getTasks() as $taskIndex => $task) {
             $expectedTaskValues = $expectedTaskValuesCollection[$taskIndex];
 
-            if (empty($expectedTaskValues['worker'])) {
-                $this->assertNull($task->getWorker());
-            } else {
-                $this->assertEquals($expectedTaskValues['worker']['hostname'], $task->getWorker()->getHostname());
-            }
-
             $this->assertEquals($expectedTaskValues['state'], $task->getState()->getName());
         }
 
@@ -145,15 +139,12 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedReturnCode' => CollectionCommand::RETURN_CODE_FAILED_NO_WORKERS,
                 'expectedTaskValuesCollection' => [
                     [
-                        'worker' => null,
                         'state' => Task::STATE_QUEUED,
                     ],
                     [
-                        'worker' => null,
                         'state' => Task::STATE_QUEUED,
                     ],
                     [
-                        'worker' => null,
                         'state' => Task::STATE_QUEUED,
                     ],
                 ],
@@ -174,15 +165,12 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedReturnCode' => 2,
                 'expectedTaskValuesCollection' => [
                     [
-                        'worker' => null,
                         'state' => Task::STATE_QUEUED,
                     ],
                     [
-                        'worker' => null,
                         'state' => Task::STATE_QUEUED,
                     ],
                     [
-                        'worker' => null,
                         'state' => Task::STATE_QUEUED,
                     ],
                 ],
@@ -221,21 +209,12 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedReturnCode' => CollectionCommand::RETURN_CODE_OK,
                 'expectedTaskValuesCollection' => [
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                 ],
@@ -271,9 +250,6 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedReturnCode' => CollectionCommand::RETURN_CODE_OK,
                 'expectedTaskValuesCollection' => [
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                 ],
@@ -312,21 +288,12 @@ class CollectionCommandTest extends AbstractBaseTestCase
                 'expectedReturnCode' => CollectionCommand::RETURN_CODE_OK,
                 'expectedTaskValuesCollection' => [
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                     [
-                        'worker' => [
-                            'hostname' => 'hydrogen.worker.example.com'
-                        ],
                         'state' => Task::STATE_IN_PROGRESS,
                     ],
                 ],

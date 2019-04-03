@@ -119,7 +119,6 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->taskService->cancel($this->task);
 
         $this->assertEquals(Task::STATE_CANCELLED, $this->task->getState()->getName());
-        $this->assertNull($this->task->getWorker());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getEndDateTime());
@@ -274,7 +273,6 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testSetStarted()
     {
         $this->assertEquals(Task::STATE_QUEUED, $this->task->getState()->getName());
-        $this->assertNull($this->task->getWorker());
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
@@ -285,7 +283,6 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->taskService->setStarted($this->task, $worker, $remoteId);
 
         $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
-        $this->assertEquals($worker, $this->task->getWorker());
         $this->assertEquals($remoteId, $this->task->getRemoteId());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
@@ -370,7 +367,6 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals($outputContent, $this->task->getOutput()->getOutput());
         $this->assertEquals($stateName, $this->task->getState()->getName());
-        $this->assertNull($this->task->getWorker());
         $this->assertNull($this->task->getRemoteId());
     }
 

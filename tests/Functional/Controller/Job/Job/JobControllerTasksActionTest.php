@@ -170,10 +170,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         }
     }
 
-    /**
-     * @return array
-     */
-    public function requestTaskIdsDataProvider()
+    public function requestTaskIdsDataProvider(): array
     {
         return [
             'all' => [
@@ -182,19 +179,16 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                     [
                         'url' => 'http://example.com/one',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                     [
                         'url' => 'http://example.com/bar%20foo',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                     [
                         'url' => 'http://example.com/foo bar',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                 ],
@@ -205,7 +199,6 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                     [
                         'url' => 'http://example.com/one',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                 ],
@@ -216,7 +209,6 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                     [
                         'url' => 'http://example.com/foo bar',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                 ],
@@ -227,13 +219,11 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                     [
                         'url' => 'http://example.com/one',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                     [
                         'url' => 'http://example.com/foo bar',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                 ],
@@ -244,13 +234,11 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                     [
                         'url' => 'http://example.com/bar%20foo',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                     [
                         'url' => 'http://example.com/foo bar',
                         'state' => 'queued',
-                        'worker' => '',
                         'type' => 'HTML validation',
                     ],
                 ],
