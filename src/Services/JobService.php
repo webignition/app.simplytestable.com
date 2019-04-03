@@ -136,13 +136,9 @@ class JobService
 
         $tasks = $job->getTasks();
 
-        /* @var $task \App\Entity\Task\Task */
+        /* @var Task $task */
         foreach ($tasks as $task) {
-            if ($task->getState()->getName() === Task::STATE_IN_PROGRESS) {
-                $this->taskService->setAwaitingCancellation($task);
-            } else {
-                $this->taskService->cancel($task);
-            }
+            $this->taskService->cancel($task);
         }
 
         if ($job->getTimePeriod() instanceof TimePeriod) {

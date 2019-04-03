@@ -434,7 +434,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testCancel($jobValues, $resolveAndPrepare)
     {
         $stateService = self::$container->get(StateService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
 
         if ($resolveAndPrepare) {
             $job = $this->jobFactory->createResolveAndPrepare($jobValues);
@@ -458,19 +458,12 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals(Job::STATE_CANCELLED, $job->getState());
 
-        foreach ($tasks as $taskIndex => $task) {
-            if ($taskIndex === 0) {
-                $this->assertEquals(Task::STATE_AWAITING_CANCELLATION, $task->getState());
-            } else {
-                $this->assertEquals(Task::STATE_CANCELLED, $task->getState());
-            }
+        foreach ($tasks as $task) {
+            $this->assertEquals(Task::STATE_CANCELLED, $task->getState());
         }
     }
 
-    /**
-     * @return array
-     */
-    public function cancelDataProvider()
+    public function cancelDataProvider(): array
     {
         return [
             'no tasks' => [
