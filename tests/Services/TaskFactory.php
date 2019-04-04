@@ -14,7 +14,6 @@ class TaskFactory
     const KEY_PARAMETERS = 'parameters';
     const KEY_TIME_PERIOD = 'time-period';
     const KEY_URL = 'url';
-    const KEY_REMOTE_ID = 'remote-id';
 
     private $entityManager;
 
