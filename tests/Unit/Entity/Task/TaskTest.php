@@ -20,7 +20,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
      * @param State $state
      * @param Type $type
      * @param TimePeriod|null $timePeriod
-     * @param int|null $remoteId
      * @param Output|null $output
      * @param array $expectedReturnValue
      */
@@ -30,7 +29,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
         State $state,
         $type,
         $timePeriod,
-        $remoteId,
         $output,
         $expectedReturnValue
     ) {
@@ -41,7 +39,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
         $task->setState($state);
         $task->setType($type);
         $task->setTimePeriod($timePeriod);
-        $task->setRemoteId($remoteId);
         $task->setOutput($output);
 
         $this->assertEquals($expectedReturnValue, $task->jsonSerialize());
@@ -61,7 +58,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
                 'timePeriod' => null,
-                'remoteId' =>  null,
                 'output' => null,
                 'expectedReturnValue' => [
                     'id' => 1,
@@ -81,7 +77,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::TIME_PERIOD_START_DATE_TIME => null,
                     ModelFactory::TIME_PERIOD_END_DATE_TIME => null,
                 ]),
-                'remoteId' =>  null,
                 'output' => null,
                 'expectedReturnValue' => [
                     'id' => 1,
@@ -101,7 +96,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::TIME_PERIOD_START_DATE_TIME => new \DateTime('2017-10-24 19:14:00'),
                     ModelFactory::TIME_PERIOD_END_DATE_TIME => null,
                 ]),
-                'remoteId' =>  null,
                 'output' => null,
                 'expectedReturnValue' => [
                     'id' => 1,
@@ -124,7 +118,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::TIME_PERIOD_START_DATE_TIME => new \DateTime('2017-10-24 19:14:00'),
                     ModelFactory::TIME_PERIOD_END_DATE_TIME => new \DateTime('2017-10-24 20:14:00'),
                 ]),
-                'remoteId' =>  null,
                 'output' => null,
                 'expectedReturnValue' => [
                     'id' => 1,
@@ -137,24 +130,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
             ],
-            'non-empty remote id' => [
-                'id' => 1,
-                'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
-                'type' => ModelFactory::createTaskType([
-                    ModelFactory::TASK_TYPE_NAME => 'HTML validation',
-                ]),
-                'timePeriod' => null,
-                'remoteId' => 2,
-                'output' => null,
-                'expectedReturnValue' => [
-                    'id' => 1,
-                    'url' => 'http://foo.example.com',
-                    'state' => 'foo-state',
-                    'type' => 'HTML validation',
-                    'remote_id' => 2,
-                ],
-            ],
             'with output' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
@@ -163,7 +138,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
                 'timePeriod' => null,
-                'remoteId' => null,
                 'output' => ModelFactory::createTaskOutput([
                     ModelFactory::TASK_OUTPUT_OUTPUT => '"output content"',
                     ModelFactory::TASK_OUTPUT_CONTENT_TYPE => 'application/json',

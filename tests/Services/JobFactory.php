@@ -54,7 +54,6 @@ class JobFactory
     const KEY_TASK_STATE = 'state';
     const KEY_TASK_WORKER_HOSTNAME = 'worker-hostname';
     const KEY_SET_PUBLIC = 'set-public';
-    const KEY_TASK_REMOTE_ID = 'remote-id';
 
     /**
      * @var array
@@ -166,13 +165,6 @@ class JobFactory
                     if (isset($taskValues[self::KEY_TASK_STATE])) {
                         $stateName = $taskValues[self::KEY_TASK_STATE];
                         $task->setState($this->stateService->get($stateName));
-                        $taskIsUpdated = true;
-                    }
-
-                    if (isset($taskValues[self::KEY_TASK_REMOTE_ID])) {
-                        $remoteId = $taskValues[self::KEY_TASK_REMOTE_ID];
-
-                        $task->setRemoteId($remoteId);
                         $taskIsUpdated = true;
                     }
 

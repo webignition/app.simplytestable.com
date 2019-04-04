@@ -311,7 +311,6 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals($outputContent, $this->task->getOutput()->getOutput());
         $this->assertEquals($stateName, $this->task->getState()->getName());
-        $this->assertNull($this->task->getRemoteId());
     }
 
     /**
@@ -320,15 +319,14 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function completeSuccessDataProvider()
     {
         return [
-            'no remote id, no time period' => [
+            'no time period' => [
                 'taskValues' => [],
                 'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
                 'outputContent' => 'foo',
                 'stateName' => Task::STATE_COMPLETED,
             ],
-            'has remote id, has time period' => [
+            'has time period' => [
                 'taskValues' => [
-                    TaskFactory::KEY_REMOTE_ID => 1,
                     TaskFactory::KEY_TIME_PERIOD => [
                         TimePeriodFactory::KEY_START_DATE_TIME => new \DateTime(),
                     ],

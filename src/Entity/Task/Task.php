@@ -191,14 +191,6 @@ class Task implements \JsonSerializable
     }
 
     /**
-     * @param int $remoteId
-     */
-    public function setRemoteId($remoteId)
-    {
-        $this->remoteId = $remoteId;
-    }
-
-    /**
      * @return int
      */
     public function getRemoteId()

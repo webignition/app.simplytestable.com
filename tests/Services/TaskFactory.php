@@ -49,10 +49,6 @@ class TaskFactory
             $task->setTimePeriod($taskValues[self::KEY_TIME_PERIOD]);
         }
 
-        if (isset($taskValues[self::KEY_REMOTE_ID])) {
-            $task->setRemoteId($taskValues[self::KEY_REMOTE_ID]);
-        }
-
         if (isset($taskValues[self::KEY_URL])) {
             $task->setUrl($taskValues[self::KEY_URL]);
         }

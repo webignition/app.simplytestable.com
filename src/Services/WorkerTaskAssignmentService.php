@@ -233,25 +233,6 @@ class WorkerTaskAssignmentService extends WorkerTaskService
             $response->getReasonPhrase()
         ));
 
-        $responseObject = json_decode($response->getBody());
-        foreach ($tasks as $task) {
-            $this->setTaskRemoteIdFromRemoteCollection($task, $responseObject);
-        }
-
         return true;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @param \stdClass $remoteCollection
-     */
-    private function setTaskRemoteIdFromRemoteCollection(Task $task, $remoteCollection)
-    {
-        foreach ($remoteCollection as $taskObject) {
-            if ($task->getUrl() == $taskObject->url && (string)$task->getType() == $taskObject->type) {
-                $task->setRemoteId($taskObject->id);
-            }
-        }
     }
 }
