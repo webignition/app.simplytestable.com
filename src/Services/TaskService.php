@@ -114,7 +114,6 @@ class TaskService
         $cancelledState = $this->stateService->get(Task::STATE_CANCELLED);
 
         $task->setState($cancelledState);
-        $task->clearWorker();
 
         $timePeriod = $task->getTimePeriod();
 
@@ -246,7 +245,6 @@ class TaskService
         $task->getTimePeriod()->setEndDateTime($endDateTime);
         $task->setOutput($output);
         $task->setState($state);
-        $task->clearWorker();
         $task->clearRemoteId();
 
         $this->entityManager->persist($task);
