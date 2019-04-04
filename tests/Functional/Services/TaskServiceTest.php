@@ -231,7 +231,6 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testSetStarted()
     {
         $this->assertEquals(Task::STATE_QUEUED, $this->task->getState()->getName());
-        $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
         $this->taskService->setStarted($this->task);

@@ -191,14 +191,6 @@ class Task implements \JsonSerializable
     }
 
     /**
-     * @return int
-     */
-    public function getRemoteId()
-    {
-        return $this->remoteId;
-    }
-
-    /**
      * @param TimePeriod $timePeriod
      */
     public function setTimePeriod(TimePeriod $timePeriod = null)
