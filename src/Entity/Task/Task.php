@@ -169,11 +169,6 @@ class Task implements \JsonSerializable
         return $this->state;
     }
 
-    public function clearRemoteId()
-    {
-        $this->remoteId = null;
-    }
-
     /**
      * @param Type\Type $type
      */

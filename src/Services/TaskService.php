@@ -237,7 +237,6 @@ class TaskService
         $task->getTimePeriod()->setEndDateTime($endDateTime);
         $task->setOutput($output);
         $task->setState($state);
-        $task->clearRemoteId();
 
         $this->entityManager->persist($task);
         $this->entityManager->flush();
