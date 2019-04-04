@@ -190,12 +190,12 @@ class JobRepository extends ServiceEntityRepository
         $queryBuilder->select('Job.id');
         $queryBuilder->andWhere('Job.user = :User');
         $queryBuilder->andWhere('Job.id > :MinimumId');
-        $queryBuilder->andWhere('Job.parameters LIKE :ParameterFragmentPrefix%');
+        $queryBuilder->andWhere('Job.parameters LIKE :ParameterFragmentPrefix');
 
         $queryBuilder->setParameters([
             'User' => $user,
             'MinimumId' => $minimumId,
-            'ParameterFragmentPrefix' => $parameterFragmentPrefix,
+            'ParameterFragmentPrefix' => $parameterFragmentPrefix . '%',
         ]);
 
         $result = $queryBuilder->getQuery()->getResult();
