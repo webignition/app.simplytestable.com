@@ -234,12 +234,9 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $remoteId = 1;
-
-        $this->taskService->setStarted($this->task, $remoteId);
+        $this->taskService->setStarted($this->task);
 
         $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
-        $this->assertEquals($remoteId, $this->task->getRemoteId());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertNull($this->task->getTimePeriod()->getEndDateTime());

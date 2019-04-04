@@ -84,11 +84,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
 
             if ($this->assignCollectionToWorker($tasks, $worker)) {
                 foreach ($tasks as $task) {
-                    $this->taskService->setStarted(
-                        $task,
-                        $task->getRemoteId()
-                    );
-
+                    $this->taskService->setStarted($task);
                     $this->entityManager->persist($task);
                 }
 
