@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\TimePeriod;
-use App\Entity\Worker;
 use App\Entity\Task\Type\Type as TaskType;
 use App\Model\Parameters;
 
@@ -65,13 +65,6 @@ class Task implements \JsonSerializable
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     protected $state;
-
-    /**
-     * @var Worker
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Worker", inversedBy="tasks")
-     */
-    protected $worker;
 
     /**
      * @var TaskType
