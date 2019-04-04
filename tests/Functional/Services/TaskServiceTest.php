@@ -12,7 +12,6 @@ use App\Services\TaskService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\TaskFactory;
 use App\Tests\Services\TimePeriodFactory;
-use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -235,11 +234,9 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $workerFactory = self::$container->get(WorkerFactory::class);
-        $worker = $workerFactory->create();
         $remoteId = 1;
 
-        $this->taskService->setStarted($this->task, $worker, $remoteId);
+        $this->taskService->setStarted($this->task, $remoteId);
 
         $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
         $this->assertEquals($remoteId, $this->task->getRemoteId());

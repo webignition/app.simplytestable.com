@@ -7,7 +7,6 @@ use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type as TaskType;
 use App\Entity\Task\Output as TaskOutput;
 use App\Entity\TimePeriod;
-use App\Entity\Worker;
 use App\Entity\State;
 use App\Repository\TaskOutputRepository;
 use App\Repository\TaskRepository;
@@ -190,10 +189,9 @@ class TaskService
 
     /**
      * @param Task $task
-     * @param Worker $worker
      * @param int $remoteId
      */
-    public function setStarted(Task $task, Worker $worker, $remoteId)
+    public function setStarted(Task $task, $remoteId)
     {
         $inProgressState = $this->stateService->get(Task::STATE_IN_PROGRESS);
 
@@ -203,7 +201,6 @@ class TaskService
         $task->setRemoteId($remoteId);
         $task->setState($inProgressState);
         $task->setTimePeriod($timePeriod);
-        $task->setWorker($worker);
     }
 
     /**
