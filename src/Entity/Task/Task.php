@@ -176,14 +176,6 @@ class Task implements \JsonSerializable
         return $this->state;
     }
 
-    /**
-     * @param Worker $worker
-     */
-    public function setWorker(Worker $worker = null)
-    {
-        $this->worker = $worker;
-    }
-
     public function clearRemoteId()
     {
         $this->remoteId = null;

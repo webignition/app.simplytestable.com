@@ -86,7 +86,6 @@ class WorkerTaskAssignmentService extends WorkerTaskService
                 foreach ($tasks as $task) {
                     $this->taskService->setStarted(
                         $task,
-                        $worker,
                         $task->getRemoteId()
                     );
 

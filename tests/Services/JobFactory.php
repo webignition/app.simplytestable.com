@@ -15,7 +15,6 @@ use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\Task\Task;
 use App\Entity\TimePeriod;
-use App\Entity\Worker;
 use App\Services\ApplicationStateService;
 use App\Services\CrawlJobContainerService;
 use App\Services\HttpClientService;
@@ -138,8 +137,6 @@ class JobFactory
      */
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
-        $workerRepository = $this->entityManager->getRepository(Worker::class);
-
         $ignoreState = true;
 
         $job = $this->create($jobValues, $ignoreState);
@@ -169,16 +166,6 @@ class JobFactory
                     if (isset($taskValues[self::KEY_TASK_STATE])) {
                         $stateName = $taskValues[self::KEY_TASK_STATE];
                         $task->setState($this->stateService->get($stateName));
-                        $taskIsUpdated = true;
-                    }
-
-                    if (isset($taskValues[self::KEY_TASK_WORKER_HOSTNAME])) {
-                        $workerHostname = $taskValues[self::KEY_TASK_WORKER_HOSTNAME];
-                        $worker = $workerRepository->findOneBy([
-                            'hostname' => $workerHostname,
-                        ]);
-
-                        $task->setWorker($worker);
                         $taskIsUpdated = true;
                     }
 
