@@ -1,10 +1,8 @@
 <?php
+
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Task\Task;
 
 /**
  * @ORM\Entity
@@ -35,13 +33,6 @@ class Worker implements \JsonSerializable
     protected $hostname;
 
     /**
-     * @var DoctrineCollection
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Task\Task", mappedBy="worker")
-     */
-    protected $tasks;
-
-    /**
      * @var State
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\State")
@@ -55,11 +46,6 @@ class Worker implements \JsonSerializable
      * @ORM\Column(type="string", unique=false, nullable=true)
      */
     private $token;
-
-    public function __construct()
-    {
-        $this->tasks = new ArrayCollection();
-    }
 
     /**
      * @param State $state
@@ -99,32 +85,6 @@ class Worker implements \JsonSerializable
     public function getHostname()
     {
         return $this->hostname;
-    }
-
-    /**
-     * @param Task $tasks
-     */
-    public function addTask(Task $tasks)
-    {
-        $this->tasks[] = $tasks;
-    }
-
-    /**
-     * @param Task $tasks
-     */
-    public function removeTask(Task $tasks)
-    {
-        $this->tasks->removeElement($tasks);
-    }
-
-    /**
-     * Get tasks
-     *
-     * @return DoctrineCollection
-     */
-    public function getTasks()
-    {
-        return $this->tasks;
     }
 
     /**
