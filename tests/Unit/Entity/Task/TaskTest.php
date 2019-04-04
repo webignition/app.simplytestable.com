@@ -8,7 +8,6 @@ use App\Entity\Task\Output;
 use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type;
 use App\Entity\TimePeriod;
-use App\Entity\Worker;
 use App\Tests\Factory\ModelFactory;
 
 class TaskTest extends \PHPUnit\Framework\TestCase
@@ -19,7 +18,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
      * @param int $id
      * @param string $url
      * @param State $state
-     * @param Worker|null $worker
      * @param Type $type
      * @param TimePeriod|null $timePeriod
      * @param int|null $remoteId
@@ -30,7 +28,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
         $id,
         $url,
         State $state,
-        $worker,
         $type,
         $timePeriod,
         $remoteId,
@@ -42,7 +39,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
         $this->setTaskId($task, $id);
         $task->setUrl($url);
         $task->setState($state);
-        $task->setWorker($worker);
         $task->setType($type);
         $task->setTimePeriod($timePeriod);
         $task->setRemoteId($remoteId);
@@ -57,33 +53,10 @@ class TaskTest extends \PHPUnit\Framework\TestCase
     public function jsonSerializeDataProvider()
     {
         return [
-            'empty worker' => [
+            'default' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
                 'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => null,
-                'type' => ModelFactory::createTaskType([
-                    ModelFactory::TASK_TYPE_NAME => 'HTML validation',
-                ]),
-                'timePeriod' => null,
-                'remoteId' =>  null,
-                'output' => null,
-                'expectedReturnValue' => [
-                    'id' => 1,
-                    'url' => 'http://foo.example.com',
-                    'state' => 'foo-state',
-                    'type' => 'HTML validation'
-                ],
-            ],
-            'non-empty worker' => [
-                'id' => 1,
-                'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => ModelFactory::createWorker(
-                    'worker.example.com',
-                    ModelFactory::createState('foo'),
-                    'token'
-                ),
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -101,7 +74,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                 'id' => 1,
                 'url' => 'http://foo.example.com',
                 'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => null,
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -122,7 +94,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                 'id' => 1,
                 'url' => 'http://foo.example.com',
                 'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => null,
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -146,7 +117,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                 'id' => 1,
                 'url' => 'http://foo.example.com',
                 'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => null,
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -171,7 +141,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                 'id' => 1,
                 'url' => 'http://foo.example.com',
                 'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => null,
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -190,7 +159,6 @@ class TaskTest extends \PHPUnit\Framework\TestCase
                 'id' => 1,
                 'url' => 'http://foo.example.com',
                 'state' => ModelFactory::createState('task-foo-state'),
-                'worker' => null,
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
