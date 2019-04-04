@@ -231,15 +231,11 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testSetStarted()
     {
         $this->assertEquals(Task::STATE_QUEUED, $this->task->getState()->getName());
-        $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $remoteId = 1;
-
-        $this->taskService->setStarted($this->task, $remoteId);
+        $this->taskService->setStarted($this->task);
 
         $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
-        $this->assertEquals($remoteId, $this->task->getRemoteId());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertNull($this->task->getTimePeriod()->getEndDateTime());
@@ -314,7 +310,6 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals($outputContent, $this->task->getOutput()->getOutput());
         $this->assertEquals($stateName, $this->task->getState()->getName());
-        $this->assertNull($this->task->getRemoteId());
     }
 
     /**
@@ -323,15 +318,14 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function completeSuccessDataProvider()
     {
         return [
-            'no remote id, no time period' => [
+            'no time period' => [
                 'taskValues' => [],
                 'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
                 'outputContent' => 'foo',
                 'stateName' => Task::STATE_COMPLETED,
             ],
-            'has remote id, has time period' => [
+            'has time period' => [
                 'taskValues' => [
-                    TaskFactory::KEY_REMOTE_ID => 1,
                     TaskFactory::KEY_TIME_PERIOD => [
                         TimePeriodFactory::KEY_START_DATE_TIME => new \DateTime(),
                     ],

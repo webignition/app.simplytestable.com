@@ -12,12 +12,6 @@ use App\Model\Parameters;
 /**
  *
  * @ORM\Entity
- * @ORM\Table(
- *     name="Task",
- *     indexes={
- *         @ORM\Index(name="remoteId_idx", columns={"remoteId"})
- *     }
- * )
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
  *
  */
@@ -80,13 +74,6 @@ class Task implements \JsonSerializable
      * @ORM\OneToOne(targetEntity="App\Entity\TimePeriod", cascade={"persist", "remove"})
      */
     protected $timePeriod;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="bigint", nullable=true)
-     */
-    protected $remoteId;
 
     /**
      * @var Output
@@ -169,11 +156,6 @@ class Task implements \JsonSerializable
         return $this->state;
     }
 
-    public function clearRemoteId()
-    {
-        $this->remoteId = null;
-    }
-
     /**
      * @param Type\Type $type
      */
@@ -188,22 +170,6 @@ class Task implements \JsonSerializable
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * @param int $remoteId
-     */
-    public function setRemoteId($remoteId)
-    {
-        $this->remoteId = $remoteId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRemoteId()
-    {
-        return $this->remoteId;
     }
 
     /**
@@ -291,10 +257,6 @@ class Task implements \JsonSerializable
 
         if (!empty($this->timePeriod) && !$this->timePeriod->isEmpty()) {
             $taskData['time_period'] = $this->timePeriod->jsonSerialize();
-        }
-
-        if (!empty($this->remoteId)) {
-            $taskData['remote_id'] = $this->remoteId;
         }
 
         $output = $this->getOutput();

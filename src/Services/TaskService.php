@@ -187,18 +187,13 @@ class TaskService
         return $this->incompleteStateNames;
     }
 
-    /**
-     * @param Task $task
-     * @param int $remoteId
-     */
-    public function setStarted(Task $task, $remoteId)
+    public function setStarted(Task $task)
     {
         $inProgressState = $this->stateService->get(Task::STATE_IN_PROGRESS);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
 
-        $task->setRemoteId($remoteId);
         $task->setState($inProgressState);
         $task->setTimePeriod($timePeriod);
     }
@@ -242,7 +237,6 @@ class TaskService
         $task->getTimePeriod()->setEndDateTime($endDateTime);
         $task->setOutput($output);
         $task->setState($state);
-        $task->clearRemoteId();
 
         $this->entityManager->persist($task);
         $this->entityManager->flush();

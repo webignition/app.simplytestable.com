@@ -14,7 +14,6 @@ class TaskFactory
     const KEY_PARAMETERS = 'parameters';
     const KEY_TIME_PERIOD = 'time-period';
     const KEY_URL = 'url';
-    const KEY_REMOTE_ID = 'remote-id';
 
     private $entityManager;
 
@@ -47,10 +46,6 @@ class TaskFactory
 
         if (isset($taskValues[self::KEY_TIME_PERIOD])) {
             $task->setTimePeriod($taskValues[self::KEY_TIME_PERIOD]);
-        }
-
-        if (isset($taskValues[self::KEY_REMOTE_ID])) {
-            $task->setRemoteId($taskValues[self::KEY_REMOTE_ID]);
         }
 
         if (isset($taskValues[self::KEY_URL])) {
