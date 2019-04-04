@@ -7,7 +7,6 @@ use App\Command\Maintenance\AbstractApplicationStateChangeCommand;
 use App\Command\Maintenance\DisableReadOnlyCommand;
 use App\Command\Maintenance\EnableBackupReadOnlyCommand;
 use App\Command\Maintenance\EnableReadOnlyCommand;
-use App\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
 use App\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use App\Command\Worker\TaskNotificationCommand;
 use App\Controller\MaintenanceController;
@@ -82,8 +81,7 @@ class MaintenanceControllerTest extends AbstractControllerTest
             self::$container->get(DisableReadOnlyCommand::class),
             self::$container->get(EnqueuePrepareAllCommand::class),
             self::$container->get(RequeueQueuedForAssignmentCommand::class),
-            self::$container->get(TaskNotificationCommand::class),
-            self::$container->get(EnqueueCancellationForAwaitingCancellationCommand::class)
+            self::$container->get(TaskNotificationCommand::class)
         );
 
         $this->assertEquals(

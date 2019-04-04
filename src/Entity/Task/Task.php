@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\TimePeriod;
-use App\Entity\Worker;
 use App\Entity\Task\Type\Type as TaskType;
 use App\Model\Parameters;
 
@@ -65,13 +65,6 @@ class Task implements \JsonSerializable
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     protected $state;
-
-    /**
-     * @var Worker
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Worker", inversedBy="tasks")
-     */
-    protected $worker;
 
     /**
      * @var TaskType
@@ -176,30 +169,9 @@ class Task implements \JsonSerializable
         return $this->state;
     }
 
-    /**
-     * @param Worker $worker
-     */
-    public function setWorker(Worker $worker = null)
-    {
-        $this->worker = $worker;
-    }
-
-    public function clearWorker()
-    {
-        $this->worker = null;
-    }
-
     public function clearRemoteId()
     {
         $this->remoteId = null;
-    }
-
-    /**
-     * @return Worker
-     */
-    public function getWorker()
-    {
-        return $this->worker;
     }
 
     /**
@@ -309,17 +281,11 @@ class Task implements \JsonSerializable
     public function jsonSerialize()
     {
         $stateName = str_replace('task-', '', $this->getState()->getName());
-        $worker = $this->getWorker();
-
-        $workerHostname = empty($worker)
-            ? ''
-            : $worker->getHostname();
 
         $taskData = [
             'id' => $this->getId(),
             'url' => $this->getUrl(),
             'state' => $stateName,
-            'worker' => $workerHostname,
             'type' => $this->getType()->getName(),
         ];
 

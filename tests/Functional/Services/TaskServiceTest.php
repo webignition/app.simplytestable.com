@@ -12,7 +12,6 @@ use App\Services\TaskService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\TaskFactory;
 use App\Tests\Services\TimePeriodFactory;
-use App\Tests\Services\WorkerFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -64,48 +63,12 @@ class TaskServiceTest extends AbstractBaseTestCase
     }
 
     /**
-     * @return array
-     */
-    public function cancelFinishedTaskDataProvider()
-    {
-        return [
-            Task::STATE_CANCELLED => [
-                'stateName' => Task::STATE_CANCELLED,
-            ],
-            Task::STATE_COMPLETED => [
-                'stateName' => Task::STATE_COMPLETED,
-            ],
-            Task::STATE_FAILED_RETRY_AVAILABLE => [
-                'stateName' => Task::STATE_FAILED_RETRY_AVAILABLE,
-            ],
-            Task::STATE_FAILED_NO_RETRY_AVAILABLE => [
-                'stateName' => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
-            ],
-            Task::STATE_FAILED_RETRY_LIMIT_REACHED => [
-                'stateName' => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
-            ],
-            Task::STATE_SKIPPED => [
-                'stateName' => Task::STATE_SKIPPED,
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider cancelSuccessDataProvider
      *
      * @param array $taskValues
      */
     public function testCancelSuccess($taskValues)
     {
-        if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-            $workerFactory = self::$container->get(WorkerFactory::class);
-            $worker = $workerFactory->create([
-                WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
-            ]);
-
-            $taskValues[TaskFactory::KEY_WORKER] = $worker;
-        }
-
         if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
             $timePeriodFactory = self::$container->get(TimePeriodFactory::class);
             $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
@@ -119,22 +82,16 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->taskService->cancel($this->task);
 
         $this->assertEquals(Task::STATE_CANCELLED, $this->task->getState()->getName());
-        $this->assertNull($this->task->getWorker());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getEndDateTime());
     }
 
-    /**
-     * @return array
-     */
-    public function cancelSuccessDataProvider()
+    public function cancelSuccessDataProvider(): array
     {
         return [
-            'with worker, without start date time' => [
-                'taskValues' => [
-                    TaskFactory::KEY_WORKER => 'worker.simplytestable.com',
-                ],
+            'without start date time' => [
+                'taskValues' => [],
             ],
             'with start date time' => [
                 'taskValues' => [
@@ -274,18 +231,14 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testSetStarted()
     {
         $this->assertEquals(Task::STATE_QUEUED, $this->task->getState()->getName());
-        $this->assertNull($this->task->getWorker());
         $this->assertNull($this->task->getRemoteId());
         $this->assertNull($this->task->getTimePeriod());
 
-        $workerFactory = self::$container->get(WorkerFactory::class);
-        $worker = $workerFactory->create();
         $remoteId = 1;
 
-        $this->taskService->setStarted($this->task, $worker, $remoteId);
+        $this->taskService->setStarted($this->task, $remoteId);
 
         $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
-        $this->assertEquals($worker, $this->task->getWorker());
         $this->assertEquals($remoteId, $this->task->getRemoteId());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
@@ -336,15 +289,6 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCompleteSuccess($taskValues, $endDateTime, $outputContent, $stateName)
     {
         if (!empty($taskValues)) {
-            if (isset($taskValues[TaskFactory::KEY_WORKER])) {
-                $workerFactory = self::$container->get(WorkerFactory::class);
-                $worker = $workerFactory->create([
-                    WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
-                ]);
-
-                $taskValues[TaskFactory::KEY_WORKER] = $worker;
-            }
-
             if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
                 $timePeriodFactory = self::$container->get(TimePeriodFactory::class);
                 $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
@@ -370,7 +314,6 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals($outputContent, $this->task->getOutput()->getOutput());
         $this->assertEquals($stateName, $this->task->getState()->getName());
-        $this->assertNull($this->task->getWorker());
         $this->assertNull($this->task->getRemoteId());
     }
 
@@ -380,15 +323,14 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function completeSuccessDataProvider()
     {
         return [
-            'no worker, no remote id, no time period' => [
+            'no remote id, no time period' => [
                 'taskValues' => [],
                 'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
                 'outputContent' => 'foo',
                 'stateName' => Task::STATE_COMPLETED,
             ],
-            'has worker, has remote id, has time period' => [
+            'has remote id, has time period' => [
                 'taskValues' => [
-                    TaskFactory::KEY_WORKER => 'worker.simplytestable.com',
                     TaskFactory::KEY_REMOTE_ID => 1,
                     TaskFactory::KEY_TIME_PERIOD => [
                         TimePeriodFactory::KEY_START_DATE_TIME => new \DateTime(),

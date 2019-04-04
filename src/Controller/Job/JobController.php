@@ -6,10 +6,8 @@ use App\Repository\JobRepository;
 use App\Services\Job\AuthorisationService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
-use App\Entity\Task\Task;
 use App\Entity\User;
 use App\Repository\TaskRepository;
-use App\Resque\Job\Task\CancelCollectionJob;
 use App\Resque\Job\Worker\Tasks\NotifyJob;
 use App\Services\ApplicationStateService;
 use App\Services\CrawlJobContainerService;
@@ -284,32 +282,6 @@ class JobController
         }
 
         $jobService->cancel($job);
-
-        $tasksToDeAssign = array();
-        $taskIds = $this->taskRepository->getIdsByJob($job);
-        foreach ($taskIds as $taskId) {
-            $tasksToDeAssign[] = array(
-                'id' => $taskId
-            );
-        }
-
-        $taskAwaitingCancellationState = $stateService->get(Task::STATE_AWAITING_CANCELLATION);
-
-        /* @var Task[] $tasksAwaitingCancellation */
-        $tasksAwaitingCancellation = $this->taskRepository->findBy([
-            'job' => $job,
-            'state' => $taskAwaitingCancellationState,
-        ]);
-
-        $taskIdsToCancel = array();
-
-        foreach ($tasksAwaitingCancellation as $task) {
-            $taskIdsToCancel[] = $task->getId();
-        }
-
-        if (count($taskIdsToCancel) > 0) {
-            $resqueQueueService->enqueue(new CancelCollectionJob(['ids' => implode(',', $taskIdsToCancel)]));
-        }
 
         return new Response();
     }

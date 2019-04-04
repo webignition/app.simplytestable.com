@@ -13,7 +13,6 @@ class TaskFactory
     const KEY_OUTPUT = 'output';
     const KEY_PARAMETERS = 'parameters';
     const KEY_TIME_PERIOD = 'time-period';
-    const KEY_WORKER = 'worker';
     const KEY_URL = 'url';
     const KEY_REMOTE_ID = 'remote-id';
 
@@ -52,10 +51,6 @@ class TaskFactory
 
         if (isset($taskValues[self::KEY_REMOTE_ID])) {
             $task->setRemoteId($taskValues[self::KEY_REMOTE_ID]);
-        }
-
-        if (isset($taskValues[self::KEY_WORKER])) {
-            $task->setWorker($taskValues[self::KEY_WORKER]);
         }
 
         if (isset($taskValues[self::KEY_URL])) {
