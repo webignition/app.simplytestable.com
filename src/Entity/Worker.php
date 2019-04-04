@@ -102,32 +102,6 @@ class Worker implements \JsonSerializable
     }
 
     /**
-     * @param Task $tasks
-     */
-    public function addTask(Task $tasks)
-    {
-        $this->tasks[] = $tasks;
-    }
-
-    /**
-     * @param Task $tasks
-     */
-    public function removeTask(Task $tasks)
-    {
-        $this->tasks->removeElement($tasks);
-    }
-
-    /**
-     * Get tasks
-     *
-     * @return DoctrineCollection
-     */
-    public function getTasks()
-    {
-        return $this->tasks;
-    }
-
-    /**
      * @param string $token
      */
     public function setToken($token)
