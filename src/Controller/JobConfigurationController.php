@@ -139,7 +139,7 @@ class JobConfigurationController
 
             return $this->redirect(
                 'jobconfiguration_get',
-                ['label' => $jobConfiguration->getLabel()]
+                ['id' => $jobConfiguration->getId()]
             );
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return Response::create('', 400, [
@@ -182,16 +182,9 @@ class JobConfigurationController
         ]);
     }
 
-    /**
-     * @param string $label
-     *
-     * @return JsonResponse
-     */
-    public function getAction($label)
+    public function getAction(int $id): JsonResponse
     {
-        $label = trim($label);
-
-        $jobConfiguration = $this->jobConfigurationService->getById($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($id);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }

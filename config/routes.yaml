@@ -264,7 +264,7 @@ jobconfiguration_update:
     methods:  [POST]
 
 jobconfiguration_get:
-    path: /jobconfiguration/{label}/
+    path: /jobconfiguration/{id}/
     defaults: { _controller: App\Controller\JobConfigurationController::getAction, _format: json }
 
 scheduledjob_create:
