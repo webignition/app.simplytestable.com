@@ -10,6 +10,7 @@ class JobConfigurationFactory
     public function createFromJobStartRequest(StartRequest $jobStartRequest)
     {
         return JobConfiguration::create(
+            '',
             $jobStartRequest->getUser(),
             $jobStartRequest->getWebsite(),
             $jobStartRequest->getJobType(),

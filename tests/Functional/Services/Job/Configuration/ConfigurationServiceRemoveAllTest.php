@@ -63,6 +63,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 
@@ -91,6 +92,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
             [
                 'label' => 'bar',
@@ -101,6 +103,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 

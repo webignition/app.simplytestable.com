@@ -35,6 +35,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ];
 
         $this->createJobConfigurationCollection([$existingJobConfigurationValues]);
@@ -48,6 +49,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ];
 
         $jobConfigurationValuesModel = $this->createJobConfigurationValuesModel($jobConfigurationValues);
@@ -134,7 +136,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'foo',
@@ -145,7 +147,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -159,7 +161,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
             ],
             'label change' => [
@@ -172,7 +174,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'bar',
@@ -183,7 +185,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'bar',
@@ -197,7 +199,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
             ],
             'update parameters' => [
@@ -210,7 +212,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'foo',
@@ -221,7 +223,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'updated parameters string',
+                    'parameters' => '{"foo": "bar"}',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -235,7 +237,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'updated parameters string',
+                    'parameters' => '{"foo": "bar"}',
                 ],
             ],
             'update type' => [
@@ -248,7 +250,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'foo',
@@ -259,7 +261,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -273,7 +275,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
             ],
             'update task configuration' => [
@@ -286,7 +288,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'foo',
@@ -297,7 +299,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::CSS_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -311,7 +313,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
             ],
             'update website' => [
@@ -324,7 +326,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'foo',
@@ -335,7 +337,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -349,7 +351,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
             ],
             'update all values except label' => [
@@ -362,7 +364,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameters string',
+                    'parameters' => '[]',
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'foo',
@@ -373,7 +375,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::CSS_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'updated parameters string',
+                    'parameters' => '{"foo": "bar"}',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -387,7 +389,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'is_enabled' => true,
                         ],
                     ],
-                    'parameters' => 'updated parameters string',
+                    'parameters' => '{"foo": "bar"}',
                 ],
             ],
         ];

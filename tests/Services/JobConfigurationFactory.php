@@ -68,9 +68,8 @@ class JobConfigurationFactory
         $jobConfiguration->setWebsite($website);
         $jobConfiguration->setType($jobType);
 
-        if (isset($jobConfigurationValues[self::KEY_PARAMETERS])) {
-            $jobConfiguration->setParameters(json_encode($jobConfigurationValues[self::KEY_PARAMETERS]));
-        }
+        $parameters = $jobConfigurationValues[self::KEY_PARAMETERS] ?? [];
+        $jobConfiguration->setParameters(json_encode($parameters));
 
         $this->entityManager->persist($jobConfiguration);
         $this->entityManager->flush();

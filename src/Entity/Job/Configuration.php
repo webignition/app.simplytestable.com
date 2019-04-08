@@ -72,6 +72,7 @@ class Configuration implements \JsonSerializable
     protected $parameters;
 
     public static function create(
+        string $label,
         User $user,
         WebSite $website,
         Type $type,
@@ -80,6 +81,7 @@ class Configuration implements \JsonSerializable
     ): Configuration {
         $configuration = new Configuration();
 
+        $configuration->label = $label;
         $configuration->user = $user;
         $configuration->website = $website;
         $configuration->type = $type;
