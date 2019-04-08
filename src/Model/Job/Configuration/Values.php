@@ -34,16 +34,6 @@ class Values
     }
 
     /**
-     * @param WebSite $website
-     * @return $this
-     */
-    public function setWebsite(Website $website ) {
-        $this->website = $website;
-        return $this;
-    }
-
-
-    /**
      * @return WebSite
      */
     public function getWebsite() {
