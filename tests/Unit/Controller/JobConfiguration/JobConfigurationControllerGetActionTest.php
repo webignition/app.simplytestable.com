@@ -12,14 +12,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationControllerTest
 {
-    const LABEL = 'foo';
+    const JOB_CONFIGURATION_ID = 1;
 
     public function testGetActionJobConfigurationNotFound()
     {
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([
-                'get' => [
-                    'with' => self::LABEL,
+                'getById' => [
+                    'with' => self::JOB_CONFIGURATION_ID,
                     'return' => null,
                 ],
             ]),
@@ -27,7 +27,7 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
 
         $this->expectException(NotFoundHttpException::class);
 
-        $jobConfigurationController->getAction(self::LABEL);
+        $jobConfigurationController->getAction(self::JOB_CONFIGURATION_ID);
     }
 
     public function testGetActionSuccess()
@@ -48,14 +48,14 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
 
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([
-                'get' => [
-                    'with' => self::LABEL,
+                'getById' => [
+                    'with' => self::JOB_CONFIGURATION_ID,
                     'return' => $jobConfiguration,
                 ],
             ]),
         ]);
 
-        $response = $jobConfigurationController->getAction(self::LABEL);
+        $response = $jobConfigurationController->getAction(self::JOB_CONFIGURATION_ID);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals($response->headers->get('content-type'), 'application/json');

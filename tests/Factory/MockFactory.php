@@ -658,14 +658,14 @@ class MockFactory
         /* @var Mock|ConfigurationService $jobConfigurationService */
         $jobConfigurationService = \Mockery::mock(ConfigurationService::class);
 
-        if (isset($calls['get'])) {
-            $callValues = $calls['get'];
+        if (isset($calls['getById'])) {
+            $callValues = $calls['getById'];
 
             $with = $callValues['with'];
             $return = $callValues['return'];
 
             $jobConfigurationService
-                ->shouldReceive('get')
+                ->shouldReceive('getById')
                 ->with($with)
                 ->andReturn($return);
         }

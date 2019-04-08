@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
  */
 class JobConfigurationControllerDeleteActionTest extends AbstractJobConfigurationControllerTest
 {
-    const LABEL = 'foo';
+    const JOB_CONFIGURATION_ID = 1;
 
     public function testDeleteActionInMaintenanceReadOnlyMode()
     {
@@ -28,7 +28,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
         $jobConfigurationController->deleteAction(
             \Mockery::mock(ScheduledJobRepository::class),
-            self::LABEL
+            self::JOB_CONFIGURATION_ID
         );
     }
 
@@ -36,8 +36,8 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
     {
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([
-                'get' => [
-                    'with' => self::LABEL,
+                'getById' => [
+                    'with' => self::JOB_CONFIGURATION_ID,
                     'return' => null,
                 ],
             ]),
@@ -47,7 +47,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
         $jobConfigurationController->deleteAction(
             \Mockery::mock(ScheduledJobRepository::class),
-            'foo'
+            self::JOB_CONFIGURATION_ID
         );
     }
 
@@ -57,8 +57,8 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([
-                'get' => [
-                    'with' => self::LABEL,
+                'getById' => [
+                    'with' => self::JOB_CONFIGURATION_ID,
                     'return' => $jobConfiguration,
                 ],
             ]),
@@ -75,7 +75,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
         $response = $jobConfigurationController->deleteAction(
             $scheduledJobRepository,
-            self::LABEL
+            self::JOB_CONFIGURATION_ID
         );
 
         $this->assertTrue($response->isClientError());
