@@ -141,14 +141,6 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @return array
-     */
-    public function getParametersArray()
-    {
-        return json_decode($this->parameters, true);
-    }
-
-    /**
      * @return string
      */
     public function getLabel()
