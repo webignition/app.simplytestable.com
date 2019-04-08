@@ -38,13 +38,10 @@ class Values
         return $this->website;
     }
 
-    /**
-     * @return JobType
-     */
-    public function getType() {
+    public function getType(): JobType
+    {
         return $this->type;
     }
-
 
     /**
      * @return bool
