@@ -44,16 +44,6 @@ class Values
     }
 
     /**
-     * @param TaskConfigurationCollection $taskConfigurationCollection
-     * @return $this
-     */
-    public function setTaskConfigurationCollection(TaskConfigurationCollection $taskConfigurationCollection) {
-        $this->taskConfigurationCollection = $taskConfigurationCollection;
-        return $this;
-    }
-
-
-    /**
      * @return TaskConfigurationCollection
      */
     public function getTaskConfigurationCollection() {
