@@ -91,10 +91,7 @@ class Configuration implements \JsonSerializable
         return $configuration;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -107,42 +104,27 @@ class Configuration implements \JsonSerializable
         $this->parameters = $parameters;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    /**
-     * @return WebSite
-     */
-    public function getWebsite()
+    public function getWebsite(): WebSite
     {
         return $this->website;
     }
 
-    /**
-     * @return Type
-     */
-    public function getType()
+    public function getType(): Type
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getParameters()
+    public function getParameters(): string
     {
         return $this->parameters;
     }
 
-    /**
-     * @return string
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -177,12 +159,7 @@ class Configuration implements \JsonSerializable
         return $collection;
     }
 
-    /**
-     * @param Configuration $configuration
-     *
-     * @return bool
-     */
-    public function matches(Configuration $configuration)
+    public function matches(Configuration $configuration): bool
     {
         if ($this->getWebsite() !== $configuration->getWebsite()) {
             return false;
@@ -199,10 +176,7 @@ class Configuration implements \JsonSerializable
         return $this->parameters === $configuration->getParameters();
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $serializedTaskConfigurations = [];
 
