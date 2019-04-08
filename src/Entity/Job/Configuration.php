@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity\Job;
 
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
@@ -69,6 +70,28 @@ class Configuration implements \JsonSerializable
      * @ORM\Column(type="text", nullable=true)
      */
     protected $parameters;
+
+    public static function create(
+        User $user,
+        WebSite $website,
+        Type $type,
+        TaskConfigurationCollection $taskConfigurationCollection,
+        string $parameters
+    ): Configuration {
+        $configuration = new Configuration();
+
+        $configuration->user = $user;
+        $configuration->website = $website;
+        $configuration->type = $type;
+
+        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+            $configuration->addTaskConfiguration($taskConfiguration);
+        }
+
+        $configuration->parameters = $parameters;
+
+        return $configuration;
+    }
 
     /**
      * @return int
