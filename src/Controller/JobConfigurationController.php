@@ -233,6 +233,9 @@ class JobConfigurationController
             $jobType = $jobTypeService->getFullSiteType();
         }
 
+        $requestParameters = trim($requestData->get('parameters'));
+        $parameters = empty($requestParameters) ? $jobConfiguration->getParameters() : $requestParameters;
+
         $adapter = new RequestAdapter();
         $adapter->setRequest($request);
         $adapter->setTaskTypeService($taskTypeService);
@@ -248,7 +251,7 @@ class JobConfigurationController
             $website,
             $jobType,
             $taskConfigurationCollection,
-            $requestData->get('parameters')
+            $parameters
         );
 
         try {

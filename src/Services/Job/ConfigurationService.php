@@ -178,10 +178,7 @@ class ConfigurationService
         $jobConfiguration->setLabel($newValues->getLabel());
         $jobConfiguration->setWebsite($newValues->getWebsite());
         $jobConfiguration->setType($newValues->getType());
-
-        if ($newValues->hasParameters()) {
-            $jobConfiguration->setParameters($newValues->getParameters());
-        }
+        $jobConfiguration->setParameters($newValues->getParameters());
 
         $newTaskConfigurationCollection = $newValues->getTaskConfigurationCollection();
 

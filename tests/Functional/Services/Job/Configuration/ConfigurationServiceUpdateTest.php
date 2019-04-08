@@ -145,6 +145,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -182,6 +183,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'bar',
@@ -257,6 +259,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',

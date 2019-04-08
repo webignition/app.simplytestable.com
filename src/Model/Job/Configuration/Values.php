@@ -48,16 +48,8 @@ class Values
         return $this->taskConfigurationCollection;
     }
 
-    public function getParameters(): string
+    public function getParameters(): ?string
     {
         return $this->parameters;
-    }
-
-
-    /**
-     * @return bool
-     */
-    public function hasParameters() {
-        return !is_null($this->parameters);
     }
 }
