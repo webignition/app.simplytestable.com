@@ -190,16 +190,6 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * Get taskConfigurations
-     *
-     * @return DoctrineCollection|null
-     */
-    public function getTaskConfigurations()
-    {
-        return $this->taskConfigurations;
-    }
-
-    /**
      * @return TaskConfigurationCollection
      */
     public function getTaskConfigurationCollection()

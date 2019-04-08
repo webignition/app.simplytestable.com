@@ -190,7 +190,7 @@ class ConfigurationService
                 $this->entityManager->remove($oldTaskConfiguration);
             }
 
-            $jobConfiguration->getTaskConfigurations()->clear();
+            $jobConfiguration->clearTaskConfigurationCollection();
             $jobConfiguration->setTaskConfigurationCollection($newTaskConfigurationCollection);
 
             foreach ($newTaskConfigurationCollection->get() as $taskConfiguration) {
