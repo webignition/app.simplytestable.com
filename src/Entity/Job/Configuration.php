@@ -104,6 +104,14 @@ class Configuration implements \JsonSerializable
         return $this->id;
     }
 
+    public function update(string $label, WebSite $website, Type $type, string $parameters)
+    {
+        $this->label = $label;
+        $this->website = $website;
+        $this->type = $type;
+        $this->parameters = $parameters;
+    }
+
     /**
      * @return User
      */
