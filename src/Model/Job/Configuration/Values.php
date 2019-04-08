@@ -29,21 +29,6 @@ class Values
     }
 
     /**
-     * @param $label
-     * @return $this
-     */
-    public function setLabel($label) {
-        if (is_null($label)) {
-            $this->label = null;
-        } else {
-            $this->label = trim($label);
-        }
-
-        return $this;
-    }
-
-
-    /**
      * @return string|null
      */
     public function getLabel() {

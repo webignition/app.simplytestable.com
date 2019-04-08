@@ -134,7 +134,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $creator = $users[$creatorUserName];
         $requestor = $users[$requestorUserName];
 
-        $jobConfigurationValues = $this->createJobConfigurationValuesModel([
+        $valuesData = [
             'label' => 'foo',
             'website' => 'http://example.com/',
             'type' => JobTypeService::FULL_SITE_NAME,
@@ -143,12 +143,15 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ],
             ],
-        ]);
+        ];
+
+        $jobConfigurationValues = $this->createJobConfigurationValuesModel($valuesData);
 
         $this->setUser($creator);
         $this->jobConfigurationService->create($jobConfigurationValues);
 
-        $jobConfigurationValues->setLabel('bar');
+        $valuesData['label'] = 'bar';
+        $jobConfigurationValues = $this->createJobConfigurationValuesModel($valuesData);
 
         $this->setUser($requestor);
         $this->jobConfigurationService->create($jobConfigurationValues);
