@@ -9,44 +9,18 @@ use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 class StartRequest
 {
-    /**
-     * @var User
-     */
     private $user;
-
-    /**
-     * @var WebSite
-     */
     private $website;
-
-    /**
-     * @var JobType
-     */
     private $jobType;
-
-    /**
-     * @var TaskConfigurationCollection
-     */
     private $taskConfigurationCollection;
-
-    /**
-     * @var array
-     */
     private $jobParameters;
 
-    /**
-     * @param User $user
-     * @param WebSite $webSite
-     * @param JobType $jobType
-     * @param TaskConfigurationCollection $taskConfigurationCollection
-     * @param array $jobParameters
-     */
     public function __construct(
         User $user,
         WebSite $webSite,
         JobType $jobType,
         TaskConfigurationCollection $taskConfigurationCollection,
-        $jobParameters = []
+        array $jobParameters = []
     ) {
         $this->user = $user;
         $this->website = $webSite;
@@ -55,42 +29,27 @@ class StartRequest
         $this->jobParameters = $jobParameters;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    /**
-     * @return WebSite
-     */
-    public function getWebsite()
+    public function getWebsite(): WebSite
     {
         return $this->website;
     }
 
-    /**
-     * @return JobType
-     */
-    public function getJobType()
+    public function getJobType(): JobType
     {
         return $this->jobType;
     }
 
-    /**
-     * @return TaskConfigurationCollection
-     */
-    public function getTaskConfigurationCollection()
+    public function getTaskConfigurationCollection(): TaskConfigurationCollection
     {
         return $this->taskConfigurationCollection;
     }
 
-    /**
-     * @return array
-     */
-    public function getJobParameters()
+    public function getJobParameters(): array
     {
         return $this->jobParameters;
     }
