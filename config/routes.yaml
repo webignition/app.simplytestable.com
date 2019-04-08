@@ -259,7 +259,7 @@ jobconfiguration_delete:
     methods:  [POST]
 
 jobconfiguration_update:
-    path: /jobconfiguration/{label}/update/
+    path: /jobconfiguration/{id}/update/
     defaults: { _controller: App\Controller\JobConfigurationController::updateAction, _format: json }
     methods:  [POST]
 

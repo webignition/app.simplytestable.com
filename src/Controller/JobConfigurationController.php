@@ -203,7 +203,7 @@ class JobConfigurationController
      * @param TaskTypeService $taskTypeService
      * @param JobTypeService $jobTypeService
      * @param Request $request
-     * @param string $label
+     * @param int $id
      *
      * @return RedirectResponse|Response
      */
@@ -212,13 +212,13 @@ class JobConfigurationController
         TaskTypeService $taskTypeService,
         JobTypeService $jobTypeService,
         Request $request,
-        $label
+        int $id
     ) {
         if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobConfiguration = $this->jobConfigurationService->getById($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($id);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -257,7 +257,7 @@ class JobConfigurationController
 
             return $this->redirect(
                 'jobconfiguration_get',
-                ['label' => $jobConfiguration->getLabel()]
+                ['id' => $jobConfiguration->getId()]
             );
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return Response::create('', 400, [

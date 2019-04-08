@@ -67,7 +67,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
     public function testUpdateActionGetRequest()
     {
         $router = self::$container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_update', ['label' => 'foo']);
+        $requestUrl = $router->generate('jobconfiguration_update', ['id' => 0]);
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -85,7 +85,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
     {
         $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_update', [
-            'label' => $this->jobConfiguration->getLabel()
+            'id' => $this->jobConfiguration->getId()
         ]);
 
         $this->getCrawler([
@@ -100,7 +100,9 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
-        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/new-label/'));
+        $this->assertTrue(
+            $response->isRedirect('http://localhost/jobconfiguration/' . $this->jobConfiguration->getId() . '/')
+        );
     }
 
     /**
@@ -154,7 +156,9 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
             'parameters' => 'foo',
         ]);
 
-        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/job-configuration-label-one/'));
+        $this->assertTrue(
+            $response->isRedirect('http://localhost/jobconfiguration/' . $this->jobConfiguration->getId() . '/')
+        );
         $this->assertEquals('foo', $this->jobConfiguration->getParameters());
     }
 
@@ -170,7 +174,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
             self::$container->get(TaskTypeService::class),
             self::$container->get(JobTypeService::class),
             new Request([], $postData),
-            $this->jobConfiguration->getLabel()
+            $this->jobConfiguration->getId()
         );
     }
 }
