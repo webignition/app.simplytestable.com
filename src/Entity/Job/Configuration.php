@@ -146,10 +146,7 @@ class Configuration implements \JsonSerializable
         $this->taskConfigurations = new ArrayCollection();
     }
 
-    /**
-     * @return TaskConfigurationCollection
-     */
-    public function getTaskConfigurationCollection()
+    public function getTaskConfigurationCollection(): TaskConfigurationCollection
     {
         $collection = new TaskConfigurationCollection();
         foreach ($this->taskConfigurations as $taskConfiguration) {
