@@ -140,7 +140,7 @@ class ConfigurationService
         return $jobConfiguration;
     }
 
-    private function getByLabel(string $label): ?JobConfiguration
+    public function getByLabel(string $label): ?JobConfiguration
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
