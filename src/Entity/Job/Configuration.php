@@ -40,7 +40,7 @@ class Configuration implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    protected $user;
+    private $user;
 
     /**
      * @var WebSite
@@ -48,7 +48,7 @@ class Configuration implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="App\Entity\WebSite")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
      */
-    protected $website;
+    private $website;
 
     /**
      * @var Type
@@ -56,21 +56,21 @@ class Configuration implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="App\Entity\Job\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=false)
      */
-    protected $type;
+    private $type;
 
     /**
      * @var DoctrineCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Job\TaskConfiguration", mappedBy="jobConfiguration")
      */
-    protected $taskConfigurations = [];
+    private $taskConfigurations = [];
 
     /**
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $parameters;
+    private $parameters;
 
     public static function create(
         string $label,
