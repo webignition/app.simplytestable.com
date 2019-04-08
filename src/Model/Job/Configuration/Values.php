@@ -28,13 +28,10 @@ class Values
         $this->parameters = $parameters;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLabel() {
+    public function getLabel(): string
+    {
         return $this->label;
     }
-
 
     /**
      * @return bool
