@@ -145,7 +145,7 @@ class Configuration implements \JsonSerializable
      */
     public function hasParameters()
     {
-        return $this->getParameters() != '';
+        return !empty($this->parameters);
     }
 
     /**
@@ -153,7 +153,7 @@ class Configuration implements \JsonSerializable
      */
     public function getParametersHash()
     {
-        return md5($this->getParameters());
+        return md5($this->parameters);
     }
 
     /**
@@ -161,7 +161,7 @@ class Configuration implements \JsonSerializable
      */
     public function getParametersArray()
     {
-        return json_decode($this->getParameters(), true);
+        return json_decode($this->parameters, true);
     }
 
     /**
@@ -231,7 +231,7 @@ class Configuration implements \JsonSerializable
             return false;
         }
 
-        return $this->getParameters() == $configuration->getParameters();
+        return $this->parameters === $configuration->getParameters();
     }
 
     /**
@@ -253,10 +253,8 @@ class Configuration implements \JsonSerializable
             'task_configurations' => $serializedTaskConfigurations,
         ];
 
-        $parameters = $this->getParameters();
-
-        if (!empty($parameters)) {
-            $jobConfigurationData['parameters'] = $parameters;
+        if (!empty($this->parameters)) {
+            $jobConfigurationData['parameters'] = $this->parameters;
         }
 
         return $jobConfigurationData;
