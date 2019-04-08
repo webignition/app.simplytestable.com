@@ -36,11 +36,9 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             $this->taskConfigurationCollection->add($taskConfiguration);
         }
 
-        $taskConfigurations = $this->taskConfigurationCollection->get();
-
         $this->assertCount(
             count($expectedTaskConfigurationValuesCollection),
-            $taskConfigurations
+            $this->taskConfigurationCollection
         );
 
         foreach ($expectedTaskConfigurationValuesCollection as $expectedTaskConfigurationValues) {
@@ -143,13 +141,6 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-    }
-
-    public function testGet()
-    {
-        $taskConfigurations = $this->taskConfigurationCollection->get();
-
-        $this->assertInternalType('array', $taskConfigurations);
     }
 
     /**

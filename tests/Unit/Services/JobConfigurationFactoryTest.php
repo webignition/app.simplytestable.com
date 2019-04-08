@@ -43,6 +43,9 @@ class JobConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
     ) {
         $jobConfiguration = $this->jobConfigurationFactory->createFromJobStartRequest($startRequest);
 
+        $expectedTaskConfigurationCollection->rewind();
+        $jobConfiguration->getTaskConfigurationCollection()->rewind();
+
         $this->assertSame($expectedUser, $jobConfiguration->getUser());
         $this->assertSame($expectedWebsite, $jobConfiguration->getWebsite());
         $this->assertSame($expectedJobType, $jobConfiguration->getType());

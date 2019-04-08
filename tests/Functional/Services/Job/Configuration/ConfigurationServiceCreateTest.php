@@ -220,7 +220,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
 
         $taskConfigurationCollection = $jobConfigurationValuesModel->getTaskConfigurationCollection();
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $this->assertEquals($jobConfiguration, $taskConfiguration->getJobConfiguration());
         }
     }

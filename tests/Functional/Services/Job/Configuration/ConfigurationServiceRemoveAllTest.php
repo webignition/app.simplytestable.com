@@ -110,7 +110,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
         foreach ($jobConfigurationCollection as $jobConfiguration) {
             $this->assertNotNull($jobConfiguration->getId());
 
-            foreach ($jobConfiguration->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+            foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
                 $this->assertNotNull($taskConfiguration->getId());
             }
         }
@@ -120,7 +120,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
         foreach ($jobConfigurationCollection as $jobConfiguration) {
             $this->assertNull($jobConfiguration->getId());
 
-            foreach ($jobConfiguration->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+            foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
                 $this->assertNull($taskConfiguration->getId());
             }
         }

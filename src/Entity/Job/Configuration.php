@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 use App\Entity\WebSite;
-use App\Entity\Job\Type as JobType;
 use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 /**
@@ -176,7 +175,7 @@ class Configuration implements \JsonSerializable
     {
         $taskConfigurations = new ArrayCollection();
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $taskConfiguration->setJobConfiguration($this);
             $taskConfigurations[] = $taskConfiguration;
         }
