@@ -16,6 +16,7 @@ use App\Entity\Job\Configuration as JobConfiguration;
 use App\Model\Job\Configuration\Values as JobConfigurationValues;
 use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use App\Entity\Job\TaskConfiguration as TaskConfiguration;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -55,7 +56,7 @@ class RunCommandTest extends AbstractBaseTestCase
     ) {
         $userFactory = self::$container->get(UserFactory::class);
         $scheduledJobService = self::$container->get(ScheduledJobService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $cronReportRepository = $entityManager->getRepository(CronReport::class);
 
         $user = $userFactory->createAndActivateUser();
@@ -151,38 +152,23 @@ class RunCommandTest extends AbstractBaseTestCase
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $jobTypeService = self::$container->get(JobTypeService::class);
 
-        $jobConfigurationValues = new JobConfigurationValues();
+        $taskConfigurationCollection = new TaskConfigurationCollection();
 
-        if (isset($rawValues['label'])) {
-            $jobConfigurationValues->setLabel($rawValues['label']);
+        foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType($taskTypeService->get($taskTypeName));
+            $taskConfiguration->setOptions($taskTypeOptions);
+
+            $taskConfigurationCollection->add($taskConfiguration);
         }
 
-        if (isset($rawValues['parameters'])) {
-            $jobConfigurationValues->setParameters($rawValues['parameters']);
-        }
-
-        if (isset($rawValues['type'])) {
-            $jobType = $jobTypeService->get($rawValues['type']);
-            $jobConfigurationValues->setType($jobType);
-        }
-
-        if (isset($rawValues['website'])) {
-            $jobConfigurationValues->setWebsite($websiteService->get($rawValues['website']));
-        }
-
-        if (isset($rawValues['task_configuration'])) {
-            $taskConfigurationCollection = new TaskConfigurationCollection();
-
-            foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
-                $taskConfiguration = new TaskConfiguration();
-                $taskConfiguration->setType($taskTypeService->get($taskTypeName));
-                $taskConfiguration->setOptions($taskTypeOptions);
-
-                $taskConfigurationCollection->add($taskConfiguration);
-            }
-
-            $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
-        }
+        $jobConfigurationValues = new JobConfigurationValues(
+            $rawValues['label'],
+            $websiteService->get($rawValues['website']),
+            $jobTypeService->get($rawValues['type']),
+            $taskConfigurationCollection,
+            $rawValues['parameters'] ?? null
+        );
 
         $this->setUser($user);
 

@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Services\Job\Configuration;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
@@ -91,85 +90,6 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
     }
 
     /**
-     * @dataProvider updateMatchesCurrentJobConfigurationDataProvider
-     *
-     * @param array $jobConfigurationValues
-     * @param array $updatedJobConfigurationValues
-     */
-    public function testUpdateMatchesCurrentJobConfiguration($jobConfigurationValues, $updatedJobConfigurationValues)
-    {
-        $userService = self::$container->get(UserService::class);
-
-        $user = $userService->getPublicUser();
-        $this->setUser($user);
-
-        $jobConfigurationValuesModel = $this->createJobConfigurationValuesModel($jobConfigurationValues);
-
-        $jobConfiguration = $this->jobConfigurationService->create($jobConfigurationValuesModel);
-
-        $serialisedJobConfiguration = $jobConfiguration->jsonSerialize();
-
-        $updatedJobConfigurationValuesModel = $this->createJobConfigurationValuesModel($updatedJobConfigurationValues);
-
-        $this->jobConfigurationService->update($jobConfiguration, $updatedJobConfigurationValuesModel);
-
-        $this->assertEquals($serialisedJobConfiguration, $jobConfiguration->jsonSerialize());
-    }
-
-    /**
-     * @return array
-     */
-    public function updateMatchesCurrentJobConfigurationDataProvider()
-    {
-        return [
-            'same label' => [
-                'jobConfigurationValues' => [
-                    'label' => 'bar',
-                    'website' => 'http://example.com/',
-                    'type' => JobTypeService::SINGLE_URL_NAME,
-                    'task-configuration' => [
-                        [
-                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                        ]
-                    ],
-                ],
-                'updatedJobConfigurationValues' => [
-                    'label' => 'bar',
-                    'website' => 'http://example.com/',
-                    'type' => JobTypeService::SINGLE_URL_NAME,
-                    'task-configuration' => [
-                        [
-                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                        ]
-                    ],
-                ],
-            ],
-            'empty label' => [
-                'jobConfigurationValues' => [
-                    'label' => 'bar',
-                    'website' => 'http://example.com/',
-                    'type' => JobTypeService::SINGLE_URL_NAME,
-                    'task-configuration' => [
-                        [
-                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                        ]
-                    ],
-                ],
-                'updatedJobConfigurationValues' => [
-                    'label' => null,
-                    'website' => 'http://example.com/',
-                    'type' => JobTypeService::SINGLE_URL_NAME,
-                    'task-configuration' => [
-                        [
-                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                        ]
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider updateSuccessDataProvider
      *
      * @param array $jobConfigurationValues
@@ -204,7 +124,45 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
     public function updateSuccessDataProvider()
     {
         return [
-            'label change only' => [
+            'no change' => [
+                'jobConfigurationValues' => [
+                    'label' => 'foo',
+                    'website' => 'http://example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task-configuration' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ]
+                    ],
+                    'parameters' => 'parameters string',
+                ],
+                'updatedJobConfigurationValues' => [
+                    'label' => 'foo',
+                    'website' => 'http://example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task-configuration' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ]
+                    ],
+                    'parameters' => 'parameters string',
+                ],
+                'expectedSerializedUpdatedJobConfiguration' => [
+                    'label' => 'foo',
+                    'website' => 'http://example.com/',
+                    'user' => 'public@simplytestable.com',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task_configurations' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                            'options' => [],
+                            'is_enabled' => true,
+                        ],
+                    ],
+                    'parameters' => 'parameters string',
+                ],
+            ],
+            'label change' => [
                 'jobConfigurationValues' => [
                     'label' => 'foo',
                     'website' => 'http://example.com/',
@@ -218,6 +176,14 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                 ],
                 'updatedJobConfigurationValues' => [
                     'label' => 'bar',
+                    'website' => 'http://example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task-configuration' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ]
+                    ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'bar',
@@ -234,7 +200,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
             ],
-            'update parameters only' => [
+            'update parameters' => [
                 'jobConfigurationValues' => [
                     'label' => 'foo',
                     'website' => 'http://example.com/',
@@ -247,6 +213,14 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
                 'updatedJobConfigurationValues' => [
+                    'label' => 'foo',
+                    'website' => 'http://example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task-configuration' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ]
+                    ],
                     'parameters' => 'updated parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
@@ -264,7 +238,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'updated parameters string',
                 ],
             ],
-            'update type only' => [
+            'update type' => [
                 'jobConfigurationValues' => [
                     'label' => 'foo',
                     'website' => 'http://example.com/',
@@ -277,7 +251,15 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
                 'updatedJobConfigurationValues' => [
+                    'label' => 'foo',
+                    'website' => 'http://example.com/',
                     'type' => JobTypeService::SINGLE_URL_NAME,
+                    'task-configuration' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ]
+                    ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -294,7 +276,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
             ],
-            'update task configuration only' => [
+            'update task configuration' => [
                 'jobConfigurationValues' => [
                     'label' => 'foo',
                     'website' => 'http://example.com/',
@@ -307,11 +289,15 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
                 'updatedJobConfigurationValues' => [
+                    'label' => 'foo',
+                    'website' => 'http://example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
                     'task-configuration' => [
                         [
                             'type' => TaskTypeService::CSS_VALIDATION_TYPE,
                         ]
                     ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -328,7 +314,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
             ],
-            'update website only' => [
+            'update website' => [
                 'jobConfigurationValues' => [
                     'label' => 'foo',
                     'website' => 'http://example.com/',
@@ -341,7 +327,15 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
                 'updatedJobConfigurationValues' => [
+                    'label' => 'foo',
                     'website' => 'http://foo.example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task-configuration' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ]
+                    ],
+                    'parameters' => 'parameters string',
                 ],
                 'expectedSerializedUpdatedJobConfiguration' => [
                     'label' => 'foo',
@@ -371,6 +365,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'parameters' => 'parameters string',
                 ],
                 'updatedJobConfigurationValues' => [
+                    'label' => 'foo',
                     'website' => 'http://foo.example.com/',
                     'type' => JobTypeService::SINGLE_URL_NAME,
                     'task-configuration' => [

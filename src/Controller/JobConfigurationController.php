@@ -81,25 +81,21 @@ class JobConfigurationController
         $requestData = $request->request;
 
         $requestLabel = rawurldecode(trim($requestData->get('label')));
-
         if (empty($requestLabel)) {
             throw new BadRequestHttpException('"label" missing');
         }
 
         $requestWebsite = rawurldecode(trim($requestData->get('website')));
-
         if (empty($requestWebsite)) {
             throw new BadRequestHttpException('"website" missing');
         }
 
         $requestType = rawurldecode(trim($requestData->get('type')));
-
         if (empty($requestType)) {
             throw new BadRequestHttpException('"type" missing');
         }
 
         $requestTaskConfiguration = $requestData->get('task-configuration');
-
         if (empty($requestTaskConfiguration)) {
             throw new BadRequestHttpException('"task-configuration" missing');
         }
@@ -116,7 +112,6 @@ class JobConfigurationController
         $website = $websiteService->get($requestWebsite);
 
         $jobType = $jobTypeService->get($requestType);
-
         if (empty($jobType)) {
             $jobType = $jobTypeService->getFullSiteType();
         }
@@ -127,12 +122,13 @@ class JobConfigurationController
 
         $taskConfigurationCollection = $adapter->getCollection();
 
-        $jobConfigurationValues = new JobConfigurationValues();
-        $jobConfigurationValues->setWebsite($website);
-        $jobConfigurationValues->setType($jobType);
-        $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
-        $jobConfigurationValues->setLabel($requestLabel);
-        $jobConfigurationValues->setParameters($requestData->get('parameters'));
+        $jobConfigurationValues = new JobConfigurationValues(
+            $requestLabel,
+            $website,
+            $jobType,
+            $taskConfigurationCollection,
+            $requestData->get('parameters')
+        );
 
         try {
             $jobConfiguration = $this->jobConfigurationService->create($jobConfigurationValues);
@@ -223,19 +219,22 @@ class JobConfigurationController
             throw new NotFoundHttpException();
         }
 
-        $newJobConfigurationValues = new JobConfigurationValues();
-
         $requestData = $request->request;
 
+        $requestLabel = trim($requestData->get('label'));
+        $label = empty($requestLabel) ? $jobConfiguration->getLabel() : $requestLabel;
+
         $requestWebsite = trim($requestData->get('website'));
-        $website = $websiteService->get($requestWebsite);
+        $website = empty($requestWebsite) ? $jobConfiguration->getWebsite() : $websiteService->get($requestWebsite);
 
         $requestJobType = trim($requestData->get('type'));
-        $jobType = $jobTypeService->get($requestJobType);
-
+        $jobType = empty($requestJobType) ? $jobConfiguration->getType() : $jobTypeService->get($requestJobType);
         if (empty($jobType)) {
             $jobType = $jobTypeService->getFullSiteType();
         }
+
+        $requestParameters = trim($requestData->get('parameters'));
+        $parameters = empty($requestParameters) ? $jobConfiguration->getParameters() : $requestParameters;
 
         $adapter = new RequestAdapter();
         $adapter->setRequest($request);
@@ -243,11 +242,17 @@ class JobConfigurationController
 
         $taskConfigurationCollection = $adapter->getCollection();
 
-        $newJobConfigurationValues->setLabel($requestData->get('label'));
-        $newJobConfigurationValues->setParameters($requestData->get('parameters'));
-        $newJobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
-        $newJobConfigurationValues->setWebsite($website);
-        $newJobConfigurationValues->setType($jobType);
+        if ($taskConfigurationCollection->isEmpty()) {
+            $taskConfigurationCollection = $jobConfiguration->getTaskConfigurationsAsCollection();
+        }
+
+        $newJobConfigurationValues = new JobConfigurationValues(
+            $label,
+            $website,
+            $jobType,
+            $taskConfigurationCollection,
+            $parameters
+        );
 
         try {
             $this->jobConfigurationService->update(

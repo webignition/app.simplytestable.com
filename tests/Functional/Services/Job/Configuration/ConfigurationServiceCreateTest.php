@@ -41,45 +41,12 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
     public function createWithMissingRequiredValueDataProvider()
     {
         return [
-            'missing label' => [
-                'configurationValues' => [],
-                'expectedExceptionMessage' => 'Label cannot be empty',
-                'expectedExceptionCode' => JobConfigurationServiceException::CODE_LABEL_CANNOT_BE_EMPTY,
-            ],
-            'empty label' => [
-                'configurationValues' => [
-                    'label' => '',
-                ],
-                'expectedExceptionMessage' => 'Label cannot be empty',
-                'expectedExceptionCode' => JobConfigurationServiceException::CODE_LABEL_CANNOT_BE_EMPTY,
-            ],
-            'null label' => [
-                'configurationValues' => [
-                    'label' => null,
-                ],
-                'expectedExceptionMessage' => 'Label cannot be empty',
-                'expectedExceptionCode' => JobConfigurationServiceException::CODE_LABEL_CANNOT_BE_EMPTY,
-            ],
-            'missing website' => [
-                'configurationValues' => [
-                    'label' => 'foo',
-                ],
-                'expectedExceptionMessage' => 'Website cannot be empty',
-                'expectedExceptionCode' => JobConfigurationServiceException::CODE_WEBSITE_CANNOT_BE_EMPTY,
-            ],
-            'missing type' => [
-                'configurationValues' => [
-                    'label' => 'foo',
-                    'website' => 'http://example.com/',
-                ],
-                'expectedExceptionMessage' => 'Type cannot be empty',
-                'expectedExceptionCode' => JobConfigurationServiceException::CODE_TYPE_CANNOT_BE_EMPTY,
-            ],
             'missing task configuration collection' => [
                 'configurationValues' => [
                     'label' => 'foo',
                     'website' => 'http://example.com/',
                     'type' => JobTypeService::FULL_SITE_NAME,
+                    'task-configuration' => [],
                 ],
                 'expectedExceptionMessage' => 'TaskConfigurationCollection is empty',
                 'expectedExceptionCode' =>
@@ -167,7 +134,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $creator = $users[$creatorUserName];
         $requestor = $users[$requestorUserName];
 
-        $jobConfigurationValues = $this->createJobConfigurationValuesModel([
+        $valuesData = [
             'label' => 'foo',
             'website' => 'http://example.com/',
             'type' => JobTypeService::FULL_SITE_NAME,
@@ -176,12 +143,15 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ],
             ],
-        ]);
+        ];
+
+        $jobConfigurationValues = $this->createJobConfigurationValuesModel($valuesData);
 
         $this->setUser($creator);
         $this->jobConfigurationService->create($jobConfigurationValues);
 
-        $jobConfigurationValues->setLabel('bar');
+        $valuesData['label'] = 'bar';
+        $jobConfigurationValues = $this->createJobConfigurationValuesModel($valuesData);
 
         $this->setUser($requestor);
         $this->jobConfigurationService->create($jobConfigurationValues);
