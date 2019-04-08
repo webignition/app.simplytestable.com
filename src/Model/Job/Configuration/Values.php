@@ -34,30 +34,6 @@ class Values
     }
 
     /**
-     * @return bool
-     */
-    public function hasLabel() {
-        return !is_null($this->label);
-    }
-
-
-    /**
-     * @return bool
-     */
-    public function hasEmptyLabel() {
-        return !$this->hasLabel() || $this->getLabel() == '';
-    }
-
-
-    /**
-     * @return bool
-     */
-    public function hasNonEmptyLabel() {
-        return !$this->hasEmptyLabel();
-    }
-
-
-    /**
      * @param WebSite $website
      * @return $this
      */

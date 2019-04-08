@@ -144,7 +144,7 @@ class ConfigurationService
      */
     public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
     {
-        if ($newValues->hasNonEmptyLabel()) {
+        if (!empty($newValues->getLabel())) {
             $existingConfiguration = $this->getByLabel($newValues->getLabel());
 
             if ($existingConfiguration && $existingConfiguration->getId() !== $jobConfiguration->getId()) {
@@ -162,8 +162,10 @@ class ConfigurationService
         }
 
         if ($this->matches($jobConfiguration, $comparatorValues)) {
-            $comparatorValuesHasLabelChange = $jobConfiguration->getLabel() !== $comparatorValues->getLabel();
-            $hasLabelChange = $comparatorValues->hasEmptyLabel() || $comparatorValuesHasLabelChange;
+            $comparatorLabel = $comparatorValues->getLabel();
+
+            $comparatorValuesHasLabelChange = $jobConfiguration->getLabel() !== $comparatorLabel;
+            $hasLabelChange = empty($comparatorLabel) || $comparatorValuesHasLabelChange;
 
             if (!$hasLabelChange) {
                 return $jobConfiguration;
