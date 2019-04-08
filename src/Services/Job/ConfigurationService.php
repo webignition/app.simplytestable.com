@@ -191,11 +191,9 @@ class ConfigurationService
             }
 
             $jobConfiguration->getTaskConfigurations()->clear();
+            $jobConfiguration->setTaskConfigurationCollection($newTaskConfigurationCollection);
 
             foreach ($newTaskConfigurationCollection->get() as $taskConfiguration) {
-                /* @var $taskConfiguration TaskConfiguration */
-                $taskConfiguration->setJobConfiguration($jobConfiguration);
-                $jobConfiguration->addTaskConfiguration($taskConfiguration);
                 $this->entityManager->persist($taskConfiguration);
             }
         }
@@ -274,13 +272,13 @@ class ConfigurationService
             /* @var $userJobConfiguration JobConfiguration */
             foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
                 $this->entityManager->remove($jobTaskConfiguration);
-                $userJobConfiguration->removeTaskConfiguration($jobTaskConfiguration);
             }
 
+            $userJobConfiguration->clearTaskConfigurationCollection();
             $this->entityManager->remove($userJobConfiguration);
 
             try {
-                $this->entityManager->flush($userJobConfiguration);
+                $this->entityManager->flush();
             } catch (ForeignKeyConstraintViolationException $foo) {
                 throw new JobConfigurationServiceException(
                     'One or more job configurations are in use by one or more scheduled jobs',

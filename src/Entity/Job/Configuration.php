@@ -2,6 +2,7 @@
 
 namespace App\Entity\Job;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
@@ -85,12 +86,7 @@ class Configuration implements \JsonSerializable
         $configuration->user = $user;
         $configuration->website = $website;
         $configuration->type = $type;
-
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
-            $taskConfiguration->setJobConfiguration($configuration);
-            $configuration->addTaskConfiguration($taskConfiguration);
-        }
-
+        $configuration->setTaskConfigurationCollection($taskConfigurationCollection);
         $configuration->parameters = $parameters;
 
         return $configuration;
@@ -176,20 +172,21 @@ class Configuration implements \JsonSerializable
         return $this->label;
     }
 
-    /**
-     * @param TaskConfiguration $taskConfiguration
-     */
-    public function addTaskConfiguration(TaskConfiguration $taskConfiguration)
+    public function setTaskConfigurationCollection(TaskConfigurationCollection $taskConfigurationCollection)
     {
-        $this->taskConfigurations[] = $taskConfiguration;
+        $taskConfigurations = new ArrayCollection();
+
+        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+            $taskConfiguration->setJobConfiguration($this);
+            $taskConfigurations[] = $taskConfiguration;
+        }
+
+        $this->taskConfigurations = $taskConfigurations;
     }
 
-    /**
-     * @param TaskConfiguration $taskConfiguration
-     */
-    public function removeTaskConfiguration(TaskConfiguration $taskConfiguration)
+    public function clearTaskConfigurationCollection()
     {
-        $this->taskConfigurations->removeElement($taskConfiguration);
+        $this->taskConfigurations = new ArrayCollection();
     }
 
     /**
