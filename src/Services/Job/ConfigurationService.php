@@ -242,20 +242,21 @@ class ConfigurationService
     }
 
     /**
-     * @param string $label
+     * @param int $id
      *
      * @throws JobConfigurationServiceException
      */
-    public function delete($label)
+    public function delete(int $id)
     {
-        if (!$this->has($label)) {
+        $configuration = $this->getById($id);
+
+        if (empty($configuration)) {
             throw new JobConfigurationServiceException(
-                'Configuration with label "' . $label . '" does not exist',
+                'Configuration does not exist',
                 JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION
             );
         }
 
-        $configuration = $this->getById($label);
         $this->entityManager->remove($configuration);
 
         foreach ($configuration->getTaskConfigurations() as $taskConfiguration) {
@@ -274,9 +275,8 @@ class ConfigurationService
 
     /**
      * @return JobConfiguration[]
-     * @throws JobConfigurationServiceException
      */
-    public function getList()
+    public function getList(): array
     {
         $user = $this->tokenStorage->getToken()->getUser();
 

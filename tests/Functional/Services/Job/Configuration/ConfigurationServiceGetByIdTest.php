@@ -8,7 +8,7 @@ use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\UserFactory;
 
-class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
+class ConfigurationServiceGetByIdTest extends AbstractConfigurationServiceTest
 {
     /**
      * @var User[]
@@ -142,13 +142,13 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
                 'userName' => 'member1',
                 'existingJobConfigurationValuesCollection' => $teamJobConfigurationValuesCollection,
                 'index' => 0,
-                'expectedJobConfigurationIndex' => 2,
+                'expectedJobConfigurationIndex' => 0,
             ],
             'match for member2' => [
                 'userName' => 'member2',
                 'existingJobConfigurationValuesCollection' => $teamJobConfigurationValuesCollection,
                 'index' => 1,
-                'expectedJobConfigurationIndex' => 0,
+                'expectedJobConfigurationIndex' => 1,
             ],
         ];
     }
