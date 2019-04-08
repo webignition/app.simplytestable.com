@@ -141,14 +141,6 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @return string
-     */
-    public function getParametersHash()
-    {
-        return md5($this->parameters);
-    }
-
-    /**
      * @return array
      */
     public function getParametersArray()
