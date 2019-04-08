@@ -202,7 +202,7 @@ class Configuration implements \JsonSerializable
     /**
      * @return TaskConfigurationCollection
      */
-    public function getTaskConfigurationsAsCollection()
+    public function getTaskConfigurationCollection()
     {
         $collection = new TaskConfigurationCollection();
         foreach ($this->getTaskConfigurations() as $taskConfiguration) {
@@ -227,7 +227,7 @@ class Configuration implements \JsonSerializable
             return false;
         }
 
-        if (!$this->getTaskConfigurationsAsCollection()->equals($configuration->getTaskConfigurationsAsCollection())) {
+        if (!$this->getTaskConfigurationCollection()->equals($configuration->getTaskConfigurationCollection())) {
             return false;
         }
 

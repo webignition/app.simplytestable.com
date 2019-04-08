@@ -159,7 +159,7 @@ class StartService
             'type' => $jobConfiguration->getType()
         ]);
 
-        $jobConfigurationTaskTypes = $jobConfiguration->getTaskConfigurationsAsCollection()->getTaskTypes();
+        $jobConfigurationTaskTypes = $jobConfiguration->getTaskConfigurationCollection()->getTaskTypes();
 
         foreach ($existingJobs as $existingJob) {
             if ($existingJob->getTaskTypeCollection()->equals($jobConfigurationTaskTypes)) {

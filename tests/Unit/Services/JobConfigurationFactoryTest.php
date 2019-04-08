@@ -48,7 +48,7 @@ class JobConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedJobType, $jobConfiguration->getType());
         $this->assertEquals(
             $expectedTaskConfigurationCollection,
-            $jobConfiguration->getTaskConfigurationsAsCollection()
+            $jobConfiguration->getTaskConfigurationCollection()
         );
         $this->assertEquals($expectedParameters, $jobConfiguration->getParameters());
     }

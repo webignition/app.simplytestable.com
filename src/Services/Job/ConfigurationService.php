@@ -308,7 +308,7 @@ class ConfigurationService
         foreach ($jobConfigurations as $jobConfiguration) {
             /* @var $jobConfiguration JobConfiguration */
             if ($values->getTaskConfigurationCollection()->equals(
-                $jobConfiguration->getTaskConfigurationsAsCollection()
+                $jobConfiguration->getTaskConfigurationCollection()
             )) {
                 return true;
             }
@@ -329,7 +329,7 @@ class ConfigurationService
             return false;
         }
 
-        if (!$jobConfiguration->getTaskConfigurationsAsCollection()->equals(
+        if (!$jobConfiguration->getTaskConfigurationCollection()->equals(
             $values->getTaskConfigurationCollection()
         )) {
             return false;
