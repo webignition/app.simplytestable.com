@@ -48,15 +48,6 @@ class Values
         return $this->taskConfigurationCollection;
     }
 
-
-    /**
-     * @return bool
-     */
-    public function hasTaskConfigurationCollection() {
-        return !is_null($this->taskConfigurationCollection);
-    }
-
-
     /**
      * @param string $parameters
      * @return $this
