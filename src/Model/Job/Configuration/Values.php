@@ -38,15 +38,6 @@ class Values
         return $this->website;
     }
 
-
-    /**
-     * @return bool
-     */
-    public function hasWebsite() {
-        return !is_null($this->website);
-    }
-
-
     /**
      * @param JobType $type
      * @return $this
