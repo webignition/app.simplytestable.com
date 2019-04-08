@@ -191,11 +191,9 @@ class ConfigurationService
             }
 
             $jobConfiguration->getTaskConfigurations()->clear();
+            $jobConfiguration->setTaskConfigurationCollection($newTaskConfigurationCollection);
 
             foreach ($newTaskConfigurationCollection->get() as $taskConfiguration) {
-                /* @var $taskConfiguration TaskConfiguration */
-                $taskConfiguration->setJobConfiguration($jobConfiguration);
-                $jobConfiguration->addTaskConfiguration($taskConfiguration);
                 $this->entityManager->persist($taskConfiguration);
             }
         }
