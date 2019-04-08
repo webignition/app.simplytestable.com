@@ -44,14 +44,6 @@ class Values
     }
 
     /**
-     * @return bool
-     */
-    public function hasType() {
-        return !is_null($this->type);
-    }
-
-
-    /**
      * @param TaskConfigurationCollection $taskConfigurationCollection
      * @return $this
      */
