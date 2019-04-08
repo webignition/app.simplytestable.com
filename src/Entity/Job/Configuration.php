@@ -205,7 +205,7 @@ class Configuration implements \JsonSerializable
     public function getTaskConfigurationCollection()
     {
         $collection = new TaskConfigurationCollection();
-        foreach ($this->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($this->taskConfigurations as $taskConfiguration) {
             $collection->add($taskConfiguration);
         }
 
@@ -241,7 +241,7 @@ class Configuration implements \JsonSerializable
     {
         $serializedTaskConfigurations = [];
 
-        foreach ($this->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($this->taskConfigurations as $taskConfiguration) {
             $serializedTaskConfigurations[] = $taskConfiguration->jsonSerialize();
         }
 
