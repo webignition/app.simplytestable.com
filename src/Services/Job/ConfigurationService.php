@@ -157,10 +157,6 @@ class ConfigurationService
 
         $comparatorValues = clone $newValues;
 
-        if (!$newValues->hasParameters()) {
-            $comparatorValues->setParameters($jobConfiguration->getParameters());
-        }
-
         if ($this->matches($jobConfiguration, $comparatorValues)) {
             $comparatorLabel = $comparatorValues->getLabel();
 

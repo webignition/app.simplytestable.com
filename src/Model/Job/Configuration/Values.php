@@ -49,16 +49,6 @@ class Values
     }
 
     /**
-     * @param string $parameters
-     * @return $this
-     */
-    public function setParameters($parameters) {
-        $this->parameters = $parameters;
-        return $this;
-    }
-
-
-    /**
      * @return string
      */
     public function getParameters() {
