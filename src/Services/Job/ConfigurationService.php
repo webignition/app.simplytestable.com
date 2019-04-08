@@ -159,12 +159,16 @@ class ConfigurationService
      * @param Configuration $jobConfiguration
      * @param ConfigurationValues $newValues
      *
+     * @return Configuration
+     *
      * @throws JobConfigurationServiceException
      */
     public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
     {
         if ($newValues->hasNonEmptyLabel()) {
-            if ($this->has($newValues->getLabel()) && $this->getById($newValues->getLabel()) !== $jobConfiguration) {
+            $existingConfiguration = $this->getByLabel($newValues->getLabel());
+
+            if ($existingConfiguration && $existingConfiguration->getId() !== $jobConfiguration->getId()) {
                 throw new JobConfigurationServiceException(
                     'Label "' . $newValues->getLabel() . '" is not unique',
                     JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
@@ -239,6 +243,8 @@ class ConfigurationService
 
         $this->entityManager->persist($jobConfiguration);
         $this->entityManager->flush();
+
+        return $jobConfiguration;
     }
 
     /**
@@ -323,16 +329,6 @@ class ConfigurationService
                 );
             }
         }
-    }
-
-    /**
-     * @param $label
-     *
-     * @return bool
-     */
-    private function has($label)
-    {
-        return !is_null($this->getById($label));
     }
 
     /**
