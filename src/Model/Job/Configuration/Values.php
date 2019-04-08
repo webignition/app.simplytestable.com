@@ -6,42 +6,27 @@ use App\Entity\WebSite;
 use App\Entity\Job\Type as JobType;
 use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
-class Values {
-
-    /**
-     *
-     * @var string
-     */
+class Values
+{
     private $label;
-
-
-    /**
-     *
-     * @var WebSite
-     */
     private $website;
-
-
-    /**
-     *
-     * @var JobType
-     */
     private $type;
-
-
-    /**
-     *
-     * @var TaskConfigurationCollection
-     */
     private $taskConfigurationCollection;
-
-
-    /**
-     *
-     * @var string
-     */
     private $parameters;
 
+    public function __construct(
+        string $label,
+        WebSite $website,
+        JobType $type,
+        TaskConfigurationCollection $taskConfigurationCollection,
+        ?string $parameters = null
+    ) {
+        $this->label = trim($label);
+        $this->website = $website;
+        $this->type = $type;
+        $this->taskConfigurationCollection = $taskConfigurationCollection;
+        $this->parameters = $parameters;
+    }
 
     /**
      * @param $label

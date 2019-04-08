@@ -61,31 +61,10 @@ class ConfigurationService
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        if ($values->hasEmptyLabel()) {
-            throw new JobConfigurationServiceException(
-                'Label cannot be empty',
-                JobConfigurationServiceException::CODE_LABEL_CANNOT_BE_EMPTY
-            );
-        }
-
         if (!empty($this->getByLabel($values->getLabel()))) {
             throw new JobConfigurationServiceException(
                 'Label "' . $values->getLabel() . '" is not unique',
                 JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
-            );
-        }
-
-        if (!$values->hasWebsite()) {
-            throw new JobConfigurationServiceException(
-                'Website cannot be empty',
-                JobConfigurationServiceException::CODE_WEBSITE_CANNOT_BE_EMPTY
-            );
-        }
-
-        if (!$values->hasType()) {
-            throw new JobConfigurationServiceException(
-                'Type cannot be empty',
-                JobConfigurationServiceException::CODE_TYPE_CANNOT_BE_EMPTY
             );
         }
 
@@ -178,18 +157,6 @@ class ConfigurationService
 
         $comparatorValues = clone $newValues;
 
-        if (!$newValues->hasWebsite()) {
-            $comparatorValues->setWebsite($jobConfiguration->getWebsite());
-        }
-
-        if (!$newValues->hasType()) {
-            $comparatorValues->setType($jobConfiguration->getType());
-        }
-
-        if (!$newValues->hasTaskConfigurationCollection()) {
-            $comparatorValues->setTaskConfigurationCollection($jobConfiguration->getTaskConfigurationsAsCollection());
-        }
-
         if (!$newValues->hasParameters()) {
             $comparatorValues->setParameters($jobConfiguration->getParameters());
         }
@@ -210,30 +177,24 @@ class ConfigurationService
             }
         }
 
-        if ($newValues->hasNonEmptyLabel()) {
-            $jobConfiguration->setLabel($newValues->getLabel());
-        }
-
-        if ($newValues->hasWebsite()) {
-            $jobConfiguration->setWebsite($newValues->getWebsite());
-        }
-
-        if ($newValues->hasType()) {
-            $jobConfiguration->setType($newValues->getType());
-        }
+        $jobConfiguration->setLabel($newValues->getLabel());
+        $jobConfiguration->setWebsite($newValues->getWebsite());
+        $jobConfiguration->setType($newValues->getType());
 
         if ($newValues->hasParameters()) {
             $jobConfiguration->setParameters($newValues->getParameters());
         }
 
-        if ($newValues->hasTaskConfigurationCollection()) {
+        $newTaskConfigurationCollection = $newValues->getTaskConfigurationCollection();
+
+        if (!$newTaskConfigurationCollection->isEmpty()) {
             foreach ($jobConfiguration->getTaskConfigurations() as $oldTaskConfiguration) {
                 $this->entityManager->remove($oldTaskConfiguration);
             }
 
             $jobConfiguration->getTaskConfigurations()->clear();
 
-            foreach ($newValues->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+            foreach ($newTaskConfigurationCollection->get() as $taskConfiguration) {
                 /* @var $taskConfiguration TaskConfiguration */
                 $taskConfiguration->setJobConfiguration($jobConfiguration);
                 $jobConfiguration->addTaskConfiguration($taskConfiguration);

@@ -41,42 +41,26 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
         $taskTypeService = self::$container->get(TaskTypeService::class);
         $jobTypeService = self::$container->get(JobTypeService::class);
 
-        $configurationValuesModel = new ConfigurationValues();
+        $taskConfigurationCollection = new TaskConfigurationCollection();
 
-        if (isset($jobConfigurationValues['label'])) {
-            $configurationValuesModel->setLabel($jobConfigurationValues['label']);
+        $taskConfigurationValuesCollection = $jobConfigurationValues['task-configuration'];
+
+        foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
+            $taskType = $taskTypeService->get($taskConfigurationValues['type']);
+
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType($taskType);
+
+            $taskConfigurationCollection->add($taskConfiguration);
         }
 
-        if (isset($jobConfigurationValues['website'])) {
-            $website = $websiteService->get($jobConfigurationValues['website']);
-            $configurationValuesModel->setWebsite($website);
-        }
-
-        if (isset($jobConfigurationValues['type'])) {
-            $jobType = $jobTypeService->get($jobConfigurationValues['type']);
-            $configurationValuesModel->setType($jobType);
-        }
-
-        if (isset($jobConfigurationValues['task-configuration'])) {
-            $taskConfigurationCollection = new TaskConfigurationCollection();
-
-            $taskConfigurationValuesCollection = $jobConfigurationValues['task-configuration'];
-
-            foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
-                $taskType = $taskTypeService->get($taskConfigurationValues['type']);
-
-                $taskConfiguration = new TaskConfiguration();
-                $taskConfiguration->setType($taskType);
-
-                $taskConfigurationCollection->add($taskConfiguration);
-            }
-
-            $configurationValuesModel->setTaskConfigurationCollection($taskConfigurationCollection);
-        }
-
-        if (isset($jobConfigurationValues['parameters'])) {
-            $configurationValuesModel->setParameters($jobConfigurationValues['parameters']);
-        }
+        $configurationValuesModel = new ConfigurationValues(
+            $jobConfigurationValues['label'],
+            $websiteService->get($jobConfigurationValues['website']),
+            $jobTypeService->get($jobConfigurationValues['type']),
+            $taskConfigurationCollection,
+            $jobConfigurationValues['parameters'] ??  null
+        );
 
         return $configurationValuesModel;
     }
