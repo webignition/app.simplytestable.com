@@ -151,15 +151,13 @@ class JobConfigurationController
         }
     }
 
-    public function deleteAction(ScheduledJobRepository $scheduledJobRepository, string $label):Response
+    public function deleteAction(ScheduledJobRepository $scheduledJobRepository, int $id):Response
     {
         if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $label = trim($label);
-
-        $jobConfiguration = $this->jobConfigurationService->getById($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($id);
         if (is_null($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -169,7 +167,7 @@ class JobConfigurationController
         ]);
 
         if (empty($scheduledJob)) {
-            $this->jobConfigurationService->delete($label);
+            $this->jobConfigurationService->delete($id);
 
             return new Response();
         }

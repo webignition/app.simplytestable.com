@@ -254,7 +254,7 @@ jobconfiguration_list:
     defaults: { _controller: App\Controller\JobConfigurationController::listAction, _format: json }
 
 jobconfiguration_delete:
-    path: /jobconfiguration/{label}/delete/
+    path: /jobconfiguration/{id}/delete/
     defaults: { _controller: App\Controller\JobConfigurationController::deleteAction, _format: json }
     methods:  [POST]
 
