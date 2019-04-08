@@ -141,14 +141,6 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @return bool
-     */
-    public function hasParameters()
-    {
-        return !empty($this->parameters);
-    }
-
-    /**
      * @return string
      */
     public function getParametersHash()
