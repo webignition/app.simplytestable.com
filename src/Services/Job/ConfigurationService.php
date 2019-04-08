@@ -68,7 +68,7 @@ class ConfigurationService
             );
         }
 
-        if ($this->has($values->getLabel())) {
+        if (!empty($this->getByLabel($values->getLabel()))) {
             throw new JobConfigurationServiceException(
                 'Label "' . $values->getLabel() . '" is not unique',
                 JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
@@ -125,12 +125,22 @@ class ConfigurationService
         return $jobConfiguration;
     }
 
-    /**
-     * @param string $label
-     *
-     * @return null|JobConfiguration
-     */
-    public function get($label)
+    public function getById(int $id): ?JobConfiguration
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        /* @var Configuration $jobConfiguration */
+        $jobConfiguration = $this->jobConfigurationRepository->findOneBy([
+            'id' => $id,
+            'user' => ($this->teamService->hasForUser($user))
+                ? $this->teamService->getPeopleForUser($user)
+                : [$user]
+        ]);
+
+        return $jobConfiguration;
+    }
+
+    private function getByLabel(string $label): ?JobConfiguration
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
@@ -154,7 +164,7 @@ class ConfigurationService
     public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
     {
         if ($newValues->hasNonEmptyLabel()) {
-            if ($this->has($newValues->getLabel()) && $this->get($newValues->getLabel()) !== $jobConfiguration) {
+            if ($this->has($newValues->getLabel()) && $this->getById($newValues->getLabel()) !== $jobConfiguration) {
                 throw new JobConfigurationServiceException(
                     'Label "' . $newValues->getLabel() . '" is not unique',
                     JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
@@ -245,7 +255,7 @@ class ConfigurationService
             );
         }
 
-        $configuration = $this->get($label);
+        $configuration = $this->getById($label);
         $this->entityManager->remove($configuration);
 
         foreach ($configuration->getTaskConfigurations() as $taskConfiguration) {
@@ -322,7 +332,7 @@ class ConfigurationService
      */
     private function has($label)
     {
-        return !is_null($this->get($label));
+        return !is_null($this->getById($label));
     }
 
     /**
