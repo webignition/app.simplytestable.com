@@ -121,14 +121,6 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @param  $website
-     */
-    public function setWebsite(WebSite $website)
-    {
-        $this->website = $website;
-    }
-
-    /**
      * @return WebSite
      */
     public function getWebsite()
@@ -137,27 +129,11 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @param Type $type
-     */
-    public function setType(JobType $type)
-    {
-        $this->type = $type;
-    }
-
-    /**
      * @return Type
      */
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * @param string $parameters
-     */
-    public function setParameters($parameters)
-    {
-        $this->parameters = $parameters;
     }
 
     /**
@@ -190,14 +166,6 @@ class Configuration implements \JsonSerializable
     public function getParametersArray()
     {
         return json_decode($this->getParameters(), true);
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
     }
 
     /**
