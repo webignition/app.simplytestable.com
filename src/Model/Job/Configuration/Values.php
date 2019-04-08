@@ -43,14 +43,8 @@ class Values
         return $this->type;
     }
 
-    /**
-     * @return TaskConfigurationCollection
-     */
-    public function getTaskConfigurationCollection() {
-        if (is_null($this->taskConfigurationCollection)) {
-            $this->taskConfigurationCollection = new TaskConfigurationCollection();
-        }
-
+    public function getTaskConfigurationCollection()
+    {
         return $this->taskConfigurationCollection;
     }
 
