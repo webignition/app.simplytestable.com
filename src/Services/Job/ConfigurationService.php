@@ -272,13 +272,13 @@ class ConfigurationService
             /* @var $userJobConfiguration JobConfiguration */
             foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
                 $this->entityManager->remove($jobTaskConfiguration);
-                $userJobConfiguration->removeTaskConfiguration($jobTaskConfiguration);
             }
 
+            $userJobConfiguration->clearTaskConfigurationCollection();
             $this->entityManager->remove($userJobConfiguration);
 
             try {
-                $this->entityManager->flush($userJobConfiguration);
+                $this->entityManager->flush();
             } catch (ForeignKeyConstraintViolationException $foo) {
                 throw new JobConfigurationServiceException(
                     'One or more job configurations are in use by one or more scheduled jobs',
