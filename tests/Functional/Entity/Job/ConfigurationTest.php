@@ -107,11 +107,11 @@ class ConfigurationTest extends AbstractBaseTestCase
         $this->assertEquals($parameters, $retrievedConfiguration->getParameters());
 
         /* @var PersistentCollection $retrievedTaskConfigurations */
-        $retrievedTaskConfigurations = $configuration->getTaskConfigurations();
+        $retrievedTaskConfigurations = $configuration->getTaskConfigurationCollection()->get();
 
         foreach ($taskConfigurationValuesCollection as $taskConfigurationIndex => $taskConfigurationValues) {
             /* @var TaskConfiguration $retrievedTaskConfiguration */
-            $retrievedTaskConfiguration = $retrievedTaskConfigurations->get($taskConfigurationIndex);
+            $retrievedTaskConfiguration = $retrievedTaskConfigurations[$taskConfigurationIndex];
 
             $this->assertEquals(
                 $taskConfigurationValues[JobTaskConfigurationFactory::KEY_TYPE],
