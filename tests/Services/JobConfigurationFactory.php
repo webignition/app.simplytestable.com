@@ -83,7 +83,7 @@ class JobConfigurationFactory
 
         $this->entityManager->persist($configuration);
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $taskConfiguration->setJobConfiguration($configuration);
             $this->entityManager->persist($taskConfiguration);
         }

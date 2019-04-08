@@ -93,7 +93,7 @@ class ConfigurationService
 
         $this->entityManager->persist($jobConfiguration);
 
-        foreach ($values->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+        foreach ($values->getTaskConfigurationCollection() as $taskConfiguration) {
             /* @var $taskConfiguration TaskConfiguration */
             $taskConfiguration->setJobConfiguration($jobConfiguration);
             $this->entityManager->persist($taskConfiguration);
@@ -186,14 +186,14 @@ class ConfigurationService
         $newTaskConfigurationCollection = $newValues->getTaskConfigurationCollection();
 
         if (!$newTaskConfigurationCollection->isEmpty()) {
-            foreach ($jobConfiguration->getTaskConfigurations() as $oldTaskConfiguration) {
+            foreach ($jobConfiguration->getTaskConfigurationCollection() as $oldTaskConfiguration) {
                 $this->entityManager->remove($oldTaskConfiguration);
             }
 
-            $jobConfiguration->getTaskConfigurations()->clear();
+            $jobConfiguration->clearTaskConfigurationCollection();
             $jobConfiguration->setTaskConfigurationCollection($newTaskConfigurationCollection);
 
-            foreach ($newTaskConfigurationCollection->get() as $taskConfiguration) {
+            foreach ($newTaskConfigurationCollection as $taskConfiguration) {
                 $this->entityManager->persist($taskConfiguration);
             }
         }
@@ -222,7 +222,7 @@ class ConfigurationService
 
         $this->entityManager->remove($configuration);
 
-        foreach ($configuration->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($configuration->getTaskConfigurationCollection() as $taskConfiguration) {
             $this->entityManager->remove($taskConfiguration);
         }
 
@@ -270,7 +270,7 @@ class ConfigurationService
 
         foreach ($userJobConfigurations as $userJobConfiguration) {
             /* @var $userJobConfiguration JobConfiguration */
-            foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
+            foreach ($userJobConfiguration->getTaskConfigurationCollection() as $jobTaskConfiguration) {
                 $this->entityManager->remove($jobTaskConfiguration);
             }
 
@@ -308,7 +308,7 @@ class ConfigurationService
         foreach ($jobConfigurations as $jobConfiguration) {
             /* @var $jobConfiguration JobConfiguration */
             if ($values->getTaskConfigurationCollection()->equals(
-                $jobConfiguration->getTaskConfigurationsAsCollection()
+                $jobConfiguration->getTaskConfigurationCollection()
             )) {
                 return true;
             }
@@ -329,7 +329,7 @@ class ConfigurationService
             return false;
         }
 
-        if (!$jobConfiguration->getTaskConfigurationsAsCollection()->equals(
+        if (!$jobConfiguration->getTaskConfigurationCollection()->equals(
             $values->getTaskConfigurationCollection()
         )) {
             return false;

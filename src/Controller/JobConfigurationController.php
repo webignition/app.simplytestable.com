@@ -246,7 +246,7 @@ class JobConfigurationController
         $taskConfigurationCollection = $adapter->getCollection();
 
         if ($taskConfigurationCollection->isEmpty()) {
-            $taskConfigurationCollection = $jobConfiguration->getTaskConfigurationsAsCollection();
+            $taskConfigurationCollection = $jobConfiguration->getTaskConfigurationCollection();
         }
 
         $newJobConfigurationValues = new JobConfigurationValues(

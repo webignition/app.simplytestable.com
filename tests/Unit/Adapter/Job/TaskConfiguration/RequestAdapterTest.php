@@ -31,9 +31,9 @@ class RequestAdapterTest extends \PHPUnit\Framework\TestCase
         $taskConfigurationCollection = $requestAdapter->getCollection();
 
         $this->assertEquals($expectedIsEmpty, $taskConfigurationCollection->isEmpty());
-        $this->assertCount(count($expectedTaskConfigurationCollection), $taskConfigurationCollection->get());
+        $this->assertCount(count($expectedTaskConfigurationCollection), $taskConfigurationCollection);
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $expectedTaskConfiguration = $expectedTaskConfigurationCollection[$taskConfiguration->getType()->getName()];
             $this->assertEquals($expectedTaskConfiguration['isEnabled'], $taskConfiguration->getIsEnabled());
             $this->assertEquals($expectedTaskConfiguration['options'], $taskConfiguration->getOptions());

@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Entity\Job;
 
 use App\Tests\Services\JobFactory;
 use App\Tests\Services\JobTaskConfigurationFactory;
+use App\Tests\Services\ObjectReflector;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use App\Entity\Job\Configuration;
@@ -81,8 +82,7 @@ class ConfigurationTest extends AbstractBaseTestCase
 
         $this->entityManager->persist($configuration);
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
-            /* @var $taskConfiguration TaskConfiguration */
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $taskConfiguration->setJobConfiguration($configuration);
             $this->entityManager->persist($taskConfiguration);
         }
@@ -106,12 +106,11 @@ class ConfigurationTest extends AbstractBaseTestCase
         $this->assertEquals($websiteUrl, $retrievedConfiguration->getWebsite()->getCanonicalUrl());
         $this->assertEquals($parameters, $retrievedConfiguration->getParameters());
 
-        /* @var PersistentCollection $retrievedTaskConfigurations */
-        $retrievedTaskConfigurations = $configuration->getTaskConfigurations();
+        $retrievedTaskConfigurations = ObjectReflector::getProperty($configuration, 'taskConfigurations');
 
         foreach ($taskConfigurationValuesCollection as $taskConfigurationIndex => $taskConfigurationValues) {
             /* @var TaskConfiguration $retrievedTaskConfiguration */
-            $retrievedTaskConfiguration = $retrievedTaskConfigurations->get($taskConfigurationIndex);
+            $retrievedTaskConfiguration = $retrievedTaskConfigurations[$taskConfigurationIndex];
 
             $this->assertEquals(
                 $taskConfigurationValues[JobTaskConfigurationFactory::KEY_TYPE],

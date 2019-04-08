@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 use App\Entity\WebSite;
-use App\Entity\Job\Type as JobType;
 use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 /**
@@ -152,7 +151,7 @@ class Configuration implements \JsonSerializable
     {
         $taskConfigurations = new ArrayCollection();
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $taskConfiguration->setJobConfiguration($this);
             $taskConfigurations[] = $taskConfiguration;
         }
@@ -166,22 +165,12 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * Get taskConfigurations
-     *
-     * @return DoctrineCollection|null
-     */
-    public function getTaskConfigurations()
-    {
-        return $this->taskConfigurations;
-    }
-
-    /**
      * @return TaskConfigurationCollection
      */
-    public function getTaskConfigurationsAsCollection()
+    public function getTaskConfigurationCollection()
     {
         $collection = new TaskConfigurationCollection();
-        foreach ($this->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($this->taskConfigurations as $taskConfiguration) {
             $collection->add($taskConfiguration);
         }
 
@@ -203,7 +192,7 @@ class Configuration implements \JsonSerializable
             return false;
         }
 
-        if (!$this->getTaskConfigurationsAsCollection()->equals($configuration->getTaskConfigurationsAsCollection())) {
+        if (!$this->getTaskConfigurationCollection()->equals($configuration->getTaskConfigurationCollection())) {
             return false;
         }
 
@@ -217,7 +206,7 @@ class Configuration implements \JsonSerializable
     {
         $serializedTaskConfigurations = [];
 
-        foreach ($this->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($this->taskConfigurations as $taskConfiguration) {
             $serializedTaskConfigurations[] = $taskConfiguration->jsonSerialize();
         }
 
