@@ -187,14 +187,6 @@ class Configuration implements \JsonSerializable
     /**
      * @param TaskConfiguration $taskConfiguration
      */
-    public function addTaskConfiguration(TaskConfiguration $taskConfiguration)
-    {
-        $this->taskConfigurations[] = $taskConfiguration;
-    }
-
-    /**
-     * @param TaskConfiguration $taskConfiguration
-     */
     public function removeTaskConfiguration(TaskConfiguration $taskConfiguration)
     {
         $this->taskConfigurations->removeElement($taskConfiguration);
