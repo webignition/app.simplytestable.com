@@ -254,17 +254,17 @@ jobconfiguration_list:
     defaults: { _controller: App\Controller\JobConfigurationController::listAction, _format: json }
 
 jobconfiguration_delete:
-    path: /jobconfiguration/{label}/delete/
+    path: /jobconfiguration/{id}/delete/
     defaults: { _controller: App\Controller\JobConfigurationController::deleteAction, _format: json }
     methods:  [POST]
 
 jobconfiguration_update:
-    path: /jobconfiguration/{label}/update/
+    path: /jobconfiguration/{id}/update/
     defaults: { _controller: App\Controller\JobConfigurationController::updateAction, _format: json }
     methods:  [POST]
 
 jobconfiguration_get:
-    path: /jobconfiguration/{label}/
+    path: /jobconfiguration/{id}/
     defaults: { _controller: App\Controller\JobConfigurationController::getAction, _format: json }
 
 scheduledjob_create:

@@ -8,7 +8,9 @@ use App\Repository\ScheduledJobRepository;
 use App\Tests\Services\UserFactory;
 use App\Entity\Job\Configuration as JobConfiguration;
 use App\Tests\Services\JobConfigurationFactory;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @group Controller/JobConfiguration
@@ -47,7 +49,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
     {
         $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_delete', [
-            'label' => $this->jobConfiguration->getLabel(),
+            'id' => $this->jobConfiguration->getId(),
         ]);
 
         $this->getCrawler([
@@ -66,7 +68,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
     {
         $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_delete', [
-            'label' => $this->jobConfiguration->getLabel(),
+            'id' => $this->jobConfiguration->getId(),
         ]);
 
         $this->getCrawler([
@@ -83,18 +85,20 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
     public function testDeleteActionSuccess()
     {
         $entityManager = self::$container->get(EntityManagerInterface::class);
+
+        /* @var EntityRepository|ObjectRepository $jobConfigurationRepository */
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
         $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $response = $this->jobConfigurationController->deleteAction(
             $scheduledJobRepository,
-            $this->jobConfiguration->getLabel()
+            $this->jobConfiguration->getId()
         );
 
         $this->assertTrue($response->isSuccessful());
 
         $jobConfiguration = $jobConfigurationRepository->findOneBy([
-            'label' => $this->jobConfiguration->getLabel(),
+            'id' => $this->jobConfiguration->getId(),
         ]);
 
         $this->assertNull($jobConfiguration);

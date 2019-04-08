@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
  */
 class JobConfigurationControllerUpdateActionTest extends AbstractJobConfigurationControllerTest
 {
-    const LABEL = 'foo';
+    const JOB_CONFIGURATION_ID = 1;
 
     public function testUpdateActionInMaintenanceReadOnlyMode()
     {
@@ -29,7 +29,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
             MockFactory::createTaskTypeService(),
             MockFactory::createJobTypeService(),
             new Request(),
-            self::LABEL
+            self::JOB_CONFIGURATION_ID
         );
     }
 
@@ -37,8 +37,8 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
     {
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([
-                'get' => [
-                    'with' => self::LABEL,
+                'getById' => [
+                    'with' => self::JOB_CONFIGURATION_ID,
                     'return' => null,
                 ],
             ]),
@@ -51,7 +51,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractJobConfiguratio
             MockFactory::createTaskTypeService(),
             MockFactory::createJobTypeService(),
             new Request(),
-            self::LABEL
+            self::JOB_CONFIGURATION_ID
         );
     }
 }

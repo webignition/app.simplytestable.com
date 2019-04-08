@@ -139,7 +139,7 @@ class JobConfigurationController
 
             return $this->redirect(
                 'jobconfiguration_get',
-                ['label' => $jobConfiguration->getLabel()]
+                ['id' => $jobConfiguration->getId()]
             );
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return Response::create('', 400, [
@@ -151,15 +151,13 @@ class JobConfigurationController
         }
     }
 
-    public function deleteAction(ScheduledJobRepository $scheduledJobRepository, string $label):Response
+    public function deleteAction(ScheduledJobRepository $scheduledJobRepository, int $id):Response
     {
         if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $label = trim($label);
-
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($id);
         if (is_null($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -169,7 +167,7 @@ class JobConfigurationController
         ]);
 
         if (empty($scheduledJob)) {
-            $this->jobConfigurationService->delete($label);
+            $this->jobConfigurationService->delete($id);
 
             return new Response();
         }
@@ -182,16 +180,9 @@ class JobConfigurationController
         ]);
     }
 
-    /**
-     * @param string $label
-     *
-     * @return JsonResponse
-     */
-    public function getAction($label)
+    public function getAction(int $id): JsonResponse
     {
-        $label = trim($label);
-
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($id);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -212,7 +203,7 @@ class JobConfigurationController
      * @param TaskTypeService $taskTypeService
      * @param JobTypeService $jobTypeService
      * @param Request $request
-     * @param string $label
+     * @param int $id
      *
      * @return RedirectResponse|Response
      */
@@ -221,13 +212,13 @@ class JobConfigurationController
         TaskTypeService $taskTypeService,
         JobTypeService $jobTypeService,
         Request $request,
-        $label
+        int $id
     ) {
         if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($id);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -266,7 +257,7 @@ class JobConfigurationController
 
             return $this->redirect(
                 'jobconfiguration_get',
-                ['label' => $jobConfiguration->getLabel()]
+                ['id' => $jobConfiguration->getId()]
             );
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return Response::create('', 400, [

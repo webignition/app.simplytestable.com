@@ -10,16 +10,16 @@ use App\Services\UserService;
 
 class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
 {
-    public function testDeleteInvalidLabel()
+    public function testDeleteInvalidId()
     {
         $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $this->expectException(JobConfigurationServiceException::class);
-        $this->expectExceptionMessage('Configuration with label "foo" does not exist');
+        $this->expectExceptionMessage('Configuration does not exist');
         $this->expectExceptionCode(JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION);
 
-        $this->jobConfigurationService->delete('foo');
+        $this->jobConfigurationService->delete(0);
     }
 
     public function testDeleteInUseByScheduledJob()
@@ -49,7 +49,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
         $this->expectExceptionMessage('Job configuration is in use by one or more scheduled jobs');
         $this->expectExceptionCode(JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB);
 
-        $this->jobConfigurationService->delete($jobConfiguration->getLabel());
+        $this->jobConfigurationService->delete($jobConfiguration->getId());
     }
 
     public function testDeleteSuccess()
@@ -79,7 +79,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
             $this->assertNotNull($taskConfiguration->getId());
         }
 
-        $this->jobConfigurationService->delete($jobConfiguration->getLabel());
+        $this->jobConfigurationService->delete($jobConfiguration->getId());
 
         $this->assertNull($jobConfiguration->getId());
 

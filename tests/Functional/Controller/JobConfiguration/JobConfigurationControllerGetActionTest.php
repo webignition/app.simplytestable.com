@@ -38,7 +38,7 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
 
         $router = self::$container->get('router');
         $requestUrl = $router->generate('jobconfiguration_get', [
-            'label' => $jobConfiguration->getLabel(),
+            'id' => $jobConfiguration->getId(),
         ]);
 
         $this->getCrawler([

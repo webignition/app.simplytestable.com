@@ -122,7 +122,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControl
             $jobConfigurationService = self::$container->get(ConfigurationService::class);
 
             foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
-                $jobConfiguration = $jobConfigurationService->get($scheduledJobValues['job-configuration']);
+                $jobConfiguration = $jobConfigurationService->getByLabel($scheduledJobValues['job-configuration']);
 
                 $scheduledJobService->create(
                     $jobConfiguration,

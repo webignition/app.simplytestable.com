@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Services\Job\Configuration;
 
@@ -7,7 +8,7 @@ use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\UserFactory;
 
-class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
+class ConfigurationServiceGetByIdTest extends AbstractConfigurationServiceTest
 {
     /**
      * @var User[]
@@ -27,27 +28,25 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
 
     /**
      * @dataProvider getDataProvider
-     *
-     * @param $userName
-     * @param $existingJobConfigurationValuesCollection
-     * @param $label
-     * @param $expectedJobConfigurationIndex
      */
     public function testGet(
-        $userName,
-        $existingJobConfigurationValuesCollection,
-        $label,
-        $expectedJobConfigurationIndex
+        string $userName,
+        array $existingJobConfigurationValuesCollection,
+        int $index,
+        ?int $expectedJobConfigurationIndex
     ) {
         $jobConfigurationCollection = $this->createJobConfigurationCollection(
             $existingJobConfigurationValuesCollection,
             $this->users
         );
 
+        $jobConfiguration = $jobConfigurationCollection[$index] ?? null;
+        $jobConfigurationId = $jobConfiguration ? $jobConfiguration->getId() : 0;
+
         $user = $this->users[$userName];
         $this->setUser($user);
 
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($jobConfigurationId);
 
         if (is_null($expectedJobConfigurationIndex)) {
             $this->assertNull($jobConfiguration);
@@ -58,10 +57,7 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getDataProvider()
+    public function getDataProvider(): array
     {
         $teamJobConfigurationValuesCollection = [
             [
@@ -104,7 +100,7 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
             'no existing job configurations' => [
                 'userName' => 'public',
                 'existingJobConfigurationValuesCollection' => [],
-                'label' => 'foo',
+                'index' => 0,
                 'expectedJobConfigurationIndex' => null,
             ],
             'match for user' => [
@@ -133,26 +129,26 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
                         ],
                     ],
                 ],
-                'label' => 'bar',
+                'index' => 1,
                 'expectedJobConfigurationIndex' => 1,
             ],
             'match for leader' => [
                 'userName' => 'leader',
                 'existingJobConfigurationValuesCollection' => $teamJobConfigurationValuesCollection,
-                'label' => 'leader',
+                'index' => 2,
                 'expectedJobConfigurationIndex' => 2,
             ],
             'match for member1' => [
                 'userName' => 'member1',
                 'existingJobConfigurationValuesCollection' => $teamJobConfigurationValuesCollection,
-                'label' => 'leader',
-                'expectedJobConfigurationIndex' => 2,
+                'index' => 0,
+                'expectedJobConfigurationIndex' => 0,
             ],
             'match for member2' => [
                 'userName' => 'member2',
                 'existingJobConfigurationValuesCollection' => $teamJobConfigurationValuesCollection,
-                'label' => 'member1',
-                'expectedJobConfigurationIndex' => 0,
+                'index' => 1,
+                'expectedJobConfigurationIndex' => 1,
             ],
         ];
     }

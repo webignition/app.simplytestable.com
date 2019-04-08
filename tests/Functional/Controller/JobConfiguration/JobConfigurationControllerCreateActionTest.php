@@ -8,6 +8,9 @@ use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -44,7 +47,8 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
-        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/label/'));
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertRegExp('#http://localhost/jobconfiguration/[0-9]+/#', $response->getTargetUrl());
     }
 
     public function testCreateActionFailureLabelNotUnique()
@@ -102,7 +106,9 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateAction()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+
+        /* @var ObjectRepository|EntityRepository $jobConfigurationRepository */
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
         $userFactory = self::$container->get(UserFactory::class);
@@ -123,10 +129,16 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
         /* @var RedirectResponse $response */
         $response = $this->callCreateAction($request, $user);
 
-        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/label%20value/'));
+        $responseTargetUrl = $response->getTargetUrl();
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertRegExp('#http://localhost/jobconfiguration/[0-9]+/#', $responseTargetUrl);
+
+        $targetUrlParts = explode('/', rtrim($responseTargetUrl, '/'));
+        $configurationId = (int) $targetUrlParts[count($targetUrlParts) - 1];
 
         $jobConfiguration = $jobConfigurationRepository->findOneBy([
-            'label' => $label,
+            'id' => $configurationId,
         ]);
 
         $this->assertInstanceOf(JobConfiguration::class, $jobConfiguration);

@@ -99,7 +99,7 @@ class ScheduledJobController
             ]);
         }
 
-        $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
+        $jobConfiguration = $jobConfigurationService->getByLabel($requestJobConfigurationLabel);
 
         if (empty($jobConfiguration)) {
             return Response::create('', 400, [
@@ -234,7 +234,7 @@ class ScheduledJobController
         $requestJobConfigurationLabel = trim($requestData->get('job-configuration'));
 
         if (!empty($requestJobConfigurationLabel)) {
-            $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
+            $jobConfiguration = $jobConfigurationService->getByLabel($requestJobConfigurationLabel);
             if (empty($jobConfiguration)) {
                 return Response::create('', 400, [
                     'X-ScheduledJobUpdate-Error' => json_encode([
