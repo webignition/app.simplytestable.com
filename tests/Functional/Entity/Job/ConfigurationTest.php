@@ -13,6 +13,7 @@ use App\Services\TaskTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 class ConfigurationTest extends AbstractBaseTestCase
 {
@@ -34,7 +35,7 @@ class ConfigurationTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->jobFactory = self::$container->get(JobFactory::class);
-        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get(EntityManagerInterface::class);
     }
 
     /**
@@ -64,27 +65,28 @@ class ConfigurationTest extends AbstractBaseTestCase
         $user = $userService->getPublicUser();
         $website = $websiteService->get($websiteUrl);
 
-        $configuration = new Configuration();
-
-        $configuration->setType($jobType);
-        $configuration->setUser($user);
-        $configuration->setLabel($label);
-        $configuration->setWebsite($website);
-        $configuration->setParameters($parameters);
-
-        $this->entityManager->persist($configuration);
-        $this->entityManager->flush();
-
+        $taskConfigurationCollection = new TaskConfigurationCollection();
         foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
-            $taskConfiguration = $taskConfigurationFactory->create($taskConfigurationValues);
-            $taskConfiguration->setJobConfiguration($configuration);
-            $this->entityManager->persist($taskConfiguration);
-            $this->entityManager->flush();
-
-            $configuration->addTaskConfiguration($taskConfiguration);
+            $taskConfigurationCollection->add($taskConfigurationFactory->create($taskConfigurationValues));
         }
 
+        $configuration = Configuration::create(
+            $label,
+            $user,
+            $website,
+            $jobType,
+            $taskConfigurationCollection,
+            $parameters
+        );
+
         $this->entityManager->persist($configuration);
+
+        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+            /* @var $taskConfiguration TaskConfiguration */
+            $taskConfiguration->setJobConfiguration($configuration);
+            $this->entityManager->persist($taskConfiguration);
+        }
+
         $this->entityManager->flush();
 
         $configurationId = $configuration->getId();
@@ -133,7 +135,7 @@ class ConfigurationTest extends AbstractBaseTestCase
                 'jobTypeName' => JobTypeService::FULL_SITE_NAME,
                 'label' => 'foo label',
                 'websiteUrl' => 'http://example.com/',
-                'parameters' => null,
+                'parameters' => '[]',
                 'taskConfigurationValuesCollection' => [],
             ],
             'has parameters, has task configurations' => [

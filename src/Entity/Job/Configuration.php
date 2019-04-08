@@ -87,6 +87,7 @@ class Configuration implements \JsonSerializable
         $configuration->type = $type;
 
         foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+            $taskConfiguration->setJobConfiguration($configuration);
             $configuration->addTaskConfiguration($taskConfiguration);
         }
 
