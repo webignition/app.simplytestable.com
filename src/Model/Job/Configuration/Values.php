@@ -33,10 +33,8 @@ class Values
         return $this->label;
     }
 
-    /**
-     * @return WebSite
-     */
-    public function getWebsite() {
+    public function getWebsite(): WebSite
+    {
         return $this->website;
     }
 
