@@ -71,6 +71,7 @@ class JobConfigurationControllerListActionTest extends AbstractJobConfigurationC
                     'website' => $this->jobConfiguration->getWebsite()->getCanonicalUrl(),
                     'type' => $this->jobConfiguration->getType()->getName(),
                     'task_configurations' => [],
+                    'parameters' => '[]',
                 ],
             ],
             $responseData

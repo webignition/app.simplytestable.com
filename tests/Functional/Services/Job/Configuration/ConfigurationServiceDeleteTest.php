@@ -39,6 +39,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 
@@ -68,6 +69,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 

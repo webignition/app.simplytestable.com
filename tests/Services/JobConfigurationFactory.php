@@ -3,6 +3,7 @@
 namespace App\Tests\Services;
 
 use App\Entity\Job\Configuration;
+use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use App\Services\JobTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
@@ -62,36 +63,33 @@ class JobConfigurationFactory
         $website = $this->websiteService->get($jobConfigurationValues[self::KEY_WEBSITE_URL]);
         $jobType = $this->jobTypeService->get($jobConfigurationValues[self::KEY_TYPE]);
 
-        $jobConfiguration = new Configuration();
-        $jobConfiguration->setLabel($jobConfigurationValues[self::KEY_LABEL]);
-        $jobConfiguration->setUser($jobConfigurationValues[self::KEY_USER]);
-        $jobConfiguration->setWebsite($website);
-        $jobConfiguration->setType($jobType);
+        $taskConfigurationValuesCollection = $jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS] ?? [];
 
-        if (isset($jobConfigurationValues[self::KEY_PARAMETERS])) {
-            $jobConfiguration->setParameters(json_encode($jobConfigurationValues[self::KEY_PARAMETERS]));
+        $taskConfigurationCollection = new TaskConfigurationCollection();
+        foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
+            $taskConfigurationCollection->add($this->jobTaskConfigurationFactory->create($taskConfigurationValues));
         }
 
-        $this->entityManager->persist($jobConfiguration);
-        $this->entityManager->flush();
+        $parameters = $jobConfigurationValues[self::KEY_PARAMETERS] ?? [];
 
-        if (isset($jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS])) {
-            $taskConfigurationValuesCollection = $jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS];
+        $configuration = Configuration::create(
+            $jobConfigurationValues[self::KEY_LABEL],
+            $jobConfigurationValues[self::KEY_USER],
+            $website,
+            $jobType,
+            $taskConfigurationCollection,
+            json_encode($parameters)
+        );
 
-            foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
-                $taskConfiguration = $this->jobTaskConfigurationFactory->create($taskConfigurationValues);
-                $taskConfiguration->setJobConfiguration($jobConfiguration);
+        $this->entityManager->persist($configuration);
 
-                $this->entityManager->persist($taskConfiguration);
-                $this->entityManager->flush();
-
-                $jobConfiguration->addTaskConfiguration($taskConfiguration);
-            }
+        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+            $taskConfiguration->setJobConfiguration($configuration);
+            $this->entityManager->persist($taskConfiguration);
         }
 
-        $this->entityManager->persist($jobConfiguration);
         $this->entityManager->flush();
 
-        return $jobConfiguration;
+        return $configuration;
     }
 }

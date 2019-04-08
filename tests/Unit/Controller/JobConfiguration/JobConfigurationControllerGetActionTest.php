@@ -2,10 +2,12 @@
 
 namespace App\Tests\Unit\Controller\JobConfiguration;
 
+use App\Entity\Job\Configuration;
 use App\Services\Job\ConfigurationService;
 use App\Tests\Factory\MockFactory;
 use App\Tests\Factory\ModelFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 /**
  * @group Controller/JobConfiguration
@@ -32,19 +34,20 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
 
     public function testGetActionSuccess()
     {
-        $jobConfiguration = ModelFactory::createJobConfiguration([
-            ModelFactory::JOB_CONFIGURATION_LABEL => 'foo',
-            ModelFactory::JOB_CONFIGURATION_USER => ModelFactory::createUser([
+        $jobConfiguration = Configuration::create(
+            'foo',
+            ModelFactory::createUser([
                 ModelFactory::USER_EMAIL => 'user@example.com',
             ]),
-            ModelFactory::JOB_CONFIGURATION_WEBSITE => ModelFactory::createWebsite([
+            ModelFactory::createWebsite([
                 ModelFactory::WEBSITE_CANONICAL_URL => 'http://foo.example.com/',
             ]),
-            ModelFactory::JOB_CONFIGURATION_TYPE => ModelFactory::createJobType([
+            ModelFactory::createJobType([
                 ModelFactory::JOB_TYPE_NAME => 'job type name',
             ]),
-            ModelFactory::JOB_CONFIGURATION_PARAMETERS => 'parameters string'
-        ]);
+            new TaskConfigurationCollection(),
+            '[]'
+        );
 
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([
@@ -61,6 +64,6 @@ class JobConfigurationControllerGetActionTest extends AbstractJobConfigurationCo
         $this->assertEquals($response->headers->get('content-type'), 'application/json');
 
         $responseData = json_decode($response->getContent(), true);
-        $this->assertInternalType('array', $responseData);
+        $this->assertIsArray($responseData);
     }
 }

@@ -20,6 +20,7 @@ use App\Services\WebSiteService;
 use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
+use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 class JobServiceTest extends AbstractBaseTestCase
 {
@@ -46,7 +47,7 @@ class JobServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->jobService = self::$container->get(JobService::class);
-        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get(EntityManagerInterface::class);
         $this->jobFactory = self::$container->get(JobFactory::class);
     }
 
@@ -91,12 +92,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $jobType = $jobTypeService->get($jobTypeName);
 
-        $jobConfiguration = new Configuration();
-        $jobConfiguration->setUser($user);
-        $jobConfiguration->setWebsite($website);
-        $jobConfiguration->setType($jobType);
-        $jobConfiguration->setParameters(json_encode($jobParameters));
-
+        $taskConfigurationCollection = new TaskConfigurationCollection();
         foreach ($taskConfigurationCollectionValues as $taskConfigurationValues) {
             $taskType = $taskTypeService->get($taskConfigurationValues['type']);
 
@@ -105,8 +101,17 @@ class JobServiceTest extends AbstractBaseTestCase
             $taskConfiguration->setIsEnabled($taskConfigurationValues['isEnabled']);
             $taskConfiguration->setOptions($taskConfigurationValues['options']);
 
-            $jobConfiguration->addTaskConfiguration($taskConfiguration);
+            $taskConfigurationCollection->add($taskConfiguration);
         }
+
+        $jobConfiguration = Configuration::create(
+            '',
+            $user,
+            $website,
+            $jobType,
+            $taskConfigurationCollection,
+            json_encode($jobParameters)
+        );
 
         $job = $this->jobService->create($jobConfiguration);
 
@@ -556,7 +561,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testCancelIncompleteTasks()
     {
         $stateService = self::$container->get(StateService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
 
         $finishedTaskStates = [
             Task::STATE_CANCELLED,
