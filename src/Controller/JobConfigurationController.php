@@ -159,7 +159,7 @@ class JobConfigurationController
 
         $label = trim($label);
 
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($label);
         if (is_null($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -191,7 +191,7 @@ class JobConfigurationController
     {
         $label = trim($label);
 
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($label);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }
@@ -227,7 +227,7 @@ class JobConfigurationController
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobConfiguration = $this->jobConfigurationService->get($label);
+        $jobConfiguration = $this->jobConfigurationService->getById($label);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();
         }

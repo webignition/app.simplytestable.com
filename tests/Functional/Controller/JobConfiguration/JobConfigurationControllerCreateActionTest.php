@@ -8,6 +8,9 @@ use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Services\UserService;
 use App\Services\WebSiteService;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Services\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -102,7 +105,9 @@ class JobConfigurationControllerCreateActionTest extends AbstractJobConfiguratio
 
     public function testCreateAction()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+
+        /* @var ObjectRepository|EntityRepository $jobConfigurationRepository */
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
         $userFactory = self::$container->get(UserFactory::class);
