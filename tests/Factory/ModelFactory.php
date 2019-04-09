@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Job\Type;
 use Cron\CronBundle\Entity\CronJob;
 use ReflectionClass;
 use App\Entity\Account\Plan\Constraint;
@@ -370,7 +371,13 @@ class ModelFactory
      */
     public static function createJob($jobValues = [])
     {
-        $job = new Job();
+        $user = $jobValues[self::JOB_USER] ?? new User();
+        $website = $jobValues[self::JOB_WEBSITE] ?? new WebSite();
+        $type = $jobValues[self::JOB_TYPE] ?? new Type();
+        $state = $jobValues[self::JOB_STATE] ?? new State();
+        $parameters = $jobValues[self::JOB_PARAMETERS] ?? '';
+
+        $job = Job::create($user, $website, $type, $state, $parameters);
 
         if (isset($jobValues[self::JOB_ID])) {
             $reflectionClass = new ReflectionClass(Job::class);
@@ -378,18 +385,6 @@ class ModelFactory
             $reflectionProperty = $reflectionClass->getProperty('id');
             $reflectionProperty->setAccessible(true);
             $reflectionProperty->setValue($job, $jobValues[self::JOB_ID]);
-        }
-
-        if (isset($jobValues[self::JOB_USER])) {
-            $job->setUser($jobValues[self::JOB_USER]);
-        }
-
-        if (isset($jobValues[self::JOB_WEBSITE])) {
-            $job->setWebsite($jobValues[self::JOB_WEBSITE]);
-        }
-
-        if (isset($jobValues[self::JOB_STATE])) {
-            $job->setState($jobValues[self::JOB_STATE]);
         }
 
         if (isset($jobValues[self::JOB_URL_COUNT])) {
@@ -412,16 +407,11 @@ class ModelFactory
             }
         }
 
-        if (isset($jobValues[self::JOB_TYPE])) {
-            $job->setType($jobValues[self::JOB_TYPE]);
-        }
-
         if (isset($jobValues[self::JOB_TIME_PERIOD])) {
-            $job->setTimePeriod($jobValues[self::JOB_TIME_PERIOD]);
-        }
+            $timePeriod = $jobValues[self::JOB_TIME_PERIOD];
 
-        if (isset($jobValues[self::JOB_PARAMETERS])) {
-            $job->setParametersString($jobValues[self::JOB_PARAMETERS]);
+            $job->setStartDateTime($timePeriod->getStartDateTime());
+            $job->setEndDateTime($timePeriod->getEndDateTime());
         }
 
         return $job;

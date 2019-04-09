@@ -3,6 +3,9 @@
 
 namespace App\Tests\Command;
 
+use App\Entity\Job\Type;
+use App\Entity\State;
+use App\Entity\User;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use App\Entity\Job\Job;
@@ -851,9 +854,13 @@ class UrlFinderTest extends AbstractBaseTestCase
         $website = new WebSite();
         $website->setCanonicalUrl($canonicalUrl);
 
-        $job = new Job();
-        $job->setWebsite($website);
-        $job->setParametersString(json_encode($parameters));
+        $job = Job::create(
+            \Mockery::mock(User::class),
+            $website,
+            \Mockery::mock(Type::class),
+            \Mockery::mock(State::class),
+            json_encode($parameters)
+        );
 
         return $job;
     }

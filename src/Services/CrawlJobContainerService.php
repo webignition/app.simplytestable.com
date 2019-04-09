@@ -5,7 +5,6 @@ namespace App\Services;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
-use App\Entity\TimePeriod;
 use App\Entity\User;
 use App\Repository\CrawlJobContainerRepository;
 
@@ -90,10 +89,7 @@ class CrawlJobContainerService
 
         $crawlJob->addTask($task);
         $crawlJob->setState($jobQueuedState);
-
-        $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime(new \DateTime());
-        $crawlJob->setTimePeriod($timePeriod);
+        $crawlJob->setStartDateTime(new \DateTime());
 
         $this->entityManager->persist($task);
         $this->entityManager->persist($crawlJob);
@@ -109,15 +105,13 @@ class CrawlJobContainerService
      */
     private function create(Job $job)
     {
-        $jobStartingState = $this->stateService->get(Job::STATE_STARTING);
-        $crawlJobType = $this->jobTypeService->getCrawlType();
-
-        $crawlJob = new Job();
-        $crawlJob->setType($crawlJobType);
-        $crawlJob->setState($jobStartingState);
-        $crawlJob->setUser($job->getUser());
-        $crawlJob->setWebsite($job->getWebsite());
-        $crawlJob->setParametersString($job->getParametersString());
+        $crawlJob = Job::create(
+            $job->getUser(),
+            $job->getWebsite(),
+            $this->jobTypeService->getCrawlType(),
+            $this->stateService->get(Job::STATE_STARTING),
+            $job->getParametersString()
+        );
 
         $this->entityManager->persist($crawlJob);
 
