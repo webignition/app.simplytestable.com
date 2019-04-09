@@ -404,14 +404,6 @@ class Job
     }
 
     /**
-     * @param Type $type
-     */
-    public function setType(JobType $type)
-    {
-        $this->type = $type;
-    }
-
-    /**
      * @return Type
      */
     public function getType()
