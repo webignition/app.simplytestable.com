@@ -415,6 +415,11 @@ class Job
         $this->identifier = $identifier;
     }
 
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
     public function jsonSerialize(): array
     {
         $serializedRequestedTaskTypes = [];

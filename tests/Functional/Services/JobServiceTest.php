@@ -125,6 +125,10 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals($expectedJobParameters, $job->getParameters()->getAsArray());
         $this->assertEquals($jobStartingState, $job->getState());
 
+        $identifier = $job->getIdentifier();
+        $this->assertNotNull($identifier);
+        $this->assertIsString($identifier);
+
         $jobTaskTypes = $job->getTaskTypeCollection()->get();
 
         $this->assertCount(count($expectedJobTaskTypes), $jobTaskTypes);

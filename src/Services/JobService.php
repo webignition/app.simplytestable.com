@@ -44,6 +44,7 @@ class JobService
     private $entityManager;
     private $jobRepository;
     private $taskRepository;
+    private $jobIdentifierFactory;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -51,7 +52,8 @@ class JobService
         TaskService $taskService,
         TaskTypeService $taskTypeService,
         JobRepository $jobRepository,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        JobIdentifierFactory $jobIdentifierFactory
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
@@ -59,6 +61,7 @@ class JobService
         $this->taskTypeService = $taskTypeService;
         $this->jobRepository = $jobRepository;
         $this->taskRepository = $taskRepository;
+        $this->jobIdentifierFactory = $jobIdentifierFactory;
     }
 
     /**
@@ -91,6 +94,11 @@ class JobService
                 $job->getTaskTypeOptions()->add($taskTypeOptions);
             }
         }
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
+
+        $job->setIdentifier($this->jobIdentifierFactory->create($job));
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
