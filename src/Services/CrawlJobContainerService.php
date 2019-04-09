@@ -109,15 +109,13 @@ class CrawlJobContainerService
      */
     private function create(Job $job)
     {
-        $jobStartingState = $this->stateService->get(Job::STATE_STARTING);
-        $crawlJobType = $this->jobTypeService->getCrawlType();
-
-        $crawlJob = new Job();
-        $crawlJob->setType($crawlJobType);
-        $crawlJob->setState($jobStartingState);
-        $crawlJob->setUser($job->getUser());
-        $crawlJob->setWebsite($job->getWebsite());
-        $crawlJob->setParametersString($job->getParametersString());
+        $crawlJob = Job::create(
+            $job->getUser(),
+            $job->getWebsite(),
+            $this->jobTypeService->getCrawlType(),
+            $this->stateService->get(Job::STATE_STARTING),
+            $job->getParametersString()
+        );
 
         $this->entityManager->persist($crawlJob);
 

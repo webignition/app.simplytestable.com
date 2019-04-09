@@ -69,10 +69,13 @@ class JobService
      */
     public function create(JobConfiguration $jobConfiguration)
     {
-        $job = new Job();
-        $job->setUser($jobConfiguration->getUser());
-        $job->setWebsite($jobConfiguration->getWebsite());
-        $job->setType($jobConfiguration->getType());
+        $job = Job::create(
+            $jobConfiguration->getUser(),
+            $jobConfiguration->getWebsite(),
+            $jobConfiguration->getType(),
+            $this->stateService->get(Job::STATE_STARTING),
+            $jobConfiguration->getParameters()
+        );
 
         foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
             if ($taskConfiguration->getIsEnabled()) {
@@ -90,15 +93,6 @@ class JobService
             }
         }
 
-        $jobConfigurationParameters = $jobConfiguration->getParameters();
-
-        if (!empty($jobConfigurationParameters)) {
-            $job->setParametersString($jobConfigurationParameters);
-        }
-
-        $startingState = $this->stateService->get(Job::STATE_STARTING);
-
-        $job->setState($startingState);
         $this->entityManager->persist($job);
         $this->entityManager->flush();
 
