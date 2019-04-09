@@ -18,6 +18,7 @@ env:
     - STRIPE_KEY=stripe_key_value
     - POSTMARK_API_KEY=postmark_api_key_value
     - DOTENV_PATH=../../../.env.travis-ci
+    - INSTANCE_ID=1
 
 cache:
   directories:
