@@ -16,6 +16,7 @@ class CrawlJobContainerService
     private $crawlJobContainerRepository;
     private $jobTypeService;
     private $urlDiscoveryTaskService;
+    private $jobIdentifierFactory;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -23,7 +24,8 @@ class CrawlJobContainerService
         StateService $stateService,
         JobTypeService $jobTypeService,
         UrlDiscoveryTaskService $urlDiscoveryTaskService,
-        CrawlJobContainerRepository $crawlJobContainerRepository
+        CrawlJobContainerRepository $crawlJobContainerRepository,
+        JobIdentifierFactory $jobIdentifierFactory
     ) {
         $this->entityManager = $entityManager;
         $this->jobService = $jobService;
@@ -31,6 +33,7 @@ class CrawlJobContainerService
         $this->jobTypeService = $jobTypeService;
         $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
         $this->crawlJobContainerRepository = $crawlJobContainerRepository;
+        $this->jobIdentifierFactory = $jobIdentifierFactory;
     }
 
     /**
@@ -114,6 +117,9 @@ class CrawlJobContainerService
         );
 
         $this->entityManager->persist($crawlJob);
+        $this->entityManager->flush();
+
+        $crawlJob->setIdentifier($this->jobIdentifierFactory->create($crawlJob));
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($job);
