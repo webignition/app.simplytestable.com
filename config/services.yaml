@@ -210,3 +210,9 @@ services:
         $environment: '%kernel.environment%'
 
     webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder:
+
+    Hashids\Hashids:
+
+    App\Services\JobIdentifierFactory:
+      arguments:
+        $instanceId: '%env(INSTANCE_ID)%'
