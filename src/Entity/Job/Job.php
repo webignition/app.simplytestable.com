@@ -452,15 +452,6 @@ class Job
     }
 
     /**
-     * @param string $parameters
-     */
-    public function setParametersString($parameters)
-    {
-        $this->parameters = $parameters;
-        $this->parametersObject = null;
-    }
-
-    /**
      * @return string
      */
     public function getParametersString()
