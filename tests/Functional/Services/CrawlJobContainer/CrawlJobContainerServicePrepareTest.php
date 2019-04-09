@@ -6,9 +6,11 @@ use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Services\CrawlJobContainerService;
+use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Services\WebSiteService;
+use App\Tests\Factory\ModelFactory;
 use App\Tests\Factory\StateFactory;
 
 class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServiceTest
@@ -21,11 +23,11 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
     public function testPrepareInWrongState($stateName)
     {
         $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
-
         $state = StateFactory::create($stateName);
 
-        $crawlJob = new Job();
-        $crawlJob->setState($state);
+        $crawlJob = ModelFactory::createJob([
+            ModelFactory::JOB_STATE => $state,
+        ]);
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setCrawlJob($crawlJob);
@@ -77,7 +79,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
      */
     public function testPrepareWhenCrawlJobHasTasks($taskCount, $expectedReturnValue)
     {
-        $crawlJob = new Job();
+        $crawlJob = ModelFactory::createJob();
         $crawlJobTasks = $crawlJob->getTasks();
 
         for ($taskIndex = 0; $taskIndex < $taskCount; $taskIndex++) {
@@ -112,18 +114,26 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $stateService = self::$container->get(StateService::class);
         $websiteService = self::$container->get(WebSiteService::class);
         $taskTypeService = self::$container->get(TaskTypeService::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $user = $this->userFactory->create();
         $website = $websiteService->get('http://example.com/');
 
-        $crawlJob = new Job();
-        $crawlJob->setState($stateService->get(Job::STATE_STARTING));
-        $crawlJob->setUser($user);
-        $crawlJob->setWebsite($website);
+        $crawlJob = Job::create(
+            $user,
+            $website,
+            $jobTypeService->getCrawlType(),
+            $stateService->get(Job::STATE_STARTING),
+            ''
+        );
 
-        $parentJob = new Job();
-        $parentJob->setUser($user);
-        $parentJob->setWebsite($website);
+        $parentJob = Job::create(
+            $user,
+            $website,
+            $jobTypeService->getFullSiteType(),
+            $stateService->get(Job::STATE_STARTING),
+            ''
+        );
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setCrawlJob($crawlJob);

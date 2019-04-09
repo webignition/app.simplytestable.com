@@ -153,6 +153,18 @@ class Job
         $this->parameters = '';
     }
 
+    public static function create(User $user, WebSite $webSite, Type $type, State $state, string $parameters)
+    {
+        $job = new Job();
+        $job->user = $user;
+        $job->website = $webSite;
+        $job->type = $type;
+        $job->state = $state;
+        $job->parameters = $parameters;
+
+        return $job;
+    }
+
     /**
      * @return int
      */
