@@ -144,6 +144,9 @@
     "hamcrest/hamcrest-php": {
         "version": "v2.0.0"
     },
+    "hashids/hashids": {
+        "version": "4.0.0"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
