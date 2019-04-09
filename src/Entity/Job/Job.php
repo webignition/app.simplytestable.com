@@ -42,7 +42,7 @@ class Job
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
 
     /**
      * @var User
@@ -50,7 +50,7 @@ class Job
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    protected $user;
+    private $user;
 
     /**
      * @var WebSite
@@ -58,7 +58,7 @@ class Job
      * @ORM\ManyToOne(targetEntity="App\Entity\WebSite")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
      */
-    protected $website;
+    private $website;
 
     /**
      * @var State
@@ -66,12 +66,12 @@ class Job
      * @ORM\ManyToOne(targetEntity="App\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
-    protected $state;
+    private $state;
 
     /**
      * @var int
      */
-    protected $urlCount;
+    private $urlCount;
 
     /**
      * @var DoctrineCollection
@@ -86,7 +86,7 @@ class Job
      * @ORM\ManyToOne(targetEntity="App\Entity\Job\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true)
      */
-    protected $type;
+    private $type;
 
     /**
      * @var DoctrineCollection
@@ -112,7 +112,7 @@ class Job
      *
      * @ORM\OneToOne(targetEntity="App\Entity\TimePeriod", cascade={"persist"})
      */
-    protected $timePeriod;
+    private $timePeriod;
 
     /**
      * @var DoctrineCollection
@@ -130,7 +130,7 @@ class Job
      *
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $parameters;
+    private $parameters;
 
     /**
      * @var bool
