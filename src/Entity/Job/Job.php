@@ -2,6 +2,7 @@
 
 namespace App\Entity\Job;
 
+use App\Exception\JobMutationException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -243,6 +244,35 @@ class Job
     public function getTasks()
     {
         return $this->tasks;
+    }
+
+    /**
+     * @param \DateTime $startDateTime
+     *
+     * @throws JobMutationException
+     */
+    public function setStartDateTime(\DateTime $startDateTime)
+    {
+        if (!empty($this->timePeriod)) {
+            throw JobMutationException::createStartDateTimeAlreadySetException();
+        }
+
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime($startDateTime);
+    }
+
+    /**
+     * @param \DateTime $endDateTime
+     *
+     * @throws JobMutationException
+     */
+    public function setEndDateTime(\DateTime $endDateTime)
+    {
+        if (empty($this->timePeriod)) {
+            throw JobMutationException::createStartDateTimeNotSetException();
+        }
+
+        $this->timePeriod->setEndDateTime($endDateTime);
     }
 
     /**
