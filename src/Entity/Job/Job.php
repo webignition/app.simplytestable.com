@@ -166,74 +166,47 @@ class Job
         return $job;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    /**
-     * @param $website
-     */
     public function setWebsite(WebSite $website)
     {
         $this->website = $website;
     }
 
-    /**
-     * @return WebSite
-     */
-    public function getWebsite()
+    public function getWebsite(): WebSite
     {
         return $this->website;
     }
 
-    /**
-     * @param State $state
-     */
     public function setState(State $state)
     {
         $this->state = $state;
     }
 
-    /**
-     * @return State
-     */
-    public function getState()
+    public function getState(): State
     {
         return $this->state;
     }
 
-    /**
-     * @param Task $task
-     */
     public function addTask(Task $task)
     {
         $this->tasks[] = $task;
     }
 
-    /**
-     * @param Task $task
-     */
     public function removeTask(Task $task)
     {
         $this->tasks->removeElement($task);
     }
 
-    /**
-     * @return DoctrineCollection
-     */
-    public function getTasks()
+    public function getTasks(): DoctrineCollection
     {
         return $this->tasks;
     }
@@ -277,9 +250,6 @@ class Job
         return $this->timePeriod;
     }
 
-    /**
-     * @param TaskType $requestedTaskType
-     */
     public function addRequestedTaskType(TaskType $requestedTaskType)
     {
         if (!$this->requestedTaskTypes->contains($requestedTaskType)) {
@@ -287,26 +257,17 @@ class Job
         }
     }
 
-    /**
-     * @param TaskType $requestedTaskType
-     */
     public function removeRequestedTaskType(TaskType $requestedTaskType)
     {
         $this->requestedTaskTypes->removeElement($requestedTaskType);
     }
 
-    /**
-     * @return DoctrineCollection
-     */
-    public function getRequestedTaskTypes()
+    public function getRequestedTaskTypes(): DoctrineCollection
     {
         return $this->requestedTaskTypes;
     }
 
-    /**
-     * @return TaskTypeCollection
-     */
-    public function getTaskTypeCollection()
+    public function getTaskTypeCollection(): TaskTypeCollection
     {
         $collection = new TaskTypeCollection();
 
@@ -317,12 +278,7 @@ class Job
         return $collection;
     }
 
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
-    public function equals(Job $job)
+    public function equals(Job $job): bool
     {
         if (!$this->getState()->equals($job->getState())) {
             return false;
@@ -343,12 +299,7 @@ class Job
         return true;
     }
 
-    /**
-     * @param DoctrineCollection $requestedTaskTypes
-     *
-     * @return bool
-     */
-    private function requestedTaskTypesEquals(DoctrineCollection $requestedTaskTypes)
+    private function requestedTaskTypesEquals(DoctrineCollection $requestedTaskTypes): bool
     {
         /* @var $comparatorTaskType TaskType */
         /* @var $requestedTaskType TaskType */
@@ -363,106 +314,67 @@ class Job
         return true;
     }
 
-    /**
-     * @return int
-     */
-    public function getUrlCount()
+    public function getUrlCount(): ?int
     {
         return $this->urlCount;
     }
 
-    /**
-     * @param int $urlCount
-     */
-    public function setUrlCount($urlCount)
+    public function setUrlCount(int $urlCount)
     {
         $this->urlCount = $urlCount;
     }
 
-    /**
-     * @param TaskTypeOptions $taskTypeOptions
-     */
     public function addTaskTypeOption(TaskTypeOptions $taskTypeOptions)
     {
         $this->taskTypeOptions[] = $taskTypeOptions;
     }
 
-    /**
-     * @param TaskTypeOptions $taskTypeOptions
-     */
     public function removeTaskTypeOption(TaskTypeOptions $taskTypeOptions)
     {
         $this->taskTypeOptions->removeElement($taskTypeOptions);
     }
 
-    /**
-     * @return DoctrineCollection
-     */
-    public function getTaskTypeOptions()
+    public function getTaskTypeOptions(): DoctrineCollection
     {
         return $this->taskTypeOptions;
     }
 
-    /**
-     * @return Type
-     */
-    public function getType()
+    public function getType(): Type
     {
         return $this->type;
     }
 
-    /**
-     * @param Ammendment $ammendment
-     */
     public function addAmmendment(Ammendment $ammendment)
     {
         $this->ammendments[] = $ammendment;
     }
 
-    /**
-     * @param Ammendment $ammendment
-     */
     public function removeAmmendment(Ammendment $ammendment)
     {
         $this->ammendments->removeElement($ammendment);
     }
 
-    /**
-     * @return DoctrineCollection
-     */
-    public function getAmmendments()
+    public function getAmmendments(): DoctrineCollection
     {
         return $this->ammendments;
     }
 
-    /**
-     * @param boolean $isPublic
-     */
-    public function setIsPublic($isPublic)
+    public function setIsPublic(bool $isPublic)
     {
         $this->isPublic = $isPublic;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsPublic()
+    public function getIsPublic(): bool
     {
-        return filter_var($this->isPublic, FILTER_VALIDATE_BOOLEAN);
+        return $this->isPublic;
     }
 
-    /**
-     * @return string
-     */
-    public function getParametersString()
+    public function getParametersString(): string
     {
         return $this->parameters;
     }
 
-    /**
-     * @return Parameters
-     */
-    public function getParameters()
+    public function getParameters(): Parameters
     {
         if (empty($this->parametersObject)) {
             $parametersArray = json_decode($this->parameters, true);
@@ -480,7 +392,7 @@ class Job
     /**
      * @return int[]
      */
-    public function getTaskIds()
+    public function getTaskIds(): array
     {
         $taskIds = [];
 
@@ -491,10 +403,7 @@ class Job
         return $taskIds;
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $serializedRequestedTaskTypes = [];
 
