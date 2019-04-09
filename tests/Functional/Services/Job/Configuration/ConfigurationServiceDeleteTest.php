@@ -39,6 +39,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 
@@ -68,6 +69,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 
@@ -75,7 +77,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
 
         $this->assertNotNull($jobConfiguration->getId());
 
-        foreach ($jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
             $this->assertNotNull($taskConfiguration->getId());
         }
 
@@ -83,7 +85,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
 
         $this->assertNull($jobConfiguration->getId());
 
-        foreach ($jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
             $this->assertNull($taskConfiguration->getId());
         }
     }

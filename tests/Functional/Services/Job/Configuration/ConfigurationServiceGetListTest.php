@@ -29,6 +29,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ],
         [
             'userName' => 'member1',
@@ -40,6 +41,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ],
         [
             'userName' => 'public',
@@ -51,6 +53,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ],
         [
             'userName' => 'member2',
@@ -62,6 +65,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ],
         [
             'userName' => 'leader',
@@ -73,6 +77,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ],
         [
             'userName' => 'public',
@@ -84,6 +89,7 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ]
             ],
+            'parameters' => '[]',
         ],
     ];
 

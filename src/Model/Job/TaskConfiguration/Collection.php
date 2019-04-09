@@ -5,12 +5,56 @@ namespace App\Model\Job\TaskConfiguration;
 use App\Entity\Job\TaskConfiguration;
 use App\Model\Task\Type\Collection as TaskTypeCollection;
 
-class Collection
+class Collection implements \Iterator, \Countable
 {
     /**
      * @var TaskConfiguration[]
      */
     private $collection = [];
+
+    private $position = 0;
+
+    public function __construct()
+    {
+        $this->collection = [];
+        $this->position = 0;
+    }
+
+    /**
+     * \Iterator methods
+     */
+    public function rewind()
+    {
+        $this->position = 0;
+    }
+
+    public function current(): TaskConfiguration
+    {
+        return $this->collection[$this->position];
+    }
+
+    public function key()
+    {
+        return $this->position;
+    }
+
+    public function next()
+    {
+        ++$this->position;
+    }
+
+    public function valid()
+    {
+        return isset($this->collection[$this->position]);
+    }
+
+    /**
+     * \Countable methods
+     */
+    public function count(): int
+    {
+        return count($this->collection);
+    }
 
     /**
      * @param TaskConfiguration $taskConfiguration
@@ -25,19 +69,11 @@ class Collection
     /**
      * @return TaskConfiguration[]
      */
-    public function get()
-    {
-        return $this->collection;
-    }
-
-    /**
-     * @return TaskConfiguration[]
-     */
     public function getEnabled()
     {
         $collection = [];
 
-        foreach ($this->get() as $taskConfiguration) {
+        foreach ($this as $taskConfiguration) {
             if ($taskConfiguration->getIsEnabled()) {
                 $collection[] = $taskConfiguration;
             }
@@ -80,17 +116,14 @@ class Collection
      */
     public function equals(Collection $comparator)
     {
-        $comparatorCollection = $comparator->get();
         $thisCollectionCount = count($this->collection);
-
-        if ($thisCollectionCount !== count($comparatorCollection)) {
+        if (count($this) !== count($comparator)) {
             return false;
         }
 
         $matchCount = 0;
 
-        /* @var $taskConfiguration TaskConfiguration */
-        foreach ($this->get() as $taskConfiguration) {
+        foreach ($this as $taskConfiguration) {
             if ($comparator->contains($taskConfiguration)) {
                 $matchCount++;
             }
@@ -106,7 +139,7 @@ class Collection
     {
         $taskTypes = new TaskTypeCollection();
 
-        foreach ($this->get() as $taskConfiguration) {
+        foreach ($this as $taskConfiguration) {
             $taskTypes->add($taskConfiguration->getType());
         }
 

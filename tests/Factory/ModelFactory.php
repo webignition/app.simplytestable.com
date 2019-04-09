@@ -8,7 +8,6 @@ use App\Entity\Account\Plan\Constraint;
 use App\Entity\Account\Plan\Plan as AccountPlan;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Ammendment;
-use App\Entity\Job\Configuration;
 use App\Entity\Job\Job;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskConfiguration;
@@ -75,12 +74,6 @@ class ModelFactory
     const JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE = 'job-ids-to-exclude';
     const JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE = 'job-ids-to-include';
     const JOB_LIST_REQUEST_USER = 'user';
-    const JOB_CONFIGURATION_USER = 'user';
-    const JOB_CONFIGURATION_WEBSITE = 'website';
-    const JOB_CONFIGURATION_LABEL = 'label';
-    const JOB_CONFIGURATION_PARAMETERS = 'parameters';
-    const JOB_CONFIGURATION_TYPE = 'type';
-    const JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION = 'task-configuration-collection';
     const SCHEDULED_JOB_JOB_CONFIGURATION = 'job-configuration';
     const SCHEDULED_JOB_SCHEDULE = 'schedule';
     const SCHEDULED_JOB_ID = 'id';
@@ -484,46 +477,6 @@ class ModelFactory
         );
 
         return $jobListRequest;
-    }
-
-    /**
-     * @param array $jobConfigurationValues
-     *
-     * @return Configuration
-     */
-    public static function createJobConfiguration($jobConfigurationValues = [])
-    {
-        $jobConfiguration = new Configuration();
-
-        $jobConfiguration->setLabel($jobConfigurationValues[self::JOB_CONFIGURATION_LABEL]);
-
-        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_USER])) {
-            $jobConfiguration->setUser($jobConfigurationValues[self::JOB_CONFIGURATION_USER]);
-        }
-
-        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_WEBSITE])) {
-            $jobConfiguration->setWebsite($jobConfigurationValues[self::JOB_CONFIGURATION_WEBSITE]);
-        }
-
-        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_PARAMETERS])) {
-            $jobConfiguration->setParameters($jobConfigurationValues[self::JOB_CONFIGURATION_PARAMETERS]);
-        }
-
-        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_TYPE])) {
-            $jobConfiguration->setType($jobConfigurationValues[self::JOB_CONFIGURATION_TYPE]);
-        }
-
-        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION])) {
-            $taskConfigurationCollection = $jobConfigurationValues[
-                self::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION
-            ];
-
-            foreach ($taskConfigurationCollection as $taskConfiguration) {
-                $jobConfiguration->addTaskConfiguration($taskConfiguration);
-            }
-        }
-
-        return $jobConfiguration;
     }
 
     /**

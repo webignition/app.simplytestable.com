@@ -74,7 +74,7 @@ class JobService
         $job->setWebsite($jobConfiguration->getWebsite());
         $job->setType($jobConfiguration->getType());
 
-        foreach ($jobConfiguration->getTaskConfigurationsAsCollection()->get() as $taskConfiguration) {
+        foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
             if ($taskConfiguration->getIsEnabled()) {
                 $job->addRequestedTaskType($taskConfiguration->getType());
             }

@@ -47,6 +47,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                     'website' => 'http://example.com/',
                     'type' => JobTypeService::FULL_SITE_NAME,
                     'task-configuration' => [],
+                    'parameters' => '[]',
                 ],
                 'expectedExceptionMessage' => 'TaskConfigurationCollection is empty',
                 'expectedExceptionCode' =>
@@ -82,6 +83,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ],
             ],
+            'parameters' => '[]',
         ]);
 
         $this->setUser($creator);
@@ -143,6 +145,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                     'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                 ],
             ],
+            'parameters' => '[]',
         ];
 
         $jobConfigurationValues = $this->createJobConfigurationValuesModel($valuesData);
@@ -217,7 +220,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
 
         $taskConfigurationCollection = $jobConfigurationValuesModel->getTaskConfigurationCollection();
 
-        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfiguration) {
             $this->assertEquals($jobConfiguration, $taskConfiguration->getJobConfiguration());
         }
     }
@@ -240,7 +243,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameter string',
+                    'parameters' => '[]',
                 ],
             ],
             'no matching job configurations for website' => [
@@ -256,7 +259,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                                 'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             ]
                         ],
-                        'parameters' => 'parameter string',
+                        'parameters' => '[]',
                     ],
                 ],
                 'jobConfigurationValues' => [
@@ -268,7 +271,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameter string',
+                    'parameters' => '[]',
                 ],
             ],
             'no matching job configurations for type' => [
@@ -284,7 +287,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                                 'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             ]
                         ],
-                        'parameters' => 'parameter string',
+                        'parameters' => '[]',
                     ],
                 ],
                 'jobConfigurationValues' => [
@@ -296,7 +299,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameter string',
+                    'parameters' => '[]',
                 ],
             ],
             'no matching job configurations for parameters' => [
@@ -312,7 +315,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                                 'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             ]
                         ],
-                        'parameters' => 'parameter string',
+                        'parameters' => '[]',
                     ],
                 ],
                 'jobConfigurationValues' => [
@@ -324,7 +327,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'bar parameter string',
+                    'parameters' => '{"foo":"bar"}',
                 ],
             ],
             'no matching job configurations for individual user' => [
@@ -340,7 +343,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                                 'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             ]
                         ],
-                        'parameters' => 'parameter string',
+                        'parameters' => '[]',
                     ],
                 ],
                 'jobConfigurationValues' => [
@@ -352,7 +355,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameter string',
+                    'parameters' => '[]',
                 ],
             ],
             'no matching job configurations for team user' => [
@@ -368,7 +371,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                                 'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             ]
                         ],
-                        'parameters' => 'parameter string',
+                        'parameters' => '[]',
                     ],
                     [
                         'userName' => 'member2',
@@ -380,7 +383,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                                 'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                             ]
                         ],
-                        'parameters' => 'parameter string',
+                        'parameters' => '[]',
                     ],
                 ],
                 'jobConfigurationValues' => [
@@ -392,7 +395,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                         ]
                     ],
-                    'parameters' => 'parameter string',
+                    'parameters' => '[]',
                 ],
             ],
         ];

@@ -53,7 +53,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
     public function testDeleteActionJobConfigurationBelongsToScheduledJob()
     {
-        $jobConfiguration = new Configuration();
+        $jobConfiguration = \Mockery::mock(Configuration::class);
 
         $jobConfigurationController = $this->createJobConfigurationController([
             ConfigurationService::class => MockFactory::createJobConfigurationService([

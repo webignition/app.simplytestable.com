@@ -25,19 +25,20 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'without task configuration' => [
-                'configuration' => ModelFactory::createJobConfiguration([
-                    ModelFactory::JOB_CONFIGURATION_LABEL => 'foo',
-                    ModelFactory::JOB_CONFIGURATION_USER => ModelFactory::createUser([
+                'configuration' => Configuration::create(
+                    'foo',
+                    ModelFactory::createUser([
                         ModelFactory::USER_EMAIL => 'user@example.com',
                     ]),
-                    ModelFactory::JOB_CONFIGURATION_WEBSITE => ModelFactory::createWebsite([
+                    ModelFactory::createWebsite([
                         ModelFactory::WEBSITE_CANONICAL_URL => 'http://foo.example.com/',
                     ]),
-                    ModelFactory::JOB_CONFIGURATION_TYPE => ModelFactory::createJobType([
+                    ModelFactory::createJobType([
                         ModelFactory::JOB_TYPE_NAME => 'job type name',
                     ]),
-                    ModelFactory::JOB_CONFIGURATION_PARAMETERS => 'parameters string'
-                ]),
+                    ModelFactory::createTaskConfigurationCollection(),
+                    'parameters string'
+                ),
                 'expectedSerializedData' => [
                     'label' => 'foo',
                     'user' => 'user@example.com',
@@ -48,29 +49,30 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'with task configuration' => [
-                'configuration' => ModelFactory::createJobConfiguration([
-                    ModelFactory::JOB_CONFIGURATION_LABEL => 'foo',
-                    ModelFactory::JOB_CONFIGURATION_USER => ModelFactory::createUser([
+                'configuration' => Configuration::create(
+                    'foo',
+                    ModelFactory::createUser([
                         ModelFactory::USER_EMAIL => 'user@example.com',
                     ]),
-                    ModelFactory::JOB_CONFIGURATION_WEBSITE => ModelFactory::createWebsite([
+                    ModelFactory::createWebsite([
                         ModelFactory::WEBSITE_CANONICAL_URL => 'http://bar.example.com/',
                     ]),
-                    ModelFactory::JOB_CONFIGURATION_TYPE => ModelFactory::createJobType([
+                    ModelFactory::createJobType([
                         ModelFactory::JOB_TYPE_NAME => 'job type name',
                     ]),
-                    ModelFactory::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION => [
-                        ModelFactory::createTaskConfiguration([
+                    ModelFactory::createTaskConfigurationCollection([
+                        [
                             ModelFactory::TASK_CONFIGURATION_TYPE => 'html validation',
                             ModelFactory::TASK_CONFIGURATION_OPTIONS => [
                                 'html-foo' => 'html-bar',
                             ],
-                        ]),
-                        ModelFactory::createTaskConfiguration([
+                        ],
+                        [
                             ModelFactory::TASK_CONFIGURATION_TYPE => 'css validation',
-                        ]),
-                    ],
-                ]),
+                        ],
+                    ]),
+                    '[]'
+                ),
                 'expectedSerializedData' => [
                     'label' => 'foo',
                     'user' => 'user@example.com',
@@ -90,6 +92,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                             'is_enabled' => true,
                         ],
                     ],
+                    'parameters' => '[]',
                 ],
             ],
         ];

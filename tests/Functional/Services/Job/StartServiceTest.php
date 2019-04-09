@@ -24,6 +24,7 @@ use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use App\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as
     UserAccountPlanEnforcementException;
+use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 class StartServiceTest extends AbstractBaseTestCase
 {
@@ -61,8 +62,14 @@ class StartServiceTest extends AbstractBaseTestCase
         $website = new WebSite();
         $website->setCanonicalUrl($url);
 
-        $jobConfiguration = new JobConfiguration();
-        $jobConfiguration->setWebsite($website);
+        $jobConfiguration = JobConfiguration::create(
+            '',
+            \Mockery::mock(User::class),
+            $website,
+            \Mockery::mock(Type::class),
+            new TaskConfigurationCollection(),
+            ''
+        );
 
         $jobStartService = $this->createJobStartService();
 
@@ -125,10 +132,14 @@ class StartServiceTest extends AbstractBaseTestCase
 
         $website = $this->websiteService->get('http://example.com');
 
-        $jobConfiguration = new JobConfiguration();
-        $jobConfiguration->setWebsite($website);
-        $jobConfiguration->setUser($user);
-        $jobConfiguration->setType($jobType);
+        $jobConfiguration = JobConfiguration::create(
+            '',
+            $user,
+            $website,
+            $jobType,
+            new TaskConfigurationCollection(),
+            ''
+        );
 
         $mockJobUserAccountPlanEnforcementService = $this->createJobUserAccountPlanEnforcementService(
             $user,
@@ -207,11 +218,14 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobType = $jobTypeService->getFullSiteType();
         $website = $this->websiteService->get('http://example.com');
 
-        $jobConfiguration = new JobConfiguration();
-        $jobConfiguration->setWebsite($website);
-        $jobConfiguration->setUser($user);
-        $jobConfiguration->setType($jobType);
-
+        $jobConfiguration = JobConfiguration::create(
+            '',
+            $user,
+            $website,
+            $jobType,
+            new TaskConfigurationCollection(),
+            ''
+        );
 
         $jobStartService = $this->createJobStartService();
 
@@ -247,10 +261,14 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobType = $jobTypeService->get($jobTypeName);
         $website = $this->websiteService->get($url);
 
-        $jobConfiguration = new JobConfiguration();
-        $jobConfiguration->setWebsite($website);
-        $jobConfiguration->setUser($user);
-        $jobConfiguration->setType($jobType);
+        $jobConfiguration = JobConfiguration::create(
+            '',
+            $user,
+            $website,
+            $jobType,
+            new TaskConfigurationCollection(),
+            ''
+        );
 
         $jobStartService = $this->createJobStartService();
 

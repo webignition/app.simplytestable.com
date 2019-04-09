@@ -63,6 +63,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 
@@ -91,6 +92,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
             [
                 'label' => 'bar',
@@ -101,13 +103,14 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                         'type' => TaskTypeService::HTML_VALIDATION_TYPE,
                     ]
                 ],
+                'parameters' => '[]',
             ],
         ]);
 
         foreach ($jobConfigurationCollection as $jobConfiguration) {
             $this->assertNotNull($jobConfiguration->getId());
 
-            foreach ($jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
+            foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
                 $this->assertNotNull($taskConfiguration->getId());
             }
         }
@@ -117,7 +120,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
         foreach ($jobConfigurationCollection as $jobConfiguration) {
             $this->assertNull($jobConfiguration->getId());
 
-            foreach ($jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
+            foreach ($jobConfiguration->getTaskConfigurationCollection() as $taskConfiguration) {
                 $this->assertNull($taskConfiguration->getId());
             }
         }

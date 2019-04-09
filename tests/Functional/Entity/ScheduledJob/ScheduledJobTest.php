@@ -9,6 +9,7 @@ use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\ScheduledJob;
 use Cron\CronBundle\Entity\CronJob;
 use App\Entity\Job\Configuration as JobConfiguration;
+use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 abstract class ScheduledJobTest extends AbstractBaseTestCase
 {
@@ -18,17 +19,14 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase
     protected function getScheduledJob()
     {
         $scheduledJob = new ScheduledJob();
-        $scheduledJob->setCronJob($this->getCronJob());
-        $scheduledJob->setJobConfiguration($this->getJobConfiguration());
+        $scheduledJob->setCronJob($this->createCronJob());
+        $scheduledJob->setJobConfiguration($this->createJobConfiguration());
         $scheduledJob->setIsRecurring(true);
 
         return $scheduledJob;
     }
 
-    /**
-     * @return CronJob
-     */
-    protected function getCronJob()
+    protected function createCronJob(): CronJob
     {
         $cronJob = new CronJob();
         $cronJob->setName('cron job name');
@@ -40,10 +38,7 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase
         return $cronJob;
     }
 
-    /**
-     * @return JobConfiguration
-     */
-    protected function getJobConfiguration()
+    protected function createJobConfiguration(): JobConfiguration
     {
         $userService = self::$container->get(UserService::class);
         $websiteService = self::$container->get(WebSiteService::class);
@@ -51,12 +46,14 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase
 
         $fullSiteJobType = $jobTypeService->getFullSiteType();
 
-        $jobConfiguration = new JobConfiguration();
-        $jobConfiguration->setLabel('label');
-        $jobConfiguration->setParameters('');
-        $jobConfiguration->setType($fullSiteJobType);
-        $jobConfiguration->setUser($userService->getPublicUser());
-        $jobConfiguration->setWebsite($websiteService->get('http://example.com/'));
+        $jobConfiguration = JobConfiguration::create(
+            'label',
+            $userService->getPublicUser(),
+            $websiteService->get('http://example.com/'),
+            $fullSiteJobType,
+            new TaskConfigurationCollection(),
+            '[]'
+        );
 
         return $jobConfiguration;
     }

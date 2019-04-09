@@ -59,7 +59,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
             $websiteService->get($jobConfigurationValues['website']),
             $jobTypeService->get($jobConfigurationValues['type']),
             $taskConfigurationCollection,
-            $jobConfigurationValues['parameters'] ??  null
+            $jobConfigurationValues['parameters']
         );
 
         return $configurationValuesModel;

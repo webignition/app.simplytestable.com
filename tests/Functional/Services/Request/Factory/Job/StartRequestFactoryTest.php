@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\Request\Factory\Job;
 
+use App\Request\Job\StartRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Services\JobTypeService;
 use App\Services\Request\Factory\Job\StartRequestFactory;
@@ -39,6 +40,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
         $this->setUser($user);
 
         $jobStartRequestFactory = self::$container->get(StartRequestFactory::class);
+        /* @var StartRequest $jobStartRequest */
         $jobStartRequest = $jobStartRequestFactory->create($request);
 
         $this->assertEquals($jobStartRequest->getUser(), $user);
@@ -46,11 +48,9 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
 
         $taskConfigurationCollection = $jobStartRequest->getTaskConfigurationCollection();
 
-        $taskConfigurations = $taskConfigurationCollection->get();
+        $this->assertCount(count($expectedTaskConfigurationCollection), $taskConfigurationCollection);
 
-        $this->assertEquals(count($expectedTaskConfigurationCollection), count($taskConfigurations));
-
-        foreach ($taskConfigurations as $taskConfigurationIndex => $taskConfiguration) {
+        foreach ($taskConfigurationCollection as $taskConfigurationIndex => $taskConfiguration) {
             $expectedTaskConfiguration = $expectedTaskConfigurationCollection[$taskConfigurationIndex];
 
             $this->assertEquals($expectedTaskConfiguration['type']['name'], $taskConfiguration->getType()->getName());

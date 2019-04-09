@@ -19,7 +19,7 @@ class Values
         WebSite $website,
         JobType $type,
         TaskConfigurationCollection $taskConfigurationCollection,
-        ?string $parameters = null
+        string $parameters
     ) {
         $this->label = trim($label);
         $this->website = $website;
@@ -48,7 +48,7 @@ class Values
         return $this->taskConfigurationCollection;
     }
 
-    public function getParameters(): ?string
+    public function getParameters(): string
     {
         return $this->parameters;
     }

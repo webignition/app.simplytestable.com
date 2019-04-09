@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Job\Configuration;
 use App\Entity\ScheduledJob;
 use App\Tests\Factory\ModelFactory;
 
@@ -23,13 +24,16 @@ class ScheduledJobTest extends \PHPUnit\Framework\TestCase
      */
     public function jsonSerializeDataProvider()
     {
+        $configuration = \Mockery::mock(Configuration::class);
+        $configuration
+            ->shouldReceive('getLabel')
+            ->andReturn('foo');
+
         return [
             'without cron modififer' => [
                 'scheduledJob' => ModelFactory::createScheduledJob([
                     ModelFactory::SCHEDULED_JOB_ID => 1,
-                    ModelFactory::SCHEDULED_JOB_JOB_CONFIGURATION => ModelFactory::createJobConfiguration([
-                        ModelFactory::JOB_CONFIGURATION_LABEL => 'foo',
-                    ]),
+                    ModelFactory::SCHEDULED_JOB_JOB_CONFIGURATION => $configuration,
                     ModelFactory::SCHEDULED_JOB_SCHEDULE => '* * * * *',
                     ModelFactory::SCHEDULED_JOB_IS_RECURRING => false,
                 ]),
@@ -43,9 +47,7 @@ class ScheduledJobTest extends \PHPUnit\Framework\TestCase
             'with cron modififer' => [
                 'scheduledJob' => ModelFactory::createScheduledJob([
                     ModelFactory::SCHEDULED_JOB_ID => 1,
-                    ModelFactory::SCHEDULED_JOB_JOB_CONFIGURATION => ModelFactory::createJobConfiguration([
-                        ModelFactory::JOB_CONFIGURATION_LABEL => 'foo',
-                    ]),
+                    ModelFactory::SCHEDULED_JOB_JOB_CONFIGURATION => $configuration,
                     ModelFactory::SCHEDULED_JOB_SCHEDULE => '* * * * 1',
                     ModelFactory::SCHEDULED_JOB_IS_RECURRING => true,
                     ModelFactory::SCHEDULED_JOB_SCHEDULE_MODIFIER => 'bar',

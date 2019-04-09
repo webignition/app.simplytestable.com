@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Services\Job;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\Configuration as JobConfiguration;
-use App\Entity\Job\Configuration;
 use App\Entity\Job\TaskConfiguration as TaskConfiguration;
 use App\Services\Team\Service as TeamService;
 use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
@@ -48,7 +48,7 @@ class ConfigurationService
         $this->teamService = $teamService;
         $this->tokenStorage = $tokenStorage;
 
-        $this->jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
+        $this->jobConfigurationRepository = $entityManager->getRepository(JobConfiguration::class);
     }
 
     /**
@@ -82,19 +82,20 @@ class ConfigurationService
             );
         }
 
-        $jobConfiguration = new JobConfiguration();
-        $jobConfiguration->setLabel($values->getLabel());
-        $jobConfiguration->setUser($user);
-        $jobConfiguration->setWebsite($values->getWebsite());
-        $jobConfiguration->setType($values->getType());
-        $jobConfiguration->setParameters($values->getParameters());
+        $jobConfiguration = JobConfiguration::create(
+            $values->getLabel(),
+            $user,
+            $values->getWebsite(),
+            $values->getType(),
+            $values->getTaskConfigurationCollection(),
+            $values->getParameters()
+        );
 
         $this->entityManager->persist($jobConfiguration);
 
-        foreach ($values->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+        foreach ($values->getTaskConfigurationCollection() as $taskConfiguration) {
             /* @var $taskConfiguration TaskConfiguration */
             $taskConfiguration->setJobConfiguration($jobConfiguration);
-            $jobConfiguration->addTaskConfiguration($taskConfiguration);
             $this->entityManager->persist($taskConfiguration);
         }
 
@@ -108,7 +109,7 @@ class ConfigurationService
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        /* @var Configuration $jobConfiguration */
+        /* @var JobConfiguration $jobConfiguration */
         $jobConfiguration = $this->jobConfigurationRepository->findOneBy([
             'id' => $id,
             'user' => ($this->teamService->hasForUser($user))
@@ -123,7 +124,7 @@ class ConfigurationService
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        /* @var Configuration $jobConfiguration */
+        /* @var JobConfiguration $jobConfiguration */
         $jobConfiguration = $this->jobConfigurationRepository->findOneBy([
             'label' => $label,
             'user' => ($this->teamService->hasForUser($user))
@@ -135,10 +136,10 @@ class ConfigurationService
     }
 
     /**
-     * @param Configuration $jobConfiguration
+     * @param JobConfiguration $jobConfiguration
      * @param ConfigurationValues $newValues
      *
-     * @return Configuration
+     * @return JobConfiguration
      *
      * @throws JobConfigurationServiceException
      */
@@ -175,24 +176,24 @@ class ConfigurationService
             }
         }
 
-        $jobConfiguration->setLabel($newValues->getLabel());
-        $jobConfiguration->setWebsite($newValues->getWebsite());
-        $jobConfiguration->setType($newValues->getType());
-        $jobConfiguration->setParameters($newValues->getParameters());
+        $jobConfiguration->update(
+            $newValues->getLabel(),
+            $newValues->getWebsite(),
+            $newValues->getType(),
+            $newValues->getParameters()
+        );
 
         $newTaskConfigurationCollection = $newValues->getTaskConfigurationCollection();
 
         if (!$newTaskConfigurationCollection->isEmpty()) {
-            foreach ($jobConfiguration->getTaskConfigurations() as $oldTaskConfiguration) {
+            foreach ($jobConfiguration->getTaskConfigurationCollection() as $oldTaskConfiguration) {
                 $this->entityManager->remove($oldTaskConfiguration);
             }
 
-            $jobConfiguration->getTaskConfigurations()->clear();
+            $jobConfiguration->clearTaskConfigurationCollection();
+            $jobConfiguration->setTaskConfigurationCollection($newTaskConfigurationCollection);
 
-            foreach ($newTaskConfigurationCollection->get() as $taskConfiguration) {
-                /* @var $taskConfiguration TaskConfiguration */
-                $taskConfiguration->setJobConfiguration($jobConfiguration);
-                $jobConfiguration->addTaskConfiguration($taskConfiguration);
+            foreach ($newTaskConfigurationCollection as $taskConfiguration) {
                 $this->entityManager->persist($taskConfiguration);
             }
         }
@@ -221,7 +222,7 @@ class ConfigurationService
 
         $this->entityManager->remove($configuration);
 
-        foreach ($configuration->getTaskConfigurations() as $taskConfiguration) {
+        foreach ($configuration->getTaskConfigurationCollection() as $taskConfiguration) {
             $this->entityManager->remove($taskConfiguration);
         }
 
@@ -269,15 +270,15 @@ class ConfigurationService
 
         foreach ($userJobConfigurations as $userJobConfiguration) {
             /* @var $userJobConfiguration JobConfiguration */
-            foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
+            foreach ($userJobConfiguration->getTaskConfigurationCollection() as $jobTaskConfiguration) {
                 $this->entityManager->remove($jobTaskConfiguration);
-                $userJobConfiguration->removeTaskConfiguration($jobTaskConfiguration);
             }
 
+            $userJobConfiguration->clearTaskConfigurationCollection();
             $this->entityManager->remove($userJobConfiguration);
 
             try {
-                $this->entityManager->flush($userJobConfiguration);
+                $this->entityManager->flush();
             } catch (ForeignKeyConstraintViolationException $foo) {
                 throw new JobConfigurationServiceException(
                     'One or more job configurations are in use by one or more scheduled jobs',
@@ -307,7 +308,7 @@ class ConfigurationService
         foreach ($jobConfigurations as $jobConfiguration) {
             /* @var $jobConfiguration JobConfiguration */
             if ($values->getTaskConfigurationCollection()->equals(
-                $jobConfiguration->getTaskConfigurationsAsCollection()
+                $jobConfiguration->getTaskConfigurationCollection()
             )) {
                 return true;
             }
@@ -328,7 +329,7 @@ class ConfigurationService
             return false;
         }
 
-        if (!$jobConfiguration->getTaskConfigurationsAsCollection()->equals(
+        if (!$jobConfiguration->getTaskConfigurationCollection()->equals(
             $values->getTaskConfigurationCollection()
         )) {
             return false;

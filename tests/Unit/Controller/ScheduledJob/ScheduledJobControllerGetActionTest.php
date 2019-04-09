@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Controller\ScheduledJob;
 
+use App\Entity\Job\Configuration;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Tests\Factory\MockFactory;
@@ -33,10 +34,13 @@ class ScheduledJobControllerGetActionTest extends AbstractScheduledJobController
 
     public function testGetSuccess()
     {
+        $configuration = \Mockery::mock(Configuration::class);
+        $configuration
+            ->shouldReceive('getLabel')
+            ->andReturn('foo');
+
         $scheduledJob = ModelFactory::createScheduledJob([
-            ModelFactory::SCHEDULED_JOB_JOB_CONFIGURATION => ModelFactory::createJobConfiguration([
-                ModelFactory::JOB_CONFIGURATION_LABEL => 'job configuration label',
-            ]),
+            ModelFactory::SCHEDULED_JOB_JOB_CONFIGURATION => $configuration,
             ModelFactory::SCHEDULED_JOB_SCHEDULE => '* * * * *',
         ]);
 
