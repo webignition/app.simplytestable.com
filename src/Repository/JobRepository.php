@@ -181,28 +181,6 @@ class JobRepository extends ServiceEntityRepository
         return !!$result[0]['isPublic'];
     }
 
-    public function getIdsByUserAndMinimumIdAndParameterFragment(
-        User $user,
-        int $minimumId,
-        string $parameterFragmentPrefix
-    ): array {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job.id');
-        $queryBuilder->andWhere('Job.user = :User');
-        $queryBuilder->andWhere('Job.id > :MinimumId');
-        $queryBuilder->andWhere('Job.parameters LIKE :ParameterFragmentPrefix');
-
-        $queryBuilder->setParameters([
-            'User' => $user,
-            'MinimumId' => $minimumId,
-            'ParameterFragmentPrefix' => $parameterFragmentPrefix . '%',
-        ]);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return $this->getSingleFieldCollectionFromResult($result, 'id');
-    }
-
     private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool
     {
         $wherePredicates[] = 'Job.id = :JobId';
