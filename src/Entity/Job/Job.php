@@ -148,7 +148,7 @@ class Job
     /**
      * @var string
      *
-     * @ORM\Column(type="string", unique=false, nullable=true, options={"collation"="utf8_unicode_ci"})
+     * @ORM\Column(type="string", unique=false, nullable=true, options={"collation"="latin1_bin"})
      */
     private $identifier;
 
