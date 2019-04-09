@@ -90,7 +90,7 @@ class SetJobIdentifierCommand extends Command
             }
         }
 
-        if ($flushableCount === self::FLUSH_THRESHOLD && !$isDryRun) {
+        if (!$isDryRun) {
             $this->entityManager->flush();
         }
 
