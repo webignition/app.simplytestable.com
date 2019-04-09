@@ -28,13 +28,12 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
             JobFactory::KEY_USER => $user,
         ]);
 
-        $this->assertTrue($this->crawlJobContainerService->hasForJob($jobHasCrawlJob));
-
         $crawlJobContainer = $this->crawlJobContainerService->getForJob($jobHasCrawlJob);
 
         $parentJob = $crawlJobContainer->getParentJob();
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
+        $this->assertNotNull($crawlJob->getIdentifier());
         $this->assertEquals($jobHasCrawlJob, $parentJob);
 
         $this->assertTrue($this->crawlJobContainerService->hasForJob($parentJob));
