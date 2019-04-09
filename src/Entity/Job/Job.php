@@ -145,13 +145,6 @@ class Job
      */
     private $parametersObject;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", unique=false, nullable=true, options={"collation"="utf8_unicode_ci"})
-     */
-    private $identifier;
-
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -408,11 +401,6 @@ class Job
         }
 
         return $taskIds;
-    }
-
-    public function setIdentifier(string $identifier)
-    {
-        $this->identifier = $identifier;
     }
 
     public function jsonSerialize(): array
