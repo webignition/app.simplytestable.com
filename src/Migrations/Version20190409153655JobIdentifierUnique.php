@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190409152644JobIdentifierUnique extends AbstractMigration
+final class Version20190409153655JobIdentifierUnique extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -17,7 +17,6 @@ final class Version20190409152644JobIdentifierUnique extends AbstractMigration
             'Migration can only be executed safely on \'mysql\'.'
         );
 
-        $this->addSql('ALTER TABLE Job CHANGE identifier identifier VARCHAR(255) NOT NULL COLLATE latin1_bin');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_C395A618772E836A ON Job (identifier)');
     }
 
@@ -29,6 +28,5 @@ final class Version20190409152644JobIdentifierUnique extends AbstractMigration
         );
 
         $this->addSql('DROP INDEX UNIQ_C395A618772E836A ON Job');
-        $this->addSql('ALTER TABLE Job CHANGE identifier identifier VARCHAR(255) DEFAULT NULL COLLATE latin1_bin');
     }
 }
