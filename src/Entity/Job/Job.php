@@ -460,14 +460,6 @@ class Job
     }
 
     /**
-     * @return bool
-     */
-    public function hasParameters()
-    {
-        return !empty($this->parameters);
-    }
-
-    /**
      * @return Parameters
      */
     public function getParameters()
