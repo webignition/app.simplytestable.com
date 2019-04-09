@@ -3,7 +3,10 @@
 namespace App\Tests\Functional\Services;
 
 use App\Entity\Job\Job;
+use App\Entity\Job\Type;
+use App\Entity\State;
 use App\Entity\Task\Task;
+use App\Entity\User;
 use App\Entity\WebSite;
 use App\Services\TaskTypeService;
 use App\Services\UrlDiscoveryTaskService;
@@ -98,24 +101,18 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
         ];
     }
 
-    /**
-     * @param array $crawlJobValues
-     *
-     * @return Job
-     */
-    private function createCrawlJob($crawlJobValues = [])
+    private function createCrawlJob(array $crawlJobValues = []): Job
     {
-        $crawlJob = new Job();
+        $website = new WebSite();
+        $website->setCanonicalUrl($crawlJobValues['canonical_url'] ?? '');
 
-        if (isset($crawlJobValues['parameters'])) {
-            $crawlJob->setParametersString($crawlJobValues['parameters']);
-        }
-
-        if (isset($crawlJobValues['canonical_url'])) {
-            $website = new WebSite();
-            $website->setCanonicalUrl($crawlJobValues['canonical_url']);
-            $crawlJob->setWebsite($website);
-        }
+        $crawlJob = Job::create(
+            \Mockery::mock(User::class),
+            $website,
+            \Mockery::mock(Type::class),
+            \Mockery::mock(State::class),
+            $crawlJobValues['parameters'] ?? ''
+        );
 
         return $crawlJob;
     }

@@ -5,10 +5,12 @@ namespace App\Tests\Functional\Services\CrawlJobContainer;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\User;
+use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Services\WebSiteService;
 use App\Tests\Services\UserFactory;
 use App\Tests\Services\JobFactory;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
 {
@@ -49,7 +51,8 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
     {
         $stateService = self::$container->get(StateService::class);
         $websiteService = self::$container->get(WebSiteService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $jobStateNames = [
             Job::STATE_STARTING,
@@ -88,22 +91,26 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
             $users[1]->getEmail() => [],
         ];
 
-        $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
-
         foreach ($users as $userIndex => $user) {
             foreach ($jobStateNames as $jobStateName) {
                 $url = 'http://' . $jobStateName . '.example.com/';
                 $website = $websiteService->get($url);
 
-                $crawlJob = new Job();
-                $crawlJob->setState($stateService->get($jobStateName));
-                $crawlJob->setUser($user);
-                $crawlJob->setWebsite($website);
+                $crawlJob = Job::create(
+                    $user,
+                    $website,
+                    $jobTypeService->getCrawlType(),
+                    $stateService->get($jobStateName),
+                    ''
+                );
 
-                $parentJob = new Job();
-                $parentJob->setUser($user);
-                $parentJob->setWebsite($website);
-                $parentJob->setState($jobFailedNoSitemapState);
+                $parentJob = Job::create(
+                    $user,
+                    $website,
+                    $jobTypeService->getFullSiteType(),
+                    $stateService->get(Job::STATE_FAILED_NO_SITEMAP),
+                    ''
+                );
 
                 $crawlJobContainer = new CrawlJobContainer();
                 $crawlJobContainer->setCrawlJob($crawlJob);

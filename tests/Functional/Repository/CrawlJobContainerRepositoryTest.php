@@ -7,12 +7,14 @@ use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Entity\User;
 use App\Repository\CrawlJobContainerRepository;
+use App\Services\JobTypeService;
 use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Services\WebSiteService;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 {
@@ -47,27 +49,33 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     public function testDoesCrawlTaskParentStateMatchState()
     {
         $websiteService = self::$container->get(WebSiteService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $stateService = self::$container->get(StateService::class);
         $taskTypeService = self::$container->get(TaskTypeService::class);
-
+        $jobTypeService = self::$container->get(JobTypeService::class);
         $userFactory = self::$container->get(UserFactory::class);
 
         $website = $websiteService->get('http://example.com/');
         $user = $userFactory->create();
 
-        $parentJob = new Job();
-        $parentJob->setUser($user);
-        $parentJob->setWebsite($website);
-        $parentJob->setState($stateService->get(Job::STATE_FAILED_NO_SITEMAP));
+        $parentJob = Job::create(
+            $user,
+            $website,
+            $jobTypeService->getFullSiteType(),
+            $stateService->get(Job::STATE_FAILED_NO_SITEMAP),
+            ''
+        );
 
         $entityManager->persist($parentJob);
         $entityManager->flush();
 
-        $crawlJob = new Job();
-        $crawlJob->setUser($user);
-        $crawlJob->setWebsite($website);
-        $crawlJob->setState($stateService->get(Job::STATE_IN_PROGRESS));
+        $crawlJob = Job::create(
+            $user,
+            $website,
+            $jobTypeService->getCrawlType(),
+            $stateService->get(Job::STATE_IN_PROGRESS),
+            ''
+        );
 
         $entityManager->persist($crawlJob);
         $entityManager->flush();
@@ -156,7 +164,8 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     ) {
         $stateService = self::$container->get(StateService::class);
         $websiteService = self::$container->get(WebSiteService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $jobTypeService = self::$container->get(JobTypeService::class);
 
         $jobStateNames = [
             Job::STATE_STARTING,
@@ -179,8 +188,6 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
             ]);
         }
 
-        $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
-
         $crawlJobContainerIds = [];
 
         foreach ($users as $userIndex => $user) {
@@ -188,15 +195,21 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 $url = 'http://' . $jobStateName . '.example.com/';
                 $website = $websiteService->get($url);
 
-                $crawlJob = new Job();
-                $crawlJob->setState($stateService->get($jobStateName));
-                $crawlJob->setUser($user);
-                $crawlJob->setWebsite($website);
+                $crawlJob = Job::create(
+                    $user,
+                    $website,
+                    $jobTypeService->getCrawlType(),
+                    $stateService->get($jobStateName),
+                    ''
+                );
 
-                $parentJob = new Job();
-                $parentJob->setUser($user);
-                $parentJob->setWebsite($website);
-                $parentJob->setState($jobFailedNoSitemapState);
+                $parentJob = Job::create(
+                    $user,
+                    $website,
+                    $jobTypeService->getFullSiteType(),
+                    $stateService->get(Job::STATE_FAILED_NO_SITEMAP),
+                    ''
+                );
 
                 $crawlJobContainer = new CrawlJobContainer();
                 $crawlJobContainer->setCrawlJob($crawlJob);

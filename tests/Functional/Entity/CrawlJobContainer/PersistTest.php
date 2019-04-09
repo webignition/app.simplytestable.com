@@ -8,26 +8,26 @@ use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Tests\Services\JobFactory;
+use Doctrine\ORM\EntityManagerInterface;
 
 class PersistTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
         $stateService = self::$container->get(StateService::class);
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $jobTypeService = self::$container->get(JobTypeService::class);
-
-        $crawlJobType = $jobTypeService->getCrawlType();
-
         $jobFactory = self::$container->get(JobFactory::class);
 
         $parentJob = $jobFactory->create();
 
-        $crawlJob = new Job();
-        $crawlJob->setType($crawlJobType);
-        $crawlJob->setState($stateService->get(Job::STATE_STARTING));
-        $crawlJob->setUser($parentJob->getUser());
-        $crawlJob->setWebsite($parentJob->getWebsite());
+        $crawlJob = Job::create(
+            $parentJob->getUser(),
+            $parentJob->getWebsite(),
+            $jobTypeService->getCrawlType(),
+            $stateService->get(Job::STATE_STARTING),
+            $parentJob->getParametersString()
+        );
 
         $entityManager->persist($crawlJob);
 
