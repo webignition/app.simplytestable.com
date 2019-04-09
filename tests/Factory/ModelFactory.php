@@ -407,10 +407,6 @@ class ModelFactory
             }
         }
 
-        if (isset($jobValues[self::JOB_TYPE])) {
-            $job->setType($jobValues[self::JOB_TYPE]);
-        }
-
         if (isset($jobValues[self::JOB_TIME_PERIOD])) {
             $timePeriod = $jobValues[self::JOB_TIME_PERIOD];
 

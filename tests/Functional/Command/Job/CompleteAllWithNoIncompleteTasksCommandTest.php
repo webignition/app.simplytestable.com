@@ -6,6 +6,7 @@ use App\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Services\JobTypeService;
+use App\Tests\Services\ObjectReflector;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -75,7 +76,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
 
         foreach ($jobs as $jobIndex => $job) {
             if (in_array($jobIndex, $crawlJobIndices)) {
-                $job->setType($crawlJobType);
+                ObjectReflector::setProperty($job, Job::class, 'type', $crawlJobType);
+
                 $entityManager->persist($job);
                 $entityManager->flush();
             }
