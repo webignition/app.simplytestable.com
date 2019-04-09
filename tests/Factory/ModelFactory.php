@@ -412,7 +412,10 @@ class ModelFactory
         }
 
         if (isset($jobValues[self::JOB_TIME_PERIOD])) {
-            $job->setTimePeriod($jobValues[self::JOB_TIME_PERIOD]);
+            $timePeriod = $jobValues[self::JOB_TIME_PERIOD];
+
+            $job->setStartDateTime($timePeriod->getStartDateTime());
+            $job->setEndDateTime($timePeriod->getEndDateTime());
         }
 
         return $job;

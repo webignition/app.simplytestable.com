@@ -65,7 +65,9 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             $jobValues[JobFactory::KEY_USER] = $user;
             $job = $jobFactory->create($jobValues);
 
-            $job->setTimePeriod($this->createTimePeriod());
+            $timePeriod = $this->createTimePeriod();
+            $job->setStartDateTime($timePeriod->getStartDateTime());
+            $job->setEndDateTime($timePeriod->getEndDateTime());
 
             $entityManager->persist($job);
             $entityManager->flush();
@@ -451,20 +453,11 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         ];
     }
 
-    /**
-     * @return TimePeriod
-     */
-    private function createTimePeriod()
+    private function createTimePeriod(): TimePeriod
     {
-        $startDateTime = new \DateTime('first day of this month');
-        $endDateTime = new \DateTime('last day of this month');
         $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime($startDateTime);
-        $timePeriod->setEndDateTime($endDateTime);
-
-        $entityManger = self::$container->get('doctrine.orm.entity_manager');
-        $entityManger->persist($timePeriod);
-        $entityManger->flush();
+        $timePeriod->setStartDateTime(new \DateTime('first day of this month'));
+        $timePeriod->setEndDateTime(new \DateTime('last day of this month'));
 
         return $timePeriod;
     }

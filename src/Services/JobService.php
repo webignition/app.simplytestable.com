@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Account\Plan\Constraint;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
-use App\Entity\TimePeriod;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\Configuration as JobConfiguration;
@@ -135,13 +134,11 @@ class JobService
             $this->taskService->cancel($task);
         }
 
-        if ($job->getTimePeriod() instanceof TimePeriod) {
-            $job->getTimePeriod()->setEndDateTime(new \DateTime());
-        } else {
-            $job->setTimePeriod(new TimePeriod());
-            $job->getTimePeriod()->setStartDateTime(new \DateTime());
-            $job->getTimePeriod()->setEndDateTime(new \DateTime());
+        if (empty($job->getTimePeriod())) {
+            $job->setStartDateTime(new \DateTime());
         }
+
+        $job->setEndDateTime(new \DateTime());
 
         $cancelledState = $this->stateService->get(Job::STATE_CANCELLED);
 

@@ -259,6 +259,8 @@ class Job
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime($startDateTime);
+
+        $this->timePeriod = $timePeriod;
     }
 
     /**
@@ -273,14 +275,6 @@ class Job
         }
 
         $this->timePeriod->setEndDateTime($endDateTime);
-    }
-
-    /**
-     * @param TimePeriod $timePeriod
-     */
-    public function setTimePeriod(TimePeriod $timePeriod = null)
-    {
-        $this->timePeriod = $timePeriod;
     }
 
     /**

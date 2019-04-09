@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -7,7 +8,6 @@ use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type as TaskType;
 use App\Entity\Job\TaskTypeOptions;
-use App\Entity\TimePeriod;
 use App\Model\Parameters;
 use webignition\NormalisedUrl\NormalisedUrl;
 use App\Entity\CrawlJobContainer;
@@ -192,10 +192,7 @@ class JobPreparationService
             $jobQueuedState = $this->stateService->get(Job::STATE_QUEUED);
 
             $job->setState($jobQueuedState);
-
-            $timePeriod = new TimePeriod();
-            $timePeriod->setStartDateTime(new \DateTime());
-            $job->setTimePeriod($timePeriod);
+            $job->setStartDateTime(new \DateTime());
 
             $this->entityManager->persist($job);
             $this->entityManager->flush();
@@ -231,8 +228,6 @@ class JobPreparationService
         $urls = $this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer);
 
         if ($crawlJobContainer->getCrawlJob()->getAmmendments()->count()) {
-            /* @var $ammendment \App\Entity\Job\Ammendment */
-
             foreach ($crawlJobContainer->getCrawlJob()->getAmmendments() as $ammendment) {
                 /* @var Ammendment $ammendment */
                 $constraint = $ammendment->getConstraint();
@@ -248,10 +243,7 @@ class JobPreparationService
         $jobQueuedState = $this->stateService->get(Job::STATE_QUEUED);
 
         $job->setState($jobQueuedState);
-
-        $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime(new \DateTime());
-        $job->setTimePeriod($timePeriod);
+        $job->setStartDateTime(new \DateTime());
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();

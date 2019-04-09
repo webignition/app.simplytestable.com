@@ -14,7 +14,6 @@ use App\Entity\Account\Plan\Constraint;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\Task\Task;
-use App\Entity\TimePeriod;
 use App\Services\ApplicationStateService;
 use App\Services\CrawlJobContainerService;
 use App\Services\HttpClientService;
@@ -267,11 +266,8 @@ class JobFactory
         }
 
         if (isset($jobValues[self::KEY_TIME_PERIOD_START]) && isset($jobValues[self::KEY_TIME_PERIOD_END])) {
-            $timePeriod = new TimePeriod();
-            $timePeriod->setStartDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_START]));
-            $timePeriod->setEndDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_END]));
-
-            $job->setTimePeriod($timePeriod);
+            $job->setStartDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_START]));
+            $job->setEndDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_END]));
 
             $this->entityManager->persist($job);
             $this->entityManager->flush();
