@@ -168,7 +168,12 @@ class JobPreparationService
 
             $job->setState($jobFailedNoSitemapState);
 
-            if (!$this->userService->isPublicUser($user)) {
+            if ($this->userService->isPublicUser($user)) {
+                $now = new \DateTime();
+
+                $job->setStartDateTime($now);
+                $job->setEndDateTime($now);
+            } else {
                 if (!$this->crawlJobContainerService->hasForJob($job)) {
                     $crawlJobContainer = $this->crawlJobContainerService->getForJob($job);
                     $this->crawlJobContainerService->prepare($crawlJobContainer);
