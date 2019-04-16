@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services;
 
+use App\Entity\TimePeriod;
 use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Ammendment;
@@ -1009,9 +1010,20 @@ class JobServiceTest extends AbstractBaseTestCase
             $constraint = $plan->getConstraintNamed($constraintName);
         }
 
+        $this->assertNull($job->getTimePeriod());
+
         $this->jobService->reject($job, $reason, $constraint);
 
         $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+
+        $timePeriod = $job->getTimePeriod();
+        $this->assertInstanceOf(TimePeriod::class, $timePeriod);
+
+        $startDateTime = $timePeriod->getStartDateTime();
+        $endDateTime = $timePeriod->getEndDateTime();
+        $this->assertNotNull($startDateTime);
+        $this->assertNotNull($endDateTime);
+        $this->assertEquals($startDateTime, $endDateTime);
 
         $rejectionReason = $jobRejectionReasonRepository->findOneBy([
             'job' => $job,
