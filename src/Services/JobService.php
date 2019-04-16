@@ -190,6 +190,10 @@ class JobService
         $rejectedState = $this->stateService->get(Job::STATE_REJECTED);
         $job->setState($rejectedState);
 
+        $now = new \DateTime();
+        $job->setStartDateTime($now);
+        $job->setEndDateTime($now);
+
         $rejectionReason = new JobRejectionReason();
         $rejectionReason->setConstraint($constraint);
         $rejectionReason->setJob($job);
