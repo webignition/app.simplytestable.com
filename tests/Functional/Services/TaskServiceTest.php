@@ -638,10 +638,14 @@ class TaskServiceTest extends AbstractBaseTestCase
         $tasks = $this->job->getTasks()->toArray();
         $task = $tasks[0];
 
+        $previousOutputId = null;
+
         if (isset($updatedTaskValues[TaskFactory::KEY_OUTPUT])) {
             $outputValues = $updatedTaskValues[TaskFactory::KEY_OUTPUT];
             $output = $outputFactory->create($task, $outputValues);
             $updatedTaskValues[TaskFactory::KEY_OUTPUT] = $output;
+
+            $previousOutputId = $output->getId();
         }
 
         $taskFactory->update($task, $updatedTaskValues);
@@ -656,6 +660,8 @@ class TaskServiceTest extends AbstractBaseTestCase
             $this->assertNull($task->getOutput());
         } else {
             $output = $task->getOutput();
+
+            $this->assertNotEquals($previousOutputId, $output->getId());
 
             $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_OUTPUT], $output->getOutput());
             $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_CONTENT_TYPE], $output->getContentType());
