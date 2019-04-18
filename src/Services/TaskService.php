@@ -294,12 +294,23 @@ class TaskService
         $output = $task->getOutput();
 
         if ($output instanceof TaskOutput) {
-            $output->setOutput(null);
-            $output->setContentType(null);
-            $output->generateHash();
-        }
+            $newOutput = new TaskOutput();
+            $newOutput->setErrorCount($output->getErrorCount());
+            $newOutput->setWarningCount($output->getWarningCount());
+            $newOutput->generateHash();
 
-        $this->entityManager->persist($task);
-        $this->entityManager->flush();
+            $existingOutput = $this->taskOutputRepository->findOneBy([
+                'hash' => $newOutput->getHash(),
+            ]);
+
+            if ($existingOutput) {
+                $newOutput = $existingOutput;
+            } else {
+                $this->entityManager->persist($newOutput);
+                $this->entityManager->flush();
+            }
+
+            $task->setOutput($newOutput);
+        }
     }
 }
