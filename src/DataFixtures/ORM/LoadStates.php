@@ -36,7 +36,9 @@ class LoadStates extends Fixture
         'worker-unactivated' => null,
         'job-rejected' => null,
         'job-resolving' => null,
-        'job-resolved' => null
+        'job-resolved' => null,
+        'job-expired' => null,
+        'task-expired' => null,
     );
 
     /**
