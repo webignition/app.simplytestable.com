@@ -4,6 +4,7 @@ namespace App\Tests\Services;
 
 use App\Entity\Task\Task;
 use App\Entity\TimePeriod;
+use App\Services\StateService;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TaskFactory
@@ -16,10 +17,14 @@ class TaskFactory
     const KEY_URL = 'url';
 
     private $entityManager;
+    private $stateService;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        StateService $stateService
+    ) {
         $this->entityManager = $entityManager;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -28,32 +33,47 @@ class TaskFactory
      */
     public function update(Task $task, $taskValues)
     {
-        if (isset($taskValues[self::KEY_STATE])) {
-            $task->setState($taskValues[self::KEY_STATE]);
+        $isUpdated = false;
+
+        $state = $taskValues[self::KEY_STATE] ?? null;
+        if (is_string($state)) {
+            $state = $this->stateService->get($state);
+        }
+
+        if ($state) {
+            $task->setState($state);
+            $isUpdated = true;
         }
 
         if (isset($taskValues[self::KEY_TYPE])) {
             $task->setType($taskValues[self::KEY_TYPE]);
+            $isUpdated = true;
         }
 
         if (isset($taskValues[self::KEY_OUTPUT])) {
             $task->setOutput($taskValues[self::KEY_OUTPUT]);
+            $isUpdated = true;
         }
 
         if (isset($taskValues[self::KEY_PARAMETERS])) {
             $task->setParameters($taskValues[self::KEY_PARAMETERS]);
+            $isUpdated = true;
         }
 
         if (isset($taskValues[self::KEY_TIME_PERIOD])) {
             $task->setTimePeriod($taskValues[self::KEY_TIME_PERIOD]);
+            $isUpdated = true;
         }
 
         if (isset($taskValues[self::KEY_URL])) {
             $task->setUrl($taskValues[self::KEY_URL]);
+            $isUpdated = true;
         }
 
-        $this->entityManager->persist($task);
-        $this->entityManager->flush();
+        if ($isUpdated) {
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
+        }
     }
 
     /**

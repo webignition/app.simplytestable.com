@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 use App\Entity\Task\Task;
 use App\Services\TaskTypeService;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 
 trait FindUrlsByJobAndStateDataProvider
 {
@@ -26,13 +27,13 @@ trait FindUrlsByJobAndStateDataProvider
                     ],
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],

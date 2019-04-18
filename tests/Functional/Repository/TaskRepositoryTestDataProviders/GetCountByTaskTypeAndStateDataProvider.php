@@ -6,6 +6,7 @@ use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Services\TaskTypeService;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 
 trait GetCountByTaskTypeAndStateDataProvider
 {
@@ -32,22 +33,22 @@ trait GetCountByTaskTypeAndStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -59,13 +60,13 @@ trait GetCountByTaskTypeAndStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -77,13 +78,13 @@ trait GetCountByTaskTypeAndStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_CANCELLED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],

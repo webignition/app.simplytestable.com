@@ -7,6 +7,7 @@ use App\Entity\Job\Job;
 use App\Entity\Task\Task;
 use App\Services\JobTypeService;
 use App\Tests\Services\ObjectReflector;
+use App\Tests\Services\TaskFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -112,13 +113,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                         ],
                     ],
@@ -126,13 +127,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                         ],
                     ],
@@ -151,13 +152,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -165,13 +166,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                         ],
                     ],
@@ -190,13 +191,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -204,13 +205,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                         ],
                     ],
@@ -229,13 +230,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -243,13 +244,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                         ],
                     ],
@@ -270,13 +271,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -286,13 +287,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_DOMAIN => 'foo.example.com',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -302,13 +303,13 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_DOMAIN => 'bar.example.com',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],

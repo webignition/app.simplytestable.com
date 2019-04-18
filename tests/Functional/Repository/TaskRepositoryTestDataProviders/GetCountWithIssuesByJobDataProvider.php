@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
 use App\Entity\Task\Task;
 use App\Repository\TaskRepository;
+use App\Tests\Services\TaskFactory;
 use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\JobFactory;
 
@@ -19,13 +20,13 @@ trait GetCountWithIssuesByJobDataProvider
                 JobFactory::KEY_USER => 'public',
                 JobFactory::KEY_TASKS => [
                     [
-                        JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                     ],
                     [
-                        JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                        TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                     ],
                     [
-                        JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                        TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                     ],
                 ],
             ],
