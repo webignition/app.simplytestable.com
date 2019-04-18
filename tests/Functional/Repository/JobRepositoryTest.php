@@ -97,24 +97,24 @@ class JobRepositoryTest extends AbstractBaseTestCase
                 ],
                 'expectedJobIndices' => [],
             ],
-            'job-states[in-progress], task-states[completed]' => [
+            'job-states[in-progress], task-states[failed-no-retry-available]' => [
                 'jobStateNames' => [
                     Job::STATE_IN_PROGRESS,
                 ],
                 'taskStateNames' => [
-                    Task::STATE_IN_PROGRESS,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                 ],
-                'expectedJobIndices' => [7],
+                'expectedJobIndices' => [8],
             ],
-            'job-states[in-progress, cancelled], task-states[completed]' => [
+            'job-states[in-progress, completed], task-states[failed-no-retry-available]' => [
                 'jobStateNames' => [
                     Job::STATE_IN_PROGRESS,
-                    Job::STATE_CANCELLED,
+                    Job::STATE_COMPLETED,
                 ],
                 'taskStateNames' => [
-                    Task::STATE_COMPLETED,
+                    Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                 ],
-                'expectedJobIndices' => [1, 7],
+                'expectedJobIndices' => [2, 8],
             ],
         ];
     }
