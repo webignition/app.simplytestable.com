@@ -140,7 +140,7 @@ class JobRepository extends ServiceEntityRepository
         return !!$result[0]['isPublic'];
     }
 
-    public function findJobsForUserOlderThanMaxAge(User $user, string $maximumAge, array $states = [])
+    public function findJobsForUserOlderThanMaxAgeWithStates(User $user, string $maximumAge, array $states = [])
     {
         $queryBuilder = $this->createQueryBuilder('Job');
 

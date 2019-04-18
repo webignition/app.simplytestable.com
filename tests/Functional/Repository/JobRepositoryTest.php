@@ -613,6 +613,111 @@ class JobRepositoryTest extends AbstractBaseTestCase
     }
 
     /**
+     * @dataProvider findJobsForUserOlderThanMaxAgeWithStatesDataProvider
+     */
+    public function testFindJobsForUserOlderThanMaxAgeWithStates(
+        array $jobValuesCollection,
+        string $userName,
+        string $maximumAge,
+        array $stateNames,
+        array $expectedJobIndices
+    ) {
+        $stateService = self::$container->get(StateService::class);
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+
+        $jobs = $this->createJobs($jobValuesCollection, $users);
+        $expectedJobIds = $this->createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices);
+
+        $user = $users[$userName];
+
+        $states = array_values($stateService->getCollection($stateNames));
+
+        /* @var Job[] $retrievedJobs */
+        $retrievedJobs = $this->jobRepository->findJobsForUserOlderThanMaxAgeWithStates(
+            $user,
+            $maximumAge,
+            $states
+        );
+
+        $this->assertEquals($expectedJobIds, $this->getJobIds($retrievedJobs));
+    }
+
+    public function findJobsForUserOlderThanMaxAgeWithStatesDataProvider(): array
+    {
+        $defaultJobValuesCollection = [
+            [
+                JobFactory::KEY_URL => 'http://0.example.com/',
+                JobFactory::KEY_STATE => Job::STATE_CANCELLED,
+                JobFactory::KEY_TIME_PERIOD_START => (new \DateTime('- 48 HOUR'))->format('Y-m-d H:i:s'),
+                JobFactory::KEY_TIME_PERIOD_END => (new \DateTime('- 47 HOUR'))->format('Y-m-d H:i:s'),
+                JobFactory::KEY_USER => 'private',
+            ],
+            [
+                JobFactory::KEY_URL => 'http://1.example.com/',
+                JobFactory::KEY_STATE => Job::STATE_COMPLETED,
+                JobFactory::KEY_TIME_PERIOD_START => (new \DateTime('- 48 HOUR'))->format('Y-m-d H:i:s'),
+                JobFactory::KEY_TIME_PERIOD_END => (new \DateTime('- 47 HOUR'))->format('Y-m-d H:i:s'),
+                JobFactory::KEY_USER => 'public',
+            ],
+        ];
+
+        return [
+            'no jobs' => [
+                'jobValuesCollection' => [],
+                'username' => 'public',
+                'maximumAge' => '24 HOUR',
+                'stateNames' => [],
+                'expectedJobIndices' => [],
+            ],
+            'no match on user, match on age' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_URL => 'http://0.example.com/',
+                        JobFactory::KEY_STATE => Job::STATE_CANCELLED,
+                        JobFactory::KEY_TIME_PERIOD_START => (new \DateTime('- 48 HOUR'))->format('Y-m-d H:i:s'),
+                        JobFactory::KEY_TIME_PERIOD_END => (new \DateTime('- 47 HOUR'))->format('Y-m-d H:i:s'),
+                        JobFactory::KEY_USER => 'private',
+                    ],
+                ],
+                'username' => 'public',
+                'maximumAge' => '24 HOUR',
+                'stateNames' => [],
+                'expectedJobIndices' => [],
+            ],
+            'match on public user, match on age, no match on states' => [
+                'jobValuesCollection' => $defaultJobValuesCollection,
+                'username' => 'public',
+                'maximumAge' => '24 HOUR',
+                'stateNames' => [
+                    Job::STATE_REJECTED,
+                ],
+                'expectedJobIndices' => [],
+            ],
+            'match on public user, match on age, match on states' => [
+                'jobValuesCollection' => $defaultJobValuesCollection,
+                'username' => 'public',
+                'maximumAge' => '24 HOUR',
+                'stateNames' => [
+                    Job::STATE_COMPLETED,
+                    Job::STATE_REJECTED,
+                ],
+                'expectedJobIndices' => [1],
+            ],
+            'match on private user, match on age, match on states' => [
+                'jobValuesCollection' => $defaultJobValuesCollection,
+                'username' => 'private',
+                'maximumAge' => '24 HOUR',
+                'stateNames' => [
+                    Job::STATE_CANCELLED,
+                    Job::STATE_REJECTED,
+                ],
+                'expectedJobIndices' => [0],
+            ],
+        ];
+    }
+
+    /**
      * @return Job[]
      */
     private function createJobsForAllJobStatesWithTasksForAllTaskStates()
