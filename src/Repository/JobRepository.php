@@ -181,6 +181,33 @@ class JobRepository extends ServiceEntityRepository
         return !!$result[0]['isPublic'];
     }
 
+    public function findJobsForUserOlderThanMaxAge(User $user, string $maximumAge, array $states = [])
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+
+        $queryBuilder->select('Job');
+        $queryBuilder->join('Job.timePeriod', 'TimePeriod');
+
+        $queryBuilder->where('Job.user = :User');
+        $queryBuilder->andWhere('TimePeriod.startDateTime < :MaximumAge');
+
+        $parameters = [
+            'User' => $user,
+            'MaximumAge' => new \DateTimeImmutable('-' . $maximumAge),
+        ];
+
+        if (count($states)) {
+            $queryBuilder->andWhere('Job.state IN (:States)');
+            $parameters['States'] = $states;
+        }
+
+        $queryBuilder->setParameters($parameters);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return $result;
+    }
+
     private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool
     {
         $wherePredicates[] = 'Job.id = :JobId';
