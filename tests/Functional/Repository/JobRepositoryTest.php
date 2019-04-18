@@ -1,7 +1,7 @@
 <?php
 /** @noinspection PhpDocSignatureInspection */
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Repository;
 
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
@@ -49,12 +49,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getByStatesAndTaskStatesDataProvider
-     *
-     * @param string[] $jobStateNames
-     * @param string[] $taskStateNames
-     * @param int[] $expectedJobIndices
      */
-    public function testGetByStatesAndTaskStates($jobStateNames, $taskStateNames, $expectedJobIndices)
+    public function testGetByStatesAndTaskStates(array $jobStateNames, array $taskStateNames, array $expectedJobIndices)
     {
         $stateService = self::$container->get(StateService::class);
 
@@ -70,10 +66,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals($expectedJobIds, $this->getJobIds($retrievedJobs));
     }
 
-    /**
-     * @return array
-     */
-    public function getByStatesAndTaskStatesDataProvider()
+    public function getByStatesAndTaskStatesDataProvider(): array
     {
         return [
             'job-states[none specified], task-states[none specified]' => [
@@ -128,12 +121,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getIdsByStateDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param string $stateName
-     * @param int[] $expectedJobIndices
      */
-    public function testGetIdsByState($jobValuesCollection, $stateName, $expectedJobIndices)
+    public function testGetIdsByState(array $jobValuesCollection, string $stateName, array $expectedJobIndices)
     {
         $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
@@ -146,10 +135,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals($expectedJobIds, $retrievedIds);
     }
 
-    /**
-     * @return array
-     */
-    public function getIdsByStateDataProvider()
+    public function getIdsByStateDataProvider(): array
     {
         return [
             'no jobs' => [
@@ -180,12 +166,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getCountByStateDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param string $stateName
-     * @param int[] $expectedCount
      */
-    public function testGetCountByState($jobValuesCollection, $stateName, $expectedCount)
+    public function testGetCountByState(array $jobValuesCollection, string $stateName, int $expectedCount)
     {
         $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
@@ -197,10 +179,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals($expectedCount, $count);
     }
 
-    /**
-     * @return array
-     */
-    public function getCountByStateDataProvider()
+    public function getCountByStateDataProvider(): array
     {
         return [
             'no jobs' => [
@@ -267,23 +246,15 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getJobCountByUserAndJobTypeAndWebsiteForPeriodDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param string $userName
-     * @param string $jobTypeName
-     * @param string $websiteUrl
-     * @param string $periodStart
-     * @param string $periodEnd
-     * @param int $expectedCount
      */
     public function testGetJobCountByUserAndJobTypeAndWebsiteForPeriod(
-        $jobValuesCollection,
-        $userName,
-        $jobTypeName,
-        $websiteUrl,
-        $periodStart,
-        $periodEnd,
-        $expectedCount
+        array $jobValuesCollection,
+        string $userName,
+        string $jobTypeName,
+        string $websiteUrl,
+        string $periodStart,
+        string $periodEnd,
+        int $expectedCount
     ) {
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
@@ -307,10 +278,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals($expectedCount, $count);
     }
 
-    /**
-     * @return array
-     */
-    public function getJobCountByUserAndJobTypeAndWebsiteForPeriodDataProvider()
+    public function getJobCountByUserAndJobTypeAndWebsiteForPeriodDataProvider(): array
     {
         return [
             'no jobs' => [
