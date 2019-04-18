@@ -157,6 +157,7 @@ class JobUserAccountPlanEnforcementService
                 Task::STATE_FAILED_RETRY_AVAILABLE,
                 Task::STATE_FAILED_RETRY_LIMIT_REACHED,
                 Task::STATE_SKIPPED,
+                Task::STATE_EXPIRED,
             ]),
             $startDateTime->format('Y-m-01'),
             $endDateTime->format('Y-m-d 23:59:59')
