@@ -87,9 +87,9 @@ class Output implements \JsonSerializable
     }
 
     /**
-     * @param InternetMediaType $contentType
+     * @param InternetMediaType|null $contentType
      */
-    public function setContentType(InternetMediaType $contentType)
+    public function setContentType(?InternetMediaType $contentType)
     {
         $this->contentType = $contentType;
     }

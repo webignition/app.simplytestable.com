@@ -286,4 +286,20 @@ class TaskService
 
         return $tasks;
     }
+
+    public function expire(Task $task)
+    {
+        $task->setState($this->stateService->get(Task::STATE_EXPIRED));
+
+        $output = $task->getOutput();
+
+        if ($output instanceof TaskOutput) {
+            $output->setOutput(null);
+            $output->setContentType(null);
+            $output->generateHash();
+        }
+
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
+    }
 }

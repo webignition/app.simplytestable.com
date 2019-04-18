@@ -12,6 +12,7 @@ class TaskOutputFactory
     const KEY_ERROR_COUNT = 'error-count';
     const KEY_WARNING_COUNT = 'warning-count';
     const KEY_HASH = 'hash';
+    const KEY_CONTENT_TYPE = 'content-type';
 
     private $entityManager;
 
@@ -46,6 +47,10 @@ class TaskOutputFactory
             $output->setHash($taskOutputValues[self::KEY_HASH]);
         } else {
             $output->generateHash();
+        }
+
+        if (isset($taskOutputValues[self::KEY_CONTENT_TYPE])) {
+            $output->setContentType($taskOutputValues[self::KEY_CONTENT_TYPE]);
         }
 
         $task->setOutput($output);

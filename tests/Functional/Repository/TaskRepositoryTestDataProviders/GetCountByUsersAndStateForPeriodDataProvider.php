@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
 use App\Entity\Task\Task;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 
 trait GetCountByUsersAndStateForPeriodDataProvider
 {
@@ -19,13 +20,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
@@ -51,13 +52,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
@@ -83,13 +84,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
@@ -116,13 +117,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
@@ -130,13 +131,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                                TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                         ],
                     ],
@@ -144,13 +145,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'leader',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -158,13 +159,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'member1',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                         ],
                     ],
@@ -172,13 +173,13 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                         JobFactory::KEY_USER => 'member2',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                                TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],

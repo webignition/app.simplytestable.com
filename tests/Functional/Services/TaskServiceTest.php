@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Services;
 
@@ -11,10 +12,12 @@ use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
 use App\Tests\Services\TaskFactory;
+use App\Tests\Services\TaskOutputFactory;
 use App\Tests\Services\TimePeriodFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use webignition\InternetMediaType\InternetMediaType;
 
 class TaskServiceTest extends AbstractBaseTestCase
 {
@@ -619,6 +622,77 @@ class TaskServiceTest extends AbstractBaseTestCase
                     Task::STATE_COMPLETED,
                 ],
                 'expectedEquivalentTaskIndices' => [2],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider expireDataProvider
+     */
+    public function testExpire(array $updatedTaskValues, bool $expectedTaskHasOutput, array $expectedOutputValues)
+    {
+        $taskFactory = self::$container->get(TaskFactory::class);
+        $outputFactory = self::$container->get(TaskOutputFactory::class);
+
+        /* @var Task[] $tasks */
+        $tasks = $this->job->getTasks()->toArray();
+        $task = $tasks[0];
+
+        if (isset($updatedTaskValues[TaskFactory::KEY_OUTPUT])) {
+            $outputValues = $updatedTaskValues[TaskFactory::KEY_OUTPUT];
+            $output = $outputFactory->create($task, $outputValues);
+            $updatedTaskValues[TaskFactory::KEY_OUTPUT] = $output;
+        }
+
+        $taskFactory->update($task, $updatedTaskValues);
+
+        $this->assertEquals($expectedTaskHasOutput, !empty($task->getOutput()));
+
+        $this->taskService->expire($task);
+
+        $this->assertEquals(Task::STATE_EXPIRED, $task->getState());
+
+        if (empty($expectedOutputValues)) {
+            $this->assertNull($task->getOutput());
+        } else {
+            $output = $task->getOutput();
+
+            $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_OUTPUT], $output->getOutput());
+            $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_CONTENT_TYPE], $output->getContentType());
+            $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_ERROR_COUNT], $output->getErrorCount());
+            $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_WARNING_COUNT], $output->getWarningCount());
+            $this->assertSame($expectedOutputValues[TaskOutputFactory::KEY_HASH], $output->getHash());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function expireDataProvider(): array
+    {
+        return [
+            'task not has output' => [
+                'updatedTaskValues' => [],
+                'expectedHasOutput' => false,
+                'expectedOutputValues' => [],
+            ],
+            'task has output' => [
+                'updatedTaskValues' => [
+                    TaskFactory::KEY_OUTPUT => [
+                        TaskOutputFactory::KEY_OUTPUT => 'output content',
+                        TaskOutputFactory::KEY_CONTENT_TYPE => new InternetMediaType('text', 'plain'),
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 2,
+                        TaskOutputFactory::KEY_HASH => 'output-1-hash',
+                    ],
+                ],
+                'expectedHasOutput' => true,
+                'expectedOutputValues' => [
+                    TaskOutputFactory::KEY_OUTPUT => null,
+                    TaskOutputFactory::KEY_CONTENT_TYPE => null,
+                    TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                    TaskOutputFactory::KEY_WARNING_COUNT => 2,
+                    TaskOutputFactory::KEY_HASH => 'e02617653f512665006c7e7cc45ba070',
+                ],
             ],
         ];
     }

@@ -1,9 +1,11 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Services;
 
 use App\Entity\TimePeriod;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\Configuration;
@@ -54,31 +56,19 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider createDataProvider
-     *
-     * @param string $userEmail
-     * @param string $url
-     * @param string $jobTypeName
-     * @param array $jobParameters
-     * @param array $taskConfigurationCollectionValues
-     * @param string $expectedUserEmail
-     * @param string $expectedWebsiteUrl
-     * @param string $expectedJobTypeName
-     * @param array $expectedJobParameters
-     * @param array $expectedJobTaskTypes
-     * @param array $expectedJobTaskTypeOptions
      */
     public function testCreate(
-        $userEmail,
-        $url,
-        $jobTypeName,
-        $jobParameters,
-        $taskConfigurationCollectionValues,
-        $expectedUserEmail,
-        $expectedWebsiteUrl,
-        $expectedJobTypeName,
-        $expectedJobParameters,
-        $expectedJobTaskTypes,
-        $expectedJobTaskTypeOptions
+        string $userEmail,
+        string $url,
+        string $jobTypeName,
+        array $jobParameters,
+        array $taskConfigurationCollectionValues,
+        string $expectedUserEmail,
+        string $expectedWebsiteUrl,
+        string $expectedJobTypeName,
+        array $expectedJobParameters,
+        array $expectedJobTaskTypes,
+        array $expectedJobTaskTypeOptions
     ) {
         $userFactory = self::$container->get(UserFactory::class);
         $websiteService = self::$container->get(WebSiteService::class);
@@ -154,17 +144,14 @@ class JobServiceTest extends AbstractBaseTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
+    public function createDataProvider(): array
     {
         return [
             'public user, full site, html validation only' => [
                 'userEmail' => 'public@simplytestable.com',
                 'url' => 'http://example.com',
                 'jobTypeName' => JobTypeService::FULL_SITE_NAME,
-                'jobParameters' => null,
+                'jobParameters' => [],
                 'taskConfigurationCollectionValues' => [
                     [
                         'type' => 'HTML validation',
@@ -306,14 +293,13 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider isStateDataProvider
-     *
-     * @param string $stateName
-     * @param bool $expectedIsFinished
-     * @param bool $expectedIsNew
-     * @param bool $expectedIsPreparing
      */
-    public function testIsState($stateName, $expectedIsFinished, $expectedIsNew, $expectedIsPreparing)
-    {
+    public function testIsState(
+        string $stateName,
+        bool $expectedIsFinished,
+        bool $expectedIsNew,
+        bool $expectedIsPreparing
+    ) {
         $stateService = self::$container->get(StateService::class);
         $state = $stateService->get($stateName);
 
@@ -328,10 +314,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals($expectedIsPreparing, Job::STATE_PREPARING == $job->getState());
     }
 
-    /**
-     * @return array
-     */
-    public function isStateDataProvider()
+    public function isStateDataProvider(): array
     {
         return [
             Job::STATE_STARTING => [
@@ -394,15 +377,19 @@ class JobServiceTest extends AbstractBaseTestCase
                 'expectedIsNew' => false,
                 'expectedIsPreparing' => false,
             ],
+            Job::STATE_EXPIRED => [
+                'stateName' => Job::STATE_EXPIRED,
+                'expectedIsFinished' => true,
+                'expectedIsNew' => false,
+                'expectedIsPreparing' => false,
+            ],
         ];
     }
 
     /**
      * @dataProvider cancelFinishedJobDataProvider
-     *
-     * @param string $stateName
      */
-    public function testCancelFinishedJob($stateName)
+    public function testCancelFinishedJob(string $stateName)
     {
         $stateService = self::$container->get(StateService::class);
 
@@ -417,10 +404,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals($stateName, $job->getState());
     }
 
-    /**
-     * @return array
-     */
-    public function cancelFinishedJobDataProvider()
+    public function cancelFinishedJobDataProvider(): array
     {
         return [
             Job::STATE_REJECTED => [
@@ -437,11 +421,8 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider cancelDataProvider
-     *
-     * @param array $jobValues
-     * @param bool $resolveAndPrepare
      */
-    public function testCancel($jobValues, $resolveAndPrepare)
+    public function testCancel(array $jobValues, bool $resolveAndPrepare)
     {
         $stateService = self::$container->get(StateService::class);
         $entityManager = self::$container->get(EntityManagerInterface::class);
@@ -489,21 +470,14 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider addAmmendmentDataProvider
-     *
-     * @param string $user
-     * @param array $jobValues
-     * @param string $reason
-     * @param string $constraintName
-     * @param string $expectedReason
-     * @param string $expectedConstraintName
      */
     public function testAddAmmendment(
-        $user,
-        $jobValues,
-        $reason,
-        $constraintName,
-        $expectedReason,
-        $expectedConstraintName
+        string $user,
+        array $jobValues,
+        string $reason,
+        ?string $constraintName,
+        string $expectedReason,
+        ?string $expectedConstraintName
     ) {
         $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -538,10 +512,7 @@ class JobServiceTest extends AbstractBaseTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function addAmmendmentDataProvider()
+    public function addAmmendmentDataProvider(): array
     {
         return [
             'public user, no constraint' => [
@@ -636,9 +607,6 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider cancelIncompleteTasksFooDataProvider
-     *
-     * @param array $jobValues
-     * @param array $expectedTaskStates
      */
     public function testCancelIncompleteTasksFoo(array $jobValues, array $expectedTaskStates)
     {
@@ -657,7 +625,7 @@ class JobServiceTest extends AbstractBaseTestCase
         }
     }
 
-    public function cancelIncompleteTasksFooDataProvider()
+    public function cancelIncompleteTasksFooDataProvider(): array
     {
         return [
             'finished tasks only, all finished states' => [
@@ -668,22 +636,22 @@ class JobServiceTest extends AbstractBaseTestCase
                     ],
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                            TaskFactory::KEY_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                            TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                            TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                            TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                         ],
                     ],
                 ],
@@ -704,22 +672,22 @@ class JobServiceTest extends AbstractBaseTestCase
                     ],
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                            TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                            TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                            TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
+                            TaskFactory::KEY_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                            TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                            TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                         ],
                     ],
                 ],
@@ -741,31 +709,31 @@ class JobServiceTest extends AbstractBaseTestCase
                     ],
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                            TaskFactory::KEY_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                            TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                            TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                            TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                            TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                            TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                            TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                         ],
                     ],
                 ],
@@ -786,10 +754,8 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider completeFinishedJobDataProvider
-     *
-     * @param string $stateName
      */
-    public function testCompleteFinishedJob($stateName)
+    public function testCompleteFinishedJob(string $stateName)
     {
         $stateService = self::$container->get(StateService::class);
 
@@ -806,10 +772,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals($stateName, $job->getState()->getName());
     }
 
-    /**
-     * @return array
-     */
-    public function completeFinishedJobDataProvider()
+    public function completeFinishedJobDataProvider(): array
     {
         return [
             'finished; rejected' => [
@@ -823,6 +786,9 @@ class JobServiceTest extends AbstractBaseTestCase
             ],
             'finished; failed-no-sitemap' => [
                 'state' => Job::STATE_FAILED_NO_SITEMAP,
+            ],
+            'finished; expired' => [
+                'state' => Job::STATE_EXPIRED,
             ],
         ];
     }
@@ -929,10 +895,8 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider rejectInWrongStateDataProvider
-     *
-     * @param string $stateName
      */
-    public function testRejectInWrongState($stateName)
+    public function testRejectInWrongState(string $stateName)
     {
         $stateService = self::$container->get(StateService::class);
         $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
@@ -954,10 +918,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertNull($rejectionReason);
     }
 
-    /**
-     * @return array
-     */
-    public function rejectInWrongStateDataProvider()
+    public function rejectInWrongStateDataProvider(): array
     {
         return [
             Job::STATE_CANCELLED => [
@@ -981,17 +942,16 @@ class JobServiceTest extends AbstractBaseTestCase
             Job::STATE_RESOLVED => [
                 'stateName' => Job::STATE_RESOLVED,
             ],
+            Job::STATE_EXPIRED => [
+                'stateName' => Job::STATE_EXPIRED,
+            ],
         ];
     }
 
     /**
      * @dataProvider rejectDataProvider
-     *
-     * @param string $userName
-     * @param string $reason
-     * @param string $constraintName
      */
-    public function testReject($userName, $reason, $constraintName)
+    public function testReject(string $userName, string $reason, ?string $constraintName)
     {
         $userFactory = self::$container->get(UserFactory::class);
         $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
@@ -1034,10 +994,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals($constraint, $rejectionReason->getConstraint());
     }
 
-    /**
-     * @return array
-     */
-    public function rejectDataProvider()
+    public function rejectDataProvider(): array
     {
         return [
             'unroutable' => [
@@ -1055,17 +1012,12 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getCountOfTasksWithIssuesDataProvider
-     *
-     * @param array $jobValues
-     * @param array $taskOutputValuesCollection
-     * @param int $expectedCountOfTasksWithErrors
-     * @param int $expectedCountOfTasksWithWarnings
      */
     public function testGetCountOfTasksWithIssues(
-        $jobValues,
-        $taskOutputValuesCollection,
-        $expectedCountOfTasksWithErrors,
-        $expectedCountOfTasksWithWarnings
+        array $jobValues,
+        array $taskOutputValuesCollection,
+        int $expectedCountOfTasksWithErrors,
+        int $expectedCountOfTasksWithWarnings
     ) {
         $userFactory = self::$container->get(UserFactory::class);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -1098,10 +1050,7 @@ class JobServiceTest extends AbstractBaseTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getCountOfTasksWithIssuesDataProvider()
+    public function getCountOfTasksWithIssuesDataProvider(): array
     {
         return [
             'no output' => [
@@ -1114,13 +1063,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                            TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                     ],
                 ],
@@ -1145,13 +1094,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -1177,11 +1126,8 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getCancelledTaskCountDataProvider
-     *
-     * @param $jobValues
-     * @param $expectedCount
      */
-    public function testGetCancelledTaskCount($jobValues, $expectedCount)
+    public function testGetCancelledTaskCount(array $jobValues, int $expectedCount)
     {
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
 
@@ -1191,10 +1137,7 @@ class JobServiceTest extends AbstractBaseTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getCancelledTaskCountDataProvider()
+    public function getCancelledTaskCountDataProvider(): array
     {
         return [
             'no cancelled tasks' => [
@@ -1205,13 +1148,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                            TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -1222,11 +1165,8 @@ class JobServiceTest extends AbstractBaseTestCase
 
     /**
      * @dataProvider getSkippedTaskCountDataProvider
-     *
-     * @param $jobValues
-     * @param $expectedCount
      */
-    public function testGetSkippedTaskCount($jobValues, $expectedCount)
+    public function testGetSkippedTaskCount(array $jobValues, bool $expectedCount)
     {
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
 
@@ -1236,10 +1176,7 @@ class JobServiceTest extends AbstractBaseTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getSkippedTaskCountDataProvider()
+    public function getSkippedTaskCountDataProvider(): array
     {
         return [
             'no skipped tasks' => [
@@ -1250,13 +1187,13 @@ class JobServiceTest extends AbstractBaseTestCase
                 'jobValues' => [
                     JobFactory::KEY_TASKS => [
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                            TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                            TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                         ],
                         [
-                            JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                            TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                         ],
                     ],
                 ],
@@ -1273,8 +1210,34 @@ class JobServiceTest extends AbstractBaseTestCase
                 Job::STATE_CANCELLED,
                 Job::STATE_COMPLETED,
                 Job::STATE_FAILED_NO_SITEMAP,
+                Job::STATE_EXPIRED,
             ],
             $this->jobService->getFinishedStateNames()
         );
+    }
+
+    public function testExpire()
+    {
+        $job = $this->jobFactory->createResolveAndPrepare([]);
+
+        $this->assertEquals(Job::STATE_QUEUED, $job->getState());
+
+        $tasks = $job->getTasks();
+        $this->assertCount(3, $tasks);
+
+        foreach ($tasks as $task) {
+            $this->assertEquals(Task::STATE_QUEUED, $task->getState());
+        }
+
+        $this->jobService->expire($job);
+
+        $this->assertEquals(Job::STATE_EXPIRED, $job->getState());
+
+        $tasks = $job->getTasks();
+        $this->assertCount(3, $tasks);
+
+        foreach ($tasks as $task) {
+            $this->assertEquals(Task::STATE_EXPIRED, $task->getState());
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Services\Task;
 
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 use GuzzleHttp\Psr7\Response;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
@@ -138,31 +139,31 @@ class QueueServiceTest extends AbstractBaseTestCase
                         ],
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                                TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_SKIPPED,
+                                TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
                             ],
                         ],
                     ],
@@ -245,10 +246,10 @@ class QueueServiceTest extends AbstractBaseTestCase
                         JobFactory::KEY_URL => 'http://0.example.com/',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                         ],
                     ],
@@ -256,7 +257,7 @@ class QueueServiceTest extends AbstractBaseTestCase
                         JobFactory::KEY_URL => 'http://1.example.com/',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_AWAITING_CANCELLATION,
+                                TaskFactory::KEY_STATE => Task::STATE_AWAITING_CANCELLATION,
                             ],
                         ],
                     ],

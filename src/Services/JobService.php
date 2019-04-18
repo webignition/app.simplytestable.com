@@ -36,6 +36,7 @@ class JobService
         Job::STATE_CANCELLED,
         Job::STATE_COMPLETED,
         Job::STATE_FAILED_NO_SITEMAP,
+        Job::STATE_EXPIRED,
     ];
 
     private $stateService;
@@ -363,5 +364,19 @@ class JobService
     public function getFinishedStateNames()
     {
         return $this->finishedStates;
+    }
+
+    public function expire(Job $job)
+    {
+        $jobExpiredState = $this->stateService->get(Job::STATE_EXPIRED);
+
+        $job->setState($jobExpiredState);
+
+        foreach ($job->getTasks() as $task) {
+            $this->taskService->expire($task);
+        }
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
     }
 }
