@@ -374,9 +374,9 @@ class JobService
 
         foreach ($job->getTasks() as $task) {
             $this->taskService->expire($task);
+            $this->entityManager->persist($task);
         }
 
         $this->entityManager->persist($job);
-        $this->entityManager->flush();
     }
 }
