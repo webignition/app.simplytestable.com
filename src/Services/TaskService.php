@@ -53,6 +53,7 @@ class TaskService
         Task::STATE_FAILED_NO_RETRY_AVAILABLE,
         Task::STATE_FAILED_RETRY_LIMIT_REACHED,
         Task::STATE_SKIPPED,
+        Task::STATE_EXPIRED,
     ];
 
     /**
