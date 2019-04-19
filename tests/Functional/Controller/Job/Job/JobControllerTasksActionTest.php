@@ -281,8 +281,8 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                     [
                         TaskFactory::KEY_STATE => Task::STATE_EXPIRED,
                         TaskFactory::KEY_OUTPUT => [
-                            TaskOutputFactory::KEY_OUTPUT => 'expired output',
-                            TaskOutputFactory::KEY_CONTENT_TYPE => new InternetMediaType('text', 'plain'),
+                            TaskOutputFactory::KEY_OUTPUT => null,
+                            TaskOutputFactory::KEY_CONTENT_TYPE => null,
                             TaskOutputFactory::KEY_ERROR_COUNT => 1,
                             TaskOutputFactory::KEY_WARNING_COUNT => 2,
                         ],
@@ -295,8 +295,8 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                         'state' => 'expired',
                         'type' => 'HTML validation',
                         'output' => [
-                            'output' => 'expired output',
-                            'content_type' => 'text/plain',
+                            'output' => null,
+                            'content_type' => null,
                             'error_count' => 1,
                             'warning_count' => 2,
                         ],
