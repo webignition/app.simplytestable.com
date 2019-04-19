@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace App\Tests\Functional\Controller\Job\Job;
 
@@ -13,6 +14,8 @@ use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\UserService;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
+use App\Tests\Services\TaskOutputFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Tests\Factory\MockFactory;
 use App\Tests\Factory\TaskControllerCompleteActionRequestFactory;
@@ -21,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use App\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
+use webignition\InternetMediaType\InternetMediaType;
 
 /**
  * @group Controller/Job/JobController
@@ -136,20 +140,22 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
     }
 
     /**
-     * @dataProvider requestTaskIdsDataProvider
-     *
-     * @param string $requestTaskIdIndices
-     * @param array $expectedTaskDataCollection
+     * @dataProvider successDataProvider
      */
-    public function testWithRequestTaskIds($requestTaskIdIndices, $expectedTaskDataCollection)
-    {
+    public function testSuccess(
+        array $taskValuesCollection,
+        string $requestTaskIdIndices,
+        array $expectedTaskDataCollection
+    ) {
         $userService = self::$container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
-        $job = $this->jobFactory->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_TASKS => $taskValuesCollection,
+        ]);
 
         $requestData = [];
-        if (!is_null($requestTaskIdIndices)) {
+        if ('' !== $requestTaskIdIndices) {
             $requestData['taskIds'] = $this->createRequestTaskIdsFromRequestTaskIndices($job, $requestTaskIdIndices);
         }
 
@@ -159,7 +165,6 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         );
 
         $tasksResponseData = json_decode($tasksActionResponse->getContent(), true);
-
         $this->assertCount(count($expectedTaskDataCollection), $tasksResponseData);
 
         foreach ($expectedTaskDataCollection as $taskIndex => $expectedTaskData) {
@@ -170,30 +175,136 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         }
     }
 
-    public function requestTaskIdsDataProvider(): array
+    public function successDataProvider(): array
     {
         return [
-            'all' => [
-                'requestTaskIdIndices' => null,
+            'all: cancelled, completed, failed-retry-available; with output' => [
+                'taskValuesCollection' => [
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
+                        TaskFactory::KEY_OUTPUT => [
+                            TaskOutputFactory::KEY_OUTPUT => 'cancelled output',
+                            TaskOutputFactory::KEY_CONTENT_TYPE => new InternetMediaType('text', 'plain'),
+                            TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                            TaskOutputFactory::KEY_WARNING_COUNT => 2,
+                        ],
+                    ],
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
+                        TaskFactory::KEY_OUTPUT => [
+                            TaskOutputFactory::KEY_OUTPUT => 'completed output',
+                            TaskOutputFactory::KEY_CONTENT_TYPE => new InternetMediaType('text', 'plain'),
+                            TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                            TaskOutputFactory::KEY_WARNING_COUNT => 4,
+                        ],
+                    ],
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                        TaskFactory::KEY_OUTPUT => [
+                            TaskOutputFactory::KEY_OUTPUT => 'failed retry available output',
+                            TaskOutputFactory::KEY_CONTENT_TYPE => new InternetMediaType('text', 'plain'),
+                            TaskOutputFactory::KEY_ERROR_COUNT => 5,
+                            TaskOutputFactory::KEY_WARNING_COUNT => 6,
+                        ],
+                    ],
+                ],
+                'requestTaskIdIndices' => '',
                 'expectedTaskDataCollection' => [
                     [
                         'url' => 'http://example.com/one',
-                        'state' => 'queued',
+                        'state' => 'cancelled',
+                        'type' => 'HTML validation',
+                        'output' => [
+                            'output' => 'cancelled output',
+                            'content_type' => 'text/plain',
+                            'error_count' => 1,
+                            'warning_count' => 2,
+                        ],
+                    ],
+                    [
+                        'url' => 'http://example.com/bar%20foo',
+                        'state' => 'completed',
+                        'type' => 'HTML validation',
+                        'output' => [
+                            'output' => 'completed output',
+                            'content_type' => 'text/plain',
+                            'error_count' => 3,
+                            'warning_count' => 4,
+                        ],
+                    ],
+                    [
+                        'url' => 'http://example.com/foo bar',
+                        'state' => 'failed-retry-available',
+                        'type' => 'HTML validation',
+                        'output' => [
+                            'output' => 'failed retry available output',
+                            'content_type' => 'text/plain',
+                            'error_count' => 5,
+                            'warning_count' => 6,
+                        ],
+                    ],
+                ],
+            ],
+            'all: failed-no-retry-available, failed-retry-limit-reached, skipped' => [
+                'taskValuesCollection' => [
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_FAILED_NO_RETRY_AVAILABLE,
+                    ],
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_LIMIT_REACHED,
+                    ],
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_SKIPPED,
+                    ],
+                ],
+                'requestTaskIdIndices' => '',
+                'expectedTaskDataCollection' => [
+                    [
+                        'url' => 'http://example.com/one',
+                        'state' => 'failed-no-retry-available',
                         'type' => 'HTML validation',
                     ],
                     [
                         'url' => 'http://example.com/bar%20foo',
-                        'state' => 'queued',
+                        'state' => 'failed-retry-limit-reached',
                         'type' => 'HTML validation',
                     ],
                     [
                         'url' => 'http://example.com/foo bar',
-                        'state' => 'queued',
+                        'state' => 'skipped',
                         'type' => 'HTML validation',
                     ],
                 ],
             ],
+            'first only, expired, with output' => [
+                'taskValuesCollection' => [
+                    [
+                        TaskFactory::KEY_STATE => Task::STATE_EXPIRED,
+                        TaskFactory::KEY_OUTPUT => [
+                            TaskOutputFactory::KEY_OUTPUT => null,
+                            TaskOutputFactory::KEY_CONTENT_TYPE => null,
+                            TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                            TaskOutputFactory::KEY_WARNING_COUNT => 2,
+                        ],
+                    ],
+                ],
+                'requestTaskIdIndices' => '0',
+                'expectedTaskDataCollection' => [
+                    [
+                        'url' => 'http://example.com/one',
+                        'state' => 'expired',
+                        'type' => 'HTML validation',
+                        'output' => [
+                            'output' => null,
+                            'content_type' => null,
+                            'error_count' => 1,
+                            'warning_count' => 2,
+                        ],
+                    ],
+                ],
+            ],
             'first only' => [
+                'taskValuesCollection' => [],
                 'requestTaskIdIndices' => '0',
                 'expectedTaskData' => [
                     [
@@ -204,6 +315,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                 ],
             ],
             'third only' => [
+                'taskValuesCollection' => [],
                 'requestTaskIdIndices' => '2',
                 'expectedTaskData' => [
                     [
@@ -214,6 +326,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                 ],
             ],
             'first and third' => [
+                'taskValuesCollection' => [],
                 'requestTaskIdIndices' => '0,2',
                 'expectedTaskDataCollection' => [
                     [
@@ -229,6 +342,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                 ],
             ],
             'second and third with range' => [
+                'taskValuesCollection' => [],
                 'requestTaskIdIndices' => '1:2',
                 'expectedTaskDataCollection' => [
                     [

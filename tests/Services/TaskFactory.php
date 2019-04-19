@@ -18,13 +18,16 @@ class TaskFactory
 
     private $entityManager;
     private $stateService;
+    private $taskOutputFactory;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        StateService $stateService
+        StateService $stateService,
+        TaskOutputFactory $taskOutputFactory
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
+        $this->taskOutputFactory = $taskOutputFactory;
     }
 
     /**
@@ -50,8 +53,13 @@ class TaskFactory
             $isUpdated = true;
         }
 
-        if (isset($taskValues[self::KEY_OUTPUT])) {
-            $task->setOutput($taskValues[self::KEY_OUTPUT]);
+        $output = $taskValues[self::KEY_OUTPUT] ?? null;
+        if (is_array($output)) {
+            $output = $this->taskOutputFactory->create($task, $output);
+        }
+
+        if ($output) {
+            $task->setOutput($output);
             $isUpdated = true;
         }
 
