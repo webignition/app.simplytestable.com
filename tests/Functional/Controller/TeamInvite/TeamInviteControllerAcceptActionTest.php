@@ -5,14 +5,11 @@ namespace App\Tests\Functional\Controller\TeamInvite;
 use App\Entity\Job\Configuration;
 use App\Entity\Team\Invite;
 use App\Entity\User;
-use App\Repository\ScheduledJobRepository;
-use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\Team\InviteService;
 use App\Services\Team\MemberService;
 use App\Services\Team\Service;
 use App\Tests\Services\UserAccountPlanFactory;
 use App\Tests\Services\UserFactory;
-use App\Tests\Services\JobConfigurationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -141,14 +138,12 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
     public function testAcceptActionSuccess()
     {
-        $scheduledJobService = self::$container->get(ScheduledJobService::class);
         $teamMemberService = self::$container->get(MemberService::class);
         $teamService = self::$container->get(Service::class);
         $teamInviteService = self::$container->get(InviteService::class);
         $entityManager = self::$container->get(EntityManagerInterface::class);
 
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
-        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $leader2 = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'leader2@example.com',
@@ -158,26 +153,6 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $teamInviteService->get($leader2, $this->inviteeUser);
 
         $this->assertCount(2, $teamInviteService->getForUser($this->inviteeUser));
-
-        $jobConfigurationFactory = self::$container->get(JobConfigurationFactory::class);
-        $jobConfiguration = $jobConfigurationFactory->create([
-            JobConfigurationFactory::KEY_USER => $this->inviteeUser,
-            JobConfigurationFactory::KEY_LABEL => 'job-configuration-label',
-        ]);
-
-        $scheduledJobService->create($jobConfiguration);
-
-        $scheduledJob = $scheduledJobRepository->findOneBy([
-            'jobConfiguration' => $jobConfiguration
-        ]);
-
-        $this->assertNotNull($scheduledJob);
-
-        $jobConfiguration = $jobConfigurationRepository->findOneBy([
-            'user' => $this->inviteeUser,
-        ]);
-
-        $this->assertNotNull($jobConfiguration);
 
         $this->setUser($this->inviteeUser);
 
@@ -191,10 +166,6 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
         $team = $teamService->getForUser($this->inviteeUser);
         $this->assertEquals('Foo', $team->getName());
-
-        $this->assertNull($scheduledJobRepository->findOneBy([
-            'jobConfiguration' => $jobConfiguration
-        ]));
 
         $this->assertNull($jobConfigurationRepository->findOneBy([
             'user' => $this->inviteeUser,

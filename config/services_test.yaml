@@ -52,9 +52,6 @@ services:
   App\Tests\Services\PlanFactory:
     public: true
 
-  App\Tests\Services\ScheduledJobFactory:
-    public: true
-
   App\Tests\Services\TaskFactory:
     public: true
 
