@@ -2,7 +2,6 @@
 
 namespace App\Services\Job;
 
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\Configuration as JobConfiguration;
@@ -226,14 +225,7 @@ class ConfigurationService
             $this->entityManager->remove($taskConfiguration);
         }
 
-        try {
-            $this->entityManager->flush();
-        } catch (ForeignKeyConstraintViolationException $foo) {
-            throw new JobConfigurationServiceException(
-                'Job configuration is in use by one or more scheduled jobs',
-                JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
-            );
-        }
+        $this->entityManager->flush();
     }
 
     /**
@@ -277,14 +269,7 @@ class ConfigurationService
             $userJobConfiguration->clearTaskConfigurationCollection();
             $this->entityManager->remove($userJobConfiguration);
 
-            try {
-                $this->entityManager->flush();
-            } catch (ForeignKeyConstraintViolationException $foo) {
-                throw new JobConfigurationServiceException(
-                    'One or more job configurations are in use by one or more scheduled jobs',
-                    JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
-                );
-            }
+            $this->entityManager->flush();
         }
     }
 
