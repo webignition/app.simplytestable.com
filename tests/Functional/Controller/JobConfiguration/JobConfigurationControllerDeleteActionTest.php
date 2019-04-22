@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Controller\JobConfiguration;
 
 use App\Entity\Job\Configuration;
 use App\Entity\User;
-use App\Repository\ScheduledJobRepository;
 use App\Tests\Services\UserFactory;
 use App\Entity\Job\Configuration as JobConfiguration;
 use App\Tests\Services\JobConfigurationFactory;
@@ -88,10 +87,8 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
 
         /* @var EntityRepository|ObjectRepository $jobConfigurationRepository */
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
-        $scheduledJobRepository = self::$container->get(ScheduledJobRepository::class);
 
         $response = $this->jobConfigurationController->deleteAction(
-            $scheduledJobRepository,
             $this->jobConfiguration->getId()
         );
 
