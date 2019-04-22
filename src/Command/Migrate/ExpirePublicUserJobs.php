@@ -21,7 +21,7 @@ class ExpirePublicUserJobs extends Command
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_UNPARSEABLE_MAX_AGE = 1;
 
-    const DEFAULT_AGE = '4 WEEK';
+    const DEFAULT_AGE = '24 HOUR';
     const DEFAULT_LIMIT = null;
 
     const FLUSH_THRESHOLD = 10;
