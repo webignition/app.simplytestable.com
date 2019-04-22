@@ -7,7 +7,6 @@ use Cron\CronBundle\Entity\CronJob;
 
 /**
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="App\Repository\ScheduledJobRepository")
  */
 class ScheduledJob implements \JsonSerializable
 {
