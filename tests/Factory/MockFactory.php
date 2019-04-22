@@ -48,7 +48,6 @@ use App\Services\UserService;
 use App\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 use App\Services\WebSiteService;
 use App\Services\ScheduledJob\Service as ScheduledJobService;
-use App\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 use App\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use App\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 use App\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
@@ -778,17 +777,6 @@ class MockFactory
         }
 
         return $scheduledJobService;
-    }
-
-    /**
-     * @return Mock|CronModifierValidationService
-     */
-    public static function createCronModifierValidationService()
-    {
-        /* @var Mock|CronModifierValidationService $validationService */
-        $validationService = \Mockery::mock(CronModifierValidationService::class);
-
-        return $validationService;
     }
 
     /**
