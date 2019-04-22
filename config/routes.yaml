@@ -266,25 +266,3 @@ jobconfiguration_update:
 jobconfiguration_get:
     path: /jobconfiguration/{id}/
     defaults: { _controller: App\Controller\JobConfigurationController::getAction, _format: json }
-
-scheduledjob_create:
-    path: /scheduledjob/create/
-    defaults: { _controller: App\Controller\ScheduledJobController::createAction }
-
-scheduledjob_list:
-    path: /scheduledjob/list/
-    defaults: { _controller: App\Controller\ScheduledJobController::listAction }
-
-scheduledjob_delete:
-    path: /scheduledjob/{id}/delete/
-    defaults: { _controller: App\Controller\ScheduledJobController::deleteAction, _format: json }
-    methods:  [POST]
-
-scheduledjob_get:
-    path: /scheduledjob/{id}/
-    defaults: { _controller: App\Controller\ScheduledJobController::getAction, _format: json }
-
-scheduledjob_update:
-    path: /scheduledjob/{id}/update/
-    defaults: { _controller: App\Controller\ScheduledJobController::updateAction, _format: json }
-    methods:  [POST]
