@@ -10,7 +10,6 @@ use App\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use App\Entity\Team\Team;
 use App\Services\AccountPlanService;
 use App\Services\Job\ConfigurationService;
-use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\Team\InviteService as TeamInviteService;
 use App\Services\Team\MemberService as TeamMemberService;
 use App\Services\Team\Service as TeamService;
@@ -33,7 +32,6 @@ class TeamInviteController
     private $teamInviteService;
     private $teamMemberService;
     private $entityManager;
-    private $scheduledJobService;
     private $jobConfigurationService;
     private $userManipulator;
     private $teamRepository;
@@ -46,7 +44,6 @@ class TeamInviteController
         TeamInviteService $teamInviteService,
         TeamMemberService $teamMemberService,
         EntityManagerInterface $entityManager,
-        ScheduledJobService $scheduledJobService,
         ConfigurationService $jobConfigurationService,
         UserManipulator $userManipulator,
         TeamRepository $teamRepository
@@ -58,7 +55,6 @@ class TeamInviteController
         $this->teamInviteService = $teamInviteService;
         $this->teamMemberService = $teamMemberService;
         $this->entityManager = $entityManager;
-        $this->scheduledJobService = $scheduledJobService;
         $this->jobConfigurationService = $jobConfigurationService;
         $this->userManipulator = $userManipulator;
         $this->teamRepository = $teamRepository;
@@ -157,7 +153,6 @@ class TeamInviteController
             return new Response();
         }
 
-        $this->scheduledJobService->removeAll();
         $this->jobConfigurationService->removeAll();
 
         $this->teamMemberService->add($invite->getTeam(), $invite->getUser());
