@@ -58,10 +58,6 @@ services:
     FOS\UserBundle\Util\UserManipulator:
       alias: fos_user.util.user_manipulator
 
-    Cron\CronBundle\Cron\Manager:
-      alias: cron.manager
-    # /For silencing deprecation notices
-
     App\Command\Job\PrepareCommand:
       arguments:
         $predefinedDomainsToIgnore:
