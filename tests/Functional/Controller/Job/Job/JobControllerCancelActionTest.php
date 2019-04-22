@@ -8,6 +8,7 @@ use App\Services\CrawlJobContainerService;
 use App\Services\JobPreparationService;
 use App\Services\JobService;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Factory\MockFactory;
 use App\Services\Resque\QueueService as ResqueQueueService;
@@ -53,7 +54,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_TASKS => [
                 [
-                    JobFactory::KEY_TASK_STATE => Task::STATE_IN_PROGRESS,
+                    TaskFactory::KEY_STATE => Task::STATE_IN_PROGRESS,
                 ],
             ],
         ]);

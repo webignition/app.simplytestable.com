@@ -24,7 +24,7 @@ class JobRepository extends ServiceEntityRepository
      *
      * @return Job[]
      */
-    public function getByStatesAndTaskStates($jobStates = [], $taskStates = [])
+    public function getByStatesAndTaskStates(array $jobStates, array $taskStates): array
     {
         if (empty($jobStates) || empty($taskStates)) {
             return [];
@@ -34,15 +34,13 @@ class JobRepository extends ServiceEntityRepository
         $queryBuilder->join('Job.tasks', 'Tasks');
         $queryBuilder->select('DISTINCT Job');
 
-        if (count($jobStates)) {
-            $queryBuilder->andWhere('Job.state IN (:JobStates)')
-                ->setParameter('JobStates', array_values($jobStates));
-        }
+        $queryBuilder->andWhere('Job.state IN (:JobStates)');
+        $queryBuilder->andWhere('Tasks.state IN (:TaskStates)');
 
-        if (count($taskStates)) {
-            $queryBuilder->andWhere('Tasks.state IN (:TaskStates)')
-                ->setParameter('TaskStates', array_values($taskStates));
-        }
+        $queryBuilder->setParameters([
+            'JobStates' => array_values($jobStates),
+            'TaskStates' => array_values($taskStates),
+        ]);
 
         return $queryBuilder->getQuery()->getResult();
     }
@@ -52,7 +50,7 @@ class JobRepository extends ServiceEntityRepository
      *
      * @return int[]
      */
-    public function getIdsByState(State $state)
+    public function getIdsByState(State $state): array
     {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job.id');
@@ -65,12 +63,7 @@ class JobRepository extends ServiceEntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-    /**
-     * @param State $state
-     *
-     * @return int
-     */
-    public function getCountByState(State $state)
+    public function getCountByState(State $state): int
     {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('COUNT(Job.id)');
@@ -80,70 +73,36 @@ class JobRepository extends ServiceEntityRepository
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        return (int)$result[0][1];
+        return (int) $result[0][1];
     }
 
-    /**
-     * @param User $user
-     * @param JobType $jobType
-     * @param WebSite $website
-     * @param string $periodStart
-     * @param string $periodEnd
-     *
-     * @return int
-     */
     public function getJobCountByUserAndJobTypeAndWebsiteForPeriod(
         User $user,
         JobType $jobType,
         WebSite $website,
-        $periodStart,
-        $periodEnd
-    ) {
+        string $periodStart,
+        string $periodEnd
+    ): int {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('count(Job.id)');
         $queryBuilder->join('Job.timePeriod', 'TimePeriod');
 
-        $userPredicates = 'Job.user = :User';
-        $typePredicates = 'Job.type = :JobType';
-        $websitePredicates = 'Job.website = :Website';
-        $timePeriodPredicates = 'TimePeriod.startDateTime >= :PeriodStart AND TimePeriod.startDateTime <= :PeriodEnd';
+        $queryBuilder->where('Job.user = :User');
+        $queryBuilder->andWhere('Job.type = :JobType');
+        $queryBuilder->andWhere('Job.website = :Website');
+        $queryBuilder->andWhere('TimePeriod.startDateTime >= :PeriodStart AND TimePeriod.startDateTime <= :PeriodEnd');
 
-        $queryBuilder->where(
-            sprintf(
-                '%s AND %s AND %s AND (%s)',
-                $userPredicates,
-                $typePredicates,
-                $websitePredicates,
-                $timePeriodPredicates
-            )
-        );
-
-        $queryBuilder->setParameter('User', $user);
-        $queryBuilder->setParameter('JobType', $jobType);
-        $queryBuilder->setParameter('Website', $website);
-        $queryBuilder->setParameter('PeriodStart', $periodStart);
-        $queryBuilder->setParameter('PeriodEnd', $periodEnd);
+        $queryBuilder->setParameters([
+            'User' => $user,
+            'JobType' => $jobType,
+            'Website' =>$website,
+            'PeriodStart' => $periodStart,
+            'PeriodEnd' => $periodEnd,
+        ]);
 
         $result = $queryBuilder->getQuery()->getResult();
 
         return (int)$result[0][1];
-    }
-
-    /**
-     * @param array $result
-     * @param string $fieldName
-     *
-     * @return array
-     */
-    private function getSingleFieldCollectionFromResult($result, $fieldName)
-    {
-        $collection = array();
-
-        foreach ($result as $resultItem) {
-            $collection[] = $resultItem[$fieldName];
-        }
-
-        return $collection;
     }
 
     public function exists(int $jobId): bool
@@ -181,6 +140,33 @@ class JobRepository extends ServiceEntityRepository
         return !!$result[0]['isPublic'];
     }
 
+    public function findJobsForUserOlderThanMaxAgeWithStates(User $user, string $maximumAge, array $states = [])
+    {
+        $queryBuilder = $this->createQueryBuilder('Job');
+
+        $queryBuilder->select('Job');
+        $queryBuilder->join('Job.timePeriod', 'TimePeriod');
+
+        $queryBuilder->where('Job.user = :User');
+        $queryBuilder->andWhere('TimePeriod.startDateTime < :MaximumAge');
+
+        $parameters = [
+            'User' => $user,
+            'MaximumAge' => new \DateTimeImmutable('-' . $maximumAge),
+        ];
+
+        if (count($states)) {
+            $queryBuilder->andWhere('Job.state IN (:States)');
+            $parameters['States'] = $states;
+        }
+
+        $queryBuilder->setParameters($parameters);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return $result;
+    }
+
     private function checkJobExistence(int $jobId, array $wherePredicates = [], array $parameters = []): bool
     {
         $wherePredicates[] = 'Job.id = :JobId';
@@ -198,5 +184,16 @@ class JobRepository extends ServiceEntityRepository
         $result = $queryBuilder->getQuery()->getResult();
 
         return !empty($result);
+    }
+
+    private function getSingleFieldCollectionFromResult(array $result, string $fieldName): array
+    {
+        $collection = array();
+
+        foreach ($result as $resultItem) {
+            $collection[] = $resultItem[$fieldName];
+        }
+
+        return $collection;
     }
 }

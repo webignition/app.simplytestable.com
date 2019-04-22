@@ -35,6 +35,7 @@ class Job
     const STATE_REJECTED = 'job-rejected';
     const STATE_RESOLVING = 'job-resolving';
     const STATE_RESOLVED = 'job-resolved';
+    const STATE_EXPIRED = 'job-expired';
 
     /**
      * @var int

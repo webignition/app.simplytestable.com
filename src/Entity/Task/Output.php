@@ -87,9 +87,9 @@ class Output implements \JsonSerializable
     }
 
     /**
-     * @param InternetMediaType $contentType
+     * @param InternetMediaType|null $contentType
      */
-    public function setContentType(InternetMediaType $contentType)
+    public function setContentType(?InternetMediaType $contentType)
     {
         $this->contentType = $contentType;
     }
@@ -158,14 +158,15 @@ class Output implements \JsonSerializable
         warning-count:'.$this->getWarningCount());
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
+        $contentType = null === $this->contentType
+            ? null
+            : (string) $this->contentType;
+
         return [
             'output' => $this->output,
-            'content_type' => (string)$this->contentType,
+            'content_type' => $contentType,
             'error_count' => $this->errorCount,
             'warning_count' => $this->warningCount,
         ];

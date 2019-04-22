@@ -53,6 +53,7 @@ class TaskService
         Task::STATE_FAILED_NO_RETRY_AVAILABLE,
         Task::STATE_FAILED_RETRY_LIMIT_REACHED,
         Task::STATE_SKIPPED,
+        Task::STATE_EXPIRED,
     ];
 
     /**
@@ -285,5 +286,32 @@ class TaskService
         }
 
         return $tasks;
+    }
+
+    public function expire(Task $task)
+    {
+        $task->setState($this->stateService->get(Task::STATE_EXPIRED));
+
+        $output = $task->getOutput();
+
+        if ($output instanceof TaskOutput) {
+            $newOutput = new TaskOutput();
+            $newOutput->setErrorCount($output->getErrorCount());
+            $newOutput->setWarningCount($output->getWarningCount());
+            $newOutput->generateHash();
+
+            $existingOutput = $this->taskOutputRepository->findOneBy([
+                'hash' => $newOutput->getHash(),
+            ]);
+
+            if ($existingOutput) {
+                $newOutput = $existingOutput;
+            } else {
+                $this->entityManager->persist($newOutput);
+                $this->entityManager->flush();
+            }
+
+            $task->setOutput($newOutput);
+        }
     }
 }

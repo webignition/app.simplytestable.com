@@ -280,10 +280,17 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                 'taskStateNames' => [],
                 'expectedCreditsUsed' => 0,
             ],
-            'one credit used' => [
+            'one credit used (completed)' => [
                 'jobValues' => [],
                 'taskStateNames' => [
                     Task::STATE_COMPLETED,
+                ],
+                'expectedCreditsUsed' => 1,
+            ],
+            'one credit used (expired)' => [
+                'jobValues' => [],
+                'taskStateNames' => [
+                    Task::STATE_EXPIRED,
                 ],
                 'expectedCreditsUsed' => 1,
             ],
@@ -303,7 +310,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
                 ],
                 'expectedCreditsUsed' => 5,
             ],
-            'ten credits used' => [
+            'nine credits used' => [
                 'jobValues' => [
                     JobFactory::KEY_TEST_TYPES => [
                         TaskTypeService::HTML_VALIDATION_TYPE,

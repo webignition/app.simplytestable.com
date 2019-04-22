@@ -27,6 +27,7 @@ class Task implements \JsonSerializable
     const STATE_FAILED_RETRY_AVAILABLE = 'task-failed-retry-available';
     const STATE_FAILED_RETRY_LIMIT_REACHED = 'task-failed-retry-limit-reached';
     const STATE_SKIPPED = 'task-skipped';
+    const STATE_EXPIRED = 'task-expired';
 
     /**
      * @var int

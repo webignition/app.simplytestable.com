@@ -50,8 +50,6 @@ class JobFactory
     const KEY_DOMAIN = 'domain';
     const KEY_AMMENDMENTS = 'ammendments';
     const KEY_TASKS = 'tasks';
-    const KEY_TASK_STATE = 'state';
-    const KEY_TASK_WORKER_HOSTNAME = 'worker-hostname';
     const KEY_SET_PUBLIC = 'set-public';
 
     /**
@@ -82,6 +80,7 @@ class JobFactory
     private $resqueQueueService;
     private $taskTypeDomainsToIgnoreService;
     private $jobRepository;
+    private $taskFactory;
 
     /* @var TestHttpClientService */
     private $httpClientService;
@@ -104,7 +103,8 @@ class JobFactory
         CrawlJobContainerService $crawlJobContainerService,
         QueueService $resqueQueueService,
         TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        TaskFactory $taskFactory
     ) {
         $this->defaultJobValues[self::KEY_USER] = $userService->getPublicUser();
         $this->stateService = $stateService;
@@ -124,6 +124,7 @@ class JobFactory
         $this->resqueQueueService = $resqueQueueService;
         $this->taskTypeDomainsToIgnoreService = $taskTypeDomainsToIgnoreService;
         $this->jobRepository = $jobRepository;
+        $this->taskFactory = $taskFactory;
     }
 
     /**
@@ -156,21 +157,10 @@ class JobFactory
             $tasks = $job->getTasks();
 
             foreach ($tasks as $taskIndex => $task) {
-                $taskIsUpdated = false;
+                $updatedTaskValues = $taskValuesCollection[$taskIndex] ?? [];
 
-                if (isset($taskValuesCollection[$taskIndex])) {
-                    $taskValues = $taskValuesCollection[$taskIndex];
-
-                    if (isset($taskValues[self::KEY_TASK_STATE])) {
-                        $stateName = $taskValues[self::KEY_TASK_STATE];
-                        $task->setState($this->stateService->get($stateName));
-                        $taskIsUpdated = true;
-                    }
-
-                    if ($taskIsUpdated) {
-                        $this->entityManager->persist($task);
-                        $this->entityManager->flush();
-                    }
+                if (!empty($updatedTaskValues)) {
+                    $this->taskFactory->update($task, $updatedTaskValues);
                 }
             }
         }

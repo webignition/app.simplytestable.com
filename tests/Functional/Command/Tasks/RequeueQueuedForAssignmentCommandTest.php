@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Command\Tasks;
 
 use App\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use App\Entity\Task\Task;
+use App\Tests\Services\TaskFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\JobFactory;
@@ -95,13 +96,13 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'public',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
                             ],
                         ],
                     ],
@@ -109,13 +110,13 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED_FOR_ASSIGNMENT,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                         ],
                     ],

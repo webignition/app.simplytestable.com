@@ -6,6 +6,7 @@ use App\Entity\Task\Task;
 use App\Entity\Job\Job;
 use App\Services\TaskTypeService;
 use App\Tests\Services\JobFactory;
+use App\Tests\Services\TaskFactory;
 
 trait GetIdsByStateDataProvider
 {
@@ -26,22 +27,22 @@ trait GetIdsByStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -53,13 +54,13 @@ trait GetIdsByStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                         ],
                     ],
@@ -78,22 +79,22 @@ trait GetIdsByStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_COMPLETED,
+                                TaskFactory::KEY_STATE => Task::STATE_COMPLETED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_QUEUED,
+                                TaskFactory::KEY_STATE => Task::STATE_QUEUED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_CANCELLED,
+                                TaskFactory::KEY_STATE => Task::STATE_CANCELLED,
                             ],
                         ],
                     ],
@@ -105,13 +106,13 @@ trait GetIdsByStateDataProvider
                         JobFactory::KEY_STATE => Job::STATE_COMPLETED,
                         JobFactory::KEY_TASKS => [
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                             [
-                                JobFactory::KEY_TASK_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
+                                TaskFactory::KEY_STATE => Task::STATE_FAILED_RETRY_AVAILABLE,
                             ],
                         ],
                     ],

@@ -112,6 +112,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
                 'expectedStateNamesToExclude' => [
                     'job-cancelled',
                     'job-completed',
+                    'job-expired',
                     'job-failed-no-sitemap',
                     'job-rejected',
                 ],
