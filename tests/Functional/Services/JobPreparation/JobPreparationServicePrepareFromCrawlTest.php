@@ -84,12 +84,12 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
 
         $this->callTaskControllerCompleteAction($taskController);
 
-        $this->assertEquals(Job::STATE_FAILED_NO_SITEMAP, $parentJob->getState()->getName());
+        $this->assertEquals(Job::STATE_FAILED_NO_SITEMAP, (string) $parentJob->getState());
         $this->assertNull($parentJob->getTimePeriod());
 
         $this->jobPreparationService->prepareFromCrawl($crawlJobContainer);
 
-        $this->assertEquals(Job::STATE_QUEUED, $parentJob->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, (string) $parentJob->getState());
         $this->assertInstanceOf(TimePeriod::class, $parentJob->getTimePeriod());
 
         $timePeriod = $parentJob->getTimePeriod();
@@ -104,7 +104,7 @@ class JobPreparationServicePrepareFromCrawlTest extends AbstractJobPreparationSe
         foreach ($tasks as $taskIndex => $task) {
             $expectedTaskValues = $expectedTaskValuesCollection[$taskIndex];
 
-            $this->assertEquals(Task::STATE_QUEUED, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_QUEUED, (string) $task->getState());
             $this->assertEquals($expectedTaskValues['url'], $task->getUrl());
             $this->assertEquals($expectedTaskValues['taskTypeName'], $task->getType()->getName());
         }

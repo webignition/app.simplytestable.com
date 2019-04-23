@@ -314,7 +314,7 @@ class TasksControllerTest extends AbstractControllerTest
         );
 
         foreach ($tasks as $task) {
-            $this->assertEquals(Task::STATE_QUEUED, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_QUEUED, (string) $task->getState());
         }
 
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
@@ -340,7 +340,7 @@ class TasksControllerTest extends AbstractControllerTest
 
         foreach ($resqueJobTaskIds as $resqueJobTaskId) {
             $task = $taskRepository->find($resqueJobTaskId);
-            $this->assertEquals(Task::STATE_QUEUED_FOR_ASSIGNMENT, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_QUEUED_FOR_ASSIGNMENT, (string) $task->getState());
         }
     }
 

@@ -44,7 +44,7 @@ class TasksController
             ]);
         }
 
-        if (Worker::STATE_ACTIVE !== $worker->getState()->getName()) {
+        if (Worker::STATE_ACTIVE !== (string) $worker->getState()) {
             return Response::create('', 400, [
                 'X-Message' => 'Worker is not active',
                 'X-Retryable' => '1'

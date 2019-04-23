@@ -127,7 +127,7 @@ class TaskController
             }
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
-                if (Job::STATE_COMPLETED === $task->getJob()->getState()->getName()) {
+                if (Job::STATE_COMPLETED === (string) $task->getJob()->getState()) {
                     $jobFailedNoSitemapState = $stateService->get(Job::STATE_FAILED_NO_SITEMAP);
 
                     if ($this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(

@@ -95,7 +95,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
             'job' => $job,
         ]);
 
-        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, (string) $job->getState());
         $this->assertInstanceOf(RejectionReason::class, $jobRejectionReason);
         $this->assertEquals($expectedRejectionReason, $jobRejectionReason->getReason());
         $this->assertEquals($siteRootUrl, $job->getWebsite()->getCanonicalUrl());
@@ -159,7 +159,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
         $this->websiteResolutionService->resolve($job);
 
-        $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_RESOLVED, (string) $job->getState());
         $this->assertEquals($expectedResolvedUrl, $job->getWebsite()->getCanonicalUrl());
 
         $requestPropertiesCollection = [];

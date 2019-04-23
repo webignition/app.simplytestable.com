@@ -125,7 +125,7 @@ class PrepareCommand extends Command
         } catch (JobPreparationException $jobPreparationServiceException) {
             $this->logger->info(sprintf(
                 'simplytestable:job:prepare: nothing to do, job has a state of [%s]',
-                $job->getState()->getName()
+                (string) $job->getState()
             ));
 
             return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;

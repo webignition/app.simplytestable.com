@@ -85,7 +85,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $job = $this->jobRepository->findAll()[0];
 
         $this->assertTrue($response->isRedirect('http://localhost/job/' . $job->getId() . '/'));
-        $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_STARTING, (string) $job->getState());
     }
 
     public function testReTestActionPostRequest()
@@ -116,7 +116,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $this->assertNotEquals($job->getId(), $newJob->getId());
 
         $this->assertTrue($response->isRedirect('http://localhost/job/' . $newJob->getId() . '/'));
-        $this->assertEquals(Job::STATE_STARTING, $newJob->getState()->getName());
+        $this->assertEquals(Job::STATE_STARTING, (string) $newJob->getState());
     }
 
     /**
@@ -150,7 +150,7 @@ class JobStartControllerTest extends AbstractControllerTest
             'job' => $job,
         ]);
 
-        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, (string) $job->getState());
         $this->assertEquals('unroutable', $jobRejectionReason->getReason());
         $this->assertNull($jobRejectionReason->getConstraint());
     }
@@ -212,7 +212,7 @@ class JobStartControllerTest extends AbstractControllerTest
         ]);
 
         $this->assertTrue($response->isRedirect('http://localhost/job/' . $job->getId() . '/'));
-        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, (string) $job->getState());
         $this->assertEquals('plan-constraint-limit-reached', $jobRejectionReason->getReason());
         $this->assertEquals($constraint, $jobRejectionReason->getConstraint());
     }
@@ -235,7 +235,7 @@ class JobStartControllerTest extends AbstractControllerTest
         $job = $this->jobRepository->findAll()[0];
 
         $this->assertTrue($response->isRedirect('http://localhost/job/' . $job->getId() . '/'));
-        $this->assertEquals(Job::STATE_STARTING, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_STARTING, (string) $job->getState());
     }
 
     public function retestActionForUnfinishedJobDataProvider(): array

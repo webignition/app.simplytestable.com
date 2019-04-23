@@ -146,7 +146,8 @@ class CollectionCommand extends Command
         if ($response === 0) {
             /* @var Job $job */
             $job = $tasks[0]->getJob();
-            if ($job->getState()->getName() == 'job-queued') {
+
+            if (Job::STATE_QUEUED === (string) $job->getState()) {
                 $job->setState($jobInProgressState);
                 $this->entityManager->persist($job);
             }

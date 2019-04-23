@@ -90,7 +90,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
 
         foreach ($jobs as $jobIndex => $job) {
             $expectedStateName = $expectedJobStateNames[$jobIndex];
-            $this->assertEquals($expectedStateName, $job->getState()->getName());
+            $this->assertEquals($expectedStateName, (string) $job->getState());
         }
     }
 

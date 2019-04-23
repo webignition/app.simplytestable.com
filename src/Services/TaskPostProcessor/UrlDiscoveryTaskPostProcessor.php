@@ -64,7 +64,7 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
      */
     public function process(Task $task)
     {
-        if (Task::STATE_COMPLETED !== $task->getState()->getName()) {
+        if (Task::STATE_COMPLETED !== (string) $task->getState()) {
             return false;
         }
 
@@ -104,7 +104,7 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
                 $this->entityManager->flush();
             }
 
-            if (Job::STATE_COMPLETED !== $crawlJob->getState()->getName()) {
+            if (Job::STATE_COMPLETED !== (string) $crawlJob->getState()) {
                 $this->jobService->cancelIncompleteTasks($crawlJob);
                 $this->entityManager->flush();
             }

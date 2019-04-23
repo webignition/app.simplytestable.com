@@ -61,7 +61,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         $request = $workerActivationRequestService->create($worker, $token);
 
         $this->assertEquals($worker->getHostname(), $request->getWorker()->getHostname());
-        $this->assertEquals(WorkerActivationRequest::STATE_STARTING, $request->getState()->getName());
+        $this->assertEquals(WorkerActivationRequest::STATE_STARTING, (string) $request->getState());
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $worker->getId(),
@@ -114,7 +114,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         $request = $workerActivationRequestService->create($worker, $token);
 
         $this->assertEquals($worker->getHostname(), $request->getWorker()->getHostname());
-        $this->assertEquals(WorkerActivationRequest::STATE_STARTING, $request->getState()->getName());
+        $this->assertEquals(WorkerActivationRequest::STATE_STARTING, (string) $request->getState());
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $worker->getId(),

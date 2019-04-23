@@ -66,7 +66,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
         foreach ($tasks as $taskIndex => $task) {
             $expectedStateName = $expectedTaskStateNames[$taskIndex];
 
-            $this->assertEquals($expectedStateName, $task->getState()->getName());
+            $this->assertEquals($expectedStateName, (string) $task->getState());
         }
     }
 
