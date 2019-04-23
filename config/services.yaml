@@ -217,3 +217,14 @@ services:
       public: true # to allow usage inside container-aware migrations
       arguments:
         $resourceLoader: '@App\Services\StateNames'
+
+    app.services.data-provider.account-plans:
+      class: App\Services\YamlResourceLoader
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/account-plans.yaml'
+
+    App\Services\AccountPlanMigrator:
+      public: true # to allow usage inside container-aware migrations
+      arguments:
+        $resourceLoader: '@app.services.data-provider.account-plans'
+
