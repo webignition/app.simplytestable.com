@@ -5,7 +5,7 @@ namespace App\Services\TaskPostProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\Type;
 use App\Repository\TaskRepository;
 use App\Services\CrawlJobContainerService;
 use App\Services\CrawlJobUrlCollector;

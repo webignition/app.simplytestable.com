@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Services\TaskPreProcessor;
 
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\Type;
 use App\Services\TaskPreProcessor\Factory;
 use App\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use App\Services\TaskTypeService;

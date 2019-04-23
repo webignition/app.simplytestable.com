@@ -11,7 +11,7 @@ use App\Entity\TimePeriod;
 use App\Entity\User;
 use App\Entity\WebSite;
 use App\Entity\State;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\Type as TaskType;
 use App\Entity\Job\Type as JobType;
 use App\Model\Parameters;
 use App\Model\Task\Type\Collection as TaskTypeCollection;
@@ -93,7 +93,7 @@ class Job
     /**
      * @var DoctrineCollection
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Task\Type\Type")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Task\Type")
      * @ORM\JoinTable(name="JobTaskTypes",
      *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
      *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}

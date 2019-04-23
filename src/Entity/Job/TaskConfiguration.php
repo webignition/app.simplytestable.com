@@ -2,7 +2,7 @@
 namespace App\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\Type as TaskType;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -33,7 +33,7 @@ class TaskConfiguration implements \JsonSerializable
     /**
      * @var TaskType
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type\Type")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true)
      */
     protected $type;

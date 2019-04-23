@@ -6,7 +6,7 @@ use App\Entity\Task\Output;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\Type as TaskType;
 
 class TaskOutputRepository extends ServiceEntityRepository
 {

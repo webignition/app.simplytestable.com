@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Functional\Entity\Task\Type;
+namespace App\Tests\Functional\Entity\Task;
 
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\Type;
 
 class TypeTest extends AbstractBaseTestCase
 {

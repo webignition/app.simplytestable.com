@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\Type as TaskType;
 use App\Entity\Task\Output as TaskOutput;
 use App\Entity\TimePeriod;
 use App\Entity\State;
