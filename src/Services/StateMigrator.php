@@ -41,10 +41,12 @@ class StateMigrator
             if ($currentEntity !== $entity) {
                 $currentEntity = $entity;
 
-                $output->writeln([
-                    '',
-                    $currentEntity,
-                ]);
+                if ($output) {
+                    $output->writeln([
+                        '',
+                        $currentEntity,
+                    ]);
+                }
             }
 
             if ($output) {
@@ -56,14 +58,18 @@ class StateMigrator
             ]);
 
             if (!$entity) {
+                if ($output) {
+                    $output->write(' <fg=cyan>creating</>');
+                }
+
                 $entity = State::create($name);
                 $this->entityManager->persist($entity);
                 $this->entityManager->flush();
-
-                $output->write(' <fg=cyan>creating</>');
             }
 
-            $output->writeln(' <info>✓</info>');
+            if ($output) {
+                $output->writeln(' <info>✓</info>');
+            }
         }
     }
 }
