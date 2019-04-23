@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity\Task\Type;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -92,14 +93,6 @@ class Type implements \JsonSerializable
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * @return TaskTypeClass
-     */
-    public function getClass()
-    {
-        return $this->class;
     }
 
     /**
