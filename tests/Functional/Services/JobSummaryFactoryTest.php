@@ -178,7 +178,6 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
                     'constraint' => [
                         'name' => 'full_site_jobs_per_site',
                         'limit' => 1,
-                        'is_available' => true,
                     ],
                 ],
             ],
@@ -190,7 +189,6 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
                     'constraint' => [
                         'name' => 'single_url_jobs_per_url',
                         'limit' => 1,
-                        'is_available' => true,
                     ],
                 ],
             ],
@@ -251,7 +249,6 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
                         'constraint' => [
                             'name' => 'urls_per_job',
                             'limit' => 10,
-                            'is_available' => true,
                         ],
                     ],
                 ],
