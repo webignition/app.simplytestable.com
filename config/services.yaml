@@ -215,7 +215,7 @@ services:
     App\Services\StateMigrator:
       public: true # to allow usage inside container-aware migrations
       arguments:
-        $resourceLoader: '@App\Services\StateNames'
+        $resourceLoader: '@App\Services\StatesDataProvider'
 
     app.services.data-provider.account-plans:
       class: App\Services\YamlResourceLoader
