@@ -163,7 +163,7 @@ class JobService
     public function cancelIncompleteTasks(Job $job)
     {
         foreach ($job->getTasks() as $task) {
-            if ($task->getState()->getName() !== Task::STATE_COMPLETED) {
+            if ((string) $task->getState() !== Task::STATE_COMPLETED) {
                 $this->taskService->cancel($task);
             }
         }
