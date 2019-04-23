@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Services;
 
 use App\Entity\State;
 use App\Services\StateMigrator;
-use App\Services\StateNames;
+use App\Services\StatesDataProvider;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +49,7 @@ class StateMigratorTest extends AbstractBaseTestCase
 
         $this->entityManager->flush();
 
-        $stateNames = self::$container->get(StateNames::class);
+        $stateNames = self::$container->get(StatesDataProvider::class);
         $this->stateNames = $stateNames->getData();
     }
 
