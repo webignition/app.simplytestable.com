@@ -95,7 +95,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals($expectedReturnCode, $returnCode);
-        $this->assertEquals($expectedJobState, $job->getState()->getName());
+        $this->assertEquals($expectedJobState, (string) $job->getState());
         $this->assertCount($expectedTaskCount, $job->getTasks());
         $this->assertEquals($expectedHasCrawlJob, $crawlJobContainerService->hasForJob($job));
 

@@ -136,9 +136,9 @@ class JobPreparationService
      */
     public function prepare(Job $job)
     {
-        if (Job::STATE_RESOLVED !== $job->getState()->getName()) {
+        if (Job::STATE_RESOLVED !== (string) $job->getState()) {
             throw new JobPreparationServiceException(
-                'Job is in wrong state, currently "'.$job->getState()->getName().'"',
+                'Job is in wrong state, currently "' . (string) $job->getState() . '"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }
@@ -215,9 +215,9 @@ class JobPreparationService
         $this->processedUrls = [];
         $job = $crawlJobContainer->getParentJob();
 
-        if (Job::STATE_FAILED_NO_SITEMAP !== $job->getState()->getName()) {
+        if (Job::STATE_FAILED_NO_SITEMAP !== (string) $job->getState()) {
             throw new JobPreparationServiceException(
-                'Job is in wrong state, currently "'.$job->getState()->getName().'"',
+                'Job is in wrong state, currently "' . (string) $job->getState() . '"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }

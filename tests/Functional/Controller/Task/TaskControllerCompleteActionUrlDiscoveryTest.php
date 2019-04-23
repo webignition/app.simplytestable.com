@@ -86,8 +86,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
         $entityManager->persist($this->crawlJob);
         $entityManager->flush();
 
-        $this->assertEquals(Job::STATE_IN_PROGRESS, $this->crawlJob->getState()->getName());
-        $this->assertEquals(Job::STATE_FAILED_NO_SITEMAP, $this->parentJob->getState()->getName());
+        $this->assertEquals(Job::STATE_IN_PROGRESS, (string) $this->crawlJob->getState());
+        $this->assertEquals(Job::STATE_FAILED_NO_SITEMAP, (string) $this->parentJob->getState());
     }
 
     /**

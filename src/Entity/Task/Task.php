@@ -239,7 +239,7 @@ class Task implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $stateName = str_replace('task-', '', $this->getState()->getName());
+        $stateName = str_replace('task-', '', (string) $this->getState());
 
         $taskData = [
             'id' => $this->getId(),

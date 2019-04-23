@@ -51,7 +51,7 @@ class CrawlSummary implements \JsonSerializable
     {
         $serializedCrawlJob = [
             'id' => $this->crawlJob->getId(),
-            'state' => str_replace('job-', '', $this->crawlJob->getState()->getName()),
+            'state' => str_replace('job-', '', (string) $this->crawlJob->getState()),
             'processed_url_count' => $this->processedUrlCount,
             'discovered_url_count' => $this->discoveredUrlCount,
         ];

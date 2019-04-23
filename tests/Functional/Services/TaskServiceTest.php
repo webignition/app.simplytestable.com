@@ -61,7 +61,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             $this->task->setState($stateService->get($stateName));
 
             $this->taskService->cancel($this->task);
-            $this->assertEquals($stateName, $this->task->getState()->getName());
+            $this->assertEquals($stateName, (string) $this->task->getState());
         }
     }
 
@@ -84,7 +84,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->taskService->cancel($this->task);
 
-        $this->assertEquals(Task::STATE_CANCELLED, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_CANCELLED, (string) $this->task->getState());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getEndDateTime());
@@ -120,7 +120,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             $this->task->setState($stateService->get($stateName));
 
             $this->taskService->setAwaitingCancellation($this->task);
-            $this->assertEquals($stateName, $this->task->getState()->getName());
+            $this->assertEquals($stateName, (string) $this->task->getState());
         }
     }
 
@@ -128,7 +128,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         $this->taskService->setAwaitingCancellation($this->task);
 
-        $this->assertEquals(Task::STATE_AWAITING_CANCELLATION, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_AWAITING_CANCELLATION, (string) $this->task->getState());
     }
 
     public function testIsFinished()
@@ -233,12 +233,12 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testSetStarted()
     {
-        $this->assertEquals(Task::STATE_QUEUED, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, (string) $this->task->getState());
         $this->assertNull($this->task->getTimePeriod());
 
         $this->taskService->setStarted($this->task);
 
-        $this->assertEquals(Task::STATE_IN_PROGRESS, $this->task->getState()->getName());
+        $this->assertEquals(Task::STATE_IN_PROGRESS, (string) $this->task->getState());
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertNull($this->task->getTimePeriod()->getEndDateTime());
@@ -256,7 +256,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
             $this->taskService->complete($this->task, new \DateTime(), new Output(), $completedState);
 
-            $this->assertEquals($stateName, $this->task->getState()->getName());
+            $this->assertEquals($stateName, (string) $this->task->getState());
         }
     }
 
@@ -312,7 +312,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getEndDateTime());
 
         $this->assertEquals($outputContent, $this->task->getOutput()->getOutput());
-        $this->assertEquals($stateName, $this->task->getState()->getName());
+        $this->assertEquals($stateName, (string) $this->task->getState());
     }
 
     /**

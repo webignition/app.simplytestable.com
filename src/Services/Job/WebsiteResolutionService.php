@@ -79,11 +79,11 @@ class WebsiteResolutionService
      */
     public function resolve(Job $job)
     {
-        $jobIsNew = Job::STATE_STARTING === $job->getState()->getName();
+        $jobIsNew = Job::STATE_STARTING === (string) $job->getState();
 
         if (!$jobIsNew) {
             throw new WebsiteResolutionException(
-                'Job is in wrong state, currently "'.$job->getState()->getName().'"',
+                'Job is in wrong state, currently "' . (string) $job->getState() . '"',
                 WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }

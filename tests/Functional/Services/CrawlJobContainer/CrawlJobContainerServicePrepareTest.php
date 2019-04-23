@@ -139,7 +139,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $crawlJobContainer->setCrawlJob($crawlJob);
         $crawlJobContainer->setParentJob($parentJob);
 
-        $this->assertNotEquals(Job::STATE_QUEUED, $crawlJob->getState()->getName());
+        $this->assertNotEquals(Job::STATE_QUEUED, (string) $crawlJob->getState());
         $this->assertNull($crawlJob->getTimePeriod());
         $this->assertCount(0, $crawlJob->getTasks());
 
@@ -147,7 +147,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $this->crawlJobContainerService->prepare($crawlJobContainer);
         $this->crawlJobContainerService->prepare($crawlJobContainer);
 
-        $this->assertEquals(Job::STATE_QUEUED, $crawlJob->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, (string) $crawlJob->getState());
         $this->assertNotNull($crawlJob->getTimePeriod());
         $this->assertCount(1, $crawlJob->getTasks());
 

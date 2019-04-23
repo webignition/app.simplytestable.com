@@ -135,7 +135,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $selectedTaskOutput = $selectedTask->getOutput();
 
         $this->assertFalse($returnValue);
-        $this->assertEquals(Task::STATE_QUEUED, $selectedTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, (string) $selectedTask->getState());
         $this->assertEmpty($selectedTaskOutput);
     }
 
@@ -220,7 +220,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $selectedTaskOutput = $selectedTask->getOutput();
 
         $this->assertFalse($returnValue);
-        $this->assertEquals(Task::STATE_QUEUED, $selectedTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, (string) $selectedTask->getState());
         $this->assertEmpty($selectedTaskOutput);
     }
 
@@ -291,7 +291,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
         $this->assertFalse($returnValue);
-        $this->assertEquals(Task::STATE_QUEUED, $selectedTask->getState()->getName());
+        $this->assertEquals(Task::STATE_QUEUED, (string) $selectedTask->getState());
 
         $selectedTaskOutput = $selectedTask->getOutput();
 
@@ -418,7 +418,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
             $returnValue
         );
 
-        $this->assertEquals($expectedTaskStateName, $selectedTask->getState()->getName());
+        $this->assertEquals($expectedTaskStateName, (string) $selectedTask->getState());
 
         $taskOutput = $selectedTask->getOutput();
 

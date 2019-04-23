@@ -140,7 +140,7 @@ class TaskService
             Task::STATE_COMPLETED,
         ];
 
-        if (in_array($task->getState()->getName(), $disAllowedStateNames)) {
+        if (in_array((string) $task->getState(), $disAllowedStateNames)) {
             return;
         }
 
@@ -177,7 +177,7 @@ class TaskService
      */
     private function isTaskInStates(Task $task, $stateNames)
     {
-        return in_array($task->getState()->getName(), $stateNames);
+        return in_array((string) $task->getState(), $stateNames);
     }
 
     /**
@@ -210,7 +210,7 @@ class TaskService
         $taskIsInCorrectState = false;
 
         foreach ($this->getIncompleteStateNames() as $incompleteStateName) {
-            if ($task->getState()->getName() === $incompleteStateName) {
+            if ((string) $task->getState() === $incompleteStateName) {
                 $taskIsInCorrectState = true;
             }
         }

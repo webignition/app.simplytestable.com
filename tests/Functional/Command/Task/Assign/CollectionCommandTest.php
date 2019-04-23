@@ -109,7 +109,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         foreach ($job->getTasks() as $taskIndex => $task) {
             $expectedTaskValues = $expectedTaskValuesCollection[$taskIndex];
 
-            $this->assertEquals($expectedTaskValues['state'], $task->getState()->getName());
+            $this->assertEquals($expectedTaskValues['state'], (string) $task->getState());
         }
 
         if ($expectedTaskAssignCollectionQueueIsEmpty) {

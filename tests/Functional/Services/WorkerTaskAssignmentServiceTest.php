@@ -138,7 +138,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         foreach ($job->getTasks() as $taskIndex => $task) {
             $expectedTaskStateName = $expectedTaskStateNames[$taskIndex];
 
-            $this->assertEquals($expectedTaskStateName, $task->getState()->getName());
+            $this->assertEquals($expectedTaskStateName, (string) $task->getState());
         }
     }
 

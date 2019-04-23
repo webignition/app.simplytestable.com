@@ -85,7 +85,7 @@ class JobSummaryFactory
             $this->getOwners($job)
         );
 
-        if (Job::STATE_REJECTED === $job->getState()->getName()) {
+        if (Job::STATE_REJECTED === (string) $job->getState()) {
             /* @var RejectionReason $jobRejectionReason */
             $jobRejectionReason = $this->jobRejectionReasonRepository->findOneBy([
                 'job' => $job,
@@ -139,7 +139,7 @@ class JobSummaryFactory
         $taskCountByState = [];
 
         foreach ($taskStates as $taskState) {
-            $taskStateShortName = str_replace('task-', '', $taskState->getName());
+            $taskStateShortName = str_replace('task-', '', (string) $taskState);
             $taskCountByState[$taskStateShortName] = $this->taskRepository->getCountByJobAndStates($job, [$taskState]);
         }
 
