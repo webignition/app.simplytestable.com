@@ -63,14 +63,4 @@ class State
     public function __toString() {
         return $this->getName();
     }
-
-
-    /**
-     *
-     * @param State $state
-     * @return boolean
-     */
-    public function equals(State $state) {
-        return $this->getName() == $state->getName();
-    }
 }

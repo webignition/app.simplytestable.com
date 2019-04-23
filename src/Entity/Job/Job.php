@@ -288,7 +288,7 @@ class Job
 
     public function equals(Job $job): bool
     {
-        if (!$this->getState()->equals($job->getState())) {
+        if ($this->state->getName() !== $job->getState()->getName()) {
             return false;
         }
 
