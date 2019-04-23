@@ -58,7 +58,7 @@ class TaskTypeMigrator
 
         if (is_null($taskType)) {
             if ($output) {
-                $output->write(' <fg=cyan>creating</>');
+                $output->writeln('  <fg=cyan>creating</>');
             }
 
             $taskType = new TaskType();

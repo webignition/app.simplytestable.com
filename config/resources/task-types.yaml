@@ -1,8 +1,8 @@
-"HTML valdiation":
+"HTML validation":
   description: Validates the HTML markup for a given URL
   selectable: true
 
-"CSS valdiation":
+"CSS validation":
   description: Validates the CSS related to a given web document URL
   selectable: true
 
