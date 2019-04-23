@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Model;
 
+use App\Entity\State;
 use App\Entity\Worker;
 use App\Model\ApplicationStatus;
 use App\Tests\Factory\ModelFactory;
@@ -62,7 +63,7 @@ class ApplicationStatusTest extends \PHPUnit\Framework\TestCase
                 'workers' => [
                     ModelFactory::createWorker(
                         'worker1.example.com',
-                        ModelFactory::createState('worker-active'),
+                        State::create('worker-active'),
                         'worker1token'
                     ),
                 ],

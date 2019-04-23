@@ -37,6 +37,14 @@ class State
      */
     protected $nextState;
 
+    public static function create(string $name): State
+    {
+        $state = new State();
+        $state->name = $name;
+
+        return $state;
+    }
+
     /**
      * Get id
      *
@@ -45,18 +53,6 @@ class State
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return State
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
     }
 
     /**

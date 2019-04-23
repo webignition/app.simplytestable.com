@@ -11,7 +11,6 @@ use App\Services\Request\Factory\Task\CompleteRequestFactory;
 use App\Services\StateService;
 use App\Services\TaskService;
 use App\Services\TaskTypeService;
-use App\Tests\Factory\StateFactory;
 use App\Tests\Factory\TaskTypeFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -76,7 +75,7 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function createDataProvider()
     {
-        $completedState = StateFactory::create(Task::STATE_COMPLETED);
+        $completedState = State::create(Task::STATE_COMPLETED);
         $htmlValidationTaskType = TaskTypeFactory::create('html validation');
         $applicationJsonContentType = new InternetMediaType('application', 'json');
 
@@ -217,9 +216,9 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
     private function createTaskService($equivalentTasks, $getEquivalentTasksArgs)
     {
         $incompleteStates = [
-            StateFactory::create(Task::STATE_IN_PROGRESS),
-            StateFactory::create(Task::STATE_QUEUED),
-            StateFactory::create(Task::STATE_QUEUED_FOR_ASSIGNMENT),
+            State::create(Task::STATE_IN_PROGRESS),
+            State::create(Task::STATE_QUEUED),
+            State::create(Task::STATE_QUEUED_FOR_ASSIGNMENT),
         ];
 
         /* @var Mock|TaskService $taskService */
@@ -265,9 +264,9 @@ class CompleteRequestFactoryTest extends \PHPUnit\Framework\TestCase
                 Task::STATE_QUEUED_FOR_ASSIGNMENT,
             ])
             ->andReturn([
-                StateFactory::create(Task::STATE_IN_PROGRESS),
-                StateFactory::create(Task::STATE_QUEUED),
-                StateFactory::create(Task::STATE_QUEUED_FOR_ASSIGNMENT),
+                State::create(Task::STATE_IN_PROGRESS),
+                State::create(Task::STATE_QUEUED),
+                State::create(Task::STATE_QUEUED_FOR_ASSIGNMENT),
             ]);
 
         return $stateService;

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Services;
 
+use App\Entity\State;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use App\Services\CrawlJobContainerService;
@@ -26,7 +27,7 @@ class JobPreparationServiceTest extends \PHPUnit\Framework\TestCase
     public function testPrepareJobInWrongState()
     {
         $job = ModelFactory::createJob([
-            ModelFactory::JOB_STATE => ModelFactory::createState('foo'),
+            ModelFactory::JOB_STATE => State::create('foo'),
         ]);
 
         $jobPreparationService = $this->createJobPreparationService();
@@ -40,7 +41,7 @@ class JobPreparationServiceTest extends \PHPUnit\Framework\TestCase
     {
         $crawlJobContainer = ModelFactory::createCrawlJobContainer([
             ModelFactory::CRAWL_JOB_CONTAINER_PARENT_JOB => ModelFactory::createJob([
-                ModelFactory::JOB_STATE => ModelFactory::createState('foo'),
+                ModelFactory::JOB_STATE => State::create('foo'),
             ]),
         ]);
 

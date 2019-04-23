@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\Job;
 
+use App\Entity\State;
 use App\Tests\Services\JobFactory;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
@@ -13,7 +14,6 @@ use App\Services\HttpClientService;
 use App\Services\Job\WebsiteResolutionService;
 use App\Services\JobTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\StateFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\TestHttpClientService;
 
@@ -65,7 +65,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         $this->expectExceptionCode(WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE);
 
         $job = $this->jobFactory->create();
-        $job->setState(StateFactory::create('foo'));
+        $job->setState(State::create('foo'));
 
         $this->websiteResolutionService->resolve($job);
     }

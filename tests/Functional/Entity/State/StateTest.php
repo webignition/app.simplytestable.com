@@ -11,8 +11,7 @@ class StateTest extends AbstractBaseTestCase
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $state = new State();
-        $state->setName('foo');
+        $state = State::create('foo');
 
         $entityManager->persist($state);
         $entityManager->flush();

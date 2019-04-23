@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Services\CrawlJobContainer;
 
 use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
+use App\Entity\State;
 use App\Entity\Task\Task;
 use App\Services\CrawlJobContainerService;
 use App\Services\JobTypeService;
@@ -11,7 +12,6 @@ use App\Services\StateService;
 use App\Services\TaskTypeService;
 use App\Services\WebSiteService;
 use App\Tests\Factory\ModelFactory;
-use App\Tests\Factory\StateFactory;
 
 class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServiceTest
 {
@@ -23,7 +23,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
     public function testPrepareInWrongState($stateName)
     {
         $crawlJobContainerService = self::$container->get(CrawlJobContainerService::class);
-        $state = StateFactory::create($stateName);
+        $state = State::create($stateName);
 
         $crawlJob = ModelFactory::createJob([
             ModelFactory::JOB_STATE => $state,

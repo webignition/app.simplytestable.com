@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Request\Task;
 use App\Entity\State;
 use App\Entity\Task\Task;
 use App\Request\Task\CompleteRequest;
-use App\Tests\Factory\StateFactory;
 use webignition\InternetMediaType\InternetMediaType;
 
 class CompleteRequestTest extends \PHPUnit\Framework\TestCase
@@ -72,7 +71,7 @@ class CompleteRequestTest extends \PHPUnit\Framework\TestCase
     public function createDataProvider()
     {
         $applicationJsonContentType = new InternetMediaType('application', 'json');
-        $completedState = StateFactory::create(Task::STATE_COMPLETED);
+        $completedState = State::create(Task::STATE_COMPLETED);
         $now = new \DateTime();
 
         return [

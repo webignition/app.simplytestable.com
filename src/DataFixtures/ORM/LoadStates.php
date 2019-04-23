@@ -67,8 +67,7 @@ class LoadStates extends Fixture
             ]);
 
             if (empty($state)) {
-                $state = new State();
-                $state->setName($name);
+                $state = State::create($name);
 
                 $manager->persist($state);
                 $manager->flush();
