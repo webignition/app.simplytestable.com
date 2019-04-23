@@ -53,7 +53,7 @@ class TaskTest extends \PHPUnit\Framework\TestCase
             'default' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
+                'state' => State::create('task-foo-state'),
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -69,7 +69,7 @@ class TaskTest extends \PHPUnit\Framework\TestCase
             'time period present, all values empty' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
+                'state' => State::create('task-foo-state'),
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -88,7 +88,7 @@ class TaskTest extends \PHPUnit\Framework\TestCase
             'time period present, end date time empty values empty' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
+                'state' => State::create('task-foo-state'),
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -110,7 +110,7 @@ class TaskTest extends \PHPUnit\Framework\TestCase
             'time period present' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
+                'state' => State::create('task-foo-state'),
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),
@@ -133,7 +133,7 @@ class TaskTest extends \PHPUnit\Framework\TestCase
             'with output' => [
                 'id' => 1,
                 'url' => 'http://foo.example.com',
-                'state' => ModelFactory::createState('task-foo-state'),
+                'state' => State::create('task-foo-state'),
                 'type' => ModelFactory::createTaskType([
                     ModelFactory::TASK_TYPE_NAME => 'HTML validation',
                 ]),

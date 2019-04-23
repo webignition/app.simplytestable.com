@@ -10,35 +10,35 @@ use App\Entity\State;
 class LoadStates extends Fixture
 {
     private $stateDetails = array(
-        'job-completed' => null,
-        'job-in-progress' => 'job-completed',
-        'job-queued' => 'job-in-progress',
-        'job-preparing' => 'job-queued',
-        'job-new' => 'job-preparing',
-        'task-completed' => null,
-        'task-in-progress' => 'task-completed',
-        'task-queued' => 'task-in-progress',
-        'job-cancelled' => null,
-        'task-cancelled' => null,
-        'worker-activation-request-verified' => null,
-        'worker-activation-request-failed' => null,
-        'worker-activation-request-awaiting-verification' => 'worker-activation-request-verified',
-        'task-awaiting-cancellation' => null,
-        'job-failed-no-sitemap' => null,
-        'task-queued-for-assignment' => null,
-        'task-failed-no-retry-available' => null,
-        'task-failed-retry-available' => null,
-        'task-failed-retry-limit-reached' => null,
-        'task-skipped' => null,
-        'worker-active' => null,
-        'worker-deleted' => null,
-        'worker-offline' => null,
-        'worker-unactivated' => null,
-        'job-rejected' => null,
-        'job-resolving' => null,
-        'job-resolved' => null,
-        'job-expired' => null,
-        'task-expired' => null,
+        'job-completed',
+        'job-in-progress',
+        'job-queued',
+        'job-preparing',
+        'job-new',
+        'task-completed',
+        'task-in-progress',
+        'task-queued',
+        'job-cancelled',
+        'task-cancelled',
+        'worker-activation-request-verified',
+        'worker-activation-request-failed',
+        'worker-activation-request-awaiting-verification',
+        'task-awaiting-cancellation',
+        'job-failed-no-sitemap',
+        'task-queued-for-assignment',
+        'task-failed-no-retry-available',
+        'task-failed-retry-available',
+        'task-failed-retry-limit-reached',
+        'task-skipped',
+        'worker-active',
+        'worker-deleted',
+        'worker-offline',
+        'worker-unactivated',
+        'job-rejected',
+        'job-resolving',
+        'job-resolved',
+        'job-expired',
+        'task-expired',
     );
 
     /**
@@ -61,18 +61,13 @@ class LoadStates extends Fixture
     {
         $stateRepository = $manager->getRepository(State::class);
 
-        foreach ($this->stateDetails as $name => $nextStateName) {
+        foreach ($this->stateDetails as $name) {
             $state = $stateRepository->findOneBy([
                 'name' => $name,
             ]);
 
             if (empty($state)) {
-                $state = new State();
-                $state->setName($name);
-
-                if (!is_null($nextStateName)) {
-                    $state->setNextState($this->stateService->get($nextStateName));
-                }
+                $state = State::create($name);
 
                 $manager->persist($state);
                 $manager->flush();

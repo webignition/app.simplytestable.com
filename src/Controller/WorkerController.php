@@ -104,7 +104,7 @@ class WorkerController
             $this->entityManager->flush();
         }
 
-        if (Worker::STATE_UNACTIVATED !== $worker->getState()->getName()) {
+        if (Worker::STATE_UNACTIVATED !== (string) $worker->getState()) {
             return new Response();
         }
 

@@ -48,7 +48,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $stateNamesToExclude = [];
 
         foreach ($statesToExclude as $state) {
-            $stateNamesToExclude[] = $state->getName();
+            $stateNamesToExclude[] = (string) $state;
         }
 
         sort($stateNamesToExclude);

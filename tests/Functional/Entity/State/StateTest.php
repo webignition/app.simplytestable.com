@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Entity\State;
 
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Entity\State;
+use App\Tests\Services\ObjectReflector;
 
 class StateTest extends AbstractBaseTestCase
 {
@@ -11,12 +12,11 @@ class StateTest extends AbstractBaseTestCase
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
 
-        $state = new State();
-        $state->setName('foo');
+        $state = State::create('foo');
 
         $entityManager->persist($state);
         $entityManager->flush();
 
-        $this->assertNotNull($state->getId());
+        $this->assertNotNull(ObjectReflector::getProperty($state, 'id'));
     }
 }

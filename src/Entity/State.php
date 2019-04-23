@@ -1,112 +1,40 @@
 <?php
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- *
  * @ORM\Entity
  */
 class State
 {
     /**
-     *
-     * @var integer
+     * @var int
      *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
-
+    private $id;
 
     /**
-     *
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
      */
-    protected $name;
+    private $name;
 
-
-    /**
-     *
-     * @var State
-     *
-     * @ORM\OneToOne(targetEntity="State")
-     */
-    protected $nextState;
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public static function create(string $name): State
     {
-        return $this->id;
+        $state = new State();
+        $state->name = $name;
+
+        return $state;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return State
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
+    public function __toString(): string
     {
         return $this->name;
-    }
-
-    /**
-     * Set nextState
-     *
-     * @param App\Entity\State $nextState
-     * @return State
-     */
-    public function setNextState(\App\Entity\State $nextState = null)
-    {
-        $this->nextState = $nextState;
-        return $this;
-    }
-
-    /**
-     * Get nextState
-     *
-     * @return App\Entity\State
-     */
-    public function getNextState()
-    {
-        return $this->nextState;
-    }
-
-
-    /**
-     *
-     * @return string
-     */
-    public function __toString() {
-        return $this->getName();
-    }
-
-
-    /**
-     *
-     * @param State $state
-     * @return boolean
-     */
-    public function equals(State $state) {
-        return $this->getName() == $state->getName();
     }
 }

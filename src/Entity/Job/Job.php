@@ -288,7 +288,7 @@ class Job
 
     public function equals(Job $job): bool
     {
-        if (!$this->getState()->equals($job->getState())) {
+        if ((string) $this->state !== (string) $job->getState()) {
             return false;
         }
 
@@ -443,7 +443,7 @@ class Job
             'id' => $this->id,
             'user' => $this->user->getUsername(),
             'website' => $this->website->getCanonicalUrl(),
-            'state' => str_replace('job-', '', $this->state->getName()),
+            'state' => str_replace('job-', '', (string) $this->state),
             'url_count' => $this->urlCount,
             'task_types' => $serializedRequestedTaskTypes,
             'task_type_options' => $serializedTaskTypeOptions,

@@ -201,21 +201,6 @@ class ModelFactory
     }
 
     /**
-     * @param string $name
-     * @param State|null $nextState
-     *
-     * @return State
-     */
-    public static function createState($name, $nextState = null)
-    {
-        $state = new State();
-        $state->setName($name);
-        $state->setNextState($nextState);
-
-        return $state;
-    }
-
-    /**
      * @param string $hostname
      * @param State $state
      * @param string $token

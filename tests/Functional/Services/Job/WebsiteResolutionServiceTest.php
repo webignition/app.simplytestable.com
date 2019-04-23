@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Services\Job;
 
+use App\Entity\State;
 use App\Tests\Services\JobFactory;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
@@ -13,7 +14,6 @@ use App\Services\HttpClientService;
 use App\Services\Job\WebsiteResolutionService;
 use App\Services\JobTypeService;
 use App\Tests\Factory\ConnectExceptionFactory;
-use App\Tests\Factory\StateFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Tests\Services\TestHttpClientService;
 
@@ -65,7 +65,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
         $this->expectExceptionCode(WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE);
 
         $job = $this->jobFactory->create();
-        $job->setState(StateFactory::create('foo'));
+        $job->setState(State::create('foo'));
 
         $this->websiteResolutionService->resolve($job);
     }
@@ -95,7 +95,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
             'job' => $job,
         ]);
 
-        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, (string) $job->getState());
         $this->assertInstanceOf(RejectionReason::class, $jobRejectionReason);
         $this->assertEquals($expectedRejectionReason, $jobRejectionReason->getReason());
         $this->assertEquals($siteRootUrl, $job->getWebsite()->getCanonicalUrl());
@@ -159,7 +159,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
         $this->websiteResolutionService->resolve($job);
 
-        $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_RESOLVED, (string) $job->getState());
         $this->assertEquals($expectedResolvedUrl, $job->getWebsite()->getCanonicalUrl());
 
         $requestPropertiesCollection = [];

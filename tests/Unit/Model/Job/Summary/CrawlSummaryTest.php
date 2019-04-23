@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Model\Job\Summary;
 
 use App\Entity\Job\Job;
+use App\Entity\State;
 use App\Model\Job\Summary\CrawlSummary;
 use App\Services\JobTypeService;
 use App\Tests\Factory\ModelFactory;
@@ -50,7 +51,7 @@ class CrawlSummaryTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::JOB_WEBSITE => ModelFactory::createWebsite([
                         ModelFactory::WEBSITE_CANONICAL_URL => 'http://example.com/',
                     ]),
-                    ModelFactory::JOB_STATE => ModelFactory::createState('job-in-progress'),
+                    ModelFactory::JOB_STATE => State::create('job-in-progress'),
                     ModelFactory::JOB_URL_COUNT => 12,
                     ModelFactory::JOB_REQUESTED_TASK_TYPES => [],
                     ModelFactory::JOB_TASK_TYPE_OPTIONS_COLLECTION => [],
@@ -77,7 +78,7 @@ class CrawlSummaryTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::JOB_WEBSITE => ModelFactory::createWebsite([
                         ModelFactory::WEBSITE_CANONICAL_URL => 'http://example.com/',
                     ]),
-                    ModelFactory::JOB_STATE => ModelFactory::createState('job-in-progress'),
+                    ModelFactory::JOB_STATE => State::create('job-in-progress'),
                     ModelFactory::JOB_URL_COUNT => 12,
                     ModelFactory::JOB_REQUESTED_TASK_TYPES => [],
                     ModelFactory::JOB_TASK_TYPE_OPTIONS_COLLECTION => [],

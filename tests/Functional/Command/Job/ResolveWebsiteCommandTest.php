@@ -121,7 +121,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, (string) $job->getState());
     }
 
     /**
@@ -148,7 +148,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, (string) $job->getState());
 
         /* @var Task[] $tasks */
         $tasks = $job->getTasks()->toArray();
@@ -242,7 +242,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
-        $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_RESOLVED, (string) $job->getState());
 
         $this->assertTrue($resqueQueueService->contains(
             'job-prepare',
@@ -309,7 +309,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_OK, $returnCode);
 
         foreach ($jobs as $job) {
-            $this->assertEquals(Job::STATE_RESOLVED, $job->getState()->getName());
+            $this->assertEquals(Job::STATE_RESOLVED, (string) $job->getState());
             $this->assertTrue($resqueQueueService->contains(
                 'job-prepare',
                 ['id' => $job->getId()]

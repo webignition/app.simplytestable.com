@@ -94,7 +94,7 @@ class JobListServiceTest extends AbstractBaseTestCase
                 'id' => $listedJob->getId(),
                 'url' => $listedJob->getWebsite()->getCanonicalUrl(),
                 'type' => $listedJob->getType()->getName(),
-                'state' => $listedJob->getState()->getName(),
+                'state' => (string) $listedJob->getState(),
 
             ];
 

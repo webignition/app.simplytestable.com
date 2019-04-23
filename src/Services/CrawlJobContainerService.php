@@ -78,7 +78,7 @@ class CrawlJobContainerService
             return true;
         }
 
-        if (Job::STATE_STARTING !== $crawlJob->getState()->getName()) {
+        if (Job::STATE_STARTING !== (string) $crawlJob->getState()) {
             return false;
         }
 

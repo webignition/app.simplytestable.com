@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Services;
 
+use App\Entity\State;
 use App\Entity\User;
 use App\Request\Job\ListRequest;
 use App\Services\JobListConfigurationFactory;
@@ -67,7 +68,7 @@ class JobListConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
             ModelFactory::JOB_TYPE_NAME => 'job-type-name',
         ]);
 
-        $state = ModelFactory::createState('state-name');
+        $state = State::create('state-name');
 
         return [
             'empty' => [

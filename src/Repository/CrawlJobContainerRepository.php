@@ -40,7 +40,7 @@ class CrawlJobContainerRepository extends ServiceEntityRepository
 
         return (empty($result))
             ? false
-            : $result[0]['name'] == $state->getName();
+            : $result[0]['name'] === (string) $state;
     }
 
     /**

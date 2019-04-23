@@ -132,7 +132,7 @@ class JobService
      */
     public function cancel(Job $job)
     {
-        if ($this->isFinished($job) && Job::STATE_FAILED_NO_SITEMAP !== $job->getState()->getName()) {
+        if ($this->isFinished($job) && Job::STATE_FAILED_NO_SITEMAP !== (string) $job->getState()) {
             return;
         }
 
@@ -163,7 +163,7 @@ class JobService
     public function cancelIncompleteTasks(Job $job)
     {
         foreach ($job->getTasks() as $task) {
-            if ($task->getState()->getName() !== Task::STATE_COMPLETED) {
+            if ((string) $task->getState() !== Task::STATE_COMPLETED) {
                 $this->taskService->cancel($task);
             }
         }
@@ -176,7 +176,7 @@ class JobService
      */
     public function reject(Job $job, $reason, AccountPlanConstraint $constraint = null)
     {
-        $jobStateName = $job->getState()->getName();
+        $jobStateName = (string) $job->getState();
 
         $allowedStateNames = [
             Job::STATE_STARTING,
@@ -214,7 +214,7 @@ class JobService
     public function isFinished(Job $job)
     {
         return in_array(
-            $job->getState()->getName(),
+            (string) $job->getState(),
             $this->finishedStates
         );
     }

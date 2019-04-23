@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -81,13 +82,6 @@ class WorkerActivationRequest
     public function getState()
     {
         return $this->state;
-    }
-
-    public function setNextState()
-    {
-        if (!is_null($this->getState()->getNextState())) {
-            $this->state = $this->getState()->getNextState();
-        }
     }
 
     /**

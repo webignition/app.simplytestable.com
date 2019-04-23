@@ -110,7 +110,7 @@ class Worker implements \JsonSerializable
     {
         return [
             'hostname' => $this->getHostname(),
-            'state' => str_replace(self::STATE_NAME_PREFIX, '', $this->getState()->getName()),
+            'state' => str_replace(self::STATE_NAME_PREFIX, '', (string) $this->getState()),
         ];
     }
 }

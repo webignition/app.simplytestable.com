@@ -597,11 +597,11 @@ class JobServiceTest extends AbstractBaseTestCase
         foreach ($tasksToRemainUnchanged as $taskIndex => $task) {
             $expectedStateName = $finishedTaskStates[$taskIndex];
 
-            $this->assertEquals($expectedStateName, $task->getState()->getName());
+            $this->assertEquals($expectedStateName, (string) $task->getState());
         }
 
         foreach ($tasksToChange as $taskIndex => $task) {
-            $this->assertEquals(Task::STATE_CANCELLED, $task->getState()->getName());
+            $this->assertEquals(Task::STATE_CANCELLED, (string) $task->getState());
         }
     }
 
@@ -769,7 +769,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->jobService->complete($job);
 
-        $this->assertEquals($stateName, $job->getState()->getName());
+        $this->assertEquals($stateName, (string) $job->getState());
     }
 
     public function completeFinishedJobDataProvider(): array
@@ -796,11 +796,11 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testCompleteWithIncompleteTasks()
     {
         $job = $this->jobFactory->createResolveAndPrepare();
-        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, (string) $job->getState());
 
         $this->jobService->complete($job);
 
-        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, (string) $job->getState());
     }
 
     public function testComplete()
@@ -808,14 +808,14 @@ class JobServiceTest extends AbstractBaseTestCase
         $stateService = self::$container->get(StateService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare();
-        $this->assertEquals(Job::STATE_QUEUED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_QUEUED, (string) $job->getState());
         $this->assertNull($job->getTimePeriod()->getEndDateTime());
 
         $this->jobFactory->setTaskStates($job, $stateService->get(Task::STATE_COMPLETED));
 
         $this->jobService->complete($job);
 
-        $this->assertEquals(Job::STATE_COMPLETED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_COMPLETED, (string) $job->getState());
         $this->assertInstanceOf(\DateTime::class, $job->getTimePeriod()->getEndDateTime());
     }
 
@@ -889,7 +889,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertCount(count($completedTasksStates), $retrievedJobs);
 
         foreach ($retrievedJobs as $retrievedJob) {
-            $this->assertTrue(in_array($retrievedJob->getState()->getName(), $completedTasksStates));
+            $this->assertTrue(in_array((string) $retrievedJob->getState(), $completedTasksStates));
         }
     }
 
@@ -909,7 +909,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->jobService->reject($job, '');
 
-        $this->assertEquals($stateName, $job->getState()->getName());
+        $this->assertEquals($stateName, (string) $job->getState());
 
         $rejectionReason = $jobRejectionReasonRepository->findOneBy([
             'job' => $job,
@@ -974,7 +974,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->jobService->reject($job, $reason, $constraint);
 
-        $this->assertEquals(Job::STATE_REJECTED, $job->getState()->getName());
+        $this->assertEquals(Job::STATE_REJECTED, (string) $job->getState());
 
         $timePeriod = $job->getTimePeriod();
         $this->assertInstanceOf(TimePeriod::class, $timePeriod);

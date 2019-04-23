@@ -142,7 +142,7 @@ class ResolveWebsiteCommand extends Command
             }
         }
 
-        if (Job::STATE_REJECTED === $job->getState()->getName()) {
+        if (Job::STATE_REJECTED === (string) $job->getState()) {
             return self::RETURN_CODE_OK;
         }
 

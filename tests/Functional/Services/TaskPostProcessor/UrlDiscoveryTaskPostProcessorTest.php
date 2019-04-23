@@ -206,7 +206,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $taskIndex = 0;
         foreach ($crawlJob->getTasks() as $task) {
             $expectedTaskStateName = $expectedTaskStateNames[$taskIndex];
-            $this->assertEquals($expectedTaskStateName, $task->getState()->getName());
+            $this->assertEquals($expectedTaskStateName, (string) $task->getState());
 
             $taskIndex++;
         }
@@ -350,7 +350,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
             $expectedTaskValues = $expectedTaskValuesCollection[$taskIndex];
 
             $this->assertEquals($expectedTaskValues['url'], $task->getUrl());
-            $this->assertEquals($expectedTaskValues['stateName'], $task->getState()->getName());
+            $this->assertEquals($expectedTaskValues['stateName'], (string) $task->getState());
 
             $taskIndex++;
         }

@@ -141,13 +141,6 @@ class Task implements \JsonSerializable
         $this->state = $state;
     }
 
-    public function setNextState()
-    {
-        if (!is_null($this->getState()->getNextState())) {
-            $this->state = $this->getState()->getNextState();
-        }
-    }
-
     /**
      * @return State
      */
@@ -246,7 +239,7 @@ class Task implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $stateName = str_replace('task-', '', $this->getState()->getName());
+        $stateName = str_replace('task-', '', (string) $this->getState());
 
         $taskData = [
             'id' => $this->getId(),
