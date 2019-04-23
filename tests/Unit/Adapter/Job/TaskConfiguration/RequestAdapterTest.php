@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Adapter\Job\TaskConfiguration\RequestAdapter;
 
 use Mockery\Mock;
 use App\Adapter\Job\TaskConfiguration\RequestAdapter;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\Type;
 use App\Services\TaskTypeService;
 use Symfony\Component\HttpFoundation\Request;
 

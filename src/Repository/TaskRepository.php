@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Parameter;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\Type as TaskType;
 use App\Entity\State;
 use App\Entity\User;
 use App\Entity\Task\Output as TaskOutput;

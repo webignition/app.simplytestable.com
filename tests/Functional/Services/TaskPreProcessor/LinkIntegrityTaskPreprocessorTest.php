@@ -6,7 +6,7 @@ use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\Type;
 use App\Services\HttpClientService;
 use App\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use App\Services\TaskTypeService;

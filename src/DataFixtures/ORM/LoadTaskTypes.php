@@ -4,7 +4,7 @@ namespace App\DataFixtures\ORM;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\Type as TaskType;
 
 class LoadTaskTypes extends Fixture
 {

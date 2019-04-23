@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Services\TaskOutputJoiner;
 
 use App\Entity\Task\Output;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\Type;
 use App\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner;
 use App\Services\TaskTypeService;
 use App\Tests\Functional\AbstractBaseTestCase;
