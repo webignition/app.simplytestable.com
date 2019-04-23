@@ -226,3 +226,13 @@ services:
       public: true # to allow usage inside container-aware migrations
       arguments:
         $resourceLoader: '@app.services.data-provider.account-plans'
+
+    app.services.data-provider.job-types:
+      class: App\Services\YamlResourceLoader
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/job-types.yaml'
+
+    App\Services\JobTypeMigrator:
+      public: true # to allow usage inside container-aware migrations
+      arguments:
+        $resourceLoader: '@app.services.data-provider.job-types'
