@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity\Task\Type;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -31,15 +32,6 @@ class Type implements \JsonSerializable
      * @ORM\Column(type="text", nullable=false)
      */
     protected $description;
-
-    /**
-     *
-     * @var TaskTypeClass
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type\TaskTypeClass")
-     * @ORM\JoinColumn(name="tasktypeclass_id", referencedColumnName="id", nullable=false)
-     */
-    protected $class;
 
     /**
      *
@@ -92,22 +84,6 @@ class Type implements \JsonSerializable
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * @param TaskTypeClass $class
-     */
-    public function setClass(TaskTypeClass $class)
-    {
-        $this->class = $class;
-    }
-
-    /**
-     * @return TaskTypeClass
-     */
-    public function getClass()
-    {
-        return $this->class;
     }
 
     /**
