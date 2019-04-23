@@ -207,3 +207,13 @@ services:
     App\Services\JobIdentifierFactory:
       arguments:
         $instanceId: '%env(INSTANCE_ID)%'
+
+    App\Services\StateNames:
+      class: App\Services\StateNames
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/states.yaml'
+
+    App\Services\StateMigrator:
+      public: true # to allow usage inside container-aware migrations
+      arguments:
+        $resourceLoader: '@App\Services\StateNames'
