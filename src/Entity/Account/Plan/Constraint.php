@@ -90,14 +90,6 @@ class Constraint implements \JsonSerializable
     }
 
     /**
-     * @param bool $isAvailable
-     */
-    public function setIsAvailable($isAvailable)
-    {
-        $this->isAvailable = $isAvailable;
-    }
-
-    /**
      * @param Plan $plan
      */
     public function setPlan(Plan $plan)
