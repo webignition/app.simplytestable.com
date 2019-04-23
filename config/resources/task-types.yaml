@@ -1,0 +1,15 @@
+"HTML valdiation":
+  description: Validates the HTML markup for a given URL
+  selectable: true
+
+"CSS valdiation":
+  description: Validates the CSS related to a given web document URL
+  selectable: true
+
+"URL discovery":
+  description: Discover in-scope URLs from the anchors within a given URL
+  selectable: false
+
+"Link integrity":
+  description: "Check links in a HTML document and determine those that don't work"
+  selectable: true
