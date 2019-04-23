@@ -3,11 +3,10 @@
 namespace App\DataFixtures\ORM;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Task\Type\Type as TaskType;
 
-class LoadTaskTypes extends Fixture implements DependentFixtureInterface
+class LoadTaskTypes extends Fixture
 {
     private $taskTypes = array(
         'HTML validation' => array(
@@ -55,15 +54,5 @@ class LoadTaskTypes extends Fixture implements DependentFixtureInterface
             $manager->persist($taskType);
             $manager->flush();
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadTaskTypeClasses::class,
-        ];
     }
 }
