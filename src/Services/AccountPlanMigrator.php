@@ -50,13 +50,12 @@ class AccountPlanMigrator
         }
 
         $names = $accountPlanData['names'];
+        $name = $names[count($names) - 1];
 
         $accountPlan = $this->findPlanByNameHistory($names);
 
-        $constraintName = $names[count($names) - 1];
-
         if ($output) {
-            $output->writeln("  " . '<comment>' . $constraintName . '</comment>');
+            $output->writeln("  " . '<comment>' . $name . '</comment>');
         }
 
         if (null === $accountPlan) {
@@ -67,7 +66,7 @@ class AccountPlanMigrator
             $accountPlan = new Plan();
         }
 
-        $accountPlan->setName($names[count($names) - 1]);
+        $accountPlan->setName($name);
 
         $isVisible = $accountPlanData['visible'] ?? false;
         if ($output) {

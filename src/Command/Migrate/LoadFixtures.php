@@ -3,6 +3,7 @@
 namespace App\Command\Migrate;
 
 use App\Services\AccountPlanMigrator;
+use App\Services\JobTypeMigrator;
 use App\Services\StateMigrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,16 +15,19 @@ class LoadFixtures extends Command
 
     private $stateMigrator;
     private $accountPlanMigrator;
+    private $jobTypeMigrator;
 
     public function __construct(
         StateMigrator $stateMigrator,
         AccountPlanMigrator $accountPlanMigrator,
+        JobTypeMigrator $jobTypeMigrator,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->stateMigrator = $stateMigrator;
         $this->accountPlanMigrator = $accountPlanMigrator;
+        $this->jobTypeMigrator = $jobTypeMigrator;
     }
 
     /**
@@ -43,6 +47,7 @@ class LoadFixtures extends Command
     {
         $this->stateMigrator->migrate($output);
         $this->accountPlanMigrator->migrate($output);
+        $this->jobTypeMigrator->migrate($output);
 
         $output->writeln('');
 
