@@ -28,15 +28,6 @@ class State
      */
     protected $name;
 
-
-    /**
-     *
-     * @var State
-     *
-     * @ORM\OneToOne(targetEntity="State")
-     */
-    protected $nextState;
-
     public static function create(string $name): State
     {
         $state = new State();
