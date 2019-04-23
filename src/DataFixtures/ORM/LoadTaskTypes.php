@@ -5,7 +5,6 @@ namespace App\DataFixtures\ORM;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Task\Type\TaskTypeClass;
 use App\Entity\Task\Type\Type as TaskType;
 
 class LoadTaskTypes extends Fixture implements DependentFixtureInterface
@@ -38,7 +37,6 @@ class LoadTaskTypes extends Fixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $taskTypeClassRepository = $manager->getRepository(TaskTypeClass::class);
         $taskTypeRepository = $manager->getRepository(TaskType::class);
 
         foreach ($this->taskTypes as $name => $properties) {
@@ -50,11 +48,6 @@ class LoadTaskTypes extends Fixture implements DependentFixtureInterface
                 $taskType = new TaskType();
             }
 
-            $taskTypeClass = $taskTypeClassRepository->findOneBy([
-                'name' => $properties['class'],
-            ]);
-
-            $taskType->setClass($taskTypeClass);
             $taskType->setDescription($properties['description']);
             $taskType->setName($name);
             $taskType->setSelectable($properties['selectable']);

@@ -95,14 +95,6 @@ class Type implements \JsonSerializable
     }
 
     /**
-     * @param TaskTypeClass $class
-     */
-    public function setClass(TaskTypeClass $class)
-    {
-        $this->class = $class;
-    }
-
-    /**
      * @return TaskTypeClass
      */
     public function getClass()
