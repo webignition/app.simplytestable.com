@@ -35,15 +35,6 @@ class Type implements \JsonSerializable
 
     /**
      *
-     * @var TaskTypeClass
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type\TaskTypeClass")
-     * @ORM\JoinColumn(name="tasktypeclass_id", referencedColumnName="id", nullable=false)
-     */
-    protected $class;
-
-    /**
-     *
      * @var bool
      * @ORM\Column(type="boolean", name="selectable", nullable=false)
      */
