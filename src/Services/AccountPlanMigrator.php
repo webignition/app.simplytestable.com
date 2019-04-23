@@ -7,6 +7,7 @@ use App\Entity\Account\Plan\Plan;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class AccountPlanMigrator
 {
@@ -25,40 +26,74 @@ class AccountPlanMigrator
         $this->repository = $entityManager->getRepository(Plan::class);
     }
 
-    public function migrate()
+    public function migrate(?OutputInterface $output)
     {
+        if ($output) {
+            $output->writeln('Migrating account plans ...');
+        }
+
         $data = $this->resourceLoader->getData();
 
         foreach ($data as $accountPlanData) {
-            $this->migrateAccountPlan($accountPlanData);
+            $this->migrateAccountPlan($accountPlanData, $output);
+        }
+
+        if ($output) {
+            $output->writeln('');
         }
     }
 
-    private function migrateAccountPlan(array $accountPlanData)
+    private function migrateAccountPlan(array $accountPlanData, ?OutputInterface $output = null)
     {
+        if ($output) {
+            $output->writeln('');
+        }
+
         $names = $accountPlanData['names'];
 
         $accountPlan = $this->findPlanByNameHistory($names);
 
+        $constraintName = $names[count($names) - 1];
+
+        if ($output) {
+            $output->writeln("  " . '<comment>' . $constraintName . '</comment>');
+        }
+
         if (null === $accountPlan) {
+            if ($output) {
+                $output->write(' <fg=cyan>creating</>');
+            }
+
             $accountPlan = new Plan();
         }
 
         $accountPlan->setName($names[count($names) - 1]);
 
         $isVisible = $accountPlanData['visible'] ?? false;
+        if ($output) {
+            $output->writeln('    <comment>visible:</comment> ' . ($isVisible ? 'true' : 'false'));
+        }
+
         $accountPlan->setIsVisible($isVisible);
 
         $isPremium = $accountPlanData['premium'] ?? false;
+        if ($output) {
+            $output->writeln('    <comment>premium:</comment> ' . ($isPremium ? 'true' : 'false'));
+        }
+
         $accountPlan->setIsPremium($isPremium);
 
         $stripeId = $accountPlanData['stripeId'] ?? null;
+        if ($output) {
+            $output->writeln('    <comment>stripeId:</comment> ' . ($stripeId ?? '---'));
+        }
+
         $accountPlan->setStripeId($stripeId);
 
         $constraints = $accountPlanData['constraints'] ?? [];
 
-        foreach ($constraints as $name => $limit) {
-            $constraint = $this->getConstraintFromPlanByName($accountPlan, $name);
+        foreach ($constraints as $constraintName => $limit) {
+            $constraint = $this->getConstraintFromPlanByName($accountPlan, $constraintName);
             $isNewConstraint = false;
 
             if (is_null($constraint)) {
@@ -66,7 +101,7 @@ class AccountPlanMigrator
                 $isNewConstraint = true;
             }
 
-            $constraint->setName($name);
+            $constraint->setName($constraintName);
             if (is_int($limit)) {
                 $constraint->setLimit($limit);
             }
@@ -74,10 +109,18 @@ class AccountPlanMigrator
             if ($isNewConstraint) {
                 $accountPlan->addConstraint($constraint);
             }
+
+            if ($output) {
+                $output->writeln('      <comment>' . $constraintName . '</comment> ' . $limit);
+            }
         }
 
         $this->entityManager->persist($accountPlan);
         $this->entityManager->flush();
+
+//        if ($output) {
+//            $output->writeln(' <info>✓</info>');
+//        }
     }
 
     /**

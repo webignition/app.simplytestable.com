@@ -71,5 +71,9 @@ class StateMigrator
                 $output->writeln(' <info>✓</info>');
             }
         }
+
+        if ($output) {
+            $output->writeln('');
+        }
     }
 }
