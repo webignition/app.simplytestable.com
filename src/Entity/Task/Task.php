@@ -141,13 +141,6 @@ class Task implements \JsonSerializable
         $this->state = $state;
     }
 
-    public function setNextState()
-    {
-        if (!is_null($this->getState()->getNextState())) {
-            $this->state = $this->getState()->getNextState();
-        }
-    }
-
     /**
      * @return State
      */
