@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Entity\Job;
 
 use App\Entity\Job\Job;
+use App\Entity\State;
 use App\Services\JobTypeService;
 use App\Services\TaskTypeService;
 use App\Tests\Factory\ModelFactory;
@@ -43,7 +44,7 @@ class JobTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::JOB_WEBSITE => ModelFactory::createWebsite([
                         ModelFactory::WEBSITE_CANONICAL_URL => 'http://example.com/',
                     ]),
-                    ModelFactory::JOB_STATE => ModelFactory::createState('job-completed'),
+                    ModelFactory::JOB_STATE => State::create('job-completed'),
                     ModelFactory::JOB_URL_COUNT => 12,
                     ModelFactory::JOB_REQUESTED_TASK_TYPES => [],
                     ModelFactory::JOB_TASK_TYPE_OPTIONS_COLLECTION => [],
@@ -72,7 +73,7 @@ class JobTest extends \PHPUnit\Framework\TestCase
                     ModelFactory::JOB_WEBSITE => ModelFactory::createWebsite([
                         ModelFactory::WEBSITE_CANONICAL_URL => 'http://example.com/',
                     ]),
-                    ModelFactory::JOB_STATE => ModelFactory::createState('job-completed'),
+                    ModelFactory::JOB_STATE => State::create('job-completed'),
                     ModelFactory::JOB_URL_COUNT => 12,
                     ModelFactory::JOB_REQUESTED_TASK_TYPES => [
                         $htmlValidationTaskType,

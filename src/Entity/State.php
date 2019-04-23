@@ -37,6 +37,14 @@ class State
      */
     protected $nextState;
 
+    public static function create(string $name): State
+    {
+        $state = new State();
+        $state->name = $name;
+
+        return $state;
+    }
+
     /**
      * Get id
      *
