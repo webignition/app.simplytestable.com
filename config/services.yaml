@@ -208,8 +208,7 @@ services:
       arguments:
         $instanceId: '%env(INSTANCE_ID)%'
 
-    App\Services\StateNames:
-      class: App\Services\StateNames
+    App\Services\StatesDataProvider:
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/states.yaml'
 
@@ -227,4 +226,3 @@ services:
       public: true # to allow usage inside container-aware migrations
       arguments:
         $resourceLoader: '@app.services.data-provider.account-plans'
-

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class StateNames extends YamlResourceLoader
+class StatesDataProvider extends YamlResourceLoader
 {
     public function getData()
     {
