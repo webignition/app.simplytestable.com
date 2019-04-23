@@ -35,13 +35,6 @@ class Constraint implements \JsonSerializable
     private $limit = null;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean")
-     */
-    private $isAvailable = true;
-
-    /**
      * @var Plan
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Account\Plan\Plan", inversedBy="constraints")
@@ -90,22 +83,6 @@ class Constraint implements \JsonSerializable
     }
 
     /**
-     * @param bool $isAvailable
-     */
-    public function setIsAvailable($isAvailable)
-    {
-        $this->isAvailable = $isAvailable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIsAvailable()
-    {
-        return $this->isAvailable;
-    }
-
-    /**
      * @param Plan $plan
      */
     public function setPlan(Plan $plan)
@@ -129,7 +106,6 @@ class Constraint implements \JsonSerializable
         return [
             'name' => $this->name,
             'limit' => $this->limit,
-            'is_available' => $this->isAvailable,
         ];
     }
 }

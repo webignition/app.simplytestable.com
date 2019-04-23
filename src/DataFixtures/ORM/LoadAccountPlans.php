@@ -195,10 +195,6 @@ class LoadAccountPlans extends Fixture
                         $constraint->setLimit($constraintDetails['limit']);
                     }
 
-                    if (isset($constraintDetails['available'])) {
-                        $constraint->setIsAvailable($constraintDetails['available']);
-                    }
-
                     if ($isNewConstraint) {
                         $plan->addConstraint($constraint);
                     }

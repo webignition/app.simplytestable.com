@@ -330,7 +330,6 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
                         'constraint' => [
                             'name' => 'constraint-name',
                             'limit' => 33,
-                            'is_available' => true,
                         ],
                     ],
                 ],
@@ -412,7 +411,6 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
                             'constraint' => [
                                 'name' => 'constraint-1-name',
                                 'limit' => 10,
-                                'is_available' => true,
                             ],
                         ],
                         [
@@ -420,7 +418,6 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
                             'constraint' => [
                                 'name' => 'constraint-2-name',
                                 'limit' => 20,
-                                'is_available' => true,
                             ],
                         ],
                     ],

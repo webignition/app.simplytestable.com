@@ -37,7 +37,6 @@ class RejectionReasonTest extends \PHPUnit\Framework\TestCase
                     'constraint' => [
                         'name' => 'constraint-name',
                         'limit' => 10,
-                        'is_available' => true,
                     ],
                 ],
             ],

@@ -12,13 +12,11 @@ class ConstraintTest extends \PHPUnit\Framework\TestCase
 
         $constraint->setName('constraint-name');
         $constraint->setLimit(20);
-        $constraint->setIsAvailable(true);
 
         $this->assertEquals(
             [
                 'name' => $constraint->getName(),
                 'limit' => $constraint->getLimit(),
-                'is_available' => $constraint->getIsAvailable(),
             ],
             $constraint->jsonSerialize()
         );
