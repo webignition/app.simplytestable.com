@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type as TaskType;
+use App\Entity\Task\TaskType;
 use App\Entity\Job\TaskTypeOptions;
 use App\Model\Parameters;
 use webignition\NormalisedUrl\NormalisedUrl;

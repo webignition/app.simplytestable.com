@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\Task\Output as TaskOutput;
-use App\Entity\Task\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 class GetOutputIdsForErrorCommand extends Command
 {

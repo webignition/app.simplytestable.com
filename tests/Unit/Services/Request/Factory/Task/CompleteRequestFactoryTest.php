@@ -6,7 +6,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Mock;
 use App\Entity\State;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type as TaskType;
+use App\Entity\Task\TaskType;
 use App\Services\Request\Factory\Task\CompleteRequestFactory;
 use App\Services\StateService;
 use App\Services\TaskService;

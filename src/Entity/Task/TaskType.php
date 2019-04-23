@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="TaskType")
  */
-class Type implements \JsonSerializable
+class TaskType implements \JsonSerializable
 {
     /**
      * @var int
@@ -103,11 +103,11 @@ class Type implements \JsonSerializable
     }
 
     /**
-     * @param Type $taskType
+     * @param TaskType $taskType
      *
      * @return bool
      */
-    public function equals(Type $taskType)
+    public function equals(TaskType $taskType)
     {
         return $this->getName() == $taskType->getName();
     }

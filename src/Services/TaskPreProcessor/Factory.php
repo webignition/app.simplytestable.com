@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\TaskPreProcessor;
 
-use App\Entity\Task\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 class Factory
 {
