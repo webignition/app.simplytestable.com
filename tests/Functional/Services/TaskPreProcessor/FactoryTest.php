@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Services\TaskPreProcessor;
 
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\TaskType;
 use App\Services\TaskPreProcessor\Factory;
 use App\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use App\Services\TaskTypeService;
@@ -28,9 +28,9 @@ class FactoryTest extends AbstractBaseTestCase
     public function testGetLinkIntegrityTaskPreProcessor()
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $taskTypeRepository = $entityManager->getRepository(Type::class);
+        $taskTypeRepository = $entityManager->getRepository(TaskType::class);
 
-        /* @var Type $linkIntegrityTaskType */
+        /* @var TaskType $linkIntegrityTaskType */
         $linkIntegrityTaskType = $taskTypeRepository->findOneBy([
             'name' => TaskTypeService::LINK_INTEGRITY_TYPE,
         ]);

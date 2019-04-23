@@ -2,7 +2,7 @@
 
 namespace App\Tests\Factory;
 
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 class TaskTypeFactory
 {

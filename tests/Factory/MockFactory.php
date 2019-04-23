@@ -8,7 +8,7 @@ use FOS\UserBundle\Util\UserManipulator;
 use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 use App\Entity\User;
 use App\Repository\JobRepository;
 use App\Repository\TaskRepository;

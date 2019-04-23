@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\TaskType;
 use App\Repository\TaskRepository;
 use App\Services\HttpClientService;
 use App\Services\StateService;
@@ -57,11 +57,11 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     }
 
     /**
-     * @param Type $taskType
+     * @param TaskType $taskType
      *
      * @return bool
      */
-    public function handles(Type $taskType)
+    public function handles(TaskType $taskType)
     {
         return $taskType->getName() === TaskTypeService::LINK_INTEGRITY_TYPE;
     }

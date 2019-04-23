@@ -2,7 +2,7 @@
 namespace App\Services\TaskPreProcessor;
 
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 interface TaskPreprocessorInterface
 {

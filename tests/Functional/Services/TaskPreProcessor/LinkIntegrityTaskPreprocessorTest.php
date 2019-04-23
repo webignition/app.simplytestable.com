@@ -6,7 +6,7 @@ use App\Tests\Services\JobFactory;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\TaskType;
 use App\Services\HttpClientService;
 use App\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use App\Services\TaskTypeService;
@@ -67,7 +67,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
      */
     public function testHandles($taskTypeName, $expectedHandles)
     {
-        $taskType = new Type();
+        $taskType = new TaskType();
         $taskType->setName($taskTypeName);
 
         $this->assertEquals(

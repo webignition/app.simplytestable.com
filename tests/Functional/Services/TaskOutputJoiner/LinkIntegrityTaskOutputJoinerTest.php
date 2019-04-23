@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Services\TaskOutputJoiner;
 
 use App\Entity\Task\Output;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\TaskType;
 use App\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner;
 use App\Services\TaskTypeService;
 use App\Tests\Functional\AbstractBaseTestCase;
@@ -40,7 +40,7 @@ class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
      */
     public function testHandles($taskTypeName, $expectedHandles)
     {
-        $taskType = new Type();
+        $taskType = new TaskType();
         $taskType->setName($taskTypeName);
 
         $this->assertEquals(

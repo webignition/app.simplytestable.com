@@ -2,7 +2,7 @@
 
 namespace App\Model\Task\Type;
 
-use  App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 class Collection {
 

@@ -15,7 +15,7 @@ use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Job\Type as JobType;
 use App\Entity\State;
 use App\Entity\Task\Output;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 use App\Entity\TimePeriod;
 use App\Entity\User;
 use App\Entity\UserAccountPlan;

@@ -6,7 +6,7 @@ use ReflectionClass;
 use App\Entity\State;
 use App\Entity\Task\Output;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type\Type;
+use App\Entity\Task\TaskType;
 use App\Entity\TimePeriod;
 use App\Tests\Factory\ModelFactory;
 
@@ -18,7 +18,7 @@ class TaskTest extends \PHPUnit\Framework\TestCase
      * @param int $id
      * @param string $url
      * @param State $state
-     * @param Type $type
+     * @param TaskType $type
      * @param TimePeriod|null $timePeriod
      * @param Output|null $output
      * @param array $expectedReturnValue

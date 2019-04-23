@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 use App\Entity\WebSite;
 use App\Entity\State;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 /**
  * @ORM\Entity
@@ -37,7 +37,7 @@ class TaskTypeOptions
     /**
      * @var TaskType
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type\Type")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Task\TaskType")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
      */
     protected $taskType;

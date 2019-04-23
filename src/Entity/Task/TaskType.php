@@ -1,5 +1,6 @@
 <?php
-namespace App\Entity\Task\Type;
+
+namespace App\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -7,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="TaskType")
  */
-class Type implements \JsonSerializable
+class TaskType implements \JsonSerializable
 {
     /**
      * @var int
@@ -31,15 +32,6 @@ class Type implements \JsonSerializable
      * @ORM\Column(type="text", nullable=false)
      */
     protected $description;
-
-    /**
-     *
-     * @var TaskTypeClass
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type\TaskTypeClass")
-     * @ORM\JoinColumn(name="tasktypeclass_id", referencedColumnName="id", nullable=false)
-     */
-    protected $class;
 
     /**
      *
@@ -95,22 +87,6 @@ class Type implements \JsonSerializable
     }
 
     /**
-     * @param TaskTypeClass $class
-     */
-    public function setClass(TaskTypeClass $class)
-    {
-        $this->class = $class;
-    }
-
-    /**
-     * @return TaskTypeClass
-     */
-    public function getClass()
-    {
-        return $this->class;
-    }
-
-    /**
      * @param bool $selectable
      */
     public function setSelectable($selectable)
@@ -127,11 +103,11 @@ class Type implements \JsonSerializable
     }
 
     /**
-     * @param Type $taskType
+     * @param TaskType $taskType
      *
      * @return bool
      */
-    public function equals(Type $taskType)
+    public function equals(TaskType $taskType)
     {
         return $this->getName() == $taskType->getName();
     }

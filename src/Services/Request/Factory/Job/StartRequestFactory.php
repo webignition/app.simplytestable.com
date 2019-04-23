@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Entity\Job\TaskConfiguration;
 use App\Entity\Job\Type as JobType;
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 use App\Entity\WebSite;
 use App\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use App\Request\Job\StartRequest;

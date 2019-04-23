@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use App\Entity\Task\Type\Type as TaskType;
+use App\Entity\Task\TaskType;
 
 class PrepareCommand extends Command
 {
