@@ -6,7 +6,7 @@ use App\Entity\CrawlJobContainer;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type;
+use App\Entity\Task\TaskType;
 use App\Services\CrawlJobContainerService;
 use App\Services\CrawlJobUrlCollector;
 use App\Services\StateService;
@@ -24,7 +24,7 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
     private $crawlJobUrlCollector;
 
     /**
-     * @var Type
+     * @var TaskType
      */
     private $urlDiscoveryTaskType;
 

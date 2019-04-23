@@ -5,7 +5,7 @@ namespace App\Services\TaskPostProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Job\Job;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type;
+use App\Entity\Task\TaskType;
 use App\Repository\TaskRepository;
 use App\Services\CrawlJobContainerService;
 use App\Services\CrawlJobUrlCollector;
@@ -48,11 +48,11 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
     }
 
     /**
-     * @param Type $taskType
+     * @param TaskType $taskType
      *
      * @return bool
      */
-    public function handles(Type $taskType)
+    public function handles(TaskType $taskType)
     {
         return $taskType->getName() === TaskTypeService::URL_DISCOVERY_TYPE;
     }

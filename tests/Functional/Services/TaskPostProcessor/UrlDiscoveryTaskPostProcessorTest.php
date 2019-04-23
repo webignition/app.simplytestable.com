@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Services\TaskPostProcessor;
 
 use App\Entity\Job\Ammendment;
 use App\Entity\Task\Task;
-use App\Entity\Task\Type;
+use App\Entity\Task\TaskType;
 use App\Services\CrawlJobContainerService;
 use App\Services\StateService;
 use App\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
@@ -39,7 +39,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
      */
     public function testHandles($taskTypeName, $expectedHandles)
     {
-        $taskType = new Type();
+        $taskType = new TaskType();
         $taskType->setName($taskTypeName);
 
         $this->assertEquals(

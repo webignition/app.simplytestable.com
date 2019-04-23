@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Job\Job;
 use App\Entity\State;
 use App\Entity\TimePeriod;
-use App\Entity\Task\Type as TaskType;
 use App\Model\Parameters;
 
 /**
@@ -64,7 +63,7 @@ class Task implements \JsonSerializable
     /**
      * @var TaskType
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task\Type")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Task\TaskType")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
      */
     protected $type;

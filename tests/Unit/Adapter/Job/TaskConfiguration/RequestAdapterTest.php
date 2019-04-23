@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Adapter\Job\TaskConfiguration\RequestAdapter;
 
 use Mockery\Mock;
 use App\Adapter\Job\TaskConfiguration\RequestAdapter;
-use App\Entity\Task\Type;
+use App\Entity\Task\TaskType;
 use App\Services\TaskTypeService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -160,11 +160,11 @@ class RequestAdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param array $taskTypeValues
      *
-     * @return Type
+     * @return TaskType
      */
     private function createTaskType($taskTypeValues)
     {
-        $taskType = new Type();
+        $taskType = new TaskType();
         $taskType->setName($taskTypeValues['name']);
         $taskType->setSelectable($taskTypeValues['selectable']);
 

@@ -3,19 +3,19 @@
 namespace App\Tests\Functional\Entity\Task;
 
 use App\Tests\Functional\AbstractBaseTestCase;
-use App\Entity\Task\Type;
+use App\Entity\Task\TaskType;
 
 class TypeTest extends AbstractBaseTestCase
 {
     public function testPersistAndRetrieve()
     {
         $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $taskTypeRepository = $entityManager->getRepository(Type::class);
+        $taskTypeRepository = $entityManager->getRepository(TaskType::class);
 
         $name = 'name-ɸ';
         $description = 'description-ɸ';
 
-        $type = new Type();
+        $type = new TaskType();
         $type->setName($name);
         $type->setDescription($description);
 
