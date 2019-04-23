@@ -35,13 +35,6 @@ class Constraint implements \JsonSerializable
     private $limit = null;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean")
-     */
-    private $isAvailable = true;
-
-    /**
      * @var Plan
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Account\Plan\Plan", inversedBy="constraints")
