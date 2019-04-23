@@ -98,14 +98,6 @@ class Constraint implements \JsonSerializable
     }
 
     /**
-     * @return bool
-     */
-    public function getIsAvailable()
-    {
-        return $this->isAvailable;
-    }
-
-    /**
      * @param Plan $plan
      */
     public function setPlan(Plan $plan)
@@ -129,7 +121,6 @@ class Constraint implements \JsonSerializable
         return [
             'name' => $this->name,
             'limit' => $this->limit,
-            'is_available' => $this->isAvailable,
         ];
     }
 }

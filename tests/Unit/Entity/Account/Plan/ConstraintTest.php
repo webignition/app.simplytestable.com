@@ -18,7 +18,6 @@ class ConstraintTest extends \PHPUnit\Framework\TestCase
             [
                 'name' => $constraint->getName(),
                 'limit' => $constraint->getLimit(),
-                'is_available' => $constraint->getIsAvailable(),
             ],
             $constraint->jsonSerialize()
         );
