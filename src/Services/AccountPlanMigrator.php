@@ -26,7 +26,7 @@ class AccountPlanMigrator
         $this->repository = $entityManager->getRepository(Plan::class);
     }
 
-    public function migrate(?OutputInterface $output)
+    public function migrate(?OutputInterface $output = null)
     {
         if ($output) {
             $output->writeln('Migrating account plans ...');
