@@ -120,7 +120,7 @@ class WorkerActivationRequestService
             return $response->getStatusCode();
         }
 
-        $activationRequest->setNextState();
+        $activationRequest->setState($this->stateService->get(WorkerActivationRequest::STATE_VERIFIED));
 
         $this->entityManager->persist($activationRequest);
         $this->entityManager->flush();

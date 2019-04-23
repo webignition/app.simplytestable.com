@@ -82,17 +82,6 @@ class State
     }
 
     /**
-     * Get nextState
-     *
-     * @return App\Entity\State
-     */
-    public function getNextState()
-    {
-        return $this->nextState;
-    }
-
-
-    /**
      *
      * @return string
      */
