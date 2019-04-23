@@ -62,7 +62,6 @@ class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterf
     {
         return [
             LoadUserData::class,
-            LoadAccountPlans::class,
         ];
     }
 }

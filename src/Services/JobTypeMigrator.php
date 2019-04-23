@@ -54,7 +54,7 @@ class JobTypeMigrator
 
         if (is_null($jobType)) {
             if ($output) {
-                $output->write(' <fg=cyan>creating</>');
+                $output->writeln('   <fg=cyan>creating</>');
             }
 
             $jobType = new JobType();

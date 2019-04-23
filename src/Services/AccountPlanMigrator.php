@@ -60,7 +60,7 @@ class AccountPlanMigrator
 
         if (null === $accountPlan) {
             if ($output) {
-                $output->write(' <fg=cyan>creating</>');
+                $output->writeln('   <fg=cyan>creating</>');
             }
 
             $accountPlan = new Plan();
