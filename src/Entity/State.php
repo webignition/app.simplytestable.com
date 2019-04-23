@@ -70,18 +70,6 @@ class State
     }
 
     /**
-     * Set nextState
-     *
-     * @param App\Entity\State $nextState
-     * @return State
-     */
-    public function setNextState(\App\Entity\State $nextState = null)
-    {
-        $this->nextState = $nextState;
-        return $this;
-    }
-
-    /**
      *
      * @return string
      */
