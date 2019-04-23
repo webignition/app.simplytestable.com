@@ -56,18 +56,6 @@ class State
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return State
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
      * Get name
      *
      * @return string

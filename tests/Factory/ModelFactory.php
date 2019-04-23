@@ -200,14 +200,6 @@ class ModelFactory
         return $stripeCustomer;
     }
 
-    public static function createState(string $name): State
-    {
-        $state = new State();
-        $state->setName($name);
-
-        return $state;
-    }
-
     /**
      * @param string $hostname
      * @param State $state

@@ -80,11 +80,8 @@ class JobListQueryBuilderFactoryTest extends AbstractBaseTestCase
         $typeBar = new Type();
         $typeBar->setName('type-bar');
 
-        $stateFoo = new State();
-        $stateFoo->setName('state-foo');
-
-        $stateBar = new State();
-        $stateBar->setName('state-bar');
+        $stateFoo = State::create('state-foo');
+        $stateBar = State::create('state-bar');
 
         return [
             'default configuration' => [
