@@ -3,7 +3,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Job\Type;
-use Cron\CronBundle\Entity\CronJob;
 use ReflectionClass;
 use App\Entity\Account\Plan\Constraint;
 use App\Entity\Account\Plan\Plan as AccountPlan;
@@ -14,7 +13,6 @@ use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskConfiguration;
 use App\Entity\Job\TaskTypeOptions;
 use App\Entity\Job\Type as JobType;
-use App\Entity\ScheduledJob;
 use App\Entity\State;
 use App\Entity\Task\Output;
 use App\Entity\Task\Type\Type as TaskType;
@@ -75,11 +73,6 @@ class ModelFactory
     const JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE = 'job-ids-to-exclude';
     const JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE = 'job-ids-to-include';
     const JOB_LIST_REQUEST_USER = 'user';
-    const SCHEDULED_JOB_JOB_CONFIGURATION = 'job-configuration';
-    const SCHEDULED_JOB_SCHEDULE = 'schedule';
-    const SCHEDULED_JOB_ID = 'id';
-    const SCHEDULED_JOB_IS_RECURRING = 'is-recurring';
-    const SCHEDULED_JOB_SCHEDULE_MODIFIER = 'schedule-modifier';
     const CRAWL_JOB_CONTAINER_PARENT_JOB = 'parent-job';
     const CRAWL_JOB_CONTAINER_CRAWL_JOB = 'crawl-job';
 
@@ -467,41 +460,6 @@ class ModelFactory
         );
 
         return $jobListRequest;
-    }
-
-    /**
-     * @param array $scheduledJobValues
-     *
-     * @return ScheduledJob
-     */
-    public static function createScheduledJob($scheduledJobValues = [])
-    {
-        $scheduledJob = new ScheduledJob();
-
-        if (isset($scheduledJobValues[self::SCHEDULED_JOB_ID])) {
-            $reflectionClass = new ReflectionClass(ScheduledJob::class);
-
-            $reflectionProperty = $reflectionClass->getProperty('id');
-            $reflectionProperty->setAccessible(true);
-            $reflectionProperty->setValue($scheduledJob, $scheduledJobValues[self::SCHEDULED_JOB_ID]);
-        }
-
-        $scheduledJob->setJobConfiguration($scheduledJobValues[self::SCHEDULED_JOB_JOB_CONFIGURATION]);
-
-        if (isset($scheduledJobValues[self::SCHEDULED_JOB_IS_RECURRING])) {
-            $scheduledJob->setIsRecurring($scheduledJobValues[self::SCHEDULED_JOB_IS_RECURRING]);
-        }
-
-        $cronJob = new CronJob();
-        $cronJob->setSchedule($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE]);
-
-        $scheduledJob->setCronJob($cronJob);
-
-        if (isset($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE_MODIFIER])) {
-            $scheduledJob->setCronModifier($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE_MODIFIER]);
-        }
-
-        return $scheduledJob;
     }
 
     /**

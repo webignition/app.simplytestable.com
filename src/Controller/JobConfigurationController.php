@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\ScheduledJobRepository;
 use App\Adapter\Job\TaskConfiguration\RequestAdapter;
 use App\Entity\User;
 use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
@@ -150,7 +149,7 @@ class JobConfigurationController
         }
     }
 
-    public function deleteAction(ScheduledJobRepository $scheduledJobRepository, int $id):Response
+    public function deleteAction(int $id):Response
     {
         if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -161,22 +160,9 @@ class JobConfigurationController
             throw new NotFoundHttpException();
         }
 
-        $scheduledJob = $scheduledJobRepository->findOneBy([
-            'jobConfiguration' => $jobConfiguration,
-        ]);
+        $this->jobConfigurationService->delete($id);
 
-        if (empty($scheduledJob)) {
-            $this->jobConfigurationService->delete($id);
-
-            return new Response();
-        }
-
-        return Response::create('', 400, [
-            'X-JobConfigurationDelete-Error' => json_encode([
-                'code' => 1,
-                'message' => 'Job configuration is in use by a scheduled job'
-            ])
-        ]);
+        return new Response();
     }
 
     public function getAction(int $id): JsonResponse

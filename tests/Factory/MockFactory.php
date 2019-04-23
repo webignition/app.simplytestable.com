@@ -11,7 +11,6 @@ use App\Entity\Task\Task;
 use App\Entity\Task\Type\Type as TaskType;
 use App\Entity\User;
 use App\Repository\JobRepository;
-use App\Repository\ScheduledJobRepository;
 use App\Repository\TaskRepository;
 use App\Services\AccountPlanService;
 use App\Services\ApplicationStateService;
@@ -47,8 +46,6 @@ use App\Services\UserPostActivationPropertiesService;
 use App\Services\UserService;
 use App\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 use App\Services\WebSiteService;
-use App\Services\ScheduledJob\Service as ScheduledJobService;
-use App\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 use App\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use App\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 use App\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
@@ -718,77 +715,6 @@ class MockFactory
         $jobTypeService = \Mockery::mock(JobTypeService::class);
 
         return $jobTypeService;
-    }
-
-    /**
-     * @param array $calls
-     *
-     * @return Mock|ScheduledJobRepository
-     */
-    public static function createScheduledJobRepository($calls = [])
-    {
-        /* @var Mock|ScheduledJobRepository $scheduledJobRepository */
-        $scheduledJobRepository = \Mockery::mock(ScheduledJobRepository::class);
-
-        if (isset($calls['findOneBy'])) {
-            $callValues = $calls['findOneBy'];
-
-            $with = $callValues['with'];
-            $return = $callValues['return'];
-
-            $scheduledJobRepository
-                ->shouldReceive('findOneBy')
-                ->with($with)
-                ->andReturn($return);
-        }
-
-        return $scheduledJobRepository;
-    }
-
-    /**
-     * @param array $calls
-     *
-     * @return Mock|ScheduledJobService
-     */
-    public static function createScheduledJobService($calls = [])
-    {
-        /* @var Mock|ScheduledJobService $scheduledJobService */
-        $scheduledJobService = \Mockery::mock(ScheduledJobService::class);
-
-        if (isset($calls['get'])) {
-            $callValues = $calls['get'];
-
-            $with = $callValues['with'];
-            $return = $callValues['return'];
-
-            $scheduledJobService
-                ->shouldReceive('get')
-                ->with($with)
-                ->andReturn($return);
-        }
-
-        if (isset($calls['delete'])) {
-            $callValues = $calls['delete'];
-
-            $with = $callValues['with'];
-
-            $scheduledJobService
-                ->shouldReceive('delete')
-                ->with($with);
-        }
-
-        return $scheduledJobService;
-    }
-
-    /**
-     * @return Mock|CronModifierValidationService
-     */
-    public static function createCronModifierValidationService()
-    {
-        /* @var Mock|CronModifierValidationService $validationService */
-        $validationService = \Mockery::mock(CronModifierValidationService::class);
-
-        return $validationService;
     }
 
     /**

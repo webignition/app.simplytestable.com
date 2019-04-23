@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Services\Job\Configuration;
 
 use App\Services\JobTypeService;
-use App\Services\ScheduledJob\Service as ScheduledJobService;
 use App\Services\TaskTypeService;
 use App\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use App\Services\UserService;
@@ -44,37 +43,6 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
                 'userName' => 'member1',
             ],
         ];
-    }
-
-    public function testRemoveAllInUseByScheduledJob()
-    {
-        $userService = self::$container->get(UserService::class);
-        $scheduledJobService = self::$container->get(ScheduledJobService::class);
-
-        $this->setUser($userService->getPublicUser());
-
-        $jobConfigurationCollection = $this->createJobConfigurationCollection([
-            [
-                'label' => 'foo',
-                'website' => 'http://example.com/',
-                'type' => JobTypeService::FULL_SITE_NAME,
-                'task-configuration' => [
-                    [
-                        'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                    ]
-                ],
-                'parameters' => '[]',
-            ],
-        ]);
-
-        $jobConfiguration = $jobConfigurationCollection[0];
-        $scheduledJobService->create($jobConfiguration);
-
-        $this->expectException(JobConfigurationServiceException::class);
-        $this->expectExceptionMessage('One or more job configurations are in use by one or more scheduled jobs');
-        $this->expectExceptionCode(JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB);
-
-        $this->jobConfigurationService->removeAll();
     }
 
     public function testRemoveAllSuccess()

@@ -2,9 +2,6 @@
 
 namespace App\Tests\Unit\Controller\JobConfiguration;
 
-use App\Entity\Job\Configuration;
-use App\Entity\ScheduledJob;
-use App\Repository\ScheduledJobRepository;
 use App\Services\ApplicationStateService;
 use App\Services\Job\ConfigurationService;
 use App\Tests\Factory\MockFactory;
@@ -27,7 +24,6 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
         $this->expectException(ServiceUnavailableHttpException::class);
 
         $jobConfigurationController->deleteAction(
-            \Mockery::mock(ScheduledJobRepository::class),
             self::JOB_CONFIGURATION_ID
         );
     }
@@ -46,43 +42,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractJobConfiguratio
         $this->expectException(NotFoundHttpException::class);
 
         $jobConfigurationController->deleteAction(
-            \Mockery::mock(ScheduledJobRepository::class),
             self::JOB_CONFIGURATION_ID
-        );
-    }
-
-    public function testDeleteActionJobConfigurationBelongsToScheduledJob()
-    {
-        $jobConfiguration = \Mockery::mock(Configuration::class);
-
-        $jobConfigurationController = $this->createJobConfigurationController([
-            ConfigurationService::class => MockFactory::createJobConfigurationService([
-                'getById' => [
-                    'with' => self::JOB_CONFIGURATION_ID,
-                    'return' => $jobConfiguration,
-                ],
-            ]),
-        ]);
-
-        $scheduledJobRepository = MockFactory::createScheduledJobRepository([
-            'findOneBy' => [
-                'with' => [
-                    'jobConfiguration' => $jobConfiguration,
-                ],
-                'return' => new ScheduledJob(),
-            ],
-        ]);
-
-        $response = $jobConfigurationController->deleteAction(
-            $scheduledJobRepository,
-            self::JOB_CONFIGURATION_ID
-        );
-
-        $this->assertTrue($response->isClientError());
-
-        $this->assertEquals(
-            '{"code":1,"message":"Job configuration is in use by a scheduled job"}',
-            $response->headers->get('X-JobConfigurationDelete-Error')
         );
     }
 }
