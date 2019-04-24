@@ -3,6 +3,8 @@
 namespace App\Services\FixtureLoader;
 
 use App\Entity\User;
+use App\Services\AccountPlanService;
+use App\Services\UserAccountPlanService;
 use App\Services\UserDataProvider;
 use App\Services\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,17 +15,23 @@ class UserFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderIn
 {
     private $userService;
     private $userManipulator;
+    private $userAccountPlanService;
+    private $accountPlanService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         UserDataProvider $dataProvider,
         UserService $userService,
-        UserManipulator $userManipulator
+        UserManipulator $userManipulator,
+        UserAccountPlanService $userAccountPlanService,
+        AccountPlanService $accountPlanService
     ) {
         parent::__construct($entityManager, $dataProvider);
 
         $this->userService = $userService;
         $this->userManipulator = $userManipulator;
+        $this->userAccountPlanService = $userAccountPlanService;
+        $this->accountPlanService = $accountPlanService;
     }
 
     protected function getEntityClass(): string
@@ -56,6 +64,7 @@ class UserFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderIn
         $username = $userData['username'];
         $password = $userData['password'];
         $role = $userData['role'];
+        $planName = $userData['plan'];
 
         if ($output) {
             $output->writeln("  " . '<comment>' . $email . '</comment>');
@@ -81,6 +90,11 @@ class UserFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderIn
 
             $this->userService->updateUser($user);
             $this->userManipulator->activate($user->getUsername());
+
+            if ($planName) {
+                $plan = $this->accountPlanService->get($planName);
+                $this->userAccountPlanService->subscribe($user, $plan);
+            }
         }
     }
 }
