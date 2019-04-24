@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\Job\Type;
-use App\Services\JobTypeMigrator;
+use App\Services\FixtureLoader\JobTypeFixtureLoader;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class JobTypeMigratorTest extends AbstractBaseTestCase
+class JobTypeFixtureLoaderTest extends AbstractBaseTestCase
 {
     /**
-     * @var JobTypeMigrator
+     * @var JobTypeFixtureLoader
      */
-    private $jobTypeMigrator;
+    private $jobTypeFixtureLoader;
 
     /**
      * @var EntityManagerInterface
@@ -35,7 +35,7 @@ class JobTypeMigratorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobTypeMigrator = self::$container->get(JobTypeMigrator::class);
+        $this->jobTypeFixtureLoader = self::$container->get(JobTypeFixtureLoader::class);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->repository = $this->entityManager->getRepository(Type::class);
@@ -48,31 +48,31 @@ class JobTypeMigratorTest extends AbstractBaseTestCase
         $this->jobTypeData = $jobTypesDataProvider->getData();
     }
 
-    public function testMigrateFromEmpty()
+    public function testLoadFromEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
-        $this->jobTypeMigrator->migrate();
+        $this->jobTypeFixtureLoader->load();
 
         $this->assertRepositoryJobTypes($this->jobTypeData);
     }
 
-    public function testMigrateFromNonEmpty()
+    public function testLoadFromNonEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
         $name = key($this->jobTypeData);
         $description = current($this->jobTypeData);
 
-        $reflectionMethod = new \ReflectionMethod(JobTypeMigrator::class, 'migrateJobType');
+        $reflectionMethod = new \ReflectionMethod(JobTypeFixtureLoader::class, 'loadJobType');
         $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invoke($this->jobTypeMigrator, $name, $description);
+        $reflectionMethod->invoke($this->jobTypeFixtureLoader, $name, $description);
 
         $this->assertRepositoryJobTypes([
             $name => $description,
         ]);
 
-        $this->jobTypeMigrator->migrate();
+        $this->jobTypeFixtureLoader->load();
         $this->assertRepositoryJobTypes($this->jobTypeData);
     }
 

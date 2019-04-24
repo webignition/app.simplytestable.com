@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\Task\TaskType;
-use App\Services\TaskTypeMigrator;
+use App\Services\FixtureLoader\TaskTypeFixtureLoader;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class TaskTypeMigratorTest extends AbstractBaseTestCase
+class TaskTypeFixtureLoaderTest extends AbstractBaseTestCase
 {
     /**
-     * @var TaskTypeMigrator
+     * @var TaskTypeFixtureLoader
      */
-    private $taskTypeMigrator;
+    private $taskTypeFixtureLoader;
 
     /**
      * @var EntityManagerInterface
@@ -35,7 +35,7 @@ class TaskTypeMigratorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskTypeMigrator = self::$container->get(TaskTypeMigrator::class);
+        $this->taskTypeFixtureLoader = self::$container->get(TaskTypeFixtureLoader::class);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->repository = $this->entityManager->getRepository(TaskType::class);
@@ -48,31 +48,31 @@ class TaskTypeMigratorTest extends AbstractBaseTestCase
         $this->taskTypeData = $taskTypesDataProvider->getData();
     }
 
-    public function testMigrateFromEmpty()
+    public function testLoadFromEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
-        $this->taskTypeMigrator->migrate();
+        $this->taskTypeFixtureLoader->load();
 
         $this->assertRepositoryTaskTypes($this->taskTypeData);
     }
 
-    public function testMigrateFromNonEmpty()
+    public function testLoadFromNonEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
         $name = key($this->taskTypeData);
         $taskTypeProperties = current($this->taskTypeData);
 
-        $reflectionMethod = new \ReflectionMethod(TaskTypeMigrator::class, 'migrateTaskType');
+        $reflectionMethod = new \ReflectionMethod(TaskTypeFixtureLoader::class, 'loadTaskType');
         $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invoke($this->taskTypeMigrator, $name, $taskTypeProperties);
+        $reflectionMethod->invoke($this->taskTypeFixtureLoader, $name, $taskTypeProperties);
 
         $this->assertRepositoryTaskTypes([
             $name => $taskTypeProperties,
         ]);
 
-        $this->taskTypeMigrator->migrate();
+        $this->taskTypeFixtureLoader->load();
         $this->assertRepositoryTaskTypes($this->taskTypeData);
     }
 

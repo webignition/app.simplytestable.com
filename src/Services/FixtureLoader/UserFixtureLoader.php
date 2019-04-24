@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\FixtureLoader;
 
 use App\Entity\User;
+use App\Services\UserDataProvider;
+use App\Services\UserService;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\UserManipulator;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UserMigrator
+class UserFixtureLoader implements FixtureLoaderInterface
 {
     private $userService;
     private $userManipulator;
@@ -33,14 +35,14 @@ class UserMigrator
         $this->userManipulator = $userManipulator;
     }
 
-    public function migrate(?OutputInterface $output = null)
+    public function load(?OutputInterface $output = null): void
     {
         if ($output) {
             $output->writeln('Migrating default users ...');
         }
 
         foreach ($this->userData as $userData) {
-            $this->migrateUser($userData, $output);
+            $this->loadUser($userData, $output);
         }
 
         if ($output) {
@@ -48,7 +50,7 @@ class UserMigrator
         }
     }
 
-    private function migrateUser(array $userData, ?OutputInterface $output = null)
+    private function loadUser(array $userData, ?OutputInterface $output = null)
     {
         if ($output) {
             $output->writeln('');

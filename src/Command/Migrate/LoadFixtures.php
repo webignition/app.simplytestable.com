@@ -2,11 +2,7 @@
 
 namespace App\Command\Migrate;
 
-use App\Services\AccountPlanMigrator;
-use App\Services\JobTypeMigrator;
-use App\Services\StateMigrator;
-use App\Services\TaskTypeMigrator;
-use App\Services\UserMigrator;
+use App\Services\FixtureLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,27 +11,13 @@ class LoadFixtures extends Command
 {
     const RETURN_CODE_OK = 0;
 
-    private $stateMigrator;
-    private $accountPlanMigrator;
-    private $jobTypeMigrator;
-    private $taskTypeMigrator;
-    private $userMigrator;
+    private $fixtureLoader;
 
-    public function __construct(
-        StateMigrator $stateMigrator,
-        AccountPlanMigrator $accountPlanMigrator,
-        JobTypeMigrator $jobTypeMigrator,
-        TaskTypeMigrator $taskTypeMigrator,
-        UserMigrator $userMigrator,
-        $name = null
-    ) {
+    public function __construct(FixtureLoader $fixtureLoader, $name = null)
+    {
         parent::__construct($name);
 
-        $this->stateMigrator = $stateMigrator;
-        $this->accountPlanMigrator = $accountPlanMigrator;
-        $this->jobTypeMigrator = $jobTypeMigrator;
-        $this->taskTypeMigrator = $taskTypeMigrator;
-        $this->userMigrator = $userMigrator;
+        $this->fixtureLoader = $fixtureLoader;
     }
 
     /**
@@ -53,12 +35,7 @@ class LoadFixtures extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->stateMigrator->migrate($output);
-        $this->accountPlanMigrator->migrate($output);
-        $this->jobTypeMigrator->migrate($output);
-        $this->taskTypeMigrator->migrate($output);
-        $this->userMigrator->migrate($output);
-
+        $this->fixtureLoader->load($output);
         $output->writeln('');
 
         return self::RETURN_CODE_OK;

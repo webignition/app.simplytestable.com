@@ -69,9 +69,3 @@ services:
 
   App\Services\Job\AuthorisationService:
     public: true
-
-  app.services.data-provider.account-plans:
-    class: App\Services\YamlResourceLoader
-    public: true
-    arguments:
-      $resourcePath: '%kernel.project_dir%/config/resources/account-plans.yaml'

@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\FixtureLoader;
 
 use App\Entity\Task\TaskType;
+use App\Services\YamlResourceLoader;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TaskTypeMigrator
+class TaskTypeFixtureLoader implements FixtureLoaderInterface
 {
     private $resourceLoader;
     private $entityManager;
@@ -25,7 +26,7 @@ class TaskTypeMigrator
         $this->repository = $entityManager->getRepository(TaskType::class);
     }
 
-    public function migrate(?OutputInterface $output = null)
+    public function load(?OutputInterface $output = null): void
     {
         if ($output) {
             $output->writeln('Migrating task types ...');
@@ -34,7 +35,7 @@ class TaskTypeMigrator
         $data = $this->resourceLoader->getData();
 
         foreach ($data as $name => $taskTypeProperties) {
-            $this->migrateTaskType($name, $taskTypeProperties, $output);
+            $this->loadTaskType($name, $taskTypeProperties, $output);
         }
 
         if ($output) {
@@ -42,7 +43,7 @@ class TaskTypeMigrator
         }
     }
 
-    private function migrateTaskType(string $name, array $taskTypeProperties, ?OutputInterface $output = null)
+    private function loadTaskType(string $name, array $taskTypeProperties, ?OutputInterface $output = null)
     {
         if ($output) {
             $output->writeln('');
