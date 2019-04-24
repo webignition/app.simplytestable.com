@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\User;
 use App\Entity\UserAccountPlan;
+use App\Services\UserAccountPlanService;
 use App\Services\UserDataProvider;
 use App\Services\FixtureLoader\UserFixtureLoader;
 
@@ -70,6 +71,8 @@ class UserFixtureLoaderTest extends AbstractFixtureLoaderTest
 
     private function assertRepositoryUsers(array $userDataCollection)
     {
+        $userAccountPlanService = self::$container->get(UserAccountPlanService::class);
+
         $repositoryUsers = $this->repository->findAll();
 
         $this->assertCount(count($userDataCollection), $repositoryUsers);
@@ -87,15 +90,22 @@ class UserFixtureLoaderTest extends AbstractFixtureLoaderTest
             $this->assertEquals($userData['email'], $user->getEmail());
             $this->assertEquals($userData['username'], $user->getUsername());
             $this->assertNotNull($user->getPassword());
-        }
-    }
 
-    private function removeAllForEntity(string $entityClass)
-    {
-        $repository = $this->entityManager->getRepository($entityClass);
-        $entities = $repository->findAll();
-        foreach ($entities as $entity) {
-            $this->entityManager->remove($entity);
+            $expectedRoles = [];
+
+            if (isset($userData['role'])) {
+                $expectedRoles[] = strtoupper($userData['role']);
+            }
+
+            $expectedRoles[] = 'ROLE_USER';
+
+            $this->assertEquals($expectedRoles, $user->getRoles());
+
+            if (isset($userData['plan'])) {
+                $plan = $userAccountPlanService->getForUser($user);
+
+                $this->assertEquals($userData['plan'], $plan->getPlan()->getName());
+            }
         }
     }
 }

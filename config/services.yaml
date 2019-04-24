@@ -246,12 +246,14 @@ services:
             username: public
             password: public
             role: null
+            plan: public
 
           -
             email: '%env(ADMIN_USER_EMAIL)%'
             username: admin
             password: '%env(ADMIN_USER_PASSWORD)%'
             role: role_admin
+            plan: null
 
     App\Services\FixtureLoader\UserFixtureLoader:
 
