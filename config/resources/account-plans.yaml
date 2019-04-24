@@ -1,7 +1,6 @@
 -
   names:
     - public
-  visible: false
   constraints:
     full_site_jobs_per_site: 1
     single_url_jobs_per_url: 1
@@ -67,4 +66,11 @@
   premium: true
   constraints:
     urls_per_job: 8000
+    credits_per_month: 250000
+
+-
+  names:
+    - st-private
+  constraints:
+    urls_per_job: 250
     credits_per_month: 250000
