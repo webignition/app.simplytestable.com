@@ -4,12 +4,11 @@ namespace App\DataFixtures\ORM;
 
 use App\Repository\JobRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\User;
 use App\Services\UserService;
 
-class NormalisePublicUserJobVisibility extends Fixture implements DependentFixtureInterface
+class NormalisePublicUserJobVisibility extends Fixture
 {
     /**
      * @var User
@@ -41,15 +40,5 @@ class NormalisePublicUserJobVisibility extends Fixture implements DependentFixtu
         }
 
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadUserData::class,
-        ];
     }
 }

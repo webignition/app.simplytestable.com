@@ -6,6 +6,7 @@ use App\Services\AccountPlanMigrator;
 use App\Services\JobTypeMigrator;
 use App\Services\StateMigrator;
 use App\Services\TaskTypeMigrator;
+use App\Services\UserMigrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,12 +19,14 @@ class LoadFixtures extends Command
     private $accountPlanMigrator;
     private $jobTypeMigrator;
     private $taskTypeMigrator;
+    private $userMigrator;
 
     public function __construct(
         StateMigrator $stateMigrator,
         AccountPlanMigrator $accountPlanMigrator,
         JobTypeMigrator $jobTypeMigrator,
         TaskTypeMigrator $taskTypeMigrator,
+        UserMigrator $userMigrator,
         $name = null
     ) {
         parent::__construct($name);
@@ -32,6 +35,7 @@ class LoadFixtures extends Command
         $this->accountPlanMigrator = $accountPlanMigrator;
         $this->jobTypeMigrator = $jobTypeMigrator;
         $this->taskTypeMigrator = $taskTypeMigrator;
+        $this->userMigrator = $userMigrator;
     }
 
     /**
@@ -53,6 +57,7 @@ class LoadFixtures extends Command
         $this->accountPlanMigrator->migrate($output);
         $this->jobTypeMigrator->migrate($output);
         $this->taskTypeMigrator->migrate($output);
+        $this->userMigrator->migrate($output);
 
         $output->writeln('');
 

@@ -186,11 +186,6 @@ services:
       arguments:
         - '%env(POSTMARK_API_KEY)%'
 
-    App\DataFixtures\ORM\LoadUserData:
-      arguments:
-        $adminUserEmail: '%env(ADMIN_USER_EMAIL)%'
-        $adminUserPassword: '%env(ADMIN_USER_PASSWORD)%'
-
     App\DataFixtures\ORM\NormaliseUserAccountPlans:
       arguments:
         $defaultTrialPeriod: '%env(DEFAULT_TRIAL_PERIOD)%'
@@ -246,3 +241,18 @@ services:
       public: true # to allow usage inside container-aware migrations
       arguments:
         $resourceLoader: '@app.services.data-provider.task-types'
+
+    App\Services\UserDataProvider:
+      arguments:
+        $userData:
+          -
+            email: public@simplytestable.com
+            username: public
+            password: public
+            role: null
+
+          -
+            email: '%env(ADMIN_USER_EMAIL)%'
+            username: admin
+            password: '%env(ADMIN_USER_PASSWORD)%'
+            role: role_admin

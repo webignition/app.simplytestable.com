@@ -3,13 +3,12 @@
 namespace App\DataFixtures\ORM;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Services\AccountPlanService;
 use App\Services\UserAccountPlanService;
 use App\Services\UserService;
 
-class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterface
+class SetPublicUserAccountPlan extends Fixture
 {
     /**
      * @var UserService
@@ -53,15 +52,5 @@ class SetPublicUserAccountPlan extends Fixture implements DependentFixtureInterf
             $plan = $this->accountPlanService->get('public');
             $this->userAccountPlanService->subscribe($publicUser, $plan);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadUserData::class,
-        ];
     }
 }
