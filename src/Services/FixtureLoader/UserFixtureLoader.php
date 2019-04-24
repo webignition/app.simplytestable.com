@@ -13,17 +13,15 @@ class UserFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderIn
 {
     private $userService;
     private $userManipulator;
-    private $userData;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserDataProvider $defaultUserData,
+        UserDataProvider $dataProvider,
         UserService $userService,
         UserManipulator $userManipulator
     ) {
-        parent::__construct($entityManager);
+        parent::__construct($entityManager, $dataProvider);
 
-        $this->userData = $defaultUserData->getData();
         $this->userService = $userService;
         $this->userManipulator = $userManipulator;
     }
@@ -39,7 +37,7 @@ class UserFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderIn
             $output->writeln('Migrating default users ...');
         }
 
-        foreach ($this->userData as $userData) {
+        foreach ($this->data as $userData) {
             $this->loadUser($userData, $output);
         }
 

@@ -3,19 +3,15 @@
 namespace App\Services\FixtureLoader;
 
 use App\Entity\Task\TaskType;
-use App\Services\YamlResourceLoader;
+use App\Services\DataProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TaskTypeFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderInterface
 {
-    private $resourceLoader;
-
-    public function __construct(EntityManagerInterface $entityManager, YamlResourceLoader $resourceLoader)
+    public function __construct(EntityManagerInterface $entityManager, DataProviderInterface $dataProvider)
     {
-        parent::__construct($entityManager);
-
-        $this->resourceLoader = $resourceLoader;
+        parent::__construct($entityManager, $dataProvider);
     }
 
     protected function getEntityClass(): string
@@ -29,9 +25,7 @@ class TaskTypeFixtureLoader extends AbstractFixtureLoader implements FixtureLoad
             $output->writeln('Migrating task types ...');
         }
 
-        $data = $this->resourceLoader->getData();
-
-        foreach ($data as $name => $taskTypeProperties) {
+        foreach ($this->data as $name => $taskTypeProperties) {
             $this->loadTaskType($name, $taskTypeProperties, $output);
         }
 

@@ -3,19 +3,15 @@
 namespace App\Services\FixtureLoader;
 
 use App\Entity\State;
-use App\Services\YamlResourceLoader;
+use App\Services\DataProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class StateFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderInterface
 {
-    private $resourceLoader;
-
-    public function __construct(EntityManagerInterface $entityManager, YamlResourceLoader $resourceLoader)
+    public function __construct(EntityManagerInterface $entityManager, DataProviderInterface $dataProvider)
     {
-        parent::__construct($entityManager);
-
-        $this->resourceLoader = $resourceLoader;
+        parent::__construct($entityManager, $dataProvider);
     }
 
     protected function getEntityClass(): string
@@ -29,11 +25,9 @@ class StateFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderI
             $output->writeln('Migrating states ...');
         }
 
-        $names = $this->resourceLoader->getData();
-
         $currentEntity = '';
 
-        foreach ($names as $name) {
+        foreach ($this->data as $name) {
             $entity = explode('-', $name, 2)[0];
 
             if ($currentEntity !== $entity) {

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class UserDataProvider
+class UserDataProvider implements DataProviderInterface
 {
     private $data;
 

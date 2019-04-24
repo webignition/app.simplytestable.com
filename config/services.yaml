@@ -209,34 +209,34 @@ services:
 
     App\Services\FixtureLoader\StateFixtureLoader:
       arguments:
-        $resourceLoader: '@App\Services\StatesDataProvider'
+        $dataProvider: '@App\Services\StatesDataProvider'
 
     app.services.data-provider.account-plans:
-      class: App\Services\YamlResourceLoader
+      class: App\Services\YamlResourceDataProvider
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/account-plans.yaml'
 
     App\Services\FixtureLoader\AccountPlanFixtureLoader:
       arguments:
-        $resourceLoader: '@app.services.data-provider.account-plans'
+        $dataProvider: '@app.services.data-provider.account-plans'
 
     app.services.data-provider.job-types:
-      class: App\Services\YamlResourceLoader
+      class: App\Services\YamlResourceDataProvider
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/job-types.yaml'
 
     App\Services\FixtureLoader\JobTypeFixtureLoader:
       arguments:
-        $resourceLoader: '@app.services.data-provider.job-types'
+        $dataProvider: '@app.services.data-provider.job-types'
 
     app.services.data-provider.task-types:
-      class: App\Services\YamlResourceLoader
+      class: App\Services\YamlResourceDataProvider
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/task-types.yaml'
 
     App\Services\FixtureLoader\TaskTypeFixtureLoader:
       arguments:
-        $resourceLoader: '@app.services.data-provider.task-types'
+        $dataProvider: '@app.services.data-provider.task-types'
 
     App\Services\UserDataProvider:
       arguments:
