@@ -19,6 +19,10 @@ env:
     - POSTMARK_API_KEY=postmark_api_key_value
     - DOTENV_PATH=../../../.env.travis-ci
     - INSTANCE_ID=1
+    - LOCK_DATABASE_HOST=127.0.0.1
+    - LOCK_DATABASE_NAME=myapp_test
+    - LOCK_DATABASE_USER=root
+    - LOCK_DATABASE_PASSWORD=
 
 cache:
   directories:

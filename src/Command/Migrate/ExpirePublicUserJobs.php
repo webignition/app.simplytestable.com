@@ -12,25 +12,33 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Lock\Factory as LockFactory;
 
 class ExpirePublicUserJobs extends Command
 {
+    const NAME = 'simplytestable:migrate:expire-public-user-jobs';
+    const LOCK_KEY = 'cmd:' . self::NAME;
+    const LOCK_TTL = 1800; // 30 minutes in seconds
+
     const OPTION_MAX_AGE = 'max-age';
     const OPTION_LIMIT = 'limit';
 
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_UNPARSEABLE_MAX_AGE = 1;
+    const RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK = 2;
 
     const DEFAULT_AGE = '24 HOUR';
     const DEFAULT_LIMIT = null;
 
     const FLUSH_THRESHOLD = 10;
 
+
     private $jobRepository;
     private $userService;
     private $stateService;
     private $jobService;
     private $entityManager;
+    private $lockFactory;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -38,6 +46,7 @@ class ExpirePublicUserJobs extends Command
         UserService $userService,
         StateService $stateService,
         JobService $jobService,
+        LockFactory $lockFactory,
         $name = null
     ) {
         parent::__construct($name);
@@ -47,6 +56,7 @@ class ExpirePublicUserJobs extends Command
         $this->stateService = $stateService;
         $this->jobService = $jobService;
         $this->entityManager = $entityManager;
+        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -55,7 +65,7 @@ class ExpirePublicUserJobs extends Command
     protected function configure()
     {
         $this
-            ->setName('simplytestable:migrate:expire-public-user-jobs')
+            ->setName(self::NAME)
             ->setDescription('Expire old public user tests')
             ->addOption(
                 'dry-run',
@@ -91,6 +101,17 @@ class ExpirePublicUserJobs extends Command
                 '<comment>This is a DRY RUN, no data will be written</comment>',
                 '',
             ]);
+        }
+
+        $lock = null;
+
+        if (!$isDryRun) {
+            $lock = $this->lockFactory->createLock(self::LOCK_KEY, self::LOCK_TTL);
+            if (!$lock->acquire()) {
+                $output->writeln('Unable to acquire lock, ending');
+
+                return self::RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK;
+            }
         }
 
         $limit = $input->getOption(self::OPTION_LIMIT);
@@ -172,6 +193,10 @@ class ExpirePublicUserJobs extends Command
 
         if ($flushCount > 0) {
             $this->entityManager->flush();
+        }
+
+        if ($lock) {
+            $lock->release();
         }
 
         return self::RETURN_CODE_OK;
