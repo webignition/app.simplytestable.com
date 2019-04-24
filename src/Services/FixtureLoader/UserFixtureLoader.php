@@ -5,34 +5,32 @@ namespace App\Services\FixtureLoader;
 use App\Entity\User;
 use App\Services\UserDataProvider;
 use App\Services\UserService;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\UserManipulator;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UserFixtureLoader implements FixtureLoaderInterface
+class UserFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderInterface
 {
     private $userService;
     private $userManipulator;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
-
     private $userData;
 
     public function __construct(
-        UserDataProvider $defaultUserData,
         EntityManagerInterface $entityManager,
+        UserDataProvider $defaultUserData,
         UserService $userService,
         UserManipulator $userManipulator
     ) {
+        parent::__construct($entityManager);
+
         $this->userData = $defaultUserData->getData();
-        $this->repository = $entityManager->getRepository(User::class);
         $this->userService = $userService;
         $this->userManipulator = $userManipulator;
+    }
+
+    protected function getEntityClass(): string
+    {
+        return User::class;
     }
 
     public function load(?OutputInterface $output = null): void

@@ -4,26 +4,23 @@ namespace App\Services\FixtureLoader;
 
 use App\Entity\Task\TaskType;
 use App\Services\YamlResourceLoader;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TaskTypeFixtureLoader implements FixtureLoaderInterface
+class TaskTypeFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderInterface
 {
     private $resourceLoader;
-    private $entityManager;
 
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
-
-    public function __construct(YamlResourceLoader $resourceLoader, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, YamlResourceLoader $resourceLoader)
     {
+        parent::__construct($entityManager);
+
         $this->resourceLoader = $resourceLoader;
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(TaskType::class);
+    }
+
+    protected function getEntityClass(): string
+    {
+        return TaskType::class;
     }
 
     public function load(?OutputInterface $output = null): void
