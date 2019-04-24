@@ -186,10 +186,6 @@ services:
       arguments:
         - '%env(POSTMARK_API_KEY)%'
 
-    App\DataFixtures\ORM\NormaliseUserAccountPlans:
-      arguments:
-        $defaultTrialPeriod: '%env(DEFAULT_TRIAL_PERIOD)%'
-
     App\Services\ApplicationStateService:
       arguments:
         $kernelProjectDirectory: '%kernel.project_dir%'
