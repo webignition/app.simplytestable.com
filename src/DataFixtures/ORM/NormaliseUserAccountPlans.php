@@ -77,7 +77,6 @@ class NormaliseUserAccountPlans extends Fixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            LoadUserData::class,
             SetPublicUserAccountPlan::class,
         ];
     }
