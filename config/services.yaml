@@ -207,7 +207,7 @@ services:
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/states.yaml'
 
-    App\Services\StateFixtureLoader:
+    App\Services\FixtureLoader\StateFixtureLoader:
       arguments:
         $resourceLoader: '@App\Services\StatesDataProvider'
 
@@ -216,7 +216,7 @@ services:
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/account-plans.yaml'
 
-    App\Services\AccountPlanFixtureLoader:
+    App\Services\FixtureLoader\AccountPlanFixtureLoader:
       arguments:
         $resourceLoader: '@app.services.data-provider.account-plans'
 
@@ -225,7 +225,7 @@ services:
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/job-types.yaml'
 
-    App\Services\JobTypeFixtureLoader:
+    App\Services\FixtureLoader\JobTypeFixtureLoader:
       arguments:
         $resourceLoader: '@app.services.data-provider.job-types'
 
@@ -234,7 +234,7 @@ services:
       arguments:
         $resourcePath: '%kernel.project_dir%/config/resources/task-types.yaml'
 
-    App\Services\TaskTypeFixtureLoader:
+    App\Services\FixtureLoader\TaskTypeFixtureLoader:
       arguments:
         $resourceLoader: '@app.services.data-provider.task-types'
 
@@ -253,22 +253,22 @@ services:
             password: '%env(ADMIN_USER_PASSWORD)%'
             role: role_admin
 
-    App\Services\UserFixtureLoader:
+    App\Services\FixtureLoader\UserFixtureLoader:
 
     App\Services\FixtureLoader:
       calls:
         - method: addFixtureLoader
           arguments:
-            - '@App\Services\StateFixtureLoader'
+            - '@App\Services\FixtureLoader\StateFixtureLoader'
         - method: addFixtureLoader
           arguments:
-            - '@App\Services\AccountPlanFixtureLoader'
+            - '@App\Services\FixtureLoader\AccountPlanFixtureLoader'
         - method: addFixtureLoader
           arguments:
-            - '@App\Services\JobTypeFixtureLoader'
+            - '@App\Services\FixtureLoader\JobTypeFixtureLoader'
         - method: addFixtureLoader
           arguments:
-            - '@App\Services\TaskTypeFixtureLoader'
+            - '@App\Services\FixtureLoader\TaskTypeFixtureLoader'
         - method: addFixtureLoader
           arguments:
-            - '@App\Services\UserFixtureLoader'
+            - '@App\Services\FixtureLoader\UserFixtureLoader'

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\Account\Plan\Constraint;
 use App\Entity\Account\Plan\Plan;
 use App\Entity\UserAccountPlan;
-use App\Services\AccountPlanFixtureLoader;
+use App\Services\FixtureLoader\AccountPlanFixtureLoader;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;

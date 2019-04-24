@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\State;
-use App\Services\StateFixtureLoader;
+use App\Services\FixtureLoader\StateFixtureLoader;
 use App\Services\StatesDataProvider;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;

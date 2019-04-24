@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Functional\Services;
+namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\Task\TaskType;
-use App\Services\TaskTypeFixtureLoader;
+use App\Services\FixtureLoader\TaskTypeFixtureLoader;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\FixtureLoader;
 
 use App\Entity\State;
+use App\Services\YamlResourceLoader;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

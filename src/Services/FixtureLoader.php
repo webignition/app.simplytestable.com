@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\FixtureLoader\FixtureLoaderInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class FixtureLoader

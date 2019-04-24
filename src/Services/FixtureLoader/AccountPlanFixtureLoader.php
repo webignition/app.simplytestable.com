@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\FixtureLoader;
 
 use App\Entity\Account\Plan\Constraint;
 use App\Entity\Account\Plan\Plan;
+use App\Services\YamlResourceLoader;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
