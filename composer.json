@@ -9,9 +9,9 @@
     ],
     "require": {
         "php": ">=7.2.0",
+        "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "ext-bcmath": "*",
         "chrisboulton/php-resque": "dev-master#968b7e6a307a2079051dfc571d2fc2be0546209f",
         "chrisboulton/php-resque-scheduler": "dev-master#5954c989026f1bbc6443c02078a655333e152242",
         "doctrine/doctrine-bundle": "^1.6",
@@ -29,6 +29,7 @@
         "symfony/dotenv": "^4.2",
         "symfony/flex": "^1.0",
         "symfony/framework-bundle": "^4.2",
+        "symfony/lock": "^4.2",
         "symfony/monolog-bundle": "^3.1.0",
         "symfony/polyfill-apcu": "^1.0",
         "symfony/security-bundle": "^4.2",
