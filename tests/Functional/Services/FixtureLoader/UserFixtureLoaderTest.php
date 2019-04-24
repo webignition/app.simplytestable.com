@@ -6,27 +6,13 @@ use App\Entity\User;
 use App\Entity\UserAccountPlan;
 use App\Services\UserDataProvider;
 use App\Services\FixtureLoader\UserFixtureLoader;
-use App\Tests\Functional\AbstractBaseTestCase;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
-class UserFixtureLoaderTest extends AbstractBaseTestCase
+class UserFixtureLoaderTest extends AbstractFixtureLoaderTest
 {
     /**
      * @var UserFixtureLoader
      */
     private $userFixtureLoader;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
 
     /**
      * @var array
@@ -38,17 +24,21 @@ class UserFixtureLoaderTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->userFixtureLoader = self::$container->get(UserFixtureLoader::class);
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-
-        $this->repository = $this->entityManager->getRepository(User::class);
-
-        $this->removeAllForEntity(UserAccountPlan::class);
-        $this->removeAllForEntity(User::class);
-
-        $this->entityManager->flush();
-
         $usersDataProvider = self::$container->get(UserDataProvider::class);
         $this->userData = $usersDataProvider->getData();
+    }
+
+    protected function getEntityClass(): string
+    {
+        return User::class;
+    }
+
+    protected function getEntityClassesToRemove(): array
+    {
+        return [
+            UserAccountPlan::class,
+            User::class,
+        ];
     }
 
     public function testLoadFromEmpty()

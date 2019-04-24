@@ -4,27 +4,13 @@ namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\Task\TaskType;
 use App\Services\FixtureLoader\TaskTypeFixtureLoader;
-use App\Tests\Functional\AbstractBaseTestCase;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
-class TaskTypeFixtureLoaderTest extends AbstractBaseTestCase
+class TaskTypeFixtureLoaderTest extends AbstractFixtureLoaderTest
 {
     /**
      * @var TaskTypeFixtureLoader
      */
     private $taskTypeFixtureLoader;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
 
     /**
      * @var array
@@ -36,16 +22,20 @@ class TaskTypeFixtureLoaderTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->taskTypeFixtureLoader = self::$container->get(TaskTypeFixtureLoader::class);
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-
-        $this->repository = $this->entityManager->getRepository(TaskType::class);
-
-        $this->removeAllForEntity(TaskType::class);
-
-        $this->entityManager->flush();
-
         $taskTypesDataProvider = self::$container->get('app.services.data-provider.task-types');
         $this->taskTypeData = $taskTypesDataProvider->getData();
+    }
+
+    protected function getEntityClass(): string
+    {
+        return TaskType::class;
+    }
+
+    protected function getEntityClassesToRemove(): array
+    {
+        return [
+            TaskType::class,
+        ];
     }
 
     public function testLoadFromEmpty()
@@ -95,15 +85,6 @@ class TaskTypeFixtureLoaderTest extends AbstractBaseTestCase
             $this->assertEquals($name, $taskType->getName());
             $this->assertEquals($taskTypeProperties['description'], $taskType->getDescription());
             $this->assertEquals($taskTypeProperties['selectable'], $taskType->getSelectable());
-        }
-    }
-
-    private function removeAllForEntity(string $entityClass)
-    {
-        $repository = $this->entityManager->getRepository($entityClass);
-        $entities = $repository->findAll();
-        foreach ($entities as $entity) {
-            $this->entityManager->remove($entity);
         }
     }
 }
