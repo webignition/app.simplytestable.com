@@ -3,19 +3,19 @@
 namespace App\Tests\Functional\Services;
 
 use App\Entity\State;
-use App\Services\StateMigrator;
+use App\Services\StateFixtureLoader;
 use App\Services\StatesDataProvider;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class StateMigratorTest extends AbstractBaseTestCase
+class StateFixtureLoaderTest extends AbstractBaseTestCase
 {
     /**
-     * @var StateMigrator
+     * @var StateFixtureLoader
      */
-    private $stateMigrator;
+    private $stateFixtureLoader;
 
     /**
      * @var EntityManagerInterface
@@ -36,7 +36,7 @@ class StateMigratorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->stateMigrator = self::$container->get(StateMigrator::class);
+        $this->stateFixtureLoader = self::$container->get(StateFixtureLoader::class);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->repository = $this->entityManager->getRepository(State::class);
@@ -53,16 +53,16 @@ class StateMigratorTest extends AbstractBaseTestCase
         $this->stateNames = $stateNames->getData();
     }
 
-    public function testMigrateFromEmpty()
+    public function testLoadFromEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
-        $this->stateMigrator->migrate();
+        $this->stateFixtureLoader->load();
 
         $this->assertStateNames($this->stateNames, $this->getRepositoryStateNames());
     }
 
-    public function testMigrateFromNonEmpty()
+    public function testLoadFromNonEmpty()
     {
         $expectedStateNames = $this->stateNames;
         sort($expectedStateNames);
@@ -77,7 +77,7 @@ class StateMigratorTest extends AbstractBaseTestCase
 
         $this->assertStateNames([$stateName], $this->getRepositoryStateNames());
 
-        $this->stateMigrator->migrate();
+        $this->stateFixtureLoader->load();
 
         $this->assertStateNames($expectedStateNames, $this->getRepositoryStateNames());
     }

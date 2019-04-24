@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class StateMigrator
+class StateFixtureLoader implements FixtureLoaderInterface
 {
     private $resourceLoader;
     private $entityManager;
@@ -25,7 +25,7 @@ class StateMigrator
         $this->repository = $entityManager->getRepository(State::class);
     }
 
-    public function migrate(?OutputInterface $output = null)
+    public function load(?OutputInterface $output = null): void
     {
         if ($output) {
             $output->writeln('Migrating states ...');

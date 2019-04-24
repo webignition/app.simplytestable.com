@@ -5,18 +5,18 @@ namespace App\Tests\Functional\Services;
 use App\Entity\User;
 use App\Entity\UserAccountPlan;
 use App\Services\UserDataProvider;
-use App\Services\UserMigrator;
+use App\Services\UserFixtureLoader;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class UserMigratorTest extends AbstractBaseTestCase
+class UserFixtureLoaderTest extends AbstractBaseTestCase
 {
     /**
-     * @var UserMigrator
+     * @var UserFixtureLoader
      */
-    private $userMigrator;
+    private $userFixtureLoader;
 
     /**
      * @var EntityManagerInterface
@@ -37,7 +37,7 @@ class UserMigratorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userMigrator = self::$container->get(UserMigrator::class);
+        $this->userFixtureLoader = self::$container->get(UserFixtureLoader::class);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->repository = $this->entityManager->getRepository(User::class);
@@ -51,30 +51,30 @@ class UserMigratorTest extends AbstractBaseTestCase
         $this->userData = $usersDataProvider->getData();
     }
 
-    public function testMigrateFromEmpty()
+    public function testLoadFromEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
-        $this->userMigrator->migrate();
+        $this->userFixtureLoader->load();
 
         $this->assertRepositoryUsers($this->userData);
     }
 
-    public function testMigrateFromNonEmpty()
+    public function testLoadFromNonEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
         $userData = current($this->userData);
 
-        $reflectionMethod = new \ReflectionMethod(UserMigrator::class, 'migrateUser');
+        $reflectionMethod = new \ReflectionMethod(UserFixtureLoader::class, 'loadUser');
         $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invoke($this->userMigrator, $userData);
+        $reflectionMethod->invoke($this->userFixtureLoader, $userData);
 
         $this->assertRepositoryUsers([
             $userData,
         ]);
 
-        $this->userMigrator->migrate();
+        $this->userFixtureLoader->load();
         $this->assertRepositoryUsers($this->userData);
     }
 

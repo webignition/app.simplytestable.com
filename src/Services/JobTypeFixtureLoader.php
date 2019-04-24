@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class JobTypeMigrator
+class JobTypeFixtureLoader implements FixtureLoaderInterface
 {
     private $resourceLoader;
     private $entityManager;
@@ -25,7 +25,7 @@ class JobTypeMigrator
         $this->repository = $entityManager->getRepository(JobType::class);
     }
 
-    public function migrate(?OutputInterface $output = null)
+    public function load(?OutputInterface $output = null): void
     {
         if ($output) {
             $output->writeln('Migrating job types ...');
@@ -34,11 +34,11 @@ class JobTypeMigrator
         $data = $this->resourceLoader->getData();
 
         foreach ($data as $name => $description) {
-            $this->migrateJobType($name, $description, $output);
+            $this->loadJobType($name, $description, $output);
         }
     }
 
-    private function migrateJobType(string $name, string $description, ?OutputInterface $output = null)
+    private function loadJobType(string $name, string $description, ?OutputInterface $output = null)
     {
         if ($output) {
             $output->writeln('');
@@ -69,5 +69,9 @@ class JobTypeMigrator
 
         $this->entityManager->persist($jobType);
         $this->entityManager->flush();
+
+        if ($output) {
+            $output->writeln('');
+        }
     }
 }

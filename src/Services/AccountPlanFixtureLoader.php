@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AccountPlanMigrator
+class AccountPlanFixtureLoader implements FixtureLoaderInterface
 {
     private $resourceLoader;
     private $entityManager;
@@ -26,7 +26,7 @@ class AccountPlanMigrator
         $this->repository = $entityManager->getRepository(Plan::class);
     }
 
-    public function migrate(?OutputInterface $output = null)
+    public function load(?OutputInterface $output = null): void
     {
         if ($output) {
             $output->writeln('Migrating account plans ...');
@@ -35,7 +35,7 @@ class AccountPlanMigrator
         $data = $this->resourceLoader->getData();
 
         foreach ($data as $accountPlanData) {
-            $this->migrateAccountPlan($accountPlanData, $output);
+            $this->loadAccountPlan($accountPlanData, $output);
         }
 
         if ($output) {
@@ -43,7 +43,7 @@ class AccountPlanMigrator
         }
     }
 
-    private function migrateAccountPlan(array $accountPlanData, ?OutputInterface $output = null)
+    private function loadAccountPlan(array $accountPlanData, ?OutputInterface $output = null)
     {
         if ($output) {
             $output->writeln('');
@@ -116,10 +116,6 @@ class AccountPlanMigrator
 
         $this->entityManager->persist($accountPlan);
         $this->entityManager->flush();
-
-//        if ($output) {
-//            $output->writeln(' <info>✓</info>');
-//        }
     }
 
     /**

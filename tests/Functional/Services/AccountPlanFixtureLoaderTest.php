@@ -5,18 +5,18 @@ namespace App\Tests\Functional\Services;
 use App\Entity\Account\Plan\Constraint;
 use App\Entity\Account\Plan\Plan;
 use App\Entity\UserAccountPlan;
-use App\Services\AccountPlanMigrator;
+use App\Services\AccountPlanFixtureLoader;
 use App\Tests\Functional\AbstractBaseTestCase;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class AccountPlanMigratorTest extends AbstractBaseTestCase
+class AccountPlanFixtureLoaderTest extends AbstractBaseTestCase
 {
     /**
-     * @var AccountPlanMigrator
+     * @var AccountPlanFixtureLoader
      */
-    private $accountPlanMigrator;
+    private $accountPlanFixtureLoader;
 
     /**
      * @var EntityManagerInterface
@@ -37,7 +37,7 @@ class AccountPlanMigratorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->accountPlanMigrator = self::$container->get(AccountPlanMigrator::class);
+        $this->accountPlanFixtureLoader = self::$container->get(AccountPlanFixtureLoader::class);
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->repository = $this->entityManager->getRepository(Plan::class);
@@ -52,28 +52,28 @@ class AccountPlanMigratorTest extends AbstractBaseTestCase
         $this->accountPlansData = $accountPlansDataProvider->getData();
     }
 
-    public function testMigrateFromEmpty()
+    public function testLoadFromEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
-        $this->accountPlanMigrator->migrate();
+        $this->accountPlanFixtureLoader->load();
 
         $this->assertRepositoryAccountPlans($this->accountPlansData);
     }
 
-    public function testMigrateFromNonEmpty()
+    public function testLoadFromNonEmpty()
     {
         $this->assertEmpty($this->repository->findAll());
 
         $accountPlanData = $this->accountPlansData[0];
 
-        $reflectionMethod = new \ReflectionMethod(AccountPlanMigrator::class, 'migrateAccountPlan');
+        $reflectionMethod = new \ReflectionMethod(AccountPlanFixtureLoader::class, 'loadAccountPlan');
         $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invoke($this->accountPlanMigrator, $accountPlanData);
+        $reflectionMethod->invoke($this->accountPlanFixtureLoader, $accountPlanData);
 
         $this->assertRepositoryAccountPlans([$accountPlanData]);
 
-        $this->accountPlanMigrator->migrate();
+        $this->accountPlanFixtureLoader->load();
         $this->assertRepositoryAccountPlans($this->accountPlansData);
     }
 
