@@ -1,0 +1,76 @@
+-
+  names:
+    - public
+  constraints:
+    full_site_jobs_per_site: 1
+    single_url_jobs_per_url: 1
+    urls_per_job: 10
+    task_types_per_job: 1
+
+-
+  names:
+    - basic
+  visible: true
+  constraints:
+    urls_per_job: 10
+    credits_per_month: 500
+
+-
+  names:
+    - personal-9
+    - personal
+  visible: true
+  stripeId: personal-9
+  premium: true
+  constraints:
+    urls_per_job: 50
+    credits_per_month: 5000
+
+-
+  names:
+    - agency-19
+    - agency
+  visible: true
+  stripeId: agency-19
+  premium: true
+  constraints:
+    urls_per_job: 250
+    credits_per_month: 20000
+
+-
+  names:
+    - business-59
+    - business
+  visible: true
+  stripeId: business-59
+  premium: true
+  constraints:
+    urls_per_job: 2500
+    credits_per_month: 100000
+
+-
+  names:
+    - enterprise-299
+    - enterprise
+  visible: true
+  stripeId: enterprise-299
+  premium: true
+  constraints:
+    urls_per_job: 10000
+
+-
+  names:
+    - WDS-custom
+  visible: true
+  stripeId: wds-2
+  premium: true
+  constraints:
+    urls_per_job: 8000
+    credits_per_month: 250000
+
+-
+  names:
+    - st-private
+  constraints:
+    urls_per_job: 250
+    credits_per_month: 250000

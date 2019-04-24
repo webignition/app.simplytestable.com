@@ -186,15 +186,6 @@ services:
       arguments:
         - '%env(POSTMARK_API_KEY)%'
 
-    App\DataFixtures\ORM\LoadUserData:
-      arguments:
-        $adminUserEmail: '%env(ADMIN_USER_EMAIL)%'
-        $adminUserPassword: '%env(ADMIN_USER_PASSWORD)%'
-
-    App\DataFixtures\ORM\NormaliseUserAccountPlans:
-      arguments:
-        $defaultTrialPeriod: '%env(DEFAULT_TRIAL_PERIOD)%'
-
     App\Services\ApplicationStateService:
       arguments:
         $kernelProjectDirectory: '%kernel.project_dir%'
@@ -207,3 +198,75 @@ services:
     App\Services\JobIdentifierFactory:
       arguments:
         $instanceId: '%env(INSTANCE_ID)%'
+
+    App\Services\StatesDataProvider:
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/states.yaml'
+
+    App\Services\FixtureLoader\StateFixtureLoader:
+      arguments:
+        $dataProvider: '@App\Services\StatesDataProvider'
+
+    app.services.data-provider.account-plans:
+      class: App\Services\YamlResourceDataProvider
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/account-plans.yaml'
+
+    App\Services\FixtureLoader\AccountPlanFixtureLoader:
+      arguments:
+        $dataProvider: '@app.services.data-provider.account-plans'
+
+    app.services.data-provider.job-types:
+      class: App\Services\YamlResourceDataProvider
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/job-types.yaml'
+
+    App\Services\FixtureLoader\JobTypeFixtureLoader:
+      arguments:
+        $dataProvider: '@app.services.data-provider.job-types'
+
+    app.services.data-provider.task-types:
+      class: App\Services\YamlResourceDataProvider
+      arguments:
+        $resourcePath: '%kernel.project_dir%/config/resources/task-types.yaml'
+
+    App\Services\FixtureLoader\TaskTypeFixtureLoader:
+      arguments:
+        $dataProvider: '@app.services.data-provider.task-types'
+
+    App\Services\UserDataProvider:
+      arguments:
+        $userData:
+          -
+            email: public@simplytestable.com
+            username: public
+            password: public
+            role: null
+            plan: public
+
+          -
+            email: '%env(ADMIN_USER_EMAIL)%'
+            username: admin
+            password: '%env(ADMIN_USER_PASSWORD)%'
+            role: role_admin
+            plan: null
+
+    App\Services\FixtureLoader\UserFixtureLoader:
+
+    App\Services\FixtureLoader:
+      calls:
+        - method: addFixtureLoader
+          arguments:
+            - '@App\Services\FixtureLoader\StateFixtureLoader'
+        - method: addFixtureLoader
+          arguments:
+            - '@App\Services\FixtureLoader\AccountPlanFixtureLoader'
+        - method: addFixtureLoader
+          arguments:
+            - '@App\Services\FixtureLoader\JobTypeFixtureLoader'
+        - method: addFixtureLoader
+          arguments:
+            - '@App\Services\FixtureLoader\TaskTypeFixtureLoader'
+        - method: addFixtureLoader
+          arguments:
+            - '@App\Services\FixtureLoader\UserFixtureLoader'

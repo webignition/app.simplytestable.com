@@ -1,0 +1,36 @@
+job:
+  - completed
+  - in-progress
+  - queued
+  - preparing
+  - new
+  - cancelled
+  - failed-no-sitemap
+  - rejected
+  - resolving
+  - resolved
+  - expired
+
+task:
+  - completed
+  - in-progress
+  - queued
+  - cancelled
+  - awaiting-cancellation
+  - queued-for-assignment
+  - failed-no-retry-available
+  - failed-retry-available
+  - failed-retry-limit-reached
+  - skipped
+  - expired
+
+worker-activation-request:
+  - verified
+  - failed
+  - awaiting-verification
+
+worker:
+  - active
+  - deleted
+  - offline
+  - unactivated
