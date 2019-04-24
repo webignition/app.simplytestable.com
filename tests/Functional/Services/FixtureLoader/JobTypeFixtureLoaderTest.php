@@ -4,27 +4,13 @@ namespace App\Tests\Functional\Services\FixtureLoader;
 
 use App\Entity\Job\Type;
 use App\Services\FixtureLoader\JobTypeFixtureLoader;
-use App\Tests\Functional\AbstractBaseTestCase;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
-class JobTypeFixtureLoaderTest extends AbstractBaseTestCase
+class JobTypeFixtureLoaderTest extends AbstractFixtureLoaderTest
 {
     /**
      * @var JobTypeFixtureLoader
      */
     private $jobTypeFixtureLoader;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
 
     /**
      * @var array
@@ -36,16 +22,20 @@ class JobTypeFixtureLoaderTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->jobTypeFixtureLoader = self::$container->get(JobTypeFixtureLoader::class);
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-
-        $this->repository = $this->entityManager->getRepository(Type::class);
-
-        $this->removeAllForEntity(Type::class);
-
-        $this->entityManager->flush();
-
         $jobTypesDataProvider = self::$container->get('app.services.data-provider.job-types');
         $this->jobTypeData = $jobTypesDataProvider->getData();
+    }
+
+    protected function getEntityClass(): string
+    {
+        return Type::class;
+    }
+
+    protected function getEntityClassesToRemove(): array
+    {
+        return [
+            Type::class,
+        ];
     }
 
     public function testLoadFromEmpty()
@@ -94,15 +84,6 @@ class JobTypeFixtureLoaderTest extends AbstractBaseTestCase
 
             $this->assertEquals($name, $jobType->getName());
             $this->assertEquals($description, $jobType->getDescription());
-        }
-    }
-
-    private function removeAllForEntity(string $entityClass)
-    {
-        $repository = $this->entityManager->getRepository($entityClass);
-        $entities = $repository->findAll();
-        foreach ($entities as $entity) {
-            $this->entityManager->remove($entity);
         }
     }
 }

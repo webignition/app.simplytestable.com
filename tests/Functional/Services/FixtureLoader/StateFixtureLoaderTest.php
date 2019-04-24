@@ -5,27 +5,13 @@ namespace App\Tests\Functional\Services\FixtureLoader;
 use App\Entity\State;
 use App\Services\FixtureLoader\StateFixtureLoader;
 use App\Services\StatesDataProvider;
-use App\Tests\Functional\AbstractBaseTestCase;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
-class StateFixtureLoaderTest extends AbstractBaseTestCase
+class StateFixtureLoaderTest extends AbstractFixtureLoaderTest
 {
     /**
      * @var StateFixtureLoader
      */
     private $stateFixtureLoader;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
 
     /**
      * @var string[]
@@ -37,20 +23,20 @@ class StateFixtureLoaderTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->stateFixtureLoader = self::$container->get(StateFixtureLoader::class);
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-
-        $this->repository = $this->entityManager->getRepository(State::class);
-
-        $states = $this->repository->findAll();
-
-        foreach ($states as $state) {
-            $this->entityManager->remove($state);
-        }
-
-        $this->entityManager->flush();
-
         $stateNames = self::$container->get(StatesDataProvider::class);
         $this->stateNames = $stateNames->getData();
+    }
+
+    protected function getEntityClass(): string
+    {
+        return State::class;
+    }
+
+    protected function getEntityClassesToRemove(): array
+    {
+        return [
+            State::class,
+        ];
     }
 
     public function testLoadFromEmpty()
