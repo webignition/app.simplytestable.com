@@ -3,27 +3,20 @@
 namespace App\Services\FixtureLoader;
 
 use App\Entity\Job\Type as JobType;
-use App\Services\YamlResourceLoader;
-use Doctrine\Common\Persistence\ObjectRepository;
+use App\Services\DataProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class JobTypeFixtureLoader implements FixtureLoaderInterface
+class JobTypeFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderInterface
 {
-    private $resourceLoader;
-    private $entityManager;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
-
-    public function __construct(YamlResourceLoader $resourceLoader, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, DataProviderInterface $dataProvider)
     {
-        $this->resourceLoader = $resourceLoader;
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(JobType::class);
+        parent::__construct($entityManager, $dataProvider);
+    }
+
+    protected function getEntityClass(): string
+    {
+        return JobType::class;
     }
 
     public function load(?OutputInterface $output = null): void
@@ -32,9 +25,7 @@ class JobTypeFixtureLoader implements FixtureLoaderInterface
             $output->writeln('Migrating job types ...');
         }
 
-        $data = $this->resourceLoader->getData();
-
-        foreach ($data as $name => $description) {
+        foreach ($this->data as $name => $description) {
             $this->loadJobType($name, $description, $output);
         }
     }

@@ -4,27 +4,20 @@ namespace App\Services\FixtureLoader;
 
 use App\Entity\Account\Plan\Constraint;
 use App\Entity\Account\Plan\Plan;
-use App\Services\YamlResourceLoader;
-use Doctrine\Common\Persistence\ObjectRepository;
+use App\Services\DataProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AccountPlanFixtureLoader implements FixtureLoaderInterface
+class AccountPlanFixtureLoader extends AbstractFixtureLoader implements FixtureLoaderInterface
 {
-    private $resourceLoader;
-    private $entityManager;
-
-    /**
-     * @var EntityRepository|ObjectRepository
-     */
-    private $repository;
-
-    public function __construct(YamlResourceLoader $resourceLoader, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, DataProviderInterface $dataProvider)
     {
-        $this->resourceLoader = $resourceLoader;
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Plan::class);
+        parent::__construct($entityManager, $dataProvider);
+    }
+
+    protected function getEntityClass(): string
+    {
+        return Plan::class;
     }
 
     public function load(?OutputInterface $output = null): void
@@ -33,9 +26,7 @@ class AccountPlanFixtureLoader implements FixtureLoaderInterface
             $output->writeln('Migrating account plans ...');
         }
 
-        $data = $this->resourceLoader->getData();
-
-        foreach ($data as $accountPlanData) {
+        foreach ($this->data as $accountPlanData) {
             $this->loadAccountPlan($accountPlanData, $output);
         }
 
