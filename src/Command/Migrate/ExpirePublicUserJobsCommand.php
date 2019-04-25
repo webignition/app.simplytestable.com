@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Command\AbstractLockableCommand;
 use App\Command\DryRunOptionTrait;
 use App\Entity\Job\Job;
 use App\Repository\JobRepository;
@@ -9,19 +10,14 @@ use App\Services\JobService;
 use App\Services\StateService;
 use App\Services\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Factory as LockFactory;
 
-class ExpirePublicUserJobsCommand extends Command
+class ExpirePublicUserJobsCommand extends AbstractLockableCommand
 {
     use DryRunOptionTrait;
-
-    const NAME = 'simplytestable:migrate:expire-public-user-jobs';
-    const LOCK_KEY = 'cmd:' . self::NAME;
-    const LOCK_TTL = 1800; // 30 minutes in seconds
 
     const OPTION_MAX_AGE = 'max-age';
     const OPTION_LIMIT = 'limit';
@@ -35,31 +31,28 @@ class ExpirePublicUserJobsCommand extends Command
 
     const FLUSH_THRESHOLD = 10;
 
-
     private $jobRepository;
     private $userService;
     private $stateService;
     private $jobService;
     private $entityManager;
-    private $lockFactory;
 
     public function __construct(
+        LockFactory $lockFactory,
         EntityManagerInterface $entityManager,
         JobRepository $jobRepository,
         UserService $userService,
         StateService $stateService,
         JobService $jobService,
-        LockFactory $lockFactory,
         $name = null
     ) {
-        parent::__construct($name);
+        parent::__construct($lockFactory, $name);
 
         $this->jobRepository = $jobRepository;
         $this->userService = $userService;
         $this->stateService = $stateService;
         $this->jobService = $jobService;
         $this->entityManager = $entityManager;
-        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -68,7 +61,7 @@ class ExpirePublicUserJobsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName(self::NAME)
+            ->setName('simplytestable:migrate:expire-public-user-jobs')
             ->setDescription('Expire old public user tests')
             ->addOption(
                 self::OPTION_MAX_AGE,
@@ -99,11 +92,8 @@ class ExpirePublicUserJobsCommand extends Command
             $this->outputIsDryRunNotification($output);
         }
 
-        $lock = null;
-
         if (!$isDryRun) {
-            $lock = $this->lockFactory->createLock(self::LOCK_KEY, self::LOCK_TTL);
-            if (!$lock->acquire()) {
+            if (!$this->createAndAcquireLock()) {
                 $output->writeln('Unable to acquire lock, ending');
 
                 return self::RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK;
@@ -191,9 +181,7 @@ class ExpirePublicUserJobsCommand extends Command
             $this->entityManager->flush();
         }
 
-        if ($lock) {
-            $lock->release();
-        }
+        $this->releaseLock();
 
         return self::RETURN_CODE_OK;
     }
