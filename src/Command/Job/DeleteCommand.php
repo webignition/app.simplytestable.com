@@ -80,6 +80,8 @@ class DeleteCommand extends AbstractJobCommand
 
         $output->writeln('<info>Processing job</info> <comment>' . $job->getId() . '</comment>');
 
+        $typedInput = new TypedInput($input);
+
         $confirmDelete = $typedInput->getBooleanOption('force');
 
         if (!$confirmDelete) {

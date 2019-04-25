@@ -14,9 +14,7 @@ use App\Services\JobPreparationService;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use App\Entity\Task\TaskType;
-use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class PrepareCommand extends AbstractJobCommand
 {
@@ -74,8 +72,7 @@ class PrepareCommand extends AbstractJobCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $typedInput = new TypedInput($input);
-        $jobId = $typedInput->getIntegerArgument('id');
+        $jobId = $this->getJobId($input);
 
         if ($this->applicationStateService->isInReadOnlyMode()) {
             $this->resqueQueueService->enqueue(new PrepareJob(['id' => $jobId]));
