@@ -85,7 +85,7 @@ class PrepareCommand extends AbstractJobCommand
 
         $this->logger->info(sprintf(
             'simplytestable:job:prepare running for job [%s]',
-            $input->getArgument('id')
+            $jobId
         ));
 
         $job = $this->getJob($input);
