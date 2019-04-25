@@ -10,6 +10,7 @@ use App\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class AddHashToHashlessOutputCommand extends Command
 {
@@ -68,7 +69,10 @@ class AddHashToHashlessOutputCommand extends Command
 
         $output->writeln('Finding hashless output ...');
 
-        $hashlessOutputIds = $this->taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
+        $typedInput = new TypedInput($input);
+        $limit = $typedInput->getIntegerOption('limit');
+
+        $hashlessOutputIds = $this->taskOutputRepository->findHashlessOutputIds($limit);
         $hashlessOutputCount = count($hashlessOutputIds);
 
         if (empty($hashlessOutputIds)) {
@@ -104,21 +108,5 @@ class AddHashToHashlessOutputCommand extends Command
         }
 
         return self::RETURN_CODE_OK;
-    }
-
-    /**
-     * @param InputInterface $input
-     *
-     * @return int
-     */
-    private function getLimit(InputInterface $input)
-    {
-        if ($input->getOption('limit') === false) {
-            return 0;
-        }
-
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
-
-        return ($limit <= 0) ? 0 : $limit;
     }
 }
