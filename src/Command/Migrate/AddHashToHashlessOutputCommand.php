@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Command\DryRunOptionTrait;
 use App\Repository\TaskOutputRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Task\Output;
@@ -12,6 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AddHashToHashlessOutputCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
@@ -41,8 +44,9 @@ class AddHashToHashlessOutputCommand extends Command
             ->setName('simplytestable:migrate:add-hash-to-hashless-output')
             ->setDescription('Set the hash property on TaskOutput objects that have no hash set')
             ->addOption('limit')
-            ->addOption('dry-run')
         ;
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -56,7 +60,11 @@ class AddHashToHashlessOutputCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $isDryRun = $input->getOption('dry-run');
+        $isDryRun = $this->isDryRun($input);
+
+        if ($isDryRun) {
+            $this->outputIsDryRunNotification($output);
+        }
 
         $output->writeln('Finding hashless output ...');
 

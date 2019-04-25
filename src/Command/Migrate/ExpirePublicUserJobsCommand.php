@@ -96,10 +96,7 @@ class ExpirePublicUserJobsCommand extends Command
         $isDryRun = $this->isDryRun($input);
 
         if ($isDryRun) {
-            $output->writeln([
-                '<comment>This is a DRY RUN, no data will be written</comment>',
-                '',
-            ]);
+            $this->outputIsDryRunNotification($output);
         }
 
         $lock = null;
