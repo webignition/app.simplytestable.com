@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Entity\Account\Plan\Plan as AccountPlan;
 use App\Entity\UserAccountPlan;
 use App\Repository\UserAccountPlanRepository;
-use App\Repository\UserRepository;
 use App\Services\Team\Service as TeamService;
 use App\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
@@ -17,7 +16,6 @@ class UserAccountPlanService
     private $userService;
     private $stripeService;
     private $teamService;
-    private $userRepository;
     private $entityManager;
     private $userAccountPlanRepository;
 
@@ -31,7 +29,6 @@ class UserAccountPlanService
         UserService $userService,
         StripeService $stripeService,
         TeamService $teamService,
-        UserRepository $userRepository,
         UserAccountPlanRepository $userAccountPlanRepository,
         $defaultTrialPeriod
     ) {
@@ -40,7 +37,6 @@ class UserAccountPlanService
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
-        $this->userRepository = $userRepository;
         $this->userAccountPlanRepository = $userAccountPlanRepository;
     }
 
