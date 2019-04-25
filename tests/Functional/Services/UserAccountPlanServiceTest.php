@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Services;
 
 use App\Entity\Account\Plan\Plan;
 use App\Entity\UserAccountPlan;
-use App\Repository\UserAccountPlanRepository;
 use App\Services\AccountPlanService;
 use App\Services\UserAccountPlanService;
 use App\Tests\Factory\StripeApiFixtureFactory;
@@ -12,6 +11,7 @@ use App\Tests\Services\UserAccountPlanFactory;
 use App\Tests\Services\UserFactory;
 use App\Tests\Functional\AbstractBaseTestCase;
 use App\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserAccountPlanServiceTest extends AbstractBaseTestCase
 {
@@ -249,8 +249,8 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testGetForUser($userAccountPlansToCreate, $userName, $expectedUserAccountPlanIndex)
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
-        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
@@ -384,7 +384,9 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testDeactivateAllForUser()
     {
-        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+
         $userAccountPlanFactory = self::$container->get(UserAccountPlanFactory::class);
 
         $user = $this->userFactory->create([

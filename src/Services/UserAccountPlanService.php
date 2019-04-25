@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
 use App\Entity\Account\Plan\Plan as AccountPlan;
 use App\Entity\UserAccountPlan;
-use App\Repository\UserAccountPlanRepository;
 use App\Services\Team\Service as TeamService;
 use App\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
@@ -29,7 +28,6 @@ class UserAccountPlanService
         UserService $userService,
         StripeService $stripeService,
         TeamService $teamService,
-        UserAccountPlanRepository $userAccountPlanRepository,
         $defaultTrialPeriod
     ) {
         $this->entityManager = $entityManager;
@@ -37,7 +35,7 @@ class UserAccountPlanService
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
-        $this->userAccountPlanRepository = $userAccountPlanRepository;
+        $this->userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
     }
 
     /**
