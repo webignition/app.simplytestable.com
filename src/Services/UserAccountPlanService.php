@@ -250,17 +250,6 @@ class UserAccountPlanService
     }
 
     /**
-     * @return array
-     */
-    public function findUsersWithNoPlan()
-    {
-        return $this->userRepository->findAllNotWithIds(array_merge(
-            $this->userAccountPlanRepository->findUserIdsWithPlan(),
-            [$this->userService->getAdminUser()->getId()]
-        ));
-    }
-
-    /**
      * @param AccountPlan $plan
      *
      * @return UserAccountPlan[]
