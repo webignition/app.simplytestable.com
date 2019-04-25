@@ -4,7 +4,6 @@ namespace App\Command\Job;
 
 use App\Repository\JobRepository;
 use Psr\Log\LoggerInterface;
-use App\Entity\Job\Job;
 use App\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use App\Resque\Job\Job\PrepareJob;
 use App\Resque\Job\Task\AssignCollectionJob;
@@ -13,14 +12,13 @@ use App\Services\ApplicationStateService;
 use App\Services\CrawlJobContainerService;
 use App\Services\JobPreparationService;
 use App\Services\Resque\QueueService as ResqueQueueService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use App\Entity\Task\TaskType;
 
-class PrepareCommand extends Command
+class PrepareCommand extends AbstractJobCommand
 {
     const NAME = 'simplytestable:job:prepare';
     const RETURN_CODE_OK = 0;
@@ -32,7 +30,6 @@ class PrepareCommand extends Command
     private $jobPreparationService;
     private $crawlJobContainerService;
     private $logger;
-    private $jobRepository;
 
     /**
      * @var array
@@ -40,16 +37,16 @@ class PrepareCommand extends Command
     private $predefinedDomainsToIgnore;
 
     public function __construct(
+        JobRepository $jobRepository,
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         JobPreparationService $jobPreparationService,
         CrawlJobContainerService $crawlJobContainerService,
         LoggerInterface $logger,
-        JobRepository $jobRepository,
         array $predefinedDomainsToIgnore,
         $name = null
     ) {
-        parent::__construct($name);
+        parent::__construct($jobRepository, $name);
 
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
@@ -57,7 +54,6 @@ class PrepareCommand extends Command
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->logger = $logger;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -88,8 +84,7 @@ class PrepareCommand extends Command
             $input->getArgument('id')
         ));
 
-        /* @var Job $job */
-        $job = $this->jobRepository->find((int)$input->getArgument('id'));
+        $job = $this->getJob($input);
 
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var TaskType $taskType */

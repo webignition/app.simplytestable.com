@@ -10,15 +10,13 @@ use App\Entity\Task\Task;
 use App\Repository\CrawlJobContainerRepository;
 use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Job\Job;
 use App\Services\ApplicationStateService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class DeleteCommand extends Command
+class DeleteCommand extends AbstractJobCommand
 {
     use DryRunOptionTrait;
 
@@ -28,21 +26,19 @@ class DeleteCommand extends Command
 
     private $applicationStateService;
     private $entityManager;
-    private $jobRepository;
     private $crawlJobContainerRepository;
 
     public function __construct(
+        JobRepository $jobRepository,
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
-        JobRepository $jobRepository,
         CrawlJobContainerRepository $crawlJobContainerRepository,
         $name = null
     ) {
-        parent::__construct($name);
+        parent::__construct($jobRepository, $name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->jobRepository = $jobRepository;
         $this->crawlJobContainerRepository = $crawlJobContainerRepository;
     }
 
@@ -69,9 +65,7 @@ class DeleteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        /* @var Job $job */
-        $job = $this->jobRepository->find((int) $input->getArgument('id'));
-
+        $job = $this->getJob($input);
         if (empty($job)) {
             return self::RETURN_CODE_OK;
         }

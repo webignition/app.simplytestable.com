@@ -13,12 +13,12 @@ class ResolveWebsiteCommandTest extends \PHPUnit\Framework\TestCase
     public function testRunInMaintenanceReadOnlyMode()
     {
         $command = new ResolveWebsiteCommand(
+            \Mockery::mock(JobRepository::class),
             MockFactory::createApplicationStateService(true),
             MockFactory::createResqueQueueService(),
             MockFactory::createWebsiteResolutionService(),
             MockFactory::createJobPreparationService(),
             MockFactory::createStateService(),
-            \Mockery::mock(JobRepository::class),
             []
         );
 

@@ -26,9 +26,9 @@ class DeleteCommandTest extends \PHPUnit\Framework\TestCase
             });
 
         $command = new DeleteCommand(
+            \Mockery::mock(JobRepository::class),
             MockFactory::createApplicationStateService(true),
             MockFactory::createEntityManager(),
-            \Mockery::mock(JobRepository::class),
             \Mockery::mock(CrawlJobContainerRepository::class)
         );
 
