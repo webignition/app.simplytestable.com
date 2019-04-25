@@ -12,7 +12,6 @@ use App\Services\ApplicationStateService;
 use App\Services\CrawlJobContainerService;
 use App\Services\JobPreparationService;
 use App\Services\Resque\QueueService as ResqueQueueService;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -61,10 +60,11 @@ class PrepareCommand extends AbstractJobCommand
      */
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName(self::NAME)
-            ->setDescription('Prepare a set of tasks for a given job')
-            ->addArgument('id', InputArgument::REQUIRED, 'id of job to prepare')
+            ->setDescription('Prepare a set of tasks for a given job');
         ;
     }
 

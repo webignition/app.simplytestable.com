@@ -47,10 +47,11 @@ class DeleteCommand extends AbstractJobCommand
      */
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName(self::NAME)
             ->setDescription('Delete a job')
-            ->addArgument('id', InputArgument::REQUIRED, 'id of job to delete')
             ->addOption('force');
 
         $this->addDryRunOption();
