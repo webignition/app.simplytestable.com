@@ -13,13 +13,12 @@ use App\Services\Job\WebsiteResolutionService;
 use App\Services\JobPreparationService;
 use App\Services\JobTypeService;
 use App\Services\Resque\QueueService as ResqueQueueService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\Task\TaskType;
 
-class ResolveWebsiteCommand extends Command
+class ResolveWebsiteCommand extends AbstractJobCommand
 {
     const NAME = 'simplytestable:job:resolve';
 
@@ -57,20 +56,17 @@ class ResolveWebsiteCommand extends Command
      */
     private $stateService;
 
-    private $jobRepository;
-
-
     public function __construct(
+        JobRepository $jobRepository,
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
         StateService $stateService,
-        JobRepository $jobRepository,
         array $predefinedDomainsToIgnore,
         $name = null
     ) {
-        parent::__construct($name);
+        parent::__construct($jobRepository, $name);
 
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
@@ -78,7 +74,6 @@ class ResolveWebsiteCommand extends Command
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
         $this->stateService = $stateService;
-        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -103,8 +98,7 @@ class ResolveWebsiteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        /* @var Job $job */
-        $job = $this->jobRepository->find((int)$input->getArgument('id'));
+        $job = $this->getJob($input);
 
         $shouldResetState = $input->getOption('reset-state');
 

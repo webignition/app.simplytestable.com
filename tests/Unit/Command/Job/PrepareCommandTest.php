@@ -25,12 +25,12 @@ class PrepareCommandTest extends \PHPUnit\Framework\TestCase
             });
 
         $command = new PrepareCommand(
+            \Mockery::mock(JobRepository::class),
             MockFactory::createApplicationStateService(true),
             $resqueQueueService,
             MockFactory::createJobPreparationService(),
             MockFactory::createCrawlJobContainerService(),
             MockFactory::createLogger(),
-            \Mockery::mock(JobRepository::class),
             []
         );
 
