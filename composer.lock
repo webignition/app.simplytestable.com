@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5815bf922ba68e4ecff3951043c5279",
+    "content-hash": "b7734f7e27bd6ec386ca88570bd58f89",
     "packages": [
         {
             "name": "algo26-matthias/idna-convert",
@@ -6323,16 +6323,16 @@
         },
         {
             "name": "webignition/symfony-console-typed-input",
-            "version": "0.1",
+            "version": "0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/symfony-console-typed-input.git",
-                "reference": "685e0166bba4954258e4c0cbf1973b4b20110ba6"
+                "reference": "000f09efcad28f24899fe342764a76c653d88639"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/symfony-console-typed-input/zipball/685e0166bba4954258e4c0cbf1973b4b20110ba6",
-                "reference": "685e0166bba4954258e4c0cbf1973b4b20110ba6",
+                "url": "https://api.github.com/repos/webignition/symfony-console-typed-input/zipball/000f09efcad28f24899fe342764a76c653d88639",
+                "reference": "000f09efcad28f24899fe342764a76c653d88639",
                 "shasum": ""
             },
             "require": {
@@ -6372,7 +6372,7 @@
                 "type",
                 "typed"
             ],
-            "time": "2019-03-26T17:56:18+00:00"
+            "time": "2019-04-25T14:55:51+00:00"
         },
         {
             "name": "webignition/uri",
