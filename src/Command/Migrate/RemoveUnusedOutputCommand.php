@@ -2,15 +2,16 @@
 
 namespace App\Command\Migrate;
 
+use App\Command\AbstractLockableCommand;
 use App\Command\DryRunOptionTrait;
 use App\Repository\TaskOutputRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\ApplicationStateService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Lock\Factory as LockFactory;
 
-class RemoveUnusedOutputCommand extends Command
+class RemoveUnusedOutputCommand extends AbstractLockableCommand
 {
     use DryRunOptionTrait;
 
@@ -18,18 +19,20 @@ class RemoveUnusedOutputCommand extends Command
 
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
+    const RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK = 2;
 
     private $applicationStateService;
     private $entityManager;
     private $taskOutputRepository;
 
     public function __construct(
+        LockFactory $lockFactory,
         ApplicationStateService $applicationStateService,
         EntityManagerInterface $entityManager,
         TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
-        parent::__construct($name);
+        parent::__construct($lockFactory, $name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
@@ -66,6 +69,14 @@ class RemoveUnusedOutputCommand extends Command
             $this->outputIsDryRunNotification($output);
         }
 
+        if (!$isDryRun) {
+            if (!$this->createAndAcquireLock()) {
+                $output->writeln('Unable to acquire lock, ending');
+
+                return self::RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK;
+            }
+        }
+
         $output->writeln('Finding unused output ...');
 
         $unusedTaskOutputIds = $this->taskOutputRepository->findUnusedIds($this->getLimit($input));
@@ -73,6 +84,7 @@ class RemoveUnusedOutputCommand extends Command
         if (empty($unusedTaskOutputIds)) {
             $output->writeln('No unused task outputs found. Done.');
 
+            $this->releaseLock();
             return self::RETURN_CODE_OK;
         }
 
@@ -114,6 +126,8 @@ class RemoveUnusedOutputCommand extends Command
                 $this->entityManager->flush();
             }
         }
+
+        $this->releaseLock();
 
         return self::RETURN_CODE_OK;
     }

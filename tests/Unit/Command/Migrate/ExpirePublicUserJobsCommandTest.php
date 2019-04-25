@@ -25,16 +25,15 @@ class ExpirePublicUserJobsCommandTest extends \PHPUnit\Framework\TestCase
         $lockFactory = \Mockery::mock(Factory::class);
         $lockFactory
             ->shouldReceive('createLock')
-            ->with(ExpirePublicUserJobsCommand::LOCK_KEY, ExpirePublicUserJobsCommand::LOCK_TTL)
             ->andReturn($lock);
 
         $command = new ExpirePublicUserJobsCommand(
+            $lockFactory,
             \Mockery::mock(EntityManagerInterface::class),
             \Mockery::mock(JobRepository::class),
             \Mockery::mock(UserService::class),
             \Mockery::mock(StateService::class),
-            \Mockery::mock(JobService::class),
-            $lockFactory
+            \Mockery::mock(JobService::class)
         );
 
         $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());
