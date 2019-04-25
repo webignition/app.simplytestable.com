@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use App\Entity\Task\TaskType;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class PrepareCommand extends AbstractJobCommand
 {
@@ -73,8 +74,11 @@ class PrepareCommand extends AbstractJobCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $typedInput = new TypedInput($input);
+        $jobId = $typedInput->getIntegerArgument('id');
+
         if ($this->applicationStateService->isInReadOnlyMode()) {
-            $this->resqueQueueService->enqueue(new PrepareJob(['id' => (int)$input->getArgument('id')]));
+            $this->resqueQueueService->enqueue(new PrepareJob(['id' => $jobId]));
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
