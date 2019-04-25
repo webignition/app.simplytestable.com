@@ -84,6 +84,7 @@ class RemoveUnusedOutputCommand extends AbstractLockableCommand
         if (empty($unusedTaskOutputIds)) {
             $output->writeln('No unused task outputs found. Done.');
 
+            $this->releaseLock();
             return self::RETURN_CODE_OK;
         }
 
