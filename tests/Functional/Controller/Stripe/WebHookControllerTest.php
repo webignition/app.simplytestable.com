@@ -52,7 +52,8 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->createPostmarkSuccessResponse(),
         ]);
 
-        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $fixtureName = 'customer.subscription.created.active';
         $fixtureModifications = [
@@ -398,7 +399,6 @@ class WebHookControllerTest extends AbstractControllerTest
             self::$container->get(StripeEventService::class),
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StripeWebHookMailNotificationSender::class),
-            self::$container->get(UserAccountPlanRepository::class),
             $request
         );
     }

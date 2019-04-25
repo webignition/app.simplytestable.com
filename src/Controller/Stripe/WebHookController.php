@@ -2,7 +2,7 @@
 
 namespace App\Controller\Stripe;
 
-use App\Repository\UserAccountPlanRepository;
+use App\Entity\UserAccountPlan;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Stripe\Event;
 use App\Resque\Job\Stripe\ProcessEventJob;
@@ -20,7 +20,6 @@ class WebHookController
         StripeEventService $stripeEventService,
         ResqueQueueService $resqueQueueService,
         StripeWebHookMailNotificationSender $stripeWebHookMailNotification,
-        UserAccountPlanRepository $userAccountPlanRepository,
         Request $request
     ): JsonResponse {
         $eventContent = $this->getEventContent($request);
@@ -46,6 +45,8 @@ class WebHookController
         $stripeWebHookMailNotification->send($eventContent, $requestData->type);
 
         $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
+
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $userAccountPlan = $userAccountPlanRepository->findOneBy([
             'stripeCustomer' => $stripeCustomer,
