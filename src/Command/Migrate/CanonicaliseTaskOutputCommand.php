@@ -11,6 +11,7 @@ use App\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class CanonicaliseTaskOutputCommand extends Command
 {
@@ -71,7 +72,10 @@ class CanonicaliseTaskOutputCommand extends Command
 
         $output->writeln('Finding duplicate output ...');
 
-        $duplicateHashes = $this->taskOutputRepository->findDuplicateHashes($this->getLimit($input));
+        $typedInput = new TypedInput($input);
+        $limit = $typedInput->getIntegerOption('limit');
+
+        $duplicateHashes = $this->taskOutputRepository->findDuplicateHashes($limit);
 
         if (empty($duplicateHashes)) {
             $output->writeln('No duplicate output found. Done.');
@@ -150,21 +154,5 @@ class CanonicaliseTaskOutputCommand extends Command
         $output->writeln('['.$globalUpdatedTaskCount.'] tasks updated');
 
         return self::RETURN_CODE_OK;
-    }
-
-    /**
-     * @param InputInterface $input
-     *
-     * @return int
-     */
-    private function getLimit(InputInterface $input)
-    {
-        if ($input->getOption('limit') === false) {
-            return 0;
-        }
-
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
-
-        return ($limit <= 0) ? 0 : $limit;
     }
 }

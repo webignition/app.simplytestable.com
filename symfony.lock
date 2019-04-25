@@ -581,6 +581,9 @@
     "webignition/string-parser": {
         "version": "0.2.3"
     },
+    "webignition/symfony-console-typed-input": {
+        "version": "0.1"
+    },
     "webignition/uri": {
         "version": "0.4"
     },

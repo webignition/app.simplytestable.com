@@ -46,6 +46,7 @@
         "webignition/php-stripe-models": ">=0.2.6,<1.0",
         "webignition/resque-bundle": "dev-master",
         "webignition/sitemap-model": ">=4.1,<5",
+        "webignition/symfony-console-typed-input": ">=0.2,<1",
         "webignition/uri": "^0.4.0",
         "webignition/url": "2.1",
         "webignition/url-resolver": ">=3.3,<4",

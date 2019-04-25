@@ -14,7 +14,6 @@ use App\Services\JobPreparationService;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use App\Entity\Task\TaskType;
 
 class PrepareCommand extends AbstractJobCommand
@@ -73,15 +72,17 @@ class PrepareCommand extends AbstractJobCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $jobId = $this->getJobId($input);
+
         if ($this->applicationStateService->isInReadOnlyMode()) {
-            $this->resqueQueueService->enqueue(new PrepareJob(['id' => (int)$input->getArgument('id')]));
+            $this->resqueQueueService->enqueue(new PrepareJob(['id' => $jobId]));
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
         $this->logger->info(sprintf(
             'simplytestable:job:prepare running for job [%s]',
-            $input->getArgument('id')
+            $jobId
         ));
 
         $job = $this->getJob($input);

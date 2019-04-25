@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58d099e8b0b252deec45788e0582b8a4",
+    "content-hash": "b7734f7e27bd6ec386ca88570bd58f89",
     "packages": [
         {
             "name": "algo26-matthias/idna-convert",
@@ -6320,6 +6320,59 @@
                 "string"
             ],
             "time": "2017-05-11T10:04:12+00:00"
+        },
+        {
+            "name": "webignition/symfony-console-typed-input",
+            "version": "0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/symfony-console-typed-input.git",
+                "reference": "000f09efcad28f24899fe342764a76c653d88639"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/symfony-console-typed-input/zipball/000f09efcad28f24899fe342764a76c653d88639",
+                "reference": "000f09efcad28f24899fe342764a76c653d88639",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0",
+                "symfony/console": "^4.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2",
+                "phpstan/phpstan": "^0.11.4",
+                "phpstan/phpstan-mockery": "^0.11.0",
+                "phpunit/phpunit": "^8",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\SymfonyConsole\\TypedInput\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Symfony InputInterface providing type-specific getters for options and arguments",
+            "homepage": "https://github.com/webignition/symfony-console-typed-input",
+            "keywords": [
+                "console",
+                "input",
+                "inputinterface",
+                "symfony",
+                "type",
+                "typed"
+            ],
+            "time": "2019-04-25T14:55:51+00:00"
         },
         {
             "name": "webignition/uri",

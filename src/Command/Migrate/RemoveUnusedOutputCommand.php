@@ -10,6 +10,7 @@ use App\Services\ApplicationStateService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Factory as LockFactory;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class RemoveUnusedOutputCommand extends AbstractLockableCommand
 {
@@ -79,7 +80,10 @@ class RemoveUnusedOutputCommand extends AbstractLockableCommand
 
         $output->writeln('Finding unused output ...');
 
-        $unusedTaskOutputIds = $this->taskOutputRepository->findUnusedIds($this->getLimit($input));
+        $typedInput = new TypedInput($input);
+        $limit = $typedInput->getIntegerOption('limit');
+
+        $unusedTaskOutputIds = $this->taskOutputRepository->findUnusedIds($limit);
 
         if (empty($unusedTaskOutputIds)) {
             $output->writeln('No unused task outputs found. Done.');
@@ -91,7 +95,11 @@ class RemoveUnusedOutputCommand extends AbstractLockableCommand
         $output->writeln('['.count($unusedTaskOutputIds).'] outputs found');
         $processedTaskOutputCount = 0;
 
-        $flushThreshold = $this->getFlushTreshold($input);
+        $flushThreshold = $typedInput->getIntegerOption(
+            'flush-threshold',
+            self::DEFAULT_FLUSH_THRESHOLD
+        );
+
         $persistCount = 0;
 
         foreach ($unusedTaskOutputIds as $unusedTaskOutputId) {
@@ -130,52 +138,5 @@ class RemoveUnusedOutputCommand extends AbstractLockableCommand
         $this->releaseLock();
 
         return self::RETURN_CODE_OK;
-    }
-
-    /**
-     * @param InputInterface $input
-     *
-     * @return int
-     */
-    private function getLimit(InputInterface $input)
-    {
-        if ($input->getOption('limit') === false) {
-            return 0;
-        }
-
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
-
-        return ($limit <= 0) ? 0 : $limit;
-    }
-
-    /**
-     * @param InputInterface $input
-     *
-     * @return int
-     */
-    private function getFlushTreshold($input)
-    {
-        return $this->getIntegerOptionWithDefault(
-            $input,
-            'flush-threshold',
-            self::DEFAULT_FLUSH_THRESHOLD
-        );
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param string $optionName
-     * @param mixed $defaultValue
-     *
-     * @return int
-     */
-    private function getIntegerOptionWithDefault($input, $optionName, $defaultValue)
-    {
-        $value = $input->getOption($optionName);
-        if ($value <= 0) {
-            return $defaultValue;
-        }
-
-        return (int)$value;
     }
 }

@@ -11,10 +11,10 @@ use App\Repository\CrawlJobContainerRepository;
 use App\Repository\JobRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\ApplicationStateService;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class DeleteCommand extends AbstractJobCommand
 {
@@ -79,7 +79,9 @@ class DeleteCommand extends AbstractJobCommand
 
         $output->writeln('<info>Processing job</info> <comment>' . $job->getId() . '</comment>');
 
-        $confirmDelete = $input->getOption('force');
+        $typedInput = new TypedInput($input);
+
+        $confirmDelete = $typedInput->getBooleanOption('force');
 
         if (!$confirmDelete) {
             $questionHelper = $this->getHelper('question');

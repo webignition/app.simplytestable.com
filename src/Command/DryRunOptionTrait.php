@@ -5,6 +5,7 @@ namespace App\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 trait DryRunOptionTrait
 {
@@ -20,9 +21,9 @@ trait DryRunOptionTrait
         );
     }
 
-    protected function isDryRun(InputInterface $input)
+    protected function isDryRun(InputInterface $input): bool
     {
-        return filter_var($input->getOption($this->dryRunOptionName), FILTER_VALIDATE_BOOLEAN);
+        return (new TypedInput($input))->getOption($this->dryRunOptionName);
     }
 
     protected function outputIsDryRunNotification(OutputInterface $output)
