@@ -13,7 +13,6 @@ use App\Services\Job\WebsiteResolutionService;
 use App\Services\JobPreparationService;
 use App\Services\JobTypeService;
 use App\Services\Resque\QueueService as ResqueQueueService;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\Task\TaskType;
@@ -81,10 +80,11 @@ class ResolveWebsiteCommand extends AbstractJobCommand
      */
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName(self::NAME)
             ->setDescription('Resolve a job\'s canonical url to be sure where we are starting off')
-            ->addArgument('id', InputArgument::REQUIRED, 'id(s) of job(s) to process')
             ->addOption('reset-state');
         ;
     }
