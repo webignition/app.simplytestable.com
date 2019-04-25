@@ -2,17 +2,18 @@
 
 namespace App\Tests\Functional\Entity\User;
 
-use App\Repository\UserRepository;
+use App\Entity\User;
 use App\Services\UserService;
 use App\Tests\Functional\AbstractBaseTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserTest extends AbstractBaseTestCase
 {
     public function testUtf8Email()
     {
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $userService = self::$container->get(UserService::class);
-        $userRepository = self::$container->get(UserRepository::class);
+        $userRepository = $entityManager->getRepository(User::class);
 
         $email = 'ɸ@example.com';
 

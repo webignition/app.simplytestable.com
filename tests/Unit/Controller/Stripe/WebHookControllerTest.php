@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Controller\Stripe;
 
 use App\Controller\Stripe\WebHookController;
-use App\Repository\UserAccountPlanRepository;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Tests\Factory\MockFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +39,6 @@ class WebHookControllerTest extends \PHPUnit\Framework\TestCase
             MockFactory::createStripeEventService(),
             MockFactory::createResqueQueueService(),
             MockFactory::createStripeWebHookMailNotificationSender(),
-            \Mockery::mock(UserAccountPlanRepository::class),
             $request
         );
     }

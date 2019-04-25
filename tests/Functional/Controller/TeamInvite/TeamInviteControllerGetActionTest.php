@@ -3,10 +3,11 @@
 namespace App\Tests\Functional\Controller\TeamInvite;
 
 use App\Entity\Team\Invite;
-use App\Repository\UserRepository;
+use App\Entity\User;
 use App\Services\Team\InviteService;
 use App\Tests\Services\UserAccountPlanFactory;
 use App\Tests\Services\UserFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -136,9 +137,9 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
             UserFactory::KEY_EMAIL => 'new-user-has-invite@example.com',
         ]);
 
-        $entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $entityManager = self::$container->get(EntityManagerInterface::class);
         $teamInviteService = self::$container->get(InviteService::class);
-        $userRepository = self::$container->get(UserRepository::class);
+        $userRepository = $entityManager->getRepository(User::class);
         $inviteRepository = $entityManager->getRepository(Invite::class);
 
         $teamInviteService->get($this->users['leader'], $newUserHasInvite);

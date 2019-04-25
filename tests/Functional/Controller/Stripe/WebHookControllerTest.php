@@ -6,7 +6,6 @@ use App\Controller\Stripe\WebHookController;
 use App\Entity\Stripe\Event as StripeEvent;
 use App\Entity\Stripe\Event;
 use App\Entity\UserAccountPlan;
-use App\Repository\UserAccountPlanRepository;
 use App\Services\HttpClientService;
 use App\Services\Resque\QueueService as ResqueQueueService;
 use App\Services\StripeEventService;
@@ -52,7 +51,8 @@ class WebHookControllerTest extends AbstractControllerTest
             $this->createPostmarkSuccessResponse(),
         ]);
 
-        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $fixtureName = 'customer.subscription.created.active';
         $fixtureModifications = [
@@ -170,7 +170,7 @@ class WebHookControllerTest extends AbstractControllerTest
         $resqueQueueService = self::$container->get(ResqueQueueService::class);
 
         $stripeEventRepository = $entityManager->getRepository(Event::class);
-        $userAccountPlanRepository = self::$container->get(UserAccountPlanRepository::class);
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $resqueQueueService->getResque()->getQueue('stripe-event')->clear();
 
@@ -398,7 +398,6 @@ class WebHookControllerTest extends AbstractControllerTest
             self::$container->get(StripeEventService::class),
             self::$container->get(ResqueQueueService::class),
             self::$container->get(StripeWebHookMailNotificationSender::class),
-            self::$container->get(UserAccountPlanRepository::class),
             $request
         );
     }
