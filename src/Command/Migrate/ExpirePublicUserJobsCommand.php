@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Factory as LockFactory;
+use webignition\SymfonyConsole\TypedInput\TypedInput;
 
 class ExpirePublicUserJobsCommand extends AbstractLockableCommand
 {
@@ -100,10 +101,8 @@ class ExpirePublicUserJobsCommand extends AbstractLockableCommand
             }
         }
 
-        $limit = $input->getOption(self::OPTION_LIMIT);
-        if (ctype_digit($limit)) {
-            $limit = (int) $limit;
-        }
+        $typedInput = new TypedInput($input);
+        $limit = $typedInput->getIntegerOption(self::OPTION_LIMIT);
 
         $maxAge = $input->getOption(self::OPTION_MAX_AGE);
         try {
