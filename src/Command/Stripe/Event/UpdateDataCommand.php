@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Command\Stripe\Event;
 
+use App\Command\DryRunOptionTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Stripe\Event;
 use App\Services\ApplicationStateService;
@@ -12,6 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 
 class UpdateDataCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
 
@@ -64,14 +68,9 @@ class UpdateDataCommand extends Command
     {
         $this
             ->setName('simplytestable:stripe:event:updatedata')
-            ->setDescription('Retrieve all stripe event data from stripe and refresh local cache')
-            ->addOption(
-                'dry-run',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Run through the process without writing any data'
-            )
-        ;
+            ->setDescription('Retrieve all stripe event data from stripe and refresh local cache');
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -83,10 +82,10 @@ class UpdateDataCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $isDryRun = $input->getOption('dry-run') == 'true';
+        $isDryRun = $this->isDryRun($input);
 
         if ($isDryRun) {
-            $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
+            $this->outputIsDryRunNotification($output);
         }
 
         $stripeEventRepository = $this->entityManager->getRepository(Event::class);

@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Command\DryRunOptionTrait;
 use App\Repository\TaskOutputRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CanonicaliseTaskOutputCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
@@ -44,9 +47,9 @@ class CanonicaliseTaskOutputCommand extends Command
         $this
             ->setName('simplytestable:migrate:canonicalise-task-output')
             ->setDescription('Update tasks to point to canonical output')
-            ->addOption('limit')
-            ->addOption('dry-run')
-        ;
+            ->addOption('limit');
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -60,7 +63,11 @@ class CanonicaliseTaskOutputCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $isDryRun = $input->getOption('dry-run');
+        $isDryRun = $this->isDryRun($input);
+
+        if ($isDryRun) {
+            $this->outputIsDryRunNotification($output);
+        }
 
         $output->writeln('Finding duplicate output ...');
 

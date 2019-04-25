@@ -2,6 +2,7 @@
 
 namespace App\Command\Job;
 
+use App\Command\DryRunOptionTrait;
 use App\Entity\Job\Ammendment;
 use App\Entity\Job\RejectionReason;
 use App\Entity\Job\TaskTypeOptions;
@@ -19,6 +20,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class DeleteCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const NAME = 'simplytestable:job:delete';
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
@@ -52,9 +55,9 @@ class DeleteCommand extends Command
             ->setName(self::NAME)
             ->setDescription('Delete a job')
             ->addArgument('id', InputArgument::REQUIRED, 'id of job to delete')
-            ->addOption('force')
-            ->addOption('dry-run')
-        ;
+            ->addOption('force');
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -73,13 +76,13 @@ class DeleteCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $isDryRun = $input->getOption('dry-run');
-
-        $output->writeln('<info>Processing job</info> <comment>' . $job->getId() . '</comment>');
+        $isDryRun = $this->isDryRun($input);
 
         if ($isDryRun) {
-            $output->writeln('<info>This is a DRY RUN, no changes will be saved</info>');
+            $this->outputIsDryRunNotification($output);
         }
+
+        $output->writeln('<info>Processing job</info> <comment>' . $job->getId() . '</comment>');
 
         $confirmDelete = $input->getOption('force');
 
@@ -213,7 +216,7 @@ class DeleteCommand extends Command
         }
 
         if ($isDryRun) {
-            $output->writeln('<info>This is a DRY RUN, no changes will be saved</info>');
+            $this->outputIsDryRunNotification($output);
         }
 
         $output->writeln('<info>Done!</info>');

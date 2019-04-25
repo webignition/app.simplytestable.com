@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Command\DryRunOptionTrait;
 use App\Entity\Job\Job;
 use App\Repository\JobRepository;
 use App\Services\JobService;
@@ -16,6 +17,8 @@ use Symfony\Component\Lock\Factory as LockFactory;
 
 class ExpirePublicUserJobsCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const NAME = 'simplytestable:migrate:expire-public-user-jobs';
     const LOCK_KEY = 'cmd:' . self::NAME;
     const LOCK_TTL = 1800; // 30 minutes in seconds
@@ -68,12 +71,6 @@ class ExpirePublicUserJobsCommand extends Command
             ->setName(self::NAME)
             ->setDescription('Expire old public user tests')
             ->addOption(
-                'dry-run',
-                null,
-                InputOption::VALUE_NONE,
-                'Run through the process without writing any data'
-            )
-            ->addOption(
                 self::OPTION_MAX_AGE,
                 null,
                 InputOption::VALUE_OPTIONAL,
@@ -87,6 +84,8 @@ class ExpirePublicUserJobsCommand extends Command
                 'Limit to updating only N jobs (defaults to all)',
                 self::DEFAULT_LIMIT
             );
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -94,13 +93,10 @@ class ExpirePublicUserJobsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $isDryRun = filter_var($input->getOption('dry-run'), FILTER_VALIDATE_BOOLEAN);
+        $isDryRun = $this->isDryRun($input);
 
         if ($isDryRun) {
-            $output->writeln([
-                '<comment>This is a DRY RUN, no data will be written</comment>',
-                '',
-            ]);
+            $this->outputIsDryRunNotification($output);
         }
 
         $lock = null;

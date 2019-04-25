@@ -2,6 +2,7 @@
 
 namespace App\Command\Migrate;
 
+use App\Command\DryRunOptionTrait;
 use App\Repository\TaskOutputRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\ApplicationStateService;
@@ -11,6 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveUnusedOutputCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const DEFAULT_FLUSH_THRESHOLD = 100;
 
     const RETURN_CODE_OK = 0;
@@ -42,8 +45,9 @@ class RemoveUnusedOutputCommand extends Command
             ->setName('simplytestable:migrate:remove-unused-output')
             ->setDescription('Remove output not linked to any task')
             ->addOption('limit')
-            ->addOption('flush-threshold')
-            ->addOption('dry-run');
+            ->addOption('flush-threshold');
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -56,7 +60,11 @@ class RemoveUnusedOutputCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $isDryRun = $input->getOption('dry-run');
+        $isDryRun = $this->isDryRun($input);
+
+        if ($isDryRun) {
+            $this->outputIsDryRunNotification($output);
+        }
 
         $output->writeln('Finding unused output ...');
 
