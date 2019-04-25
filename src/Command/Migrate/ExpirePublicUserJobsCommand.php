@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Factory as LockFactory;
 
-class ExpirePublicUserJobs extends Command
+class ExpirePublicUserJobsCommand extends Command
 {
     const NAME = 'simplytestable:migrate:expire-public-user-jobs';
     const LOCK_KEY = 'cmd:' . self::NAME;
