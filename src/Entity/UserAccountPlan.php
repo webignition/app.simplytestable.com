@@ -11,7 +11,6 @@ use App\Entity\Account\Plan\Plan as AccountPlan;
  * @ORM\Table(
  *     name="UserAccountPlan"
  * )
- * @ORM\Entity(repositoryClass="App\Repository\UserAccountPlanRepository")
  */
 class UserAccountPlan implements \JsonSerializable
 {
