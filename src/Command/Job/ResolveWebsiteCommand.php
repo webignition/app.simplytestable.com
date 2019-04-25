@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command\Job;
 
 use App\Repository\JobRepository;
@@ -102,34 +103,11 @@ class ResolveWebsiteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobs = $this->getJobs($input);
-        $jobCount = count($jobs);
+        /* @var Job $job */
+        $job = $this->jobRepository->find((int)$input->getArgument('id'));
+
         $shouldResetState = $input->getOption('reset-state');
 
-        $results = [];
-
-        foreach ($jobs as $jobIndex => $job) {
-            $jobNumber = $jobIndex + 1;
-
-            $output->writeln(sprintf(
-                '<info>Resolving job %s of %s</info> <comment>%s</comment>',
-                $jobNumber,
-                $jobCount,
-                $job->getId()
-            ));
-
-            $results[] = $this->resolveJob($job, $shouldResetState);
-        }
-
-        if (count($results) === 1) {
-            return $results[0];
-        }
-
-        return self::RETURN_CODE_OK;
-    }
-
-    private function resolveJob(Job $job, bool $shouldResetState): int
-    {
         if ($shouldResetState && Job::STATE_STARTING != $job->getState()) {
             $job->setState($this->stateService->get(Job::STATE_STARTING));
         }
@@ -164,31 +142,5 @@ class ResolveWebsiteCommand extends Command
         }
 
         return self::RETURN_CODE_OK;
-    }
-
-    /**
-     * @param InputInterface $input
-     *
-     * @return Job[]
-     */
-    private function getJobs(InputInterface $input)
-    {
-        $identifier = $input->getArgument('id');
-
-        if (ctype_digit($identifier)) {
-            return [
-                $this->jobRepository->find((int)$input->getArgument('id')),
-            ];
-        }
-
-        if (preg_match('/([0-9]+,?)+/', $identifier)) {
-            $jobIds = explode(',', $identifier);
-
-            return $this->jobRepository->findBy([
-                'id' => $jobIds,
-            ]);
-        }
-
-        return [];
     }
 }
