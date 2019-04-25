@@ -1,6 +1,7 @@
 <?php
 namespace App\Command\Job;
 
+use App\Command\DryRunOptionTrait;
 use App\Entity\Job\Job;
 use App\Services\ApplicationStateService;
 use App\Services\JobService;
@@ -12,6 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CompleteAllWithNoIncompleteTasksCommand extends Command
 {
+    use DryRunOptionTrait;
+
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
     const RETURN_CODE_NO_MATCHING_JOBS = 2;
@@ -49,15 +52,9 @@ class CompleteAllWithNoIncompleteTasksCommand extends Command
     {
         $this
             ->setName('simplytestable:job:complete-all-with-no-incomplete-tasks')
-            ->setDescription('Mark as completed all in-progress jobs that have no incomplete tasks')
-            ->addOption(
-                'dry-run',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Run through the process without writing any data',
-                false
-            )
-        ;
+            ->setDescription('Mark as completed all in-progress jobs that have no incomplete tasks');
+
+        $this->addDryRunOption();
     }
 
     /**
@@ -69,10 +66,10 @@ class CompleteAllWithNoIncompleteTasksCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $isDryRun = filter_var($input->getOption('dry-run'), FILTER_VALIDATE_BOOLEAN);
+        $isDryRun = $this->isDryRun($input);
 
         if ($isDryRun) {
-            $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
+            $this->outputIsDryRunNotification($output);
         }
 
         $output->write('Finding matching jobs (unfinished with more than zero tasks all finished) ... ');
