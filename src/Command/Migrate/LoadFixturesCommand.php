@@ -7,7 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LoadFixtures extends Command
+class LoadFixturesCommand extends Command
 {
     const RETURN_CODE_OK = 0;
 

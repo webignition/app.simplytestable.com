@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Command\Migrate;
 
-use App\Command\Migrate\ExpirePublicUserJobs;
+use App\Command\Migrate\ExpirePublicUserJobsCommand;
 use App\Repository\JobRepository;
 use App\Services\JobService;
 use App\Services\StateService;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\LockInterface;
 
-class ExpirePublicUserJobsTest extends \PHPUnit\Framework\TestCase
+class ExpirePublicUserJobsCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunUnableToAcquireLock()
     {
@@ -25,10 +25,10 @@ class ExpirePublicUserJobsTest extends \PHPUnit\Framework\TestCase
         $lockFactory = \Mockery::mock(Factory::class);
         $lockFactory
             ->shouldReceive('createLock')
-            ->with(ExpirePublicUserJobs::LOCK_KEY, ExpirePublicUserJobs::LOCK_TTL)
+            ->with(ExpirePublicUserJobsCommand::LOCK_KEY, ExpirePublicUserJobsCommand::LOCK_TTL)
             ->andReturn($lock);
 
-        $command = new ExpirePublicUserJobs(
+        $command = new ExpirePublicUserJobsCommand(
             \Mockery::mock(EntityManagerInterface::class),
             \Mockery::mock(JobRepository::class),
             \Mockery::mock(UserService::class),
@@ -39,6 +39,6 @@ class ExpirePublicUserJobsTest extends \PHPUnit\Framework\TestCase
 
         $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());
 
-        $this->assertEquals(ExpirePublicUserJobs::RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK, $returnCode);
+        $this->assertEquals(ExpirePublicUserJobsCommand::RETURN_CODE_UNABLE_TO_ACQUIRE_LOCK, $returnCode);
     }
 }
